@@ -1,0 +1,27 @@
+# Vivado: generated project artifacts
+.Xil/
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+
+# Vivado logs, journals, and temporary files
+*.jou
+*.log
+*.pb
+*.str
+*.wdf
+*.vdi
+*.backup.*
+
+# Simulator output
+xsim.dir/
+webtalk*.xml
+
+# Editor and operating-system files
+*~
+*.swp
+*.swo
+.DS_Store
