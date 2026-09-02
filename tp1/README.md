@@ -8,7 +8,7 @@ Este trabajo presenta el diseño y la implementación en Verilog de una unidad a
 
 | Apellido y nombre | Legajo |
 |---|---|
-| Arnaudo, Federico Andrés | _Completar_ |
+| Arnaudo, Federico Andrés | 40248874 |
 | Perotti, Franco José | 42052766 |
 
 ## Datos de la asignatura
