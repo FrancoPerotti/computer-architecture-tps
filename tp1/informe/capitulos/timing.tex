@@ -1,0 +1,73 @@
+\section{Qué se buscó comprobar}
+
+Después de ubicar y rutear el circuito, quedaba por verificar que las rutas gobernadas por el reloj pudieran operar con el período de \SI{10}{\nano\second} definido para la \tech{Basys 3}. A diferencia de las simulaciones anteriores, esta etapa no evalúa resultados aritméticos: analiza los retardos introducidos por los recursos y las conexiones físicas elegidas por la herramienta.
+
+\section{Resultado posterior al ruteo}
+
+El resumen de timing presentó márgenes positivos de setup, hold y ancho de pulso, sin endpoints fallidos. Los valores se reúnen en la tabla~\ref{tab:timing} y se observan en la figura~\ref{fig:timing}.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.1cm} C{3.1cm} C{3.4cm}}
+\toprule
+\textbf{Análisis} & \textbf{Peor margen} & \textbf{Violación total} & \textbf{Endpoints con falla} \\
+\midrule
+Setup, WNS / TNS & \SI{7,224}{\nano\second} & \SI{0,000}{\nano\second} & 0 \\
+Hold, WHS / THS & \SI{0,128}{\nano\second} & \SI{0,000}{\nano\second} & 0 \\
+Ancho de pulso, WPWS / TPWS & \SI{4,500}{\nano\second} & \SI{0,000}{\nano\second} & 0 \\
+\bottomrule
+\end{tabularx}
+\caption{Resumen temporal posterior al ruteo.}
+\label{tab:timing}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{img/timing_summary.png}
+	\caption{Cumplimiento de las restricciones temporales especificadas.}
+	\label{fig:timing}
+\end{figure}
+
+El WNS de \SI{7,224}{\nano\second} indica que la ruta de setup más exigente conserva ese margen antes del límite de captura. El WHS de \SI{0,128}{\nano\second} confirma que los datos también permanecen estables durante el intervalo mínimo posterior al flanco. El análisis consideró 48 endpoints para setup y hold y 32 para ancho de pulso, todos sin violaciones.
+
+El resultado permite afirmar que las rutas internas incluidas por las restricciones cumplen el reloj de \SI{100}{\mega\hertz}. Esa afirmación es deliberadamente acotada: depende de qué rutas fueron analizadas y de cuáles se declararon falsas.
+
+\section{Limitaciones de la verificación}
+
+Las herramientas utilizadas cubren aspectos complementarios, pero ninguna reproduce por sí sola todas las condiciones de uso. Las principales limitaciones de la evidencia reunida son las siguientes:
+
+\begin{itemize}
+	\item \textbf{El sincronizador no es un antirrebote.} Una pulsación mecánica puede generar varias transiciones. El diseño supone que esas activaciones repetidas vuelven a guardar el mismo dato.
+	\item \textbf{Los switches no se sincronizan como un bus.} Su captura coherente depende de que el usuario los configure antes de pulsar y los mantenga estables hasta soltar el botón.
+	\item \textbf{Las salidas hacia los LED están exceptuadas.} Como no existe un reloj externo de captura, el reporte no establece un requisito temporal para la ruta combinacional completa desde los registros hasta los LED.
+	\item \textbf{La simulación RTL es digital.} Verifica la secuencia funcional, pero no reproduce metastabilidad, niveles eléctricos ni retardos reales de los controles físicos.
+	\item \textbf{La prueba no es formalmente exhaustiva.} Los 866 casos cubren operaciones, fronteras y comportamientos dirigidos, pero no enumeran todas las combinaciones posibles.
+	\item \textbf{La versión documentada aún requiere validación física final.} La síntesis y la implementación concluyeron correctamente, pero debe generarse su bitstream y repetirse el procedimiento sobre la placa.
+\end{itemize}
+
+Explicitar estas limitaciones no invalida los resultados anteriores. Permite separar con precisión tres afirmaciones distintas: el modelo RTL responde como se esperaba en los casos ensayados, las rutas internas restringidas cumplen el reloj y la interacción manual todavía debe comprobarse sobre el hardware configurado.
+
+\section{Plan de validación física}
+
+La prueba final debe comenzar con casos que hagan observable una sola propiedad por vez y continuar con combinaciones de indicadores. La secuencia propuesta se muestra en la tabla~\ref{tab:physical-plan}.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{L{3.5cm}L{4.2cm}Y}
+\toprule
+\textbf{Prueba} & \textbf{Datos} & \textbf{Resultado esperado} \\
+\midrule
+Suma simple & A=\texttt{05}, B=\texttt{03}, ADD & Resultado \texttt{08}; Z=C=V=0. \\
+Carry y cero & A=\texttt{FF}, B=\texttt{01}, ADD & Resultado \texttt{00}; Z=C=1, V=0. \\
+Overflow positivo & A=\texttt{7F}, B=\texttt{01}, ADD & Resultado \texttt{80}; V=1, Z=C=0. \\
+Overflow en resta & A=\texttt{80}, B=\texttt{01}, SUB & Resultado \texttt{7F}; V=1. \\
+Desplazamientos & A=\texttt{80}, B=\texttt{01}, SRA/SRL & \texttt{C0} para SRA y \texttt{40} para SRL. \\
+Reset & Partir de registros no nulos & A, B y opcode vuelven a cero; LED8 activo. \\
+Conservación & Soltar el botón antes de cambiar switches & Los registros retienen el último valor cargado. \\
+\bottomrule
+\end{tabularx}
+\caption{Secuencia propuesta para la validación física final.}
+\label{tab:physical-plan}
+\end{table}
+
+Además de observar el valor final, conviene repetir las cargas y el reset varias veces. Esa repetición permitirá detectar rebotes o cambios del bus durante la ventana de habilitación, justamente los fenómenos que quedan fuera de la simulación ideal y de las rutas cubiertas por el análisis temporal.
