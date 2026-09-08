@@ -1,0 +1,7 @@
+/tp1_sync/
+/informe/*.aux
+/informe/*.log
+/informe/*.listing
+/informe/*.out
+/informe/*.toc
+/informe/missfont.log
