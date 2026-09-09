@@ -1,23 +1,48 @@
+% En este capítulo, el guion de «aritmético-lógica» es ortográfico y cada
+% \item va seguido intencionalmente por el texto del elemento.
+% chktex-file 1
+% chktex-file 8
+
 \section{Objetivo general}
 
-El objetivo del trabajo práctico es diseñar, describir y verificar una unidad aritmético-lógica capaz de operar sobre datos binarios de ancho parametrizable, para luego integrarla con los recursos físicos disponibles en una placa \tech{Basys 3}.
+El objetivo del trabajo práctico es diseñar, describir y verificar
+una unidad aritmético-lógica capaz de operar sobre datos binarios de
+ancho parametrizable, para luego integrarla con los recursos físicos
+disponibles en una placa \tech{Basys 3}.
 
 \section{Objetivos específicos}
 
 El desarrollo contempla los siguientes objetivos:
 
 \begin{itemize}
-	\item Implementar ocho operaciones aritméticas, lógicas y de desplazamiento mediante una descripción combinacional en \tech{SystemVerilog}.
-	\item Informar las condiciones de resultado cero, acarreo sin signo y desbordamiento en complemento a dos.
-	\item Separar el núcleo de cálculo de la interfaz secuencial utilizada para ingresar datos desde la placa.
-	\item Sincronizar los pulsadores externos antes de utilizarlos en el dominio del reloj de \SI{100}{\mega\hertz}.
-	\item Verificar por separado la \tech{ALU}, el sincronizador y el módulo superior, incluyendo casos límite y estímulos pseudoaleatorios reproducibles.
-	\item Sintetizar e implementar el circuito sobre una \tech{FPGA Artix-7} y contrastar los recursos obtenidos con la arquitectura prevista.
-	\item Analizar el cumplimiento temporal de las rutas sujetas a las restricciones declaradas.
+	\item Describir en \tech{SystemVerilog} una lógica combinacional que
+		implemente ocho operaciones aritméticas, lógicas y de desplazamiento.
+	\item Generar indicadores de resultado cero, acarreo sin signo y
+		desbordamiento en complemento a dos.
+	\item Separar el núcleo de cálculo de la interfaz secuencial
+		utilizada para ingresar datos desde la placa.
+	\item Sincronizar los pulsadores externos antes de utilizarlos en el
+		dominio del reloj de \SI{100}{\mega\hertz}.
+	\item Verificar por separado la \tech{ALU}, el sincronizador y el
+		módulo superior, incluyendo casos límite y estímulos
+		pseudoaleatorios reproducibles.
+	\item Sintetizar e implementar el circuito en la \tech{Artix-7} de
+		la placa y contrastar los recursos obtenidos con la arquitectura prevista.
+	\item Analizar el cumplimiento temporal de las rutas sujetas a las
+		restricciones declaradas.
 \end{itemize}
 
 \section{Alcance}
 
-El trabajo documenta la descripción RTL, los archivos de restricciones, 866 comprobaciones automáticas, la síntesis, la ubicación y el ruteo del circuito. También se presenta un procedimiento concreto para operar la placa y completar su validación física.
+El trabajo documenta la descripción RTL, los archivos de
+restricciones y 866 comprobaciones automáticas. También registra la
+síntesis, la ubicación y el ruteo del circuito. El recorrido se
+completa con la generación del \tech{bitstream} y la validación física
+de trece casos sobre una placa \tech{Basys 3}.
 
-Los resultados de simulación demuestran los casos ensayados, pero no constituyen una enumeración exhaustiva de todas las combinaciones posibles. De manera análoga, el análisis temporal solo alcanza las rutas gobernadas por el reloj y no comprueba que un usuario mantenga estables los switches durante una carga. La generación del \tech{bitstream} de la implementación documentada y la repetición final de las pruebas manuales se consideran pasos pendientes.
+Los resultados de simulación respaldan los casos ensayados, aunque no
+enumeran todas las combinaciones posibles. De manera análoga, el
+análisis temporal solo alcanza las rutas gobernadas por el reloj. La
+prueba física comprueba el procedimiento de carga y la observación de
+resultados en los LEDs, pero tampoco reemplaza un ensayo exhaustivo de
+las entradas ni una caracterización eléctrica de los pulsadores.

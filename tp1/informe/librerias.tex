@@ -1,4 +1,8 @@
 % Librerias
+% Este archivo define estilos mediante declaraciones y primitivas internas de
+% LaTeX; los espacios que las siguen forman parte de esas definiciones.
+% chktex-file 1
+
 \usepackage{babel}
 \babelprovide[main,import]{spanish}
 \usepackage[utf8]{inputenc}
@@ -60,7 +64,7 @@
 	sensitive=true,
 	morecomment=[l]{//},
 	morecomment=[s]{/*}{*/},
-	morestring=[b]"
+	morestring=[b]" % chktex 18
 }
 \lstdefinestyle{tpcode}{
 	basicstyle=\ttfamily\small\color{black!88},
@@ -136,13 +140,13 @@
 
 \usepackage[colorlinks=true, allcolors=black]{hyperref}
 \fancyhead{}
-\fancyhead[L]{UNC - FCEFyN}
+\fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
 \fancyhead[R]{Arquitectura de Computadoras}
 \fancyfoot{}
 \fancyfoot[C]{\thepage}
 \fancypagestyle{plain}{
 	\fancyhead{}
-	\fancyhead[L]{UNC - FCEFyN}
+	\fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
 	\fancyhead[R]{Arquitectura de Computadoras}
 	\fancyfoot{}
 	\fancyfoot[C]{\thepage}

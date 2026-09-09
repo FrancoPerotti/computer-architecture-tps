@@ -1,7 +1,13 @@
 Una unidad aritmético-lógica reúne las operaciones que un procesador realiza sobre sus datos. Su diseño requiere establecer qué operaciones se admiten, cómo se seleccionan y de qué manera se interpretan los resultados cuando el ancho de los operandos es limitado. A partir de este problema, en el presente trabajo se desarrolló una \tech{ALU} parametrizable en \tech{SystemVerilog} para la \tech{FPGA Artix-7} de una placa \tech{Basys 3}.
 
-El núcleo implementado realiza ocho operaciones sobre datos de ocho bits: suma, resta, \tech{AND}, \tech{OR}, \tech{XOR}, \tech{NOR}, desplazamiento lógico a derecha y desplazamiento aritmético a derecha. Además del resultado, genera indicadores de cero, acarreo y desbordamiento con signo. El circuito se integró con una interfaz que permite cargar los operandos y el código de operación desde los switches de la placa y visualizar la respuesta mediante sus \tech{LED}.
+El núcleo implementado realiza ocho operaciones sobre datos de ocho bits: suma, resta, \tech{AND}, \tech{OR}, \tech{XOR}, \tech{NOR}, desplazamiento lógico a derecha y desplazamiento aritmético a derecha. Además del resultado, genera indicadores de cero, acarreo y desbordamiento con signo. El circuito se integró con una interfaz que permite cargar los operandos y el código de operación desde los switches de la placa y visualizar la respuesta mediante sus LEDs.
 
 El desarrollo recorrió las etapas de descripción, simulación, síntesis e implementación. Para aislar responsabilidades se construyeron tres módulos: el núcleo combinacional, un sincronizador para las entradas asíncronas de los pulsadores y un módulo superior que almacena los valores ingresados. Cada nivel dispone de un \tech{testbench} propio, con el que se verificaron tanto las operaciones como la secuencia de interacción.
 
-Una vez comprobado el comportamiento funcional, se utilizó \tech{Vivado 2025.2} para elaborar los esquemáticos, sintetizar el diseño para el dispositivo \texttt{xc7a35tcpg236-1}, implementar sus conexiones y analizar la utilización de recursos y los márgenes temporales. El informe presenta la relación entre el código, las estructuras inferidas por la herramienta y la evidencia obtenida en las pruebas.
+Con el comportamiento funcional ya comprobado, comenzó el flujo de
+\tech{Vivado}. Primero se elaboraron los esquemáticos y se sintetizó el
+diseño para el dispositivo \texttt{xc7a35tcpg236-1} de la placa. % chktex 8
+Después se implementaron sus conexiones y se analizaron la utilización
+de recursos y los márgenes temporales. El informe presenta la relación
+entre el código, las estructuras inferidas por la herramienta y la
+evidencia obtenida en las pruebas.
