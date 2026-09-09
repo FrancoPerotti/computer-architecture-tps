@@ -1,7 +1,47 @@
-Como grupo, consideramos que el principal aprendizaje del trabajo fue comprender que la corrección de un circuito depende tanto de sus operaciones como de las condiciones en que recibe y conserva los datos. La interacción con los pulsadores hizo necesario relacionar una acción manual con la captura gobernada por un reloj. Esto fundamentó la separación entre sincronización, almacenamiento y cálculo, y mostró que el procedimiento de uso también forma parte de la interfaz del hardware.
+Por haber sido el primero de la materia, este trabajo práctico
+representó para el grupo mucho más que la construcción de una ALU
+funcional. También constituyó el primer contacto con un flujo completo de diseño digital:
+partimos de una especificación, la
+expresamos en \tech{SystemVerilog} y recorrimos las etapas necesarias
+para convertirla en un circuito capaz de ejecutarse sobre una placa.
+Este recorrido permitió comprender que describir, verificar, sintetizar
+e implementar no eran nombres distintos para una misma tarea, sino
+instancias que respondían preguntas diferentes sobre el diseño.
 
-La verificación por módulos permitió distinguir responsabilidades. Comprobar una suma no asegura que el usuario cargue el operando esperado ni que el reset prevalezca sobre una carga. Al ensayar primero la ALU y el sincronizador y después el sistema completo, fue posible saber qué propiedad se comprobaba en cada etapa. Los casos de carry y overflow también ayudaron a separar el patrón binario de su interpretación numérica.
+Uno de los aprendizajes más importantes consistió en reconocer que
+describir hardware no equivale a escribir un programa convencional.
+El código RTL expresa estructuras que trabajaban de manera concurrente,
+por lo que decisiones como separar lógica combinacional y secuencial,
+registrar una entrada o incorporarla al dominio de un reloj tienen una
+consecuencia física. El contacto con \tech{Vivado} volvió visible esa
+relación: los esquemas RTL, la síntesis, la utilización de recursos y
+la implementación muestran distintas representaciones de una misma
+descripción y ayudan a relacionar el código con el circuito resultante.
 
-Los resultados de síntesis concuerdan con la arquitectura descripta: la ALU concentra casi toda la lógica combinacional, mientras que los 31 flip-flops se explican mediante los registros de datos, los sincronizadores y el reset de arranque. La implementación cumple las restricciones internas de \SI{100}{\mega\hertz} con márgenes positivos y sin endpoints fallidos dentro del alcance definido.
+La división en módulos y la escritura de bancos de pruebas también
+modificaron nuestra manera de encarar el problema. Separar la ALU, los
+sincronizadores y la integración superior no solo ordenó los archivos;
+estableció límites claros y permitió formular comprobaciones específicas
+para cada responsabilidad. A su vez, escribir testbenches obligó a
+definir de antemano qué resultado se esperaba, qué condiciones de borde
+eran relevantes y cómo detectar un error de forma automática. La
+verificación dejó así de ser una inspección posterior y pasó a formar
+parte del propio proceso de diseño.
 
-Finalmente, los resultados favorables de las herramientas deben leerse junto con sus límites. Las 866 comprobaciones respaldan los casos simulados y el reporte temporal respalda las rutas restringidas; ninguno reemplaza la observación de los controles físicos. El diseño cuenta con una base consistente para generar el bitstream y completar el ensayo sobre la placa, manteniendo explícita la diferencia entre lo verificado y lo pendiente.
+La carga del bitstream y la utilización de la \tech{Basys 3} completaron
+ese aprendizaje al trasladar el circuito desde las herramientas de
+simulación hasta un dispositivo real. Ver que la placa respondió como
+se esperaba en el primer intento fue una satisfacción para el grupo,
+pero, sobre todo, confirmó el valor de haber definido con cuidado las
+interfaces, las restricciones y las pruebas antes de llegar al
+laboratorio. Los switches, pulsadores y LEDs dejaron de ser señales
+abstractas y pasaron a mostrar de manera directa las decisiones tomadas
+en el código.
+
+Como corolario, este trabajo práctico nos dejó una primera metodología
+para futuros desarrollos digitales. Aprendimos a dividir el problema y
+a comprender qué hardware describía cada bloque; luego, a verificarlo
+de manera aislada antes de integrarlo y llevarlo al dispositivo. Más que
+el resultado particular de una ALU, esa forma de trabajo constituyó el
+aprendizaje que el grupo consideró más valioso de esta primera
+experiencia.
