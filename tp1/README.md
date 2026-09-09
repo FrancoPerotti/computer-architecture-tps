@@ -4,4 +4,4 @@ Implementación en SystemVerilog de una ALU parametrizable para la placa Basys 3
 
 El proyecto incluye el núcleo combinacional, la sincronización de las entradas, el módulo superior y sus respectivos bancos de pruebas. El circuito fue verificado mediante simulación, sintetizado e implementado con Vivado y validado físicamente sobre la placa.
 
-[Ver el informe completo en PDF](informe/tp1_alu.pdf)
+[Ver el informe completo en PDF](informe/tp1_alu.pdf?raw=1)
