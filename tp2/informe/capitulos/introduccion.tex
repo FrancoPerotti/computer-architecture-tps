@@ -1,0 +1,22 @@
+El Trabajo Práctico Nº 1 permitió construir una unidad aritmético-lógica de
+ocho bits y separar el cálculo combinacional de la interfaz física de la
+\tech{Basys 3}. Los operandos y el código de operación se cargaban entonces con
+switches y pulsadores. El resultado y las banderas se observaban en los LED.
+Esta organización permitió conservar la \tech{ALU} y modificar por completo la
+forma de suministrarle datos.
+
+En este segundo trabajo la computadora envía dos operandos y un código de
+operación por el conversor USB--UART de la placa, y recibe como respuesta el
+resultado. La transformación parece, en una primera mirada, un reemplazo de
+pines. Sin embargo, el enlace UART transmite un bit por vez, no comparte una
+señal de reloj con la FPGA y puede detenerse a mitad de una operación. El
+circuito ya no solo debe calcular, ahora debe recordar qué recibió, medir intervalos,
+administrar capacidad y regresar al estado inicial del protocolo cuando la
+entrada es inválida.
+
+Las máquinas de estado finitas organizan ese comportamiento temporal. Una
+máquina valida y reconstruye los bytes de entrada; otra produce las tramas de
+salida; una tercera interpreta la secuencia A--B--opcode. Entre productor y
+consumidor se interponen buffers \tech{FIFO}. En este caso, su función no es aumentar la
+velocidad de la UART, sino impedir que diferencias breves de ritmo se conviertan
+en pérdidas o sobrescrituras silenciosas de información.

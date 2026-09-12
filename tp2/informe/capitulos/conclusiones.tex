@@ -1,0 +1,46 @@
+Este trabajo cambió el centro del problema respecto del TP1. Allí predominaba la
+lógica combinacional: una vez presentes operandos y opcode, el resultado quedaba
+determinado. En el TP2 aprendimos a describir un comportamiento que se extiende
+en el tiempo. Recibir un byte, esperar el siguiente y responder cuando existe
+capacidad son acciones que necesitan memoria, no solo una expresión lógica.
+
+Las máquinas de estado nos permitieron separar estado actual, próximo estado y
+salidas. Esa separación volvió explícitas preguntas que una descripción
+compacta puede ocultar: qué se conserva mientras no llega un tick, durante qué
+ciclo se produce un pulso y a qué estado vuelve el circuito después de un
+error. La codificación one-hot facilitó seguir esas decisiones en las trazas y
+relacionarlas luego con flip-flops y lógica de decodificación en la síntesis. Al
+mismo tiempo, comprobamos que one-hot no reemplaza una rama segura para
+combinaciones ilegales.
+
+El receptor mostró que una entrada asíncrona no puede tratarse como un dato ya
+alineado con el reloj. El sincronizador reduce la probabilidad de propagar
+metastabilidad y el sobremuestreo ubica la observación cerca del centro del bit.
+El falso start y el stop inválido hicieron visible otra lección: detectar un
+error no alcanza; también hay que decidir cómo recuperar el reposo sin contar
+varias veces el mismo nivel defectuoso.
+
+Los FIFO y el backpressure ampliaron esa idea más allá de UART. Aprendimos que
+cuando productor y consumidor avanzan a ritmos diferentes, la capacidad y las
+reglas de aceptación forman parte de la arquitectura. La profundidad cuatro no
+hace más veloz la línea, pero permite desacoplar responsabilidades. De manera
+análoga, WAIT\_TX no es una espera accidental: garantiza que el resultado y las
+banderas persistan hasta que la escritura pueda aceptarse.
+
+La verificación por capas resultó esencial. Los bancos pequeños permitieron
+atribuir fallas a un contador, un orden de bits, un límite de FIFO o una
+transición. Recién después la prueba pin a pin comprobó la cooperación de todos
+los bloques en 812 transacciones, incluidas 800 pseudoaleatorias reproducibles.
+Las formas de onda y los PASS responden la pregunta funcional; la síntesis
+explica qué hardware se infirió; la implementación y el timing muestran que ese
+hardware puede operar con las restricciones declaradas.
+
+Finalmente, aprendimos a no confundir esos niveles de evidencia. El bitstream,
+los 458 endpoints con márgenes positivos y los reportes CDC/DRC cerraron la etapa
+de herramientas, pero no demostraron el cable, el conversor USB ni la
+observación de los LED. Esos elementos quedaron comprendidos en la validación
+sobre la Basys 3, cuyo resultado dependió de las respuestas UART, los registros
+de ejecución y los patrones físicos. Esa distinción entre niveles de evidencia,
+junto con la secuencia
+especificar--modularizar--verificar--implementar--medir, constituye el método que
+nos llevamos para diseños futuros con protocolos, estado y temporización.

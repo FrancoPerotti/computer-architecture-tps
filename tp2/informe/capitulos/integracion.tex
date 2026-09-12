@@ -1,0 +1,176 @@
+El sistema se utiliza desde una computadora conectada al puerto USB--UART de la
+Basys 3. Desde allí se envían los operandos y el opcode de cada operación. La
+placa procesa esos valores y devuelve el resultado por el mismo enlace.
+
+Los datos no pasan directamente desde la computadora hasta la ALU. Primero se
+transmiten por UART como una secuencia de tres bytes. El controlador recupera
+esos valores y los presenta en paralelo a la ALU. Luego, el resultado vuelve a
+la computadora y también queda visible en los LED.
+
+La integración conecta los bloques que participan en ese recorrido. En este
+nivel se establece cómo se transfieren los datos, cuándo se acepta cada byte y
+qué información se presenta fuera de la FPGA. Cada módulo mantiene una función
+propia y se comunica con los demás mediante señales bien definidas.
+
+\section{Recorrido de una transacción}
+
+Cada solicitud comienza con el envío del operando A, el operando B y el opcode.
+\texttt{uart\_core} recibe las tres tramas y almacena los bytes reconstruidos.
+El controlador los retira en el mismo orden y guarda cada uno en el registro
+correspondiente.
+
+Cuando la solicitud está completa, la ALU recibe ambos operandos y los seis bits
+inferiores del opcode. El controlador registra el resultado y las banderas en
+el ciclo siguiente. El resultado se entrega entonces a la cola de transmisión
+y los LED se actualizan con la información de la operación.
+
+La tabla~\ref{tab:secuencia-operacion} resume este recorrido. Cada transferencia
+entre bloques se realiza en un flanco del reloj.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{0.96\textwidth}{C{1.1cm}L{4.2cm}Y}
+		\toprule
+		\textbf{Paso} & \textbf{Transferencia} & \textbf{Efecto} \\
+		\midrule
+		0 & Reset hacia todos los bloques &
+		Las colas quedan vacías y el resultado inicial toma el valor cero. \\
+		1 & Computadora hacia \texttt{uart\_core} &
+		Las tramas de A, B y opcode se reconstruyen como bytes. \\
+		2 & FIFO RX hacia el controlador &
+		Los tres campos se guardan en el orden definido por el protocolo. \\
+		3 & Controlador hacia la ALU &
+		A, B y opcode quedan disponibles en paralelo. \\
+		4 & ALU hacia el controlador &
+		El resultado y las banderas se registran y actualizan los LED. \\
+		5 & Controlador hacia FIFO TX &
+		El byte de resultado queda pendiente de transmisión. \\
+		6 & \texttt{uart\_tx} hacia la computadora &
+		El resultado se serializa y se envía por la línea UART. \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Recorrido de una operación a través del sistema integrado.}%
+	\label{tab:secuencia-operacion}
+\end{table}
+
+El controlador vuelve a esperar una solicitud después de registrar la operación
+anterior. De esta manera, el byte transmitido y el patrón de los LED
+corresponden
+a los mismos operandos y al mismo opcode.
+
+\section{Resultado UART e indicadores}
+
+La respuesta UART contiene solamente los ocho bits del resultado. Las banderas
+Z, C y V no se transmiten. En cambio, se muestran junto con el resultado en los
+once LED de la placa.
+
+El controlador registra todos estos valores al completar una operación. La
+salida hacia los LED se forma a partir de esos registros según la siguiente
+distribución:
+
+\begin{equation}
+	\texttt{leds[10:0]} =
+	\{\mathrm{V},\,\mathrm{C},\,\mathrm{Z},\,\mathrm{resultado[7:0]}\}.
+\end{equation}
+
+Los valores registrados se mantienen hasta que termina una nueva operación.
+Esto permite observar el resultado aunque la respuesta UART ya haya sido
+transmitida. Después del reset, los ocho bits de resultado quedan en cero. La
+bandera Z queda activa y las banderas C y V permanecen apagadas.
+
+\section{Coordinación y rendimiento}
+
+Los bloques no siempre producen y consumen los bytes en el mismo ciclo. La cola
+de recepción conserva los datos que todavía no fueron leídos por el controlador.
+La cola de transmisión cumple la misma función con los resultados que todavía
+no fueron enviados.
+
+El controlador solo retira un byte cuando la cola de recepción contiene datos.
+También comprueba que exista espacio antes de guardar una respuesta. Si la cola
+de transmisión está llena, conserva el resultado y espera hasta que pueda
+escribirlo. Así, una diferencia momentánea entre los bloques no provoca la
+pérdida de información.
+
+La velocidad máxima queda determinada por el enlace UART. Cada trama 8N1 ocupa
+diez bits. A \num{19200} baud pueden transmitirse \num{1920} bytes por segundo.
+Como cada solicitud contiene tres bytes, la entrada admite como máximo
+\num{640} operaciones por segundo.
+
+Cada operación genera un solo byte de respuesta. Por lo tanto, esa cantidad de
+solicitudes requiere \num{6400} bits por segundo en el sentido de transmisión.
+Este valor se encuentra por debajo de la capacidad disponible. Además, las dos
+líneas UART permiten recibir una solicitud mientras se transmite el resultado
+anterior.
+
+El cliente espera la respuesta de una operación antes de enviar la siguiente.
+Con esta forma de intercambio, cada resultado puede asociarse directamente con
+la solicitud que lo produjo.
+
+\section{Cliente de la computadora}
+
+Para enviar las operaciones desde la computadora se desarrolló un programa que
+actúa como cliente del sistema. Este programa evita que el usuario tenga que
+configurar el puerto y transmitir cada byte de forma manual.
+
+El protocolo trabaja con valores binarios y no con caracteres de texto. El
+cliente \texttt{tools/uart\allowbreak\_alu\allowbreak\_client.py} configura el puerto serie en 8N1 a
+\num{19200} baud. Luego forma la solicitud con A, B y opcode, y envía los tres
+bytes en ese orden.
+
+Después del envío, el cliente recibe un único byte y lo compara con un modelo de
+referencia. Puede ejecutar una operación individual o una serie de casos
+dirigidos y pseudoaleatorios. El modelo también calcula las banderas para poder
+compararlas con los LED de la placa.
+
+El cliente incluye además una prueba de recuperación. Para realizarla, envía un
+byte aislado y espera \SI{20}{\milli\second}. Este intervalo supera el timeout
+del controlador y hace que la solicitud incompleta sea descartada. A
+continuación, se envía una operación completa y se comprueba que la respuesta
+corresponda a esa nueva solicitud.
+
+\section{Integración con la Basys 3}
+
+El módulo superior \texttt{alu\_uart\_top.sv} conecta el diseño con
+los recursos de la placa. Sus puertos corresponden al reloj de
+entrada, el pulsador de reset, las dos líneas UART y los once LED. El
+archivo \texttt{basys3.xdc} de restricciones asigna estas señales a
+los pines de la Basys 3.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{0.92\textwidth}{L{3.5cm}C{2.0cm}Y}
+		\toprule
+		\textbf{Puerto} & \textbf{Pin} & \textbf{Recurso físico} \\
+		\midrule
+		\texttt{clk} & W5 & Oscilador de \SI{100}{\mega\hertz}. \\
+		\texttt{btn\_reset} & U18 & Pulsador central BTNC. \\
+		\texttt{serial\_rx} & B18 & USB--UART desde la computadora. \\
+		\texttt{serial\_tx} & A18 & USB--UART hacia la computadora. \\
+		\texttt{leds[7:0]} & varios & Resultado de ocho bits. \\
+		\texttt{leds[10:8]} & W3, V3, V13 & Banderas V, C y Z. \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Correspondencia entre los puertos del diseño y la Basys 3.}%
+\end{table}
+
+Las señales \texttt{serial\_rx} y \texttt{btn\_reset} se originan fuera de la
+FPGA y pueden cambiar en cualquier momento respecto del reloj interno. Por este
+motivo, ambas reciben un tratamiento especial antes de utilizarse en el resto
+del circuito.
+
+La entrada \texttt{serial\_rx} atraviesa el sincronizador ubicado antes del
+receptor UART. En el caso del reset, la activación es inmediata para llevar los
+bloques a un estado conocido. Su liberación se sincroniza con el reloj para que
+todos retomen el funcionamiento a partir de un flanco válido.
+
+Estas características también se tuvieron en cuenta al definir las restricciones
+temporales. El archivo \texttt{basys3.xdc} establece un período de
+\SI{10}{\nano\second} para el reloj y aplica las excepciones únicamente al
+recorrido de las entradas asíncronas hasta sus sincronizadores. A partir de ese
+punto, las señales se analizan del mismo modo que el resto de la lógica interna.
+El archivo también establece el estándar eléctrico LVCMOS33 para los puertos de
+la placa.
+
+Con estas conexiones, el resultado de una operación puede comprobarse de dos
+formas. La computadora recibe el byte transmitido por UART y la placa muestra
+ese mismo valor junto con las banderas.

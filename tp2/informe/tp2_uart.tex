@@ -1,0 +1,50 @@
+\documentclass[12pt,a4paper,openany]{book}
+
+\input{librerias.tex}
+
+\begin{document}
+
+\input{introduccion/portada.tex}
+\begingroup
+\pagestyle{plain}
+\tableofcontents
+\thispagestyle{plain}
+\endgroup
+\newpage
+
+\chapter{Introducción}
+\input{capitulos/introduccion.tex}
+
+\chapter{Objetivos y alcance}
+\input{capitulos/objetivos.tex}
+
+\chapter{Arquitectura general}
+\input{capitulos/arquitectura.tex}
+
+\chapter{Núcleo UART y máquinas de estado}
+\input{capitulos/especificacion.tex}
+\input{capitulos/fsm.tex}
+
+\chapter{Integración con la ALU y la Basys 3}
+\input{capitulos/integracion.tex}
+
+\chapter{Verificación funcional}
+\input{capitulos/verificacion.tex}
+
+\chapter{Síntesis e implementación}
+\input{capitulos/implementacion.tex}
+
+\chapter{Timing y limitaciones}
+\input{capitulos/timing.tex}
+
+\chapter{Validación física}
+\input{capitulos/validacion.tex}
+
+\chapter{Conclusiones}
+\input{capitulos/conclusiones.tex}
+
+\chapter*{Referencias}
+\addcontentsline{toc}{chapter}{Referencias}
+\input{capitulos/referencias.tex}
+
+\end{document}

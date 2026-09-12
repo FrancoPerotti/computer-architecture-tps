@@ -1,0 +1,217 @@
+\section{Objetivo y montaje}
+
+La validación física se planteó para comprobar el funcionamiento del sistema
+completo sobre una Basys 3. A diferencia de la simulación y del análisis
+posterior al ruteo, el ensayo incluyó el cable Micro-USB, la interfaz JTAG, el
+puente USB--UART, el oscilador de la placa y los LED utilizados como salida. El
+alcance contempló el recorrido de una transacción desde la computadora hasta la
+ALU y su retorno como respuesta UART, junto con la indicación visual del
+resultado y las banderas.
+
+Con la placa apagada, el selector de alimentación se colocó en USB y el cable
+Micro-USB se conectó a J4, identificado como \texttt{PROG}. Luego se accionó
+SW16 y se comprobó el encendido de LD20. El mismo enlace proporcionó
+alimentación, acceso JTAG y comunicación USB--UART, tal como se describe en el
+\href{https://digilent.com/reference/_media/reference/programmable-logic/basys-3/basys3_rm.pdf}{manual de referencia de la Basys 3}.
+
+\section{Programación y configuración}
+
+El proyecto \texttt{vivado/tp2\_uart/tp2\_uart.xpr} se abrió en Vivado y se
+estableció la conexión desde \textit{Open Hardware Manager} mediante
+\textit{Open Target $\rightarrow$ Auto Connect}. Hardware Manager detectó el
+dispositivo \texttt{xc7a35t\_0}, sobre el cual se cargó
+\texttt{build/alu\_uart\_top.bit} con \textit{Program Device}. Se adoptaron como
+criterios de aceptación la finalización sin errores y el encendido permanente
+del indicador \texttt{DONE}. El flujo coincidió con el procedimiento de
+conexión y programación indicado en
+\href{https://docs.amd.com/r/2025.1-English/ug908-vivado-programming-debugging/Opening-Hardware-Target-Connections}{Vivado UG908}.
+
+\placeholder{\texttt{vivado\_hardware\_manager\_placa.png}}
+{Dispositivo \texttt{xc7a35t\_0}, estado programado y archivo bitstream.}
+
+Después de la programación se presionó y se soltó BTNC. El patrón de referencia
+posterior al reset consistió en LED0--LED7 apagados, LED8 encendido y
+LED9--LED10 apagados: resultado \texttt{00}, bandera Z activa y banderas C y V
+inactivas.
+
+El sistema operativo enumeró los puertos serie disponibles mediante:
+
+\begin{codebox}
+python -m serial.tools.list_ports -v
+\end{codebox}
+
+El canal asociado al puente USB--UART se asignó a la variable
+\texttt{UART\_PORT}. El cliente utilizó \num{19200} baud, ocho bits de datos,
+sin paridad, un bit de stop y sin control de flujo.
+
+\section{Pruebas realizadas}
+
+\subsection{Casos dirigidos}
+
+La primera ejecución aplicó trece casos dirigidos que cubrieron las ocho
+operaciones, resultados nulos, carry, overflow y opcode inválido. Cada respuesta
+recibida se comparó automáticamente con el modelo de referencia y la salida
+completa quedó registrada en \texttt{reports/placa\_dirigida.log}.
+
+\begin{codebox}
+python tools/uart_alu_client.py --port "$UART_PORT" \
+  --suite directed 2>&1 | tee reports/placa_dirigida.log
+\end{codebox}
+
+Se estableció como criterio de aceptación que las trece comparaciones
+coincidieran y que la ejecución terminara con:
+
+\begin{codebox}
+PASS: 13 operaciones completadas sin errores
+\end{codebox}
+
+\subsection{Casos pseudoaleatorios}
+
+La segunda ejecución aplicó cien pares de operandos por cada una de las ocho
+operaciones. La semilla \texttt{0x1a2b3c4d} fijó la secuencia y permitió
+reproducir las 800 transacciones. La salida se conservó en
+\texttt{reports/placa\_aleatoria.log}.
+
+\begin{codebox}
+python tools/uart_alu_client.py --port "$UART_PORT" \
+  --suite random --random-per-op 100 --seed 0x1a2b3c4d \
+  2>&1 | tee reports/placa_aleatoria.log
+\end{codebox}
+
+El criterio exigió que los 800 resultados recibidos coincidieran con los valores
+esperados y que el cierre fuera:
+
+\begin{codebox}
+PASS: 800 operaciones completadas sin errores
+\end{codebox}
+
+\subsection{Recuperación después de timeout}
+
+La recuperación se ejercitó mediante el envío de un único byte
+\texttt{AA}. Después se esperaron \SI{20}{\milli\second}, un intervalo superior
+al timeout interno de \SI{10}{\milli\second}, y se transmitió la resta
+\texttt{09 - 02}.
+
+\begin{codebox}
+python tools/uart_alu_client.py --port "$UART_PORT" \
+  --recovery 2>&1 | tee reports/placa_recuperacion.log
+\end{codebox}
+
+El criterio de aceptación exigió que el byte aislado no produjera una respuesta
+y que la transacción completa posterior devolviera únicamente \texttt{07}. Ese
+comportamiento indicaría que el controlador descartó el estado parcial antes de
+recuperar la espera del primer operando.
+
+\subsection{Correspondencia entre UART y LED}
+
+La correspondencia entre la respuesta serie y la salida física se comprobó con
+dos sumas. La primera operación produjo simultáneamente resultado nulo y carry:
+
+\begin{codebox}
+python tools/uart_alu_client.py --port "$UART_PORT" \
+  --a 0xff --b 0x01 --opcode ADD \
+  2>&1 | tee reports/placa_led_cz.log
+\end{codebox}
+
+El resultado esperado en la computadora fue \texttt{00}. El patrón físico de
+referencia encendió LED8 y LED9 y mantuvo apagados LED0--LED7 y LED10, lo que
+formó la palabra \texttt{0x300}.
+
+\begin{figure}[H]
+	\centering
+	\fcolorbox{placeholderline}{placeholdergray}{%
+		\parbox[c][5.3cm][c]{0.78\textwidth}{%
+			\centering
+			\textbf{Fotografía pendiente}\\[0.25cm]
+			\texttt{basys3\_uart\_carry\_zero.jpg}\\[0.2cm]
+			\small Placa completa; LED8 y LED9 encendidos.
+		}%
+	}
+	\caption{Estado de la placa para la suma
+	\texttt{FF + 01}: carry y zero activos.}%
+\end{figure}
+
+La segunda operación ejercitó el overflow de una suma con operandos positivos:
+
+\begin{codebox}
+python tools/uart_alu_client.py --port "$UART_PORT" \
+  --a 0x7f --b 0x01 --opcode ADD \
+  2>&1 | tee reports/placa_led_v.log
+\end{codebox}
+
+La respuesta UART esperada fue \texttt{80}. El patrón físico de referencia
+encendió LED7 y LED10 y mantuvo apagados los demás LED, lo que correspondió a la
+palabra \texttt{0x480}. Los dos casos permitieron cotejar el resultado
+transmitido con el retenido en las salidas físicas.
+
+\begin{figure}[H]
+	\centering
+	\fcolorbox{placeholderline}{placeholdergray}{%
+		\parbox[c][5.3cm][c]{0.78\textwidth}{%
+			\centering
+			\textbf{Fotografía pendiente}\\[0.25cm]
+			\texttt{basys3\_uart\_overflow.jpg}\\[0.2cm]
+			\small Fila de LED; LED7 y LED10 encendidos.
+		}%
+	}
+	\caption{Estado de los LED para la suma
+	\texttt{7F + 01}: overflow activo.}%
+\end{figure}
+
+Al finalizar se reunieron las últimas líneas de los cinco registros para
+conservar un resumen de la ejecución:
+
+\begin{codebox}
+clear
+tail -n 1 reports/placa_dirigida.log
+tail -n 1 reports/placa_aleatoria.log
+tail -n 1 reports/placa_recuperacion.log
+tail -n 1 reports/placa_led_cz.log
+tail -n 1 reports/placa_led_v.log
+\end{codebox}
+
+\placeholder{\texttt{validacion\_uart\_terminal.png}}
+{Resultado final de los cinco registros de ejecución.}
+
+\section{Resultados y criterio de aceptación}
+
+Para cada prueba se definió un resultado esperado antes de contrastar la salida
+UART y los LED. Los resultados observados y su estado se mantuvieron pendientes
+hasta disponer de los registros y las imágenes obtenidos sobre la placa.
+
+\begin{table}[H]
+	\centering
+	\small
+	\begin{tabularx}{0.96\textwidth}{L{2.7cm}Y C{2.4cm}C{1.9cm}}
+		\toprule
+		\textbf{Prueba} & \textbf{Criterio} &
+		\textbf{Resultado observado} & \textbf{Estado} \\
+		\midrule
+		Reset & Resultado \texttt{00}; solo Z activa. & Pendiente & Pendiente \\
+		Suite dirigida & 13 operaciones sin errores. & Pendiente & Pendiente \\
+		Suite aleatoria & 800 operaciones sin errores. & Pendiente & Pendiente \\
+		Recuperación & Una única respuesta \texttt{07}. & Pendiente & Pendiente \\
+		ADD \texttt{FF+01} & UART \texttt{00}; LED = \texttt{0x300}. &
+		Pendiente & Pendiente \\
+		ADD \texttt{7F+01} & UART \texttt{80}; LED = \texttt{0x480}. &
+		Pendiente & Pendiente \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Resultados de la validación física.}%
+	\label{tab:validacion-fisica}
+\end{table}
+
+\section{Interpretación}
+
+El conjunto de pruebas abarcó la cadena completa: enumeración del puerto,
+recepción UART, almacenamiento temporal, interpretación de la terna, ejecución
+de la ALU, transmisión de la respuesta y retención del resultado en los LED. La
+suite dirigida ejercitó las situaciones de frontera y las 800 transacciones
+pseudoaleatorias ampliaron el conjunto de operandos con una secuencia
+reproducible.
+
+La prueba de recuperación evaluó que una operación incompleta no contaminara la
+transacción siguiente. Las dos comprobaciones visuales relacionaron la respuesta
+recibida por la computadora con el estado de resultado, Z, C y V sobre la placa.
+La aceptación final quedó determinada por la coincidencia de esas observaciones
+con los criterios de la tabla~\ref{tab:validacion-fisica}.

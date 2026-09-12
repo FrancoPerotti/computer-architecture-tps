@@ -1,0 +1,24 @@
+\section{Objetivo general}
+
+El objetivo de este trabajo es diseñar, describir y verificar un
+sistema digital capaz de recibir dos operandos y un código de
+operación mediante UART, ejecutar sobre ellos la ALU desarrollada en
+el TP1 y transmitir el resultado por el mismo enlace. Además, el
+sistema debe ser sintetizable, reproducible y capaz de volver al
+estado inicial del protocolo después de recibir una trama incompleta o inválida.
+
+\section{Objetivos específicos}
+
+\begin{itemize}
+	\item Mantener el contrato funcional de la ALU del TP1, incluidas las
+		operaciones ADD, SUB, AND, OR, XOR, NOR, SRA y SRL.
+	\item Implementar una UART 8N1 a \num{19200} baud con sobremuestreo 16x.
+	\item Describir FSM separadas para re\-cep\-ción, transmisión y control
+		de la tran\-sac\-ción con recuperación segura.
+	\item Desacoplar comunicación y procesamiento mediante FIFOs.
+	\item Definir un protocolo binario sobre el orden de los bytes y el
+		tratamiento de errores.
+	\item Verificar cada bloque de manera aislada y comprobar después el recorrido
+		completo desde el pin RX hasta el pin TX.
+	\item Proveer un cliente de Python que permita ejecutar la validación física.
+\end{itemize}

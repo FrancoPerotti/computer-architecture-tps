@@ -1,0 +1,202 @@
+\section{Contrato del enlace y formato UART 8N1}
+
+En el TP1, cada operando llegaba a la ALU mediante ocho señales paralelas: una
+por cada bit. En este trabajo, la computadora envía esos mismos ocho bits de
+forma secuencial mediante UART. Los bits de cada byte ingresan uno después de
+otro por RX y la respuesta se transmite del mismo modo por TX. Como UART no
+incorpora una señal de reloj, la computadora y la FPGA deben utilizar la misma
+velocidad y el mismo formato de trama. En este diseño se emplean
+\num{19200} baud
+y el formato 8N1: ocho bits de datos, sin paridad y con un bit de stop.
+
+Cada byte ocupa diez períodos de bit. Mientras no hay una transmisión, RX y TX
+permanecen en nivel alto. Un bit de start en bajo marca el comienzo de la trama;
+a continuación se envían los ocho bits de datos, desde el menos significativo
+hasta el más significativo, y un bit de stop en alto indica el final.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[
+			x=1.05cm,y=0.8cm,
+			lbl/.style={font=\small,align=center}
+		]
+		\draw[->,thick] (-0.35,0) -- (10.55,0);
+		\foreach \x in {0,...,10} {
+			\draw[gray!55] (\x,-0.15) -- (\x,1.2);
+		}
+		\draw[very thick,codeviolet]
+		(-0.3,1) -- (0,1) -- (0,0.2) -- (1,0.2);
+		\draw[very thick,codeviolet]
+		(1,0.2) -- (1,0.82) -- (2,0.82) -- (2,0.2) --
+		(3,0.2) -- (3,0.82) -- (4,0.82) -- (4,0.2) --
+		(5,0.2) -- (5,0.82) -- (6,0.82) -- (6,0.2) --
+		(7,0.2) -- (7,0.82) -- (8,0.82) -- (8,0.2) --
+		(9,0.2) -- (9,1) -- (10.4,1);
+		\node[lbl] at (0.5,-0.42) {start};
+		\foreach \x in {0,...,7} {
+			\node[lbl] at ({1.5+\x},-0.42) {D\x};
+		}
+		\node[lbl] at (9.5,-0.42) {stop};
+		\draw[<->,codeblue] (0,1.37) -- node[above,lbl]
+		{$T_{\mathrm{bit}}$} (1,1.37);
+	\end{tikzpicture}
+	\caption{Estructura temporal de una trama UART 8N1.}%
+	\label{fig:trama-uart}
+\end{figure}
+
+Las líneas verticales de la figura~\ref{fig:trama-uart} delimitan diez
+intervalos iguales. El primer nivel bajo no es parte del dato: permite al
+receptor detectar el inicio. D0 llega antes que D7, por lo que el orden temporal
+no coincide con la forma habitual de escribir un byte. El stop alto confirma el
+final y devuelve la línea a su nivel de reposo.
+
+A \num{19200} baud, un bit dura aproximadamente
+\SI{52.083}{\micro\second} y cada byte ocupa \SI{520.833}{\micro\second}.
+El envío de los tres bytes de entrada demanda al menos
+\SI{1.563}{\milli\second}; la respuesta agrega otro intervalo de byte. Estos
+valores no incluyen demoras del sistema operativo o del adaptador USB.
+
+\section{Generación del tick de muestreo}
+
+El receptor utiliza sobremuestreo 16x: por cada bit recibido se generan
+dieciséis pulsos de muestreo. De este modo, cada período de bit queda dividido
+en dieciséis intervalos que sirven como referencia temporal. Después de
+detectar la transición que puede indicar un bit de start, el receptor espera
+ocho pulsos para comprobar su valor cerca del centro. Si el start es válido,
+toma una muestra de cada bit de datos cada dieciséis pulsos y finalmente hace
+lo mismo con el bit de stop.
+
+Para obtener esos dieciséis pulsos por bit, el generador produce
+\texttt{s\_tick} a una frecuencia 16 veces mayor que la tasa UART:
+
+\begin{equation}
+	f_{\mathrm{tick}} = 16 \cdot 19200 =
+	\SI{307200}{\hertz}.
+\end{equation}
+
+Como el reloj de la placa es de \SI{100}{\mega\hertz}, se utiliza un divisor
+entero redondeado al valor más próximo:
+
+\begin{equation}
+	D = \operatorname{round}
+	\left(\frac{100\,000\,000}{307\,200}\right) = 326.
+\end{equation}
+
+El resultado no es exacto. El tick real es
+\SI{306748.466}{\hertz} y la tasa efectiva es
+\SI{19171.779}{baud}, con un error relativo de aproximadamente
+\SI{-0.147}{\percent}. La diferencia acumulada a lo largo de una trama es muy
+inferior a medio bit y queda dentro del margen que ofrece el muestreo central.
+
+El RTL conserva el reloj de \SI{100}{\mega\hertz} y genera un pulso de
+habilitación cada 326 ciclos. La suma de media frecuencia antes de la división
+implementa el redondeo entero.
+
+\begin{codebox}[language=SystemVerilog]
+	localparam integer TICK_FREQ_HZ = BAUD_RATE * OVERSAMPLE;
+	localparam integer DIVISOR =
+	(CLK_FREQ_HZ + (TICK_FREQ_HZ / 2)) / TICK_FREQ_HZ;
+
+	always @(posedge clk) begin
+	if (reset) begin
+	counter <= '0;
+	s_tick  <= 1'b0;
+	end else if (counter == DIVISOR - 1) begin
+	counter <= '0;
+	s_tick  <= 1'b1;
+	end else begin
+	counter <= counter + 1'b1;
+	s_tick  <= 1'b0;
+	end
+	end
+\end{codebox}
+
+El fragmento muestra qué hardware se obtiene: un contador, un comparador contra
+325 y un registro para el pulso. Como \texttt{s\_tick} permanece bajo en todos
+los demás ciclos, RX y TX avanzan sus contadores de sub-bit únicamente cuando
+corresponde, pero todos sus registros siguen capturados por \texttt{clk}.
+
+\section{Protocolo de aplicación}
+
+Cada operación tiene longitud fija. La computadora transmite A, luego B y por
+último el opcode. Una vez recibidos los tres bytes válidos, la FPGA responde con
+un byte de resultado.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{0.94\textwidth}{ZZZZZ}
+		\toprule
+		\textbf{Sentido} & \textbf{Byte 0} & \textbf{Byte 1} &
+		\textbf{Byte 2} & \textbf{Respuesta} \\
+		\midrule
+		PC a FPGA & A, 8 bits & B, 8 bits &
+		Opcode en bits 5--0 & --- \\
+		FPGA a PC & --- & --- & --- & Resultado, 8 bits \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Orden de los bytes del protocolo binario.}%
+\end{table}
+
+Los bits 7 y 6 del tercer byte se ignoran. Esta elección permite enviar el
+opcode dentro de una palabra UART completa sin agregar codificación ASCII. El
+protocolo es deliberadamente mínimo: no se devuelve un byte separado de estado
+porque el requisito funcional solicita el resultado y las banderas continúan
+visibles en LED8, LED9 y LED10.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{lccc}
+		\toprule
+		\textbf{Operación} & \textbf{Opcode} & \textbf{Hexadecimal} &
+		\textbf{Resultado} \\
+		\midrule
+		SRA & \texttt{000011} & \texttt{03} & A desplazado aritméticamente
+		B lugares \\
+		SRL & \texttt{000010} & \texttt{02} & A desplazado lógicamente B lugares \\
+		ADD & \texttt{100000} & \texttt{20} & A + B \\
+		SUB & \texttt{100010} & \texttt{22} & A - B \\
+		AND & \texttt{100100} & \texttt{24} & A AND B \\
+		OR  & \texttt{100101} & \texttt{25} & A OR B \\
+		XOR & \texttt{100110} & \texttt{26} & A XOR B \\
+		NOR & \texttt{100111} & \texttt{27} & NOT (A OR B) \\
+		\bottomrule
+	\end{tabular}
+	\caption{Operaciones conservadas del TP1.}%
+\end{table}
+
+Por ejemplo, para calcular \texttt{7F + 01}, el host transmite
+\texttt{7F 01 20}. La respuesta esperada es \texttt{80}; al mismo tiempo,
+LED10 se enciende para indicar overflow y los LED de carry y cero permanecen
+apagados.
+
+\section{Recuperación y casos inválidos}
+
+El controlador debe volver a su estado inicial si la computadora deja
+de enviar datos antes de completar una solicitud. Una vez recibido A,
+o A y B, espera como máximo \SI{10}{\milli\second} el byte siguiente.
+Si vence ese plazo, descarta la operación parcial y el próximo byte
+se interpreta nuevamente como A. El timeout supera ampliamente los
+\SI{0.521}{\milli\second} de una trama normal, aun cuando los bytes
+se envían de manera individual.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{L{4.0cm}L{4.6cm}Y}
+		\toprule
+		\textbf{Situación} & \textbf{Acción} & \textbf{Respuesta} \\
+		\midrule
+		Start vuelve a alto antes del centro & Abortar la trama y esperar
+		reposo alto. & Ninguna. \\
+		Stop bajo & Emitir error de trama y esperar reposo alto. & Ninguna. \\
+		FIFO RX lleno & Conservar los cuatro bytes previos y notificar
+		overrun. & Se aborta la transacción parcial. \\
+		Transacción incompleta & Vencer el contador a los
+		\SI{10}{\milli\second}. & Ninguna. \\
+		Opcode no reconocido & Ejecutar el caso por defecto de la ALU. &
+		Un byte \texttt{00}, con Z activo. \\
+		FIFO TX lleno & Conservar resultado e indicadores. & Esperar espacio
+		antes de encolar. \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Política de tratamiento de condiciones excepcionales.}%
+\end{table}

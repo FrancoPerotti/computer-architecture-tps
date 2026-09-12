@@ -1,0 +1,197 @@
+% Librerias
+
+\usepackage{babel}
+\babelprovide[main,import]{spanish}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault,scale=0.96]{plex-sans}
+\usepackage[scale=0.91]{plex-mono}
+
+% Permite a pdfTeX realizar ajustes tipográficos mínimos en el cuerpo del texto.
+\AtBeginDocument{%
+	\pdffontexpand\font 25 25 1 autoexpand
+	\pdfadjustspacing=2
+}
+
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{
+	output-decimal-marker = {,},
+	inter-unit-product = \cdot,
+	exponent-product = \cdot,
+	per-mode = symbol
+}
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\setlength{\extrarowheight}{2pt}
+\renewcommand{\arraystretch}{1.18}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\usepackage{float}
+
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup[figure]{justification=centering, singlelinecheck=false}
+\captionsetup[table]{justification=centering, singlelinecheck=false}
+\renewcommand{\tablename}{Tabla}
+\addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
+
+\usepackage[top=2.5cm, bottom=2.5cm, left=1.5cm, right=1.5cm]{geometry}
+\raggedbottom
+\setlength{\emergencystretch}{0.5em}
+\tolerance=1800
+\setlength{\parskip}{0.55em}
+
+\usepackage{xcolor}
+\definecolor{codeback}{RGB}{252,251,255}
+\definecolor{coderule}{RGB}{218,212,232}
+\definecolor{codeviolet}{RGB}{109,78,180}
+\definecolor{codeblue}{RGB}{48,97,171}
+\definecolor{codestring}{RGB}{38,127,118}
+\definecolor{codecomment}{RGB}{118,124,132}
+\definecolor{codenumber}{RGB}{142,134,164}
+\definecolor{technicalviolet}{RGB}{98,64,150}
+\definecolor{placeholdergray}{RGB}{248,248,248}
+\definecolor{placeholderline}{RGB}{160,160,160}
+
+\DeclareTextFontCommand{\texttt}{\ttfamily\color{technicalviolet}}
+\newcommand{\tech}[1]{\mbox{\texttt{#1}}}
+
+\usepackage{listings}
+\lstdefinelanguage{SystemVerilog}{
+	morekeywords={module,endmodule,input,output,wire,reg,logic,parameter,localparam,integer,
+		always,always_comb,posedge,negedge,begin,end,if,else,case,endcase,default,
+	task,endtask,automatic,initial,repeat,for,signed,assign},
+	sensitive=true,
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]"
+}
+\lstdefinestyle{tpcode}{
+	basicstyle=\ttfamily\small\color{black!88},
+	breaklines=true,
+	columns=fullflexible,
+	commentstyle=\color{codecomment}\itshape,
+	keywordstyle=\color{codeviolet}\bfseries,
+	morekeywords={module_init,module_exit,THIS_MODULE,KERN_INFO,KERN_ERR,NULL,true,false,None,global,with,as,return,try,except,while,if,else,elif},
+	emph={always_comb,urandom,fatal,display,finish,signed,ASYNC_REG,create_clock,set_false_path},
+	emphstyle=\color{codeblue},
+	stringstyle=\color{codestring},
+	frame=none,
+	keepspaces=true,
+	lineskip=1.5pt,
+	numbers=none,
+	numberstyle=\scriptsize\ttfamily\color{codenumber},
+	showstringspaces=false,
+	tabsize=2
+}
+\lstset{style=tpcode}
+\usepackage[skins,breakable,listings]{tcolorbox}
+\usetikzlibrary{positioning,arrows.meta,fit}
+\newtcblisting{codebox}[1][]{
+	listing only,
+	enhanced,
+	colback=codeback,
+	colframe=coderule,
+	boxrule=0.45pt,
+	borderline west={2.8pt}{0pt}{codeviolet},
+	arc=2mm,
+	boxsep=0pt,
+	left=10pt,
+	right=10pt,
+	top=8pt,
+	bottom=8pt,
+	before skip=1.15em,
+	after skip=1.25em,
+	drop fuzzy shadow=black!8!white,
+	listing options={style=tpcode,#1}
+}
+
+\newcommand{\placeholder}[2]{
+	\begin{figure}[H]
+		\centering
+		\fcolorbox{placeholderline}{placeholdergray}{
+			\parbox[c][6.2cm][c]{0.88\textwidth}{
+				\centering
+				\textbf{Captura pendiente}\\[0.25cm]
+				#1\\[0.2cm]
+				\small #2
+			}
+		}
+	\end{figure}
+}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{14.5pt}
+
+\usepackage{tocloft}
+\setlength{\cftbeforechapskip}{0.42em}
+\setlength{\cftbeforesecskip}{0.08em}
+\setlength{\cftchapindent}{0pt}
+\setlength{\cftsecindent}{1.35em}
+\setlength{\cftchapnumwidth}{2.1em}
+\setlength{\cftsecnumwidth}{2.8em}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttoctitlefont}{\huge\bfseries}
+\setlength{\cftbeforetoctitleskip}{-1.2em}
+\setlength{\cftaftertoctitleskip}{1.0em}
+
+\usepackage[colorlinks=true, allcolors=black]{hyperref}
+\Urlmuskip=0mu plus 1mu\relax
+\fancyhead{}
+\fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
+\fancyhead[R]{Arquitectura de Computadoras}
+\fancyfoot{}
+\fancyfoot[C]{\thepage}
+\fancypagestyle{plain}{
+	\fancyhead{}
+	\fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
+	\fancyhead[R]{Arquitectura de Computadoras}
+	\fancyfoot{}
+	\fancyfoot[C]{\thepage}
+}
+
+% Reduce el espacio vertical excesivo que la clase book agrega antes
+% de cada seccion.
+\makeatletter
+\renewcommand{\chaptername}{Sección}
+\renewcommand{\@chapapp}{Sección}
+\def\@makechapterhead#1{%
+	\vspace*{-28\p@}%
+	{\parindent \z@ \raggedright \normalfont
+		\ifnum \c@secnumdepth >\m@ne
+		\Large\bfseries \@chapapp\space \thechapter
+		\par\nobreak
+		\vskip 3\p@
+		\fi
+		\huge \bfseries #1\par\nobreak
+		\vskip 4\p@
+}}
+\def\@makeschapterhead#1{%
+	\vspace*{-28\p@}%
+	{\parindent \z@ \raggedright
+		\normalfont
+		\huge \bfseries #1\par\nobreak
+		\vskip 4\p@
+}}
+\renewcommand
+\section{%
+	\@startsection{section}{1}{\z@}%
+	{-2.0ex \@plus -0.5ex \@minus -0.2ex}%
+	{0.35em}%
+	{\normalfont\Large\bfseries}%
+}
+\renewcommand
+\subsection{%
+	\@startsection{subsection}{2}{\z@}%
+	{-1.6ex \@plus -0.4ex \@minus -0.2ex}%
+	{0.25em}%
+	{\normalfont\large\bfseries}%
+}
+\makeatother
