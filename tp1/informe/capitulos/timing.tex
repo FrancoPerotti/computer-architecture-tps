@@ -75,7 +75,7 @@ Las columnas Z, C y V corresponden, respectivamente, a cero, carry y overflow.
 		\textbf{Operación} & \textbf{A} & \textbf{B} & \textbf{Resultado} &
 		\textbf{Z} & \textbf{C} & \textbf{V} \\
 		\midrule
-		ADD & \texttt{01} & \texttt{01} & \texttt{02} & 0 & 0 & 0 \\
+		ADD & \texttt{80} & \texttt{80} & \texttt{00} & 1 & 1 & 1 \\
 		ADD & \texttt{05} & \texttt{03} & \texttt{08} & 0 & 0 & 0 \\
 		ADD & \texttt{7F} & \texttt{01} & \texttt{80} & 0 & 0 & 1 \\
 		ADD & \texttt{FF} & \texttt{01} & \texttt{00} & 1 & 1 & 0 \\
@@ -111,7 +111,7 @@ figura~\ref{fig:physical-shifts} permite comparar ambos desplazamientos.
 
 \begin{figure}[H]
 	\centering
-	\physicalcase{img/ADD_01_01.jpeg}{ADD 01 01}\hfill
+	\physicalcase{img/ADD_80_80.jpeg}{ADD 80 80}\hfill
 	\physicalcase{img/ADD_05_03.jpeg}{ADD 05 03}
 
 	\par\vspace{0.8em}
@@ -157,8 +157,9 @@ figura~\ref{fig:physical-shifts} permite comparar ambos desplazamientos.
 
 En los trece ensayos, el patrón de los LEDs coincidió con la salida
 calculada y con los indicadores previstos en simulación. En
-particular, las fotografías permiten observar la diferencia entre
-carry y overflow, así como entre los modos de desplazamiento lógico
-(SRL) y aritmético (SRA). Además, la carga
+particular, el caso \texttt{80 + 80} produce \texttt{00} y activa
+simultáneamente Z, C y V. Las fotografías también permiten observar
+la diferencia entre carry y overflow, así como entre los modos de
+desplazamiento lógico (SRL) y aritmético (SRA). Además, la carga
 secuencial mediante pulsadores se comportó de manera estable durante
 la prueba y no se observaron fallas que exigieran repetir la implementación.
