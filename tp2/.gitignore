@@ -1,0 +1,11 @@
+/vivado/
+/.sim/
+/build/
+__pycache__/
+*.py[cod]
+/informe/*.aux
+/informe/*.log
+/informe/*.listing
+/informe/*.out
+/informe/*.toc
+/informe/missfont.log
