@@ -32,6 +32,8 @@ OPERATIONS = {
 
 @dataclass(frozen=True)
 class TestCase:
+    """Representa una operación utilizada para validar la ALU."""
+
     a: int
     b: int
     opcode: int
@@ -39,6 +41,8 @@ class TestCase:
 
 
 def parse_byte(value: str) -> int:
+    """Convierte un argumento numérico en un byte."""
+
     parsed = int(value, 0)
     if not 0 <= parsed <= 0xFF:
         raise argparse.ArgumentTypeError("el valor debe estar entre 0 y 255")
@@ -46,6 +50,8 @@ def parse_byte(value: str) -> int:
 
 
 def parse_opcode(value: str) -> int:
+    """Convierte un nombre o valor numérico en un opcode de seis bits."""
+
     upper = value.upper()
     if upper in OPERATIONS:
         return OPERATIONS[upper]
@@ -56,6 +62,8 @@ def parse_opcode(value: str) -> int:
 
 
 def alu_reference(a: int, b: int, opcode: int) -> tuple[int, int, int, int]:
+    """Calcula el resultado y las banderas esperados para una operación."""
+
     carry = 0
     overflow = 0
 
@@ -88,6 +96,8 @@ def alu_reference(a: int, b: int, opcode: int) -> tuple[int, int, int, int]:
 
 
 def directed_cases() -> list[TestCase]:
+    """Construye los casos dirigidos de la validación."""
+
     return [
         TestCase(0x05, 0x03, OPERATIONS["ADD"], "suma normal"),
         TestCase(0xFF, 0x01, OPERATIONS["ADD"], "carry y cero"),
@@ -106,6 +116,8 @@ def directed_cases() -> list[TestCase]:
 
 
 def random_cases(samples_per_operation: int, seed: int) -> Iterable[TestCase]:
+    """Genera casos pseudoaleatorios reproducibles para cada operación."""
+
     generator = random.Random(seed)
     for name, opcode in OPERATIONS.items():
         for sample in range(samples_per_operation):
@@ -118,6 +130,8 @@ def random_cases(samples_per_operation: int, seed: int) -> Iterable[TestCase]:
 
 
 def transact(port: serial.Serial, test: TestCase) -> bool:
+    """Ejecuta una transacción y comprueba la respuesta recibida."""
+
     expected, zero, carry, overflow = alu_reference(test.a, test.b, test.opcode)
     port.write(bytes((test.a, test.b, test.opcode)))
     port.flush()
@@ -140,6 +154,8 @@ def transact(port: serial.Serial, test: TestCase) -> bool:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Construye el analizador de argumentos de la línea de comandos."""
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", required=True, help="puerto serie, por ejemplo /dev/ttyUSB1")
     parser.add_argument("--baud", type=int, default=19_200)
@@ -163,6 +179,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    """Ejecuta las pruebas solicitadas y devuelve su estado."""
+
     parser = build_parser()
     args = parser.parse_args()
     single_values = (args.a, args.b, args.opcode)
