@@ -9,4 +9,4 @@ Los proyectos reúnen el diseño, la simulación y la implementación de sistema
 | Trabajo | Descripción | Documentación |
 | --- | --- | --- |
 | [TP1 — Unidad Aritmético-Lógica](tp1/) | ALU parametrizable implementada y validada sobre una placa Basys 3. | [Informe en PDF](tp1/informe/tp1_alu.pdf) |
-
+| [TP2 — ALU con interfaz UART](tp2/) | Extensión de la ALU con UART, FIFO y control mediante máquinas de estado finitas. | [Informe en PDF](tp2/informe/tp2_uart.pdf) |
