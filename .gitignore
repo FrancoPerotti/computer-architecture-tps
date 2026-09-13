@@ -25,3 +25,8 @@ webtalk*.xml
 *.swp
 *.swo
 .DS_Store
+
+# Python tools and local environments
+__pycache__/
+*.pyc
+.venv/
