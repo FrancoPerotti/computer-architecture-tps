@@ -30,3 +30,6 @@ webtalk*.xml
 __pycache__/
 *.pyc
 .venv/
+
+# Course material kept locally
+/tp2/5 - Maquinas de Estado Finitas.pdf
