@@ -12,7 +12,7 @@
 \endgroup
 \newpage
 
-\chapter{Introducción}
+\chapter{Introducción}\label{chap:introduccion}
 \input{capitulos/introduccion.tex}
 
 \chapter{Objetivos y alcance}
@@ -21,14 +21,14 @@
 \chapter{Arquitectura general}
 \input{capitulos/arquitectura.tex}
 
-\chapter{Núcleo UART y máquinas de estado}
+\chapter{Núcleo UART y máquinas de estado}\label{chap:nucleo-uart}
 \input{capitulos/especificacion.tex}
 \input{capitulos/fsm.tex}
 
 \chapter{Integración con la ALU y la Basys 3}
 \input{capitulos/integracion.tex}
 
-\chapter{Verificación funcional}
+\chapter{Verificación funcional}\label{chap:verificacion}
 \input{capitulos/verificacion.tex}
 
 \chapter{Síntesis e implementación}
@@ -37,11 +37,14 @@
 \chapter{Timing y limitaciones}
 \input{capitulos/timing.tex}
 
-\chapter{Validación física}
+\chapter{Validación física}\label{chap:validacion}
 \input{capitulos/validacion.tex}
 
 \chapter{Conclusiones}
+\begingroup
+\setlength{\parskip}{0.30em}
 \input{capitulos/conclusiones.tex}
+\endgroup
 
 \chapter*{Referencias}
 \addcontentsline{toc}{chapter}{Referencias}

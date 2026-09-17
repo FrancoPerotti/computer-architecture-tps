@@ -10,19 +10,19 @@
 % Permite a pdfTeX realizar ajustes tipográficos mínimos en el cuerpo del texto.
 % Otros motores, como XeTeX, no exponen estas primitivas.
 \AtBeginDocument{%
-	\ifdefined\pdffontexpand
-		\pdffontexpand\font 25 25 1 autoexpand
-		\pdfadjustspacing=2
-	\fi
+  \ifdefined\pdffontexpand
+  \pdffontexpand\font 25 25 1 autoexpand
+  \pdfadjustspacing=2
+  \fi
 }
 
 \usepackage{amsmath, amssymb}
 \usepackage{siunitx}
 \sisetup{
-	output-decimal-marker = {,},
-	inter-unit-product = \cdot,
-	exponent-product = \cdot,
-	per-mode = symbol
+  output-decimal-marker = {,},
+  inter-unit-product = \cdot,
+  exponent-product = \cdot,
+  per-mode = symbol
 }
 
 \usepackage{tabularx}
@@ -65,66 +65,66 @@
 
 \usepackage{listings}
 \lstdefinelanguage{SystemVerilog}{
-	morekeywords={module,endmodule,input,output,wire,reg,logic,parameter,localparam,integer,
-		always,always_comb,posedge,negedge,begin,end,if,else,case,endcase,default,
-	task,endtask,automatic,initial,repeat,for,signed,assign},
-	sensitive=true,
-	morecomment=[l]{//},
-	morecomment=[s]{/*}{*/},
-	morestring=[b]"
+  morekeywords={module,endmodule,input,output,wire,reg,logic,parameter,localparam,integer,
+    always,always_comb,posedge,negedge,begin,end,if,else,case,endcase,default,
+  task,endtask,automatic,initial,repeat,for,signed,assign},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]"
 }
 \lstdefinestyle{tpcode}{
-	basicstyle=\ttfamily\small\color{black!88},
-	breaklines=true,
-	columns=fullflexible,
-	commentstyle=\color{codecomment}\itshape,
-	keywordstyle=\color{codeviolet}\bfseries,
-	morekeywords={module_init,module_exit,THIS_MODULE,KERN_INFO,KERN_ERR,NULL,true,false,None,global,with,as,return,try,except,while,if,else,elif},
-	emph={always_comb,urandom,fatal,display,finish,signed,ASYNC_REG,create_clock,set_false_path},
-	emphstyle=\color{codeblue},
-	stringstyle=\color{codestring},
-	frame=none,
-	keepspaces=true,
-	lineskip=1.5pt,
-	numbers=none,
-	numberstyle=\scriptsize\ttfamily\color{codenumber},
-	showstringspaces=false,
-	tabsize=2
+  basicstyle=\ttfamily\small\color{black!88},
+  breaklines=true,
+  columns=fullflexible,
+  commentstyle=\color{codecomment}\itshape,
+  keywordstyle=\color{codeviolet}\bfseries,
+  morekeywords={module_init,module_exit,THIS_MODULE,KERN_INFO,KERN_ERR,NULL,true,false,None,global,with,as,return,try,except,while,if,else,elif},
+  emph={always_comb,urandom,fatal,display,finish,signed,ASYNC_REG,create_clock,set_false_path},
+  emphstyle=\color{codeblue},
+  stringstyle=\color{codestring},
+  frame=none,
+  keepspaces=true,
+  lineskip=0.5pt,
+  numbers=none,
+  numberstyle=\scriptsize\ttfamily\color{codenumber},
+  showstringspaces=false,
+  tabsize=2
 }
 \lstset{style=tpcode}
 \usepackage[skins,breakable,listings]{tcolorbox}
 \usetikzlibrary{positioning,arrows.meta,fit}
 \newtcblisting{codebox}[1][]{
-	listing only,
-	enhanced,
-	colback=codeback,
-	colframe=coderule,
-	boxrule=0.45pt,
-	borderline west={2.8pt}{0pt}{codeviolet},
-	arc=2mm,
-	boxsep=0pt,
-	left=10pt,
-	right=10pt,
-	top=8pt,
-	bottom=8pt,
-	before skip=1.15em,
-	after skip=1.25em,
-	drop fuzzy shadow=black!8!white,
-	listing options={style=tpcode,#1}
+  listing only,
+  enhanced,
+  colback=codeback,
+  colframe=coderule,
+  boxrule=0.45pt,
+  borderline west={2.8pt}{0pt}{codeviolet},
+  arc=2mm,
+  boxsep=0pt,
+  left=10pt,
+  right=10pt,
+  top=6pt,
+  bottom=6pt,
+  before skip=0.8em,
+  after skip=0.9em,
+  drop fuzzy shadow=black!8!white,
+  listing options={style=tpcode,#1}
 }
 
 \newcommand{\placeholder}[2]{
-	\begin{figure}[H]
-		\centering
-		\fcolorbox{placeholderline}{placeholdergray}{
-			\parbox[c][6.2cm][c]{0.88\textwidth}{
-				\centering
-				\textbf{Captura pendiente}\\[0.25cm]
-				#1\\[0.2cm]
-				\small #2
-			}
-		}
-	\end{figure}
+  \begin{figure}[H]
+    \centering
+    \fcolorbox{placeholderline}{placeholdergray}{
+      \parbox[c][6.2cm][c]{0.88\textwidth}{
+        \centering
+        \textbf{Captura pendiente}\\[0.25cm]
+        #1\\[0.2cm]
+        \small #2
+      }
+    }
+  \end{figure}
 }
 
 \usepackage{fancyhdr}
@@ -153,11 +153,11 @@
 \fancyfoot{}
 \fancyfoot[C]{\thepage}
 \fancypagestyle{plain}{
-	\fancyhead{}
-	\fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
-	\fancyhead[R]{Arquitectura de Computadoras}
-	\fancyfoot{}
-	\fancyfoot[C]{\thepage}
+  \fancyhead{}
+  \fancyhead[L]{UNC \textperiodcentered{} FCEFyN}
+  \fancyhead[R]{Arquitectura de Computadoras}
+  \fancyfoot{}
+  \fancyfoot[C]{\thepage}
 }
 
 % Reduce el espacio vertical excesivo que la clase book agrega antes
@@ -166,35 +166,35 @@
 \renewcommand{\chaptername}{Sección}
 \renewcommand{\@chapapp}{Sección}
 \def\@makechapterhead#1{%
-	\vspace*{-28\p@}%
-	{\parindent \z@ \raggedright \normalfont
-		\ifnum \c@secnumdepth >\m@ne
-		\Large\bfseries \@chapapp\space \thechapter
-		\par\nobreak
-		\vskip 3\p@
-		\fi
-		\huge \bfseries #1\par\nobreak
-		\vskip 4\p@
+  \vspace*{-28\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+    \Large\bfseries \@chapapp\space \thechapter
+    \par\nobreak
+    \vskip 3\p@
+    \fi
+    \huge \bfseries #1\par\nobreak
+    \vskip 4\p@
 }}
 \def\@makeschapterhead#1{%
-	\vspace*{-28\p@}%
-	{\parindent \z@ \raggedright
-		\normalfont
-		\huge \bfseries #1\par\nobreak
-		\vskip 4\p@
+  \vspace*{-28\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \huge \bfseries #1\par\nobreak
+    \vskip 4\p@
 }}
 \renewcommand
 \section{%
-	\@startsection{section}{1}{\z@}%
-	{-2.0ex \@plus -0.5ex \@minus -0.2ex}%
-	{0.35em}%
-	{\normalfont\Large\bfseries}%
+  \@startsection{section}{1}{\z@}%
+  {-2.0ex \@plus -0.5ex \@minus -0.2ex}%
+  {0.35em}%
+  {\normalfont\Large\bfseries}%
 }
 \renewcommand
 \subsection{%
-	\@startsection{subsection}{2}{\z@}%
-	{-1.6ex \@plus -0.4ex \@minus -0.2ex}%
-	{0.25em}%
-	{\normalfont\large\bfseries}%
+  \@startsection{subsection}{2}{\z@}%
+  {-1.6ex \@plus -0.4ex \@minus -0.2ex}%
+  {0.25em}%
+  {\normalfont\large\bfseries}%
 }
 \makeatother

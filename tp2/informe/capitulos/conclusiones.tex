@@ -1,54 +1,70 @@
-Este trabajo cambió el centro del problema respecto del TP1. Allí predominaba la
-lógica combinacional: una vez presentes operandos y opcode, el resultado quedaba
-determinado. En el TP2 aprendimos a describir un comportamiento que se extiende
-en el tiempo. Recibir un byte, esperar el siguiente y responder cuando existe
-capacidad son acciones que necesitan memoria, no solo una expresión lógica.
+Como se planteó en la sección~\ref{chap:introduccion}, este trabajo
+cambió el centro del problema respecto del TP1. La ALU siguió siendo
+el bloque encargado de realizar las operaciones, pero ya no recibió
+los operandos de forma directa mediante los switches de la placa. En
+este caso fue necesario construir una UART capaz de recibirlos y
+transmitir el resultado de manera serial. Esto hizo que el diseño
+dejara de depender solamente de los valores presentes en las entradas
+y pasara a depender también del orden en que llegan y del momento en
+que se producen los distintos eventos.
 
-Las máquinas de estado nos permitieron separar estado actual, próximo estado y
-salidas. Esa separación volvió explícitas preguntas que una descripción
-compacta puede ocultar: qué se conserva mientras no llega un tick, durante qué
-ciclo se produce un pulso y a qué estado vuelve el circuito después de un
-error. La codificación one-hot facilitó seguir esas decisiones en las trazas y
-relacionarlas luego con flip-flops y lógica de decodificación en la síntesis. Al
-mismo tiempo, comprobamos que one-hot no reemplaza una rama segura para
-combinaciones ilegales.
+Como se vio en la sección~\ref{chap:nucleo-uart}, dedicada al núcleo
+UART, las máquinas de estado finitas permitieron organizar este
+comportamiento temporal de una forma clara. En la recepción, la FSM
+espera el inicio de una trama, valida el bit de start, reconstruye el
+byte a medida que llegan sus bits y comprueba finalmente el bit de
+stop. En la transmisión ocurre el recorrido inverso: a partir de un
+byte se generan, en el orden y durante el tiempo correspondiente, el
+start, los ocho bits de datos y el stop. El generador de ticks y el
+sobremuestreo proporcionan la referencia temporal para que ambas
+máquinas puedan avanzar por esas etapas y trabajar con una señal que
+no comparte el reloj de la FPGA.
 
-El receptor mostró que una entrada asíncrona no puede tratarse como un dato ya
-alineado con el reloj. El sincronizador reduce la probabilidad de propagar
-metastabilidad y el sobremuestreo ubica la observación cerca del centro del bit.
-El falso start y el stop inválido hicieron visible otra lección: detectar un
-error no alcanza; también hay que decidir cómo recuperar el reposo sin contar
-varias veces el mismo nivel defectuoso.
+La tercera máquina de estados, presentada en la
+sección~\ref{sec:controlador-transacciones}, unió la comunicación con
+la ALU. Sus estados representan las distintas etapas de una
+operación: esperar los dos operandos, recibir el código de operación,
+registrar el resultado y entregarlo para su transmisión. Esta
+separación permitió expresar de manera directa qué información debía
+conservarse en cada momento y evitó que la interpretación del
+protocolo quedara mezclada con la recepción bit a bit. De esta forma,
+las tres FSM resolvieron partes diferentes del mismo intercambio y,
+al trabajar en conjunto, hicieron posible completar el recorrido
+desde la entrada RX hasta la respuesta por TX.
 
-Los FIFO y el backpressure ampliaron esa idea más allá de UART. Aprendimos que
-cuando productor y consumidor avanzan a ritmos diferentes, la capacidad y las
-reglas de aceptación forman parte de la arquitectura. La profundidad cuatro no
-hace más veloz la línea, pero permite desacoplar responsabilidades. De manera
-análoga, WAIT\_TX no es una espera accidental: garantiza que el resultado y las
-banderas persistan hasta que la escritura pueda aceptarse.
+La implementación también permitió llevar a la práctica los criterios
+de diseño de máquinas de estado estudiados en la consigna. La
+distinción entre el estado actual, el próximo estado y las salidas
+hizo más sencillo seguir las transiciones tanto en el código como en
+las formas de onda. A su vez, la codificación one-hot resultó
+adecuada para la FPGA y facilitó reconocer cada estado durante la
+verificación. Las ramas de recuperación y los estados de espera
+fueron igualmente importantes, porque una UART no solo debe procesar
+tramas válidas, sino también volver a una situación conocida frente a
+una entrada incompleta, un error de trama o un estado no contemplado.
 
-La verificación por capas resultó esencial. Los bancos pequeños permitieron
-atribuir fallas a un contador, un orden de bits, un límite de FIFO o una
-transición. Recién después la prueba pin a pin comprobó la cooperación de todos
-los bloques en 812 transacciones, incluidas 800 pseudoaleatorias reproducibles.
-Las formas de onda y los PASS responden la pregunta funcional; la síntesis
-explica qué hardware se infirió; la implementación y el timing muestran que ese
-hardware puede operar con las restricciones declaradas.
+Además de lo requerido para implementar la UART, se incorporaron
+recursos que mejoraron la robustez del sistema. Los sincronizadores
+acondicionaron las señales externas, mientras que las colas FIFO
+permitieron desacoplar por un breve intervalo la comunicación y el
+procesamiento. El timeout y el manejo de esperas completaron esa idea
+al impedir que una operación incompleta o una salida momentáneamente
+ocupada dejara al controlador en una situación indefinida. Si bien
+estos elementos no constituyen el objetivo principal del trabajo,
+ayudaron a integrar las máquinas de estado en un sistema más
+confiable y cercano a una aplicación real.
 
-Finalmente, aprendimos a no confundir esos niveles de evidencia. El bitstream,
-los 458 endpoints con márgenes positivos y los reportes CDC/DRC cerraron la etapa
-de herramientas, pero no demostraron el cable, el conversor USB ni la
-observación de los LED. La validación sobre la Basys 3 completó esa evidencia:
-la GUI obtuvo 13 de 13 casos dirigidos y 800 de 800 casos pseudoaleatorios sin
-diferencias, y las pruebas \texttt{FF+01} y \texttt{7F+01} relacionaron las
-respuestas UART con los patrones físicos de resultado, Z, C y V. En total se
-completaron 815 transacciones sobre la placa sin discrepancias respecto del
-modelo.
-
-La interfaz gráfica también volvió reproducible el uso del sistema fuera de
-Vivado: concentró la selección del puerto, la edición de operandos, la
-ejecución de suites y el registro de resultados sin exponer al usuario al
-protocolo binario. La distinción entre niveles de evidencia, junto con la
-secuencia especificar--modularizar--verificar--implementar--medir, constituye
-el método que nos llevamos para diseños futuros con protocolos, estado y
-temporización.
+Finalmente, las pruebas presentadas en las
+secciones~\ref{chap:verificacion} y~\ref{chap:validacion} permitieron
+observar las transiciones de cada FSM por separado y comprobar
+después su funcionamiento conjunto. Las simulaciones mostraron la
+recepción y transmisión de tramas, la secuencia seguida por el
+controlador y la recuperación ante errores, mientras que los ensayos
+sobre la Basys 3 confirmaron que una solicitud enviada desde la
+computadora podía atravesar todo el sistema y producir la respuesta
+esperada. En conjunto, el trabajo permitió comprender que una UART no
+se reduce a desplazar bits: requiere modelar una secuencia completa
+de acciones, conservar el progreso entre ciclos y definir con
+precisión cómo avanzar o recuperarse. En ese sentido, las máquinas de
+estado fueron la herramienta central que permitió transformar el
+protocolo UART en un circuito digital ordenado, verificable y sintetizable.
