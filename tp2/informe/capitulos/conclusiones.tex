@@ -38,9 +38,17 @@ hardware puede operar con las restricciones declaradas.
 Finalmente, aprendimos a no confundir esos niveles de evidencia. El bitstream,
 los 458 endpoints con márgenes positivos y los reportes CDC/DRC cerraron la etapa
 de herramientas, pero no demostraron el cable, el conversor USB ni la
-observación de los LED. Esos elementos quedaron comprendidos en la validación
-sobre la Basys 3, cuyo resultado dependió de las respuestas UART, los registros
-de ejecución y los patrones físicos. Esa distinción entre niveles de evidencia,
-junto con la secuencia
-especificar--modularizar--verificar--implementar--medir, constituye el método que
-nos llevamos para diseños futuros con protocolos, estado y temporización.
+observación de los LED. La validación sobre la Basys 3 completó esa evidencia:
+la GUI obtuvo 13 de 13 casos dirigidos y 800 de 800 casos pseudoaleatorios sin
+diferencias, y las pruebas \texttt{FF+01} y \texttt{7F+01} relacionaron las
+respuestas UART con los patrones físicos de resultado, Z, C y V. En total se
+completaron 815 transacciones sobre la placa sin discrepancias respecto del
+modelo.
+
+La interfaz gráfica también volvió reproducible el uso del sistema fuera de
+Vivado: concentró la selección del puerto, la edición de operandos, la
+ejecución de suites y el registro de resultados sin exponer al usuario al
+protocolo binario. La distinción entre niveles de evidencia, junto con la
+secuencia especificar--modularizar--verificar--implementar--medir, constituye
+el método que nos llevamos para diseños futuros con protocolos, estado y
+temporización.

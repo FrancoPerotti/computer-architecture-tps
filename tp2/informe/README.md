@@ -16,6 +16,6 @@ CHKTEX_CONFIG="$PWD/.chktexrc" chktex -q tp2_uart.tex
 ~~~
 
 El PDF resultante queda en `tp2/informe/tp2_uart.pdf`. La síntesis,
-implementación y temporización ya están documentadas con los reportes de Vivado
-2025.2. Solo la sección de validación física permanece pendiente hasta poder
-programar una Basys 3 y conservar la salida de la suite y las fotografías.
+implementación y temporización están documentadas con los reportes de Vivado
+2025.2. La validación física incluye las suites ejecutadas desde la GUI y las
+fotografías de los LED de la Basys 3.

@@ -8,9 +8,12 @@
 \usepackage[scale=0.91]{plex-mono}
 
 % Permite a pdfTeX realizar ajustes tipográficos mínimos en el cuerpo del texto.
+% Otros motores, como XeTeX, no exponen estas primitivas.
 \AtBeginDocument{%
-	\pdffontexpand\font 25 25 1 autoexpand
-	\pdfadjustspacing=2
+	\ifdefined\pdffontexpand
+		\pdffontexpand\font 25 25 1 autoexpand
+		\pdfadjustspacing=2
+	\fi
 }
 
 \usepackage{amsmath, amssymb}

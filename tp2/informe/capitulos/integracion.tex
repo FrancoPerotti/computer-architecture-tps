@@ -102,31 +102,35 @@ Este valor se encuentra por debajo de la capacidad disponible. Además, las dos
 líneas UART permiten recibir una solicitud mientras se transmite el resultado
 anterior.
 
-El cliente espera la respuesta de una operación antes de enviar la siguiente.
-Con esta forma de intercambio, cada resultado puede asociarse directamente con
-la solicitud que lo produjo.
+La aplicación de la computadora espera la respuesta de una operación antes de
+enviar la siguiente. Con esta forma de intercambio, cada resultado puede
+asociarse directamente con la solicitud que lo produjo.
 
-\section{Cliente de la computadora}
+\section{Interfaz gráfica de la computadora}
 
-Para enviar las operaciones desde la computadora se desarrolló un programa que
-actúa como cliente del sistema. Este programa evita que el usuario tenga que
-configurar el puerto y transmitir cada byte de forma manual.
+Para operar el sistema se desarrolló \texttt{tools/uart\_alu\_gui.py}, una
+aplicación de escritorio basada en PySide6. La interfaz enumera los puertos
+serie, configura el enlace a \num{19200} baud y permite ingresar ambos
+operandos en hexadecimal, decimal o binario. También presenta cada bit de
+entrada de forma individual y ofrece las ocho operaciones de la ALU.
 
 El protocolo trabaja con valores binarios y no con caracteres de texto. El
-cliente \texttt{tools/uart\allowbreak\_alu\allowbreak\_client.py} configura el puerto serie en 8N1 a
-\num{19200} baud. Luego forma la solicitud con A, B y opcode, y envía los tres
-bytes en ese orden.
+transporte de la GUI forma la solicitud con A, B y opcode, y envía los tres
+bytes en ese orden. La comunicación se ejecuta en un hilo separado para que la
+ventana permanezca disponible mientras se espera la respuesta de la placa.
 
-Después del envío, el cliente recibe un único byte y lo compara con un modelo de
-referencia. Puede ejecutar una operación individual o una serie de casos
-dirigidos y pseudoaleatorios. El modelo también calcula las banderas para poder
-compararlas con los LED de la placa.
+Después del envío, la aplicación recibe un único byte y lo compara con un
+modelo de referencia. La vista de ALU muestra el resultado en hexadecimal,
+binario y decimal, mientras que la vista de pruebas ejecuta casos dirigidos y
+pseudoaleatorios con semilla configurable. Cada transacción conserva los
+operandos, el opcode, los valores esperado y recibido, el tiempo y el origen de
+los datos. La sesión completa puede exportarse en formato JSON.
 
-El cliente incluye además una prueba de recuperación. Para realizarla, envía un
-byte aislado y espera \SI{20}{\milli\second}. Este intervalo supera el timeout
-del controlador y hace que la solicitud incompleta sea descartada. A
-continuación, se envía una operación completa y se comprueba que la respuesta
-corresponda a esa nueva solicitud.
+El modelo calcula además Z, C y V para orientar la inspección de los LED. Esas
+banderas se identifican explícitamente como valores esperados: no forman parte
+de la respuesta UART. La aplicación mantiene una sola solicitud en vuelo y
+deja un intervalo de reposo entre transacciones, de manera que cada respuesta
+quede vinculada con el caso que la originó.
 
 \section{Integración con la Basys 3}
 
