@@ -1,0 +1,203 @@
+\section{Objetivo y montaje}
+
+La validación física comprobó el funcionamiento del sistema completo
+sobre la Basys 3. A diferencia de la simulación y del análisis
+posterior al ruteo, este ensayo incluyó el puente USB--UART, el
+oscilador de la placa y los LED utilizados como salida. El recorrido
+observado comenzó en la interfaz gráfica de la computadora, atravesó
+el enlace serie y la ALU implementada en la FPGA, y terminó tanto en
+la respuesta UART como en los LEDs de la placa.
+
+Para realizar las pruebas, la Basys 3 se conectó a la computadora
+mediante su puerto Micro-USB de programación. Esta conexión permitió
+alimentar la placa, cargar el diseño en la FPGA y utilizar el enlace
+UART desde la misma computadora.
+
+\section{Programación y conexión}
+
+El proyecto se abrió en Vivado y se estableció la conexión desde
+\textit{Open Hardware Manager} mediante \textit{Open Target
+$\rightarrow$ Auto Connect}. Hardware Manager detectó el dispositivo
+\texttt{xc7a35t\_0}, sobre el cual se cargó
+\texttt{build/alu\_uart\_top.bit} con \textit{Program Device}. La
+figura~\ref{fig:hardware-manager-placa} muestra el dispositivo en
+estado \textit{Programmed}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{img/vivado_hardware_manager_placa.png}
+  \caption{Basys 3 detectada y programada desde Vivado Hardware Manager.}%
+  \label{fig:hardware-manager-placa}
+\end{figure}
+
+Después de la programación se presionó y se soltó BTNC para llevar
+todos los registros a su estado inicial.
+
+Para operar el sistema se inició la aplicación gráfica desarrollada en Python:
+
+% tex-fmt: off
+\begin{codebox}
+tools/.venv/bin/python tools/uart_alu_gui.py
+\end{codebox}
+% tex-fmt: on
+
+La aplicación enumeró los puertos disponibles y reconoció el puente
+de Digilent como \texttt{/dev/ttyUSB1}. Se seleccionaron \num{19200}
+baud. Al presionar \textit{Conectar}, el indicador cambió de
+\textit{Sin conexión} a \textit{Conectado}, como se observa en la
+figura~\ref{fig:gui-conexion}. El selector de baud configura el
+extremo de la computadora; no modifica el bitstream, por lo que debe
+coincidir con el valor implementado en la FPGA.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\textwidth]{img/uart_gui_port_selected.png}\par\vspace{0.25cm}
+  \includegraphics[width=0.98\textwidth]{img/uart_gui_connected.png}
+  \caption{Selección del puente USB--UART y conexión de la GUI a
+  \texttt{/dev/ttyUSB1} a \num{19200} baud.}%
+  \label{fig:gui-conexion}
+\end{figure}
+
+\section{Pruebas realizadas}
+
+\subsection{Casos dirigidos}
+
+La primera ejecución aplicó los trece casos dirigidos provistos por
+la vista \textit{Pruebas}. El conjunto cubre las ocho operaciones,
+resultados nulos, carry, overflow y un opcode inválido. Para cada
+fila, la aplicación calculó el valor esperado con el modelo de
+referencia, envió los tres bytes A--B--opcode y comparó el único byte
+recibido desde la placa.
+
+La ejecución finalizó con 13 operaciones completadas, 13 correctas y
+ninguna diferencia. La figura~\ref{fig:gui-dirigidos} conserva además
+los operandos, el opcode, los valores esperado y recibido, y el
+tiempo de cada transacción.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{img/uart_gui_directed.png}
+  \caption{Resultado de la suite dirigida ejecutada sobre la Basys 3: 13 de
+  13 casos correctos.}%
+  \label{fig:gui-dirigidos}
+\end{figure}
+
+\subsection{Casos pseudoaleatorios}
+
+La segunda ejecución utilizó cien pares de operandos por cada una de
+las ocho operaciones. La semilla \texttt{0x1a2b3c4d} fijó la
+secuencia y permitió que el conjunto de 800 transacciones fuera
+reproducible. La prueba terminó con 800 respuestas correctas y
+ninguna diferencia respecto del modelo, según la
+figura~\ref{fig:gui-aleatorios}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{img/uart_gui_random.png}
+  \caption{Resultado de la suite pseudoaleatoria: 800 de 800 respuestas
+  coincidentes con el modelo.}%
+  \label{fig:gui-aleatorios}
+\end{figure}
+
+\subsection{Correspondencia entre UART y LED}
+
+La respuesta UART contiene únicamente el resultado de ocho bits. Las
+banderas Z, C y V que presenta la GUI son los valores calculados
+localmente por el cliente python y no datos recibidos desde la FPGA.
+Por esa razón se repitieron manualmente dos casos de frontera y se
+comparó la respuesta de la GUI con los LED físicos.
+
+La operación \texttt{FF + 01} produjo la respuesta UART \texttt{00}.
+En la GUI, el byte recibido coincidió con el esperado; en la placa
+quedaron encendidos LD8 (Z) y LD9 (C), mientras que LD10 (V) y los
+LD0--LD7 permanecieron apagados. El patrón completo fue, por lo
+tanto, \texttt{0x300}. La figura~\ref{fig:validacion-carry-zero}
+reúne ambas observaciones.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{img/uart_gui_add_ff_01.png}\par
+  \vspace{0.35cm}
+  \includegraphics[width=0.90\textwidth]{img/basys3_uart_carry_zero.jpg}
+  \caption{Suma \texttt{FF + 01}: respuesta \texttt{00} en la GUI y
+  banderas Z y C activas en la placa.}%
+  \label{fig:validacion-carry-zero}
+\end{figure}
+
+\clearpage
+
+La operación \texttt{7F + 01} produjo la respuesta UART \texttt{80}.
+El bit 7 del resultado se reflejó en el LD7 y el overflow en el LD10;
+los demás LED permanecieron apagados. La palabra observada fue
+\texttt{0x480}, en correspondencia con el resultado y las banderas
+calculadas por el modelo. La figura~\ref{fig:validacion-overflow}
+muestra la comprobación.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{img/uart_gui_add_7f_01.png}\par
+  \vspace{0.35cm}
+  \includegraphics[width=0.90\textwidth]{img/basys3_uart_overflow.jpg}
+  \caption{Suma \texttt{7F + 01}: respuesta \texttt{80} en la GUI y
+  overflow activo en la placa.}%
+  \label{fig:validacion-overflow}
+\end{figure}
+
+\section{Resultados y criterio de aceptación}
+
+Antes de cada ensayo se fijó el resultado esperado. Se consideró
+aprobada una suite cuando todas las respuestas coincidieron con el
+modelo, y una prueba visual cuando el resultado UART y el patrón de
+LED representaron la misma operación. La
+tabla~\ref{tab:validacion-fisica} resume las observaciones.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{0.98\textwidth}{L{2.9cm}Y L{3.7cm}C{1.6cm}}
+    \toprule
+    \textbf{Prueba} & \textbf{Criterio} &
+    \textbf{Resultado observado} & \textbf{Estado} \\
+    \midrule
+    Programación & Dispositivo programado y \texttt{DONE} activo. &
+    \texttt{xc7a35t\_0} en estado \textit{Programmed}. & Aprobada \\
+    Conexión UART & Enlace 8N1 establecido a \num{19200} baud. &
+    \texttt{/dev/ttyUSB1}; GUI en estado \textit{Conectado}. & Aprobada \\
+    Suite dirigida & 13 operaciones sin diferencias. &
+    13 correctas; 0 diferentes. & Aprobada \\
+    Suite aleatoria & 800 operaciones sin diferencias. &
+    800 correctas; 0 diferentes. & Aprobada \\
+    ADD \texttt{FF+01} & UART \texttt{00}; LED = \texttt{0x300}. &
+    Respuesta \texttt{00}; LD8 y LD9 encendidos. & Aprobada \\
+    ADD \texttt{7F+01} & UART \texttt{80}; LED = \texttt{0x480}. &
+    Respuesta \texttt{80}; LD7 y LD10 encendidos. & Aprobada \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Resultados de la validación física.}%
+  \label{tab:validacion-fisica}
+\end{table}
+
+La GUI transmite solicitudes completas de tres bytes y no ofrece una
+acción para generar deliberadamente una trama parcial. En
+consecuencia, la recuperación por timeout no formó parte de esta
+campaña física. Ese mecanismo se verificó de manera específica en los
+bancos de prueba del controlador y del sistema integrado, donde sí
+fue posible controlar con precisión el intervalo entre bytes.
+
+\section{Interpretación}
+
+Las pruebas físicas abarcaron la cadena completa: selección del
+puerto, transmisión desde la GUI, recepción UART, almacenamiento
+temporal, interpretación de los dos operandos y el opcode, ejecución de la ALU,
+transmisión de la respuesta y retención del resultado en los LEDs. La
+suite dirigida ejercitó situaciones de frontera y la suite
+pseudoaleatoria amplió el conjunto con 800 operaciones reproducibles.
+En total se completaron 815 transacciones físicas sin diferencias
+respecto del modelo de referencia calculado localmente.
+
+Las comprobaciones visuales agregaron evidencia que el byte UART no
+puede aportar por sí solo: demostraron que el resultado retenido y
+las banderas Z, C y V correspondieron a la misma operación informada
+a la computadora. En conjunto, los resultados de la
+tabla~\ref{tab:validacion-fisica} permiten dar por aceptado el
+funcionamiento extremo a extremo del sistema en la Basys 3.

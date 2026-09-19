@@ -1,0 +1,70 @@
+Como se planteó en la sección~\ref{chap:introduccion}, este trabajo
+cambió el centro del problema respecto del TP1. La ALU siguió siendo
+el bloque encargado de realizar las operaciones, pero ya no recibió
+los operandos de forma directa mediante los switches de la placa. En
+este caso fue necesario construir una UART capaz de recibirlos y
+transmitir el resultado de manera serial. Esto hizo que el diseño
+dejara de depender solamente de los valores presentes en las entradas
+y pasara a depender también del orden en que llegan y del momento en
+que se producen los distintos eventos.
+
+Como se vio en la sección~\ref{chap:nucleo-uart}, dedicada al núcleo
+UART, las máquinas de estado finitas permitieron organizar este
+comportamiento temporal de una forma clara. En la recepción, la FSM
+espera el inicio de una trama, valida el bit de start, reconstruye el
+byte a medida que llegan sus bits y comprueba finalmente el bit de
+stop. En la transmisión ocurre el recorrido inverso: a partir de un
+byte se generan, en el orden y durante el tiempo correspondiente, el
+start, los ocho bits de datos y el stop. El generador de ticks y el
+sobremuestreo proporcionan la referencia temporal para que ambas
+máquinas puedan avanzar por esas etapas y trabajar con una señal que
+no comparte el reloj de la FPGA.
+
+La tercera máquina de estados, presentada en la
+sección~\ref{sec:controlador-transacciones}, unió la comunicación con
+la ALU. Sus estados representan las distintas etapas de una
+operación: esperar los dos operandos, recibir el código de operación,
+registrar el resultado y entregarlo para su transmisión. Esta
+separación permitió expresar de manera directa qué información debía
+conservarse en cada momento y evitó que la interpretación del
+protocolo quedara mezclada con la recepción bit a bit. De esta forma,
+las tres FSM resolvieron partes diferentes del mismo intercambio y,
+al trabajar en conjunto, hicieron posible completar el recorrido
+desde la entrada RX hasta la respuesta por TX.
+
+La implementación también permitió llevar a la práctica los criterios
+de diseño de máquinas de estado estudiados en la consigna. La
+distinción entre el estado actual, el próximo estado y las salidas
+hizo más sencillo seguir las transiciones tanto en el código como en
+las formas de onda. A su vez, la codificación one-hot resultó
+adecuada para la FPGA y facilitó reconocer cada estado durante la
+verificación. Las ramas de recuperación y los estados de espera
+fueron igualmente importantes, porque una UART no solo debe procesar
+tramas válidas, sino también volver a una situación conocida frente a
+una entrada incompleta, un error de trama o un estado no contemplado.
+
+Además de lo requerido para implementar la UART, se incorporaron
+recursos que mejoraron la robustez del sistema. Los sincronizadores
+acondicionaron las señales externas, mientras que las colas FIFO
+permitieron desacoplar por un breve intervalo la comunicación y el
+procesamiento. El timeout y el manejo de esperas completaron esa idea
+al impedir que una operación incompleta o una salida momentáneamente
+ocupada dejara al controlador en una situación indefinida. Si bien
+estos elementos no constituyen el objetivo principal del trabajo,
+ayudaron a integrar las máquinas de estado en un sistema más
+confiable y cercano a una aplicación real.
+
+Finalmente, las pruebas presentadas en las
+secciones~\ref{chap:verificacion} y~\ref{chap:validacion} permitieron
+observar las transiciones de cada FSM por separado y comprobar
+después su funcionamiento conjunto. Las simulaciones mostraron la
+recepción y transmisión de tramas, la secuencia seguida por el
+controlador y la recuperación ante errores, mientras que los ensayos
+sobre la Basys 3 confirmaron que una solicitud enviada desde la
+computadora podía atravesar todo el sistema y producir la respuesta
+esperada. En conjunto, el trabajo permitió comprender que una UART no
+se reduce a desplazar bits: requiere modelar una secuencia completa
+de acciones, conservar el progreso entre ciclos y definir con
+precisión cómo avanzar o recuperarse. En ese sentido, las máquinas de
+estado fueron la herramienta central que permitió transformar el
+protocolo UART en un circuito digital ordenado, verificable y sintetizable.

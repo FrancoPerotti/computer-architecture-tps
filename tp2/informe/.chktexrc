@@ -1,0 +1,46 @@
+# El informe está escrito en español y utiliza numerosos identificadores de
+# hardware. Las reglas 8 y 13 presuponen convenciones inglesas para guiones y
+# espaciado entre oraciones. La regla 18 interpreta como comillas tipográficas
+# los delimitadores literales del código. Ninguna resulta aplicable aquí.
+CmdLine
+{
+	-n8 -n13 -n18
+}
+
+# Comandos declarativos que pueden terminar con un espacio sin producir texto.
+# Esta lista reproduce las excepciones pertinentes de la configuración oficial
+# de ChkTeX, ausente en la instalación utilizada para desarrollar el informe.
+Silent
+{
+	\rmfamily \sffamily \ttfamily \mdseries \bfseries
+	\slshape \scshape \upshape \normalfont \selectfont \relax
+	\raggedright \raggedleft \raggedbottom \centering \noindent
+	\tiny \scriptsize \footnotesize \small \normalsize
+	\large \Large \LARGE \huge \Huge
+	\clearpage \newpage \pagebreak \nopagebreak
+	\begingroup \endgroup \makeatletter \makeatother
+	\tableofcontents \listoffigures \listoftables
+	\toprule \midrule \bottomrule \item
+	\hfill \vfill \hfil \vfil \par \nobreak
+	\ifnum \fi \else \z@ \p@ \m@ne \@plus \@minus
+	\font \parindent \c@secnumdepth \@chapapp \thechapter
+	\space \vskip \cdot
+	\pdffontexpand \pdfadjustspacing
+	\renewcommand
+}
+
+# El contenido de estos argumentos es un identificador o una ruta, no prosa.
+WipeArg
+{
+	\label:{} \ref:{} \pageref:{}
+	\input:{} \include:{} \includegraphics:[]{}
+	\href:{}{} \url:{} \path:{}
+	\texttt:{} \tech:{}
+	\lstdefinelanguage:{}{}
+}
+
+# ChkTeX no debe interpretar como prosa los lenguajes y diagramas embebidos.
+VerbEnvir
+{
+	verbatim comment listing lstlisting codebox tikzpicture
+}

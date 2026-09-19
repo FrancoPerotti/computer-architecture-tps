@@ -25,3 +25,11 @@ webtalk*.xml
 *.swp
 *.swo
 .DS_Store
+
+# Python tools and local environments
+__pycache__/
+*.pyc
+.venv/
+
+# Course material kept locally
+/tp2/5 - Maquinas de Estado Finitas.pdf
