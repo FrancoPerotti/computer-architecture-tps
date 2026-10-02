@@ -1,0 +1,9 @@
+# Vivado and simulator output
+/vivado/
+/.sim/
+/build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
