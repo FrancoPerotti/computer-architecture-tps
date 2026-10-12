@@ -1,119 +1,163 @@
 # Datapath
 
-## Qué describe este documento
+- **Tipo:** arquitectura. 
+- **Estado documental:** especificación vigente.
 
-El datapath es la parte del procesador que **almacena, transporta y transforma datos**. Incluye registros, registros interetapa, memorias, sumadores, multiplexores y unidades funcionales. Su función es recibir una instrucción ya capturada, obtener sus operandos, producir los valores intermedios necesarios y transportar el resultado correcto hasta el punto donde se vuelve arquitectónicamente visible.
+## Índice
 
-Este documento no describe la lógica que decide cuándo avanzar, cuándo insertar bubbles, cuándo hacer flush o cómo se generan las señales de control. Esos temas pertenecen al plano de control y se desarrollan en otros capítulos. Aquí el foco está puesto únicamente en los **valores que existen en la CPU** y en los **caminos por los que esos valores circulan**.
+- [Propósito y alcance](#propósito-y-alcance)
+- [Vista general del recorrido de datos](#vista-general-del-recorrido-de-datos)
+- [Estado persistente del datapath](#estado-persistente-del-datapath)
+- [Fetch: de PC a IF/ID](#fetch-de-pc-a-ifid)
+- [De una instrucción almacenada a sus operandos](#de-una-instrucción-almacenada-a-sus-operandos)
+- [Bypass en ID](#bypass-en-id)
+- [Qué guarda ID/EX](#qué-guarda-idex)
+- [Forwarding hacia EX](#forwarding-hacia-ex)
+- [Selección de operandos para la ALU](#selección-de-operandos-para-la-alu)
+- [ALU](#alu)
+- [Caminos auxiliares de EX](#caminos-auxiliares-de-ex)
+- [El valor ex_result](#el-valor-ex_result)
+- [El camino separado de store_data](#el-camino-separado-de-store_data)
+- [Qué guarda EX/MEM](#qué-guarda-exmem)
+- [Loads](#loads)
+- [Stores](#stores)
+- [Instrucciones aritméticas](#instrucciones-aritméticas)
+- [LUI](#lui)
+- [Branches](#branches)
+- [JAL y JALR](#jal-y-jalr)
+- [De EX a WB](#de-ex-a-wb)
+- [Qué guarda MEM/WB](#qué-guarda-memwb)
+- [Writeback](#writeback)
+- [Caminos fundamentales resumidos por clase de instrucción](#caminos-fundamentales-resumidos-por-clase-de-instrucción)
+- [Inventario funcional de bloques de datos](#inventario-funcional-de-bloques-de-datos)
+- [Qué deliberadamente no cubre este documento](#qué-deliberadamente-no-cubre-este-documento)
+- [Referencias y trazabilidad](#referencias-y-trazabilidad)
 
-La idea central es simple: distintas clases de instrucciones reutilizan un mismo conjunto de caminos de datos. Lo que cambia de una instrucción a otra no es la existencia de nuevos caminos completos, sino qué valores se seleccionan, qué unidades funcionales intervienen y cuál de los resultados producidos continúa hacia las etapas siguientes.
+<a id="qué-describe-este-documento"></a>
+
+## Propósito y alcance
+
+Este documento define los caminos de datos del procesador: los elementos que almacenan, transportan y transforman los valores utilizados por las instrucciones desde su búsqueda hasta la producción de sus resultados.
+
+El alcance comprende:
+
+- el PC y el recorrido de búsqueda hacia `IF/ID`;
+- el banco de registros y la generación de inmediatos;
+- los registros interetapa;
+- la selección de operandos y los caminos de forwarding;
+- la ALU, los sumadores y la generación de destinos;
+- la formación de direcciones efectivas y el transporte de datos de `load` y `store`;
+- la selección de resultados y el recorrido hacia writeback.
+
+Las distintas clases de instrucciones reutilizan estos caminos. Lo que cambia entre ellas es qué operandos se seleccionan, qué unidades funcionales intervienen y qué resultado continúa hacia la siguiente etapa.
+
+Este documento describe los valores y caminos por los que circulan los datos. No define cuándo avanza el pipeline, cuándo se insertan bubbles, cuándo se hace flush ni cómo se generan las señales de control; esos aspectos pertenecen a [Pipeline CPU](cpu_pipeline.md) y [Control y hazards](control_and_hazards.md).
 
 ---
 
-# Vista general del recorrido de datos
+## Vista general del recorrido de datos
 
-A grandes rasgos, el flujo de datos del procesador puede representarse así:
+El siguiente diagrama resume el flujo de datos del procesador:
+
+![Vista general del recorrido de datos](../diagrams/previews/datapath.png)
+
+Los selectores de los multiplexores y las señales de control locales indican qué valores debe utilizar cada camino del datapath. `access_size` y `load_unsigned` se generan en MEM a partir de la operación de memoria; no son campos adicionales de `EX/MEM`. Su generación se describe en [Etapa MEM](stage_mem.md#mem-decode).
+
+El recorrido de los datos depende del tipo de instrucción.
+
+### Instrucciones que producen un resultado
+
+En una operación aritmética, lógica, de desplazamiento, `LUI`, `JAL` o `JALR`, el recorrido es el siguiente:
+
+| Etapa | Qué ocurre |
+|---|---|
+| `EX` | Utiliza los operandos efectivos y ejecuta la operación. |
+| `EX/MEM` | Guarda el resultado producido por EX en `ex_result`. |
+| `MEM` | Transporta ese resultado sin acceder a DMEM. |
+| `MEM/WB` | Guarda el valor que utilizará la etapa WB. |
+| `WB` | Escribe el resultado en el banco de registros si `reg_write` está activo. |
+
+En forma resumida:
 
 ```mermaid
 flowchart LR
-    PC[PC] --> IMEM[IMEM]
-    IMEM --> IFID[IF/ID]
-
-    IFID --> RF[Register File]
-    IFID --> IMM[Immediate Generator]
-
-    RF --> BYP[WB→ID Bypass]
-    MEMWB[MEM/WB] -->|wb_value| BYP
-    BYP --> IDEX[ID/EX]
-    IMM --> IDEX
-
-    IDEX --> FMA[Forward MUX A]
-    IDEX --> FMB[Forward MUX B]
-    EXMEM[EX/MEM] --> FMA
-    EXMEM --> FMB
-    MEMWB --> FMA
-    MEMWB --> FMB
-
-    FMA --> ALU[ALU]
-    FMB --> ALUSRC[ALU Source MUX]
-    IDEX --> ALUSRC
-    ALUSRC --> ALU
-
-    IDEX -->|pc / immediate| TARGET[Target Adder]
-    IDEX -->|immediate| JALR[JALR target path]
-    FMA --> JALR
-    TARGET --> TMUX[Target MUX]
-    JALR --> TMUX
-    PC --> PCADD[PC Adder]
-    PCADD --> NPC[Next PC MUX]
-    TMUX -->|redirect_target| NPC
-    NPC --> PC
-    IDEX -->|pc| LINK[Link Adder]
-
-    ALU --> RESMUX[Result path]
-    LINK --> RESMUX
-    IDEX --> RESMUX
-
-    RESMUX --> EXMEM
-    FMB -->|store_data| EXMEM
-
-    EXMEM --> DMEM[DMEM]
-    EXMEM --> WBMUX[WB Value MUX]
-    DMEM -->|mem_read_data| LOAD[Load Select / Extend]
-    EXMEM -->|ex_result low bits| LOAD
-    LOADCTRL[access_size / load_unsigned] --> LOAD
-    LOAD -->|load_value| WBMUX
-    WBMUX --> MEMWB
-
-    MEMWB --> RF
+    operandos[Operandos] --> ex[EX calcula]
+    ex --> exmem[EX/MEM conserva]
+    exmem --> mem[MEM transporta]
+    mem --> memwb[MEM/WB conserva]
+    memwb --> wb[WB escribe en el banco de registros]
 ```
 
-Los selectores de muxes y los controles locales de tamaño y signo son entradas del datapath. `access_size` y `load_unsigned` se derivan en MEM y no son campos adicionales de EX/MEM; su generación se describe en [Etapa MEM](stage_mem.md#mem-decode).
+En este recorrido, `ex_result` es el resultado producido por EX. Para un `load`, el recorrido es diferente: `ex_result` contiene la dirección efectiva y MEM debe leer DMEM antes de producir `load_value`.
 
-Este recorrido contiene dos ideas estructurales que aparecen una y otra vez.
+En `JAL` y `JALR`, el resultado producido por EX es `PC + 4`, que se escribe en el registro de enlace.
 
-La primera es el **camino principal de resultado**, que lleva un valor desde EX hasta WB:
+### Instrucciones `load`
 
-```text
-operandos
-    → operación en EX
-    → ex_result
-    → MEM
-    → wb_value
-    → Register File
+En un `load`, EX no produce todavía el valor que se escribirá en el banco de registros. Produce la dirección efectiva y la conserva en `EX/MEM.ex_result`. MEM utiliza esa dirección para leer DMEM. El valor leído se convierte en `load_value` y continúa hacia WB:
+
+| Etapa | Qué ocurre |
+|---|---|
+| `EX` | Calcula la dirección efectiva sumando el operando base y el inmediato. |
+| `EX/MEM` | Guarda la dirección efectiva en `ex_result`. |
+| `MEM` | Lee DMEM usando `ex_result` y produce `load_value`. |
+| `MEM/WB` | Guarda el valor leído para la etapa WB. |
+| `WB` | Escribe `wb_value` en el banco de registros si `reg_write` está activo. |
+
+En forma resumida:
+
+```mermaid
+flowchart LR
+    ex[EX calcula] --> exmem[EX/MEM conserva]
+    exmem --> mem[MEM lee DMEM]
+    mem --> memwb[MEM/WB conserva]
+    memwb --> wb[WB escribe en el banco de registros]
 ```
 
-La segunda es que algunos valores no pertenecen a ese camino principal, sino que siguen un recorrido paralelo porque cumplen otra función. El caso más importante es el dato de un store:
+### Instrucciones `store`
 
-```text
-rs2_effective
-    → store_data
-    → EX/MEM
-    → DMEM
+En un `store`, EX calcula la dirección efectiva y conserva además el dato que debe escribirse. Ambos valores viajan por campos separados de `EX/MEM`:
+
+| Etapa | Qué ocurre |
+|---|---|
+| `EX` | Calcula la dirección efectiva y prepara el dato que debe escribirse. |
+| `EX/MEM` | Guarda la dirección efectiva en `ex_result` y el dato en `store_data`. |
+| `MEM` | Escribe `store_data` en DMEM usando `ex_result` como dirección. |
+| `MEM/WB` | No transporta un valor de `store` hacia WB. |
+| `WB` | No escribe ningún valor en el banco de registros. |
+
+En forma resumida:
+
+```mermaid
+flowchart LR
+    ex[EX calcula dirección efectiva y prepara el dato] --> exmem[EX/MEM conserva ex_result y store_data]
+    exmem --> mem[MEM escribe store_data en DMEM usando ex_result]
+    mem --> memwb[MEM/WB no transporta un valor hacia WB]
+    memwb --> wb[WB no escribe en el banco de registros]
 ```
 
-Ese valor no compite con `ex_result`; ambos existen al mismo tiempo y representan cosas distintas.
+MEM utiliza la dirección efectiva para seleccionar la posición de DMEM y `store_data` para realizar la escritura. Un `store` no produce un valor para WB.
 
 ---
 
-# Estado persistente del datapath
+## Estado persistente del datapath
 
-El datapath contiene estado persistente en cuatro grupos principales:
+El **estado persistente** es la información que el datapath conserva entre un ciclo de reloj y el siguiente. A diferencia de las señales combinacionales, no desaparece al cambiar las entradas: queda almacenada en elementos de memoria y puede utilizarse en ciclos posteriores. El datapath contiene este estado en cuatro lugares:
 
 - el **PC**;
-- el **Register File**;
+- el **`Register File`**;
 - los **registros interetapa**;
 - y, como almacenamiento visible para el programa, **IMEM** y **DMEM**.
 
-## PC
+### PC
 
 El PC conserva la dirección desde la cual IF intenta obtener la próxima instrucción. Es un registro de 32 bits.
 
-Desde el punto de vista del datapath, el PC no es una historia de ejecución ni un contador general; es simplemente el valor de dirección que alimenta el camino de fetch.
+Desde el punto de vista del datapath, el PC no es una historia de ejecución ni un contador general; es el valor de dirección que alimenta la etapa de fetch.
 
-## Register File
+### Register File
 
-El Register File contiene treinta y dos registros de 32 bits:
+El `Register File` contiene treinta y dos registros de 32 bits:
 
 ```text
 x0 ... x31
@@ -129,32 +173,30 @@ x0 = 0
 
 por lo que leer `x0` produce siempre cero y escribir sobre `rd=0` no altera su valor observable.
 
-## Registros interetapa
+### Registros interetapa
 
 Los cuatro registros interetapa almacenan el estado de cada instrucción mientras cruza el pipeline:
 
-```text
-IF/ID
-ID/EX
-EX/MEM
-MEM/WB
-```
+- `IF/ID`
+- `ID/EX`
+- `EX/MEM`
+- `MEM/WB`
 
-Cada uno contiene un subconjunto del estado que la etapa siguiente necesita interpretar. La selección exacta de sus campos surge del recorrido funcional de los datos: cada etapa registra lo que todavía será necesario más adelante.
+Cada registro guarda solo la información que la instrucción necesita para continuar hacia las etapas siguientes. Por eso sus campos son diferentes: cada etapa conserva los datos que todavía deben utilizarse más adelante.
 
-## IMEM y DMEM
+### IMEM y DMEM
 
 IMEM almacena la imagen de instrucciones. DMEM almacena datos observables por loads y stores. Desde el punto de vista del datapath, ambas memorias forman parte del espacio donde el programa obtiene o deposita información.
 
-La organización y semántica completa de memoria se desarrollan en [Arquitectura de memoria](memory_architecture.md). Aquí las trataremos como extremos del recorrido de instrucciones y datos.
+La organización y semántica completa de memoria se desarrollan en [Arquitectura de memoria](memory_architecture.md). En este documento, IMEM y DMEM son los extremos del recorrido de instrucciones y datos.
 
 ---
 
-# Fetch: de PC a IF/ID
+## Fetch: de PC a IF/ID
 
-El primer camino del datapath es el de la instrucción que entra al pipeline.
+El primer recorrido de datos lleva la instrucción desde el PC hasta el registro interetapa `IF/ID`.
 
-A partir del PC actual, IMEM entrega la word de 32 bits ubicada en esa dirección. Esa word y el PC asociado se almacenan en IF/ID. Desde este momento, la instrucción ya no es solamente “la instrucción ubicada en la dirección actual de fetch”, sino una entidad transportada por el pipeline con su propio contexto.
+El PC actual selecciona una posición de IMEM, que entrega la palabra de instrucción de 32 bits almacenada en esa dirección. En el flanco correspondiente, la palabra y su PC propio se capturan en `IF/ID`. Desde ese momento, la instrucción continúa por el pipeline acompañada por la información necesaria para las etapas siguientes.
 
 Además del valor leído desde IMEM, IF también calcula:
 
@@ -168,29 +210,27 @@ Aunque más adelante puedan existir redirecciones, el datapath siempre dispone d
 
 ---
 
-# De una instrucción almacenada a sus operandos
+## De una instrucción almacenada a sus operandos
 
-Una vez que la instrucción se encuentra en IF/ID, el datapath extrae de su codificación tres grupos de datos:
+Una vez que la instrucción se encuentra en `IF/ID`, el datapath extrae de su codificación tres grupos de datos:
 
-1. índices de registros fuente y destino;
-2. fragmentos que eventualmente formarán un inmediato;
-3. la propia word de instrucción, que sigue siendo útil como identidad y contenido observable.
+1. Índices de registros fuente y destino.
+2. Fragmentos que eventualmente formarán un inmediato.
+3. La propia palabra de instrucción, que sigue siendo útil como identidad y contenido observable.
 
-## Índices de registros
+### Índices de registros
 
 Los campos utilizados son:
 
-```text
-rs1 = instruction[19:15]
-rs2 = instruction[24:20]
-rd  = instruction[11:7]
-```
+- `rs1 = instruction[19:15]`
+- `rs2 = instruction[24:20]`
+- `rd  = instruction[11:7]`
 
-Estos índices alimentan el Register File y también forman parte de la identidad transportada más adelante, porque el destino `rd` sigue siendo necesario hasta WB.
+Estos índices alimentan el `Register File` y también forman parte de la identidad transportada más adelante, porque el destino `rd` sigue siendo necesario hasta WB.
 
-## Inmediato
+### Inmediato
 
-El Immediate Generator reconstruye un valor de 32 bits a partir de los campos fragmentados de la instrucción. Todos los offsets se interpretan en bytes.
+El `Immediate Generator` reconstruye un valor de 32 bits a partir de los campos fragmentados de la instrucción. Todos los offsets se interpretan en bytes.
 
 Las reconstrucciones son:
 
@@ -202,130 +242,123 @@ Las reconstrucciones son:
 | U | `{instruction[31:12], 12'b0}` |
 | J | `sext_21({instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0})` |
 
-Este valor inmediato es un dato más del datapath. Más adelante podrá convertirse en operando de la ALU, en desplazamiento de un target o incluso en el resultado que se escribirá en `rd`, según la clase de instrucción.
+Este valor inmediato es un dato más del datapath. Más adelante puede convertirse en operando de la ALU, en desplazamiento de un target o incluso en el resultado que se escribirá en `rd`, según la clase de instrucción.
 
-## Lectura del Register File
+### Lectura del Register File
 
-Con `rs1` y `rs2`, el Register File produce dos valores base:
+Con `rs1` y `rs2`, el `Register File` produce dos valores base:
 
-```text
-rf_rs1_value
-rf_rs2_value
-```
+- `rf_rs1_value`
+- `rf_rs2_value`
 
-Estos valores son la primera versión disponible de los operandos, pero todavía no son necesariamente los operandos finales que utilizará EX.
+Estos valores son la primera versión disponible de los operandos, pero todavía no son necesariamente los operandos finales que utiliza EX.
 
 ---
 
-# Bypass en ID
+## Bypass en ID
 
-Existe un caso particular importante: una instrucción en WB puede estar escribiendo en un registro que, durante ese mismo ciclo, la instrucción en ID necesita leer.
+Existe un caso particular: una instrucción en WB puede estar escribiendo en un registro que, durante ese mismo ciclo, la instrucción en ID necesita leer.
 
-Para que el dato utilizado en ID refleje el valor más reciente, el datapath incluye un camino de bypass desde MEM/WB hacia ID. Así se obtienen dos valores después del bypass:
+Para que el dato utilizado en ID refleje el valor más reciente, el datapath incluye un camino de bypass desde `MEM/WB` hacia ID. Así se obtienen dos valores después del bypass:
 
-```text
-rs1_value
-rs2_value
-```
+- `rs1_value`
+- `rs2_value`
 
 Conceptualmente:
 
-```text
-rs1_value =
-    bypass_rs1 ? MEM/WB.wb_value : rf_rs1_value
+- `rs1_value = bypass_rs1 ? MEM/WB.wb_value : rf_rs1_value`
+- `rs2_value = bypass_rs2 ? MEM/WB.wb_value : rf_rs2_value`
 
-rs2_value =
-    bypass_rs2 ? MEM/WB.wb_value : rf_rs2_value
-```
+Los operandos que se registran en `ID/EX` ya incorporan el bypass; no se capturan directamente las salidas del `Register File`.
 
-Los operandos que se registran en ID/EX ya incorporan el bypass; no se capturan directamente las salidas del Register File.
-
-Esto tiene una consecuencia importante para todo el datapath posterior: EX parte de operandos base que ya incorporan la posible coincidencia con el writeback del mismo ciclo.
+EX parte de operandos base que ya incorporan la posible coincidencia con el writeback del mismo ciclo.
 
 ---
 
-# Qué guarda ID/EX
+## Qué guarda ID/EX
 
-ID/EX constituye el punto donde el datapath deja de ver la instrucción como una word recién capturada y pasa a verla como un conjunto estructurado de valores listos para usarse en ejecución.
+`ID/EX` constituye el punto donde el datapath deja de ver la instrucción como una palabra recién capturada y pasa a verla como un conjunto estructurado de valores listos para usarse en ejecución.
 
-Desde el punto de vista de los datos, ID/EX conserva al menos:
+Desde el punto de vista de los datos, `ID/EX` conserva al menos:
 
 - el PC de la instrucción;
-- la word de instrucción;
+- la palabra de instrucción;
 - `rd`;
 - `rs1_value`;
 - `rs2_value`;
 - el inmediato reconstruido;
-- los campos de control que la etapa EX todavía necesita;
+- las señales de control que la etapa EX todavía necesita;
 - y la validez de la entrada.
 
-Este registro es clave porque reúne, en un mismo lugar, los datos desde los cuales EX puede producir tanto resultados aritméticos como direcciones, targets o enlaces.
+`ID/EX` reúne, en un mismo lugar, los datos desde los cuales EX puede producir tanto resultados aritméticos como direcciones, targets o enlaces.
 
 ---
 
-# Forwarding hacia EX
+## Forwarding hacia EX
 
-Aunque ID/EX ya contiene operandos después del bypass, todavía es posible que el valor más reciente de una fuente no esté en el Register File ni en MEM/WB al momento en que la instrucción fue decodificada, sino que esté siendo producido por una instrucción más cercana.
+`ID/EX` conserva los valores que `ID` obtuvo al leer el banco de registros. Si una instrucción anterior escribe en `WB` durante ese mismo ciclo, el [bypass `WB → ID`](control_and_hazards.md#bypass-wb--id) permite que `ID` capture directamente el valor actualizado.
 
-Por eso, antes de entrar a las unidades funcionales de EX, cada operando atraviesa un multiplexor de forwarding.
+Sin embargo, una instrucción anterior puede estar más cerca del consumidor y todavía no haber llegado a `WB`. Por ejemplo, una instrucción puede producir un resultado en `EX` mientras la siguiente ya fue decodificada y conserva en `ID/EX` el valor anterior de ese registro. En ese caso, el banco de registros todavía no contiene el resultado nuevo y `ID/EX` tampoco puede actualizarse retroactivamente.
 
-## Operandos efectivos
+Por eso, antes de utilizar los operandos en `EX`, cada fuente pasa por un [multiplexor de forwarding](stage_ex.md#forward-mux-a). Este multiplexor puede seleccionar el valor almacenado originalmente en `ID/EX`, el resultado más reciente disponible en `EX/MEM.ex_result` o el valor que está por escribirse desde `MEM/WB.wb_value`.
 
-Se obtienen dos operandos efectivos:
+Las [señales de control del forwarding](stage_ex.md#forwarding-unit) comparan los registros fuente de la instrucción actual con el registro destino de las instrucciones anteriores y seleccionan la versión más reciente disponible. Si el productor es un [load-use](control_and_hazards.md#dependencia-load-use) cuyo dato todavía no está disponible, el forwarding no alcanza y el control de hazards debe insertar un [stall](control_and_hazards.md#efecto-del-stall).
 
-```text
-rs1_effective
-rs2_effective
-```
+### Operandos efectivos
+
+Despues de atravesar el multiplexor de forwarding, los operandos que EX utiliza son:
+
+- `rs1_effective`
+- `rs2_effective`
 
 Cada uno de estos valores puede provenir de tres lugares:
 
 | Selector | Fuente |
 |---|---|
-| `00` | valor base almacenado en ID/EX |
+| `00` | valor base almacenado en `ID/EX` |
 | `01` | `EX/MEM.ex_result` |
 | `10` | `MEM/WB.wb_value` |
 
-Desde el punto de vista del datapath, esto significa que EX no opera directamente sobre los valores almacenados en ID/EX, sino sobre una versión potencialmente actualizada de ellos.
+De esta manera, EX no opera directamente sobre los valores almacenados en `ID/EX`, sino sobre una versión potencialmente actualizada de ellos.
 
-El detalle de cuándo se selecciona una u otra fuente pertenece al control de forwarding; lo importante aquí es que el camino de datos existe y que su salida son los operandos efectivos finales.
+Las señales de control del forwarding determinan cuándo se selecciona cada fuente. El datapath proporciona el camino de datos cuya salida son los operandos efectivos finales.
 
 ---
 
-# Selección de operandos para la ALU
+## Selección de operandos para la ALU
 
 La ALU utiliza dos entradas.
 
 La entrada A toma siempre:
 
-```text
-alu_operand_a = rs1_effective
-```
+- `alu_operand_a = rs1_effective`
 
 La entrada B puede tomar uno de dos valores:
 
-- `rs2_effective`;
-- el inmediato almacenado en ID/EX.
+- `rs2_effective`
+- el inmediato almacenado en `ID/EX` (`ID/EX.immediate`)
 
-El ALU Source MUX produce entonces:
+El `ALU Source MUX` produce entonces:
 
-```text
-alu_operand_b
-```
+- `alu_operand_b`
 
 De este modo, el datapath puede reutilizar la misma ALU para operaciones muy distintas.
 
-Las instrucciones registro-registro utilizan dos operandos provenientes, en última instancia, del Register File. Las inmediatas sustituyen el segundo operando por el inmediato. Loads y stores también utilizan el inmediato, pero en ese caso el resultado de la ALU no representa un valor aritmético final, sino una dirección efectiva.
+Las clases de instrucción reutilizan la ALU de esta manera:
+
+| Clase | Operandos y significado del resultado |
+|---|---|
+| Registro-registro | Dos operandos provenientes, en última instancia, del `Register File`. |
+| Inmediatas | El inmediato sustituye al segundo operando. |
+| Loads y stores | También utilizan el inmediato; el resultado de la ALU representa una dirección efectiva, en lugar de un valor aritmético final. |
 
 ---
 
-# ALU
+## ALU
 
 La ALU es la unidad funcional principal de EX. Produce un resultado de 32 bits y el indicador:
 
-```text
-zero
-```
+- `zero`
 
 Las operaciones implementadas son:
 
@@ -348,114 +381,101 @@ Los shifts consumen solo cinco bits de la cantidad, por lo que cantidades con lo
 
 ---
 
-# Caminos auxiliares de EX
+## Caminos auxiliares de EX
 
 Además de la ALU, EX contiene otros recorridos de datos que producen valores necesarios para ciertas clases de instrucciones.
 
 <a id="target-pc-relative"></a>
 
-## Destino relativo al PC
+### Destino relativo al PC
 
 Una instrucción puede necesitar sumar su PC con un offset inmediato para formar una dirección de destino. Para eso existe un sumador dedicado que produce:
 
-```text
-pc_relative_target = ID/EX.pc + ID/EX.immediate
-```
+- `pc_relative_target = ID/EX.pc + ID/EX.immediate`
 
 Este valor se usa en branches y JAL.
 
-## Target indirecto de JALR
+### Target indirecto de JALR
 
 JALR necesita un target basado en un registro:
 
-```text
-jalr_sum = rs1_effective + ID/EX.immediate
-```
+- `jalr_sum = rs1_effective + ID/EX.immediate`
 
 y luego limpia el bit menos significativo:
 
-```text
-jalr_target = jalr_sum & 32'hFFFFFFFE
-```
+- `jalr_target = jalr_sum & 32'hFFFFFFFE`
 
 Este valor no sustituye al resultado de la ALU de manera implícita: forma parte de un camino separado destinado a seleccionar el próximo PC.
 
-## Link
+### Link
 
 JAL y JALR también necesitan producir una dirección de retorno:
 
-```text
-link_value = ID/EX.pc + 4
-```
+
+- `link_value = ID/EX.pc + 4`
 
 Este valor sí pertenece al camino principal de resultado, porque termina escribiéndose en `rd`.
 
 ---
 
-# El valor `ex_result`
+## El valor `ex_result`
 
 No toda instrucción interpreta la salida relevante de EX de la misma manera. Algunas necesitan el resultado de la ALU; otras necesitan el inmediato; otras necesitan `PC+4`.
 
 Para unificar estos casos, el datapath define un valor explícito:
 
-```text
-ex_result
-```
+- `ex_result`
 
-`ex_result` es el resultado que sale de EX y continúa hacia MEM a través de EX/MEM. Las fuentes posibles son:
+`ex_result` es el resultado que sale de EX y continúa hacia MEM a través de `EX/MEM`. Las fuentes posibles son:
 
-- el resultado de la ALU;
-- el inmediato;
-- el link `PC+4`.
+- El resultado de la ALU.
+- El inmediato.
+- El link `PC+4`.
 
 Así, EX produce un único valor principal transportado por el pipeline, aun cuando ese valor haya sido originado por unidades diferentes.
 
-Esto simplifica enormemente los caminos posteriores: MEM y WB reciben un valor ya resuelto desde el punto de vista de EX, sin necesidad de reinterpretar qué tipo de instrucción lo produjo.
+EX ya seleccionó el origen de `ex_result`; MEM no repite esa selección entre ALU, inmediato y enlace. Para las instrucciones que escriben un registro sin acceder a DMEM, `ex_result` contiene el resultado arquitectónico; para loads y stores, contiene la dirección efectiva.
+
+MEM interpreta `EX/MEM.mem_op`, realiza el acceso a DMEM cuando corresponde y selecciona `wb_value` entre `EX/MEM.ex_result` y `load_value`. WB recibe el valor final registrado en `MEM/WB.wb_value` y lo escribe cuando la entrada es elegible.
 
 ---
 
-# El camino separado de `store_data`
+## El camino separado de `store_data`
 
 Los stores ilustran por qué `ex_result` no puede representar toda la información de una instrucción.
 
 Un store necesita dos datos distintos al mismo tiempo:
 
-1. la dirección efectiva del acceso;
-2. el contenido que se escribirá en memoria.
+1. La dirección efectiva del acceso.
+2. El contenido que se escribirá en memoria.
 
 La dirección efectiva proviene de la ALU y viaja como:
 
-```text
-ex_result
-```
+- `ex_result`
 
 El dato a escribir, en cambio, es:
 
-```text
-store_data = rs2_effective
-```
+- `store_data = rs2_effective`
 
-y sigue un camino paralelo hasta EX/MEM.
+y sigue un camino paralelo hasta `EX/MEM`.
 
-En otras palabras, un store no reemplaza el camino principal de resultado por el dato de escritura, sino que conserva ambos valores simultáneamente:
+Un store no reemplaza el camino principal de resultado por el dato de escritura, sino que conserva ambos valores simultáneamente:
 
-```text
-ex_result  = dirección
-store_data = dato
-```
+- `ex_result  = dirección`
+- `store_data = dato`
 
-Esto permite que MEM disponga, en el mismo ciclo, tanto de la dirección como del contenido del acceso.
+Los dos caminos permiten que MEM disponga, en el mismo ciclo, tanto de la dirección como del contenido del acceso.
 
 ---
 
-# Qué guarda EX/MEM
+## Qué guarda EX/MEM
 
-Desde el punto de vista de los datos, EX/MEM conserva el estado necesario para que MEM pueda actuar sin reconstruir información.
+Desde el punto de vista de los datos, `EX/MEM` conserva el estado necesario para que MEM pueda actuar sin reconstruir información.
 
 Incluye, al menos:
 
 - el PC de la instrucción;
-- la word de instrucción;
+- la palabra de instrucción;
 - `rd`;
 - `ex_result`;
 - `store_data` cuando corresponde;
@@ -470,180 +490,127 @@ A partir de aquí, el datapath ya separó dos familias de instrucciones:
 
 ---
 
-# Loads
+## Loads
 
 Un load emplea la ALU para formar:
 
-```text
-effective_address = rs1_effective + immediate
-```
+- `effective_address = rs1_effective + immediate`
 
-Ese valor entra a EX/MEM como `ex_result`. Cuando la instrucción llega a MEM, dicho valor se interpreta como dirección de acceso a DMEM.
+Ese valor entra a `EX/MEM` como `ex_result`. Cuando la instrucción llega a MEM, dicho valor se interpreta como dirección de acceso a DMEM.
 
 DMEM produce una lectura lógica. El bloque `Load Select / Extend` combina esa lectura con los bits bajos de la dirección, el tamaño del acceso y la selección signed/unsigned para identificar y ensamblar los bytes correctos y obtener:
 
-```text
-load_value
-```
+- `load_value`
 
-con el ancho y la extensión apropiados para LB, LH, LW, LBU o LHU.
+con el ancho y la extensión apropiados para `LB`, `LH`, `LW`, `LBU` o `LHU`.
 
 El recorrido completo es:
 
-```text
-rs1_effective + immediate
-        ↓
-ex_result (dirección)
-        ↓
-DMEM
-        ↓
-selección de bytes y extensión
-        ↓
-load_value
-        ↓
-wb_value
-        ↓
-rd
-```
+![Loads](../diagrams/previews/load_completo.png)
 
-Esto muestra con claridad que la dirección y el dato cargado son dos valores diferentes en momentos distintos del recorrido.
+La dirección y el dato cargado son dos valores diferentes en momentos distintos del recorrido.
 
 ---
 
-# Stores
+## Stores
 
 Un store comparte con el load el cálculo de dirección:
 
-```text
-effective_address = rs1_effective + immediate
-```
+- `effective_address = rs1_effective + immediate`
 
 pero utiliza además el camino paralelo de `store_data`.
 
 En MEM, DMEM recibe simultáneamente:
 
-- la dirección desde `EX/MEM.ex_result`;
-- el contenido desde `EX/MEM.store_data`.
+- La dirección desde `EX/MEM.ex_result`.
+- El contenido desde `EX/MEM.store_data`.
 
 El recorrido puede verse así:
 
-```text
-rs1_effective + immediate
-        ↓
-ex_result (dirección)
-        ↓
-DMEM address
+![Stores](../diagrams/previews/store_completo.png)
 
-rs2_effective
-        ↓
-store_data
-        ↓
-DMEM data
-```
-
-Un store no produce `wb_value` ni escribe `rd`; su efecto visible termina en DMEM.
+Un store no escribe `rd`; su escritura en DMEM ocurre en MEM cuando el commit es elegible. `WB Value MUX` puede presentar `EX/MEM.ex_result` como `wb_value`, pero ese valor no produce escritura en el banco de registros ni forwarding porque el store tiene `reg_write=0`.
 
 ---
 
-# Instrucciones aritméticas
+## Instrucciones aritméticas
 
-Las instrucciones aritméticas, tanto registro-registro como inmediatas, son el caso más directo del datapath.
+Las instrucciones aritméticas incluyen las operaciones registro-registro y las inmediatas.
 
 En ambos casos el resultado visible proviene de la ALU y no se transforma en MEM. El camino completo es:
 
-```text
-operandos efectivos
-    → ALU
-    → ex_result
-    → EX/MEM
-    → wb_value
-    → MEM/WB
-    → rd
-```
+![Instrucciones aritméticas](../diagrams/previews/aritmetica_completa.png)
 
 La diferencia entre una instrucción registro-registro y una inmediata no cambia este recorrido global. Solo cambia el origen del segundo operando que recibe la ALU.
 
 ---
 
-# LUI
+## LUI
 
-LUI utiliza el inmediato U-type como valor final. Su caso es importante porque muestra que el resultado que atraviesa EX no siempre nace en la ALU.
+LUI utiliza el inmediato U-type como valor final. El resultado que atraviesa EX no siempre nace en la ALU.
 
 El inmediato reconstruido llega a EX ya completo y se selecciona como:
 
-```text
-ex_result = immediate
-```
+- `ex_result = immediate`
 
 A partir de allí continúa exactamente por el mismo camino de writeback que cualquier otro productor de registros:
 
-```text
-immediate
-    → ex_result
-    → wb_value
-    → rd
-```
+![LUI](../diagrams/previews/lui_completo.png)
 
 ---
 
-# Branches
+## Branches
 
 Los branches utilizan la ALU y el sumador de target, pero no generan un valor destinado a writeback.
 
 Los operandos efectivos permiten formar una comparación. Paralelamente, el datapath produce:
 
-```text
-pc_relative_target = ID/EX.pc + immediate
-```
+- `pc_relative_target = ID/EX.pc + immediate`
 
 que representa el destino potencial del salto.
 
-Desde el punto de vista de los datos, lo importante es que EX dispone al mismo tiempo de:
+EX dispone al mismo tiempo de:
 
-- el resultado de la comparación;
-- el destino relativo al PC.
+- El resultado de la comparación.
+- El destino relativo al PC.
 
 La decisión de si ese target efectivamente se convierte en el próximo PC pertenece al plano de control. El datapath solo garantiza que el valor existe y que está correctamente calculado.
 
 ---
 
-# JAL y JALR
+## JAL y JALR
 
 Estas instrucciones combinan dos caminos de datos distintos en una misma instrucción.
 
 Por un lado producen un target de salto:
 
-- `pc_relative_target` para JAL;
+- `pc_relative_target` para JAL.
 - `jalr_target` para JALR.
 
 Por otro lado producen un valor de enlace:
 
-```text
-link_value = ID/EX.pc + 4
-```
+- `link_value = ID/EX.pc + 4`
 
 Ese valor de enlace entra al camino principal de resultado y termina escribiéndose en `rd`.
 
 Por lo tanto, en una misma instrucción de salto con enlace, el datapath produce dos salidas conceptualmente distintas:
 
-- un valor que alimenta la actualización del PC;
-- un valor que viaja por `ex_result → wb_value → rd`.
+- Un valor que alimenta la actualización del PC.
+- Un valor que viaja por `ex_result → wb_value → rd`.
 
 Esto explica por qué JAL y JALR no necesitan un mecanismo especial de writeback: su enlace reutiliza el mismo camino principal que usa el resto de las instrucciones que escriben un registro.
 
 ---
 
-# De EX a WB
+## De EX a WB
 
-Una vez que el valor principal de EX entró a EX/MEM, MEM decide cuál será el valor final de writeback.
+Una vez que el valor principal de EX entró a `EX/MEM`, MEM decide cuál será el valor final de writeback.
 
-Aquí aparece otro concepto clave del datapath:
+El valor final de writeback es:
 
-```text
-wb_value
-```
+- `wb_value`
 
-`wb_value` es el dato definitivo que entra a MEM/WB y que, si corresponde, podrá escribirse en el Register File.
+`wb_value` es el dato definitivo que entra a `MEM/WB` y que, si corresponde, podrá escribirse en el `Register File`.
 
 Sus fuentes son dos:
 
@@ -652,42 +619,39 @@ Sus fuentes son dos:
 
 Para todas las instrucciones que no son load:
 
-```text
-wb_value = EX/MEM.ex_result
-```
+- `wb_value = EX/MEM.ex_result`
 
 Para un load:
 
-```text
-wb_value = load_value
-```
+- `wb_value = load_value`
+- `wb_value = load_value`
 
 Este es el último punto donde el camino principal de resultados cambia de significado. Después de este mux, WB no necesita distinguir si el valor provino de una operación aritmética, de un inmediato, de un enlace o de una carga desde memoria.
 
 ---
 
-# Qué guarda MEM/WB
+## Qué guarda MEM/WB
 
-MEM/WB contiene el resultado ya finalizado desde el punto de vista del datapath.
+`MEM/WB` contiene el resultado ya finalizado desde el punto de vista del datapath.
 
 Sus campos relevantes son, al menos:
 
-- el PC de la instrucción;
-- la word de instrucción;
-- `rd`;
-- `wb_value`;
-- la información necesaria para determinar si existe writeback;
-- y la validez.
+- El PC de la instrucción.
+- La palabra de instrucción.
+- `rd`.
+- `wb_value`.
+- La información necesaria para determinar si existe writeback.
+- La validez.
 
-A partir de este punto ya no hay nuevas transformaciones de datos. Solo resta hacer commit del valor final en el Register File.
+A partir de este punto ya no hay nuevas transformaciones de datos. Solo resta hacer commit del valor final en el `Register File`.
 
 ---
 
-# Writeback
+## Writeback
 
 WB constituye el final del camino principal de resultados.
 
-Cuando la entrada en MEM/WB corresponde a una instrucción que escribe un registro y el destino no es `x0`, `wb_value` se aplica al puerto de escritura del Register File.
+Cuando la entrada en `MEM/WB` corresponde a una instrucción que escribe un registro y el destino no es `x0`, `wb_value` se aplica al puerto de escritura del `Register File`.
 
 Desde el punto de vista del datapath, este es el punto en el que un valor producido por la instrucción vuelve a incorporarse al estado arquitectónico del procesador.
 
@@ -702,166 +666,89 @@ Muchas clases de instrucciones distintas convergen aquí:
 
 La unificación es posible porque todas ellas hicieron coincidir previamente su recorrido en el par:
 
-```text
-ex_result
-wb_value
-```
+- `ex_result`
+- `wb_value`
 
 ---
 
-# Caminos fundamentales resumidos por clase de instrucción
+## Caminos fundamentales resumidos por clase de instrucción
 
-## Aritméticas registro-registro
+### Aritméticas registro-registro
 
-```text
-rs1_effective
-rs2_effective
-    → ALU
-    → ex_result
-    → wb_value
-    → rd
-```
+![Aritméticas registro-registro](../diagrams/previews/aritmetica_completa.png)
 
-## Aritméticas inmediatas
+### Aritméticas inmediatas
 
-```text
-rs1_effective
-immediate
-    → ALU
-    → ex_result
-    → wb_value
-    → rd
-```
+![Aritméticas inmediatas](../diagrams/previews/inmediata_completa.png)
 
-## LUI
+### LUI
 
-```text
-immediate
-    → ex_result
-    → wb_value
-    → rd
-```
+![LUI](../diagrams/previews/lui_completo.png)
 
-## Loads
+### Loads
 
-```text
-rs1_effective + immediate
-    → ex_result (dirección)
-    → DMEM
-    → selección de bytes y extensión
-    → load_value
-    → wb_value
-    → rd
-```
+![Loads](../diagrams/previews/load_completo.png)
 
-## Stores
+### Stores
 
-```text
-rs1_effective + immediate
-    → ex_result (dirección)
-    → DMEM address
+![Stores](../diagrams/previews/store_completo.png)
 
-rs2_effective
-    → store_data
-    → DMEM data
-```
+### Branches
 
-## Branches
+![Branches](../diagrams/previews/ex_branch.png)
 
-```text
-rs1_effective
-rs2_effective
-    → comparación en EX
+### JAL
 
-ID/EX.pc + immediate
-    → pc_relative_target
-```
+![JAL](../diagrams/previews/jal_completo.png)
 
-## JAL
+### JALR
 
-```text
-ID/EX.pc + immediate
-    → pc_relative_target
-
-ID/EX.pc + 4
-    → link_value
-    → ex_result
-    → wb_value
-    → rd
-```
-
-## JALR
-
-```text
-rs1_effective + immediate
-    → jalr_target (bit 0 limpio)
-
-ID/EX.pc + 4
-    → link_value
-    → ex_result
-    → wb_value
-    → rd
-```
+![JALR](../diagrams/previews/jalr_completo.png)
 
 ---
 
-# Inventario funcional de bloques de datos
+## Inventario funcional de bloques de datos
 
 La siguiente tabla resume únicamente los bloques que pertenecen al datapath o al almacenamiento funcional de la CPU.
 
 | Bloque | Naturaleza | Función de datos |
 |---|---|---|
 | PC | registro de 32 bits | conserva la dirección actual de fetch |
-| IMEM | memoria | entrega la word de instrucción almacenada |
-| IF/ID | registro interetapa | conserva instrucción, PC y contexto de fetch |
-| Register File | 32×32, 2R1W | entrega registros fuente y recibe writeback |
-| Immediate Generator | combinacional | reconstruye inmediatos I/S/B/U/J |
+| IMEM | memoria | entrega la palabra de instrucción almacenada |
+| `IF/ID` | registro interetapa | conserva instrucción, PC y contexto de fetch |
+| `Register File` | 32×32, 2R1W | entrega registros fuente y recibe writeback |
+| `Immediate Generator` | combinacional | reconstruye inmediatos I/S/B/U/J |
 | WB→ID Bypass path | camino combinacional | sustituye lecturas del RF por `wb_value` cuando coincide el destino |
-| ID/EX | registro interetapa | conserva operandos base, inmediato, identidad y contexto |
-| Forward MUX A | mux 3:1 | produce `rs1_effective` |
-| Forward MUX B | mux 3:1 | produce `rs2_effective` |
-| ALU Source MUX | mux 2:1 | selecciona `rs2_effective` o inmediato como operando B |
+| `ID/EX` | registro interetapa | conserva operandos base, inmediato, identidad y contexto |
+| `Forward MUX A` | mux 3:1 | produce `rs1_effective` |
+| `Forward MUX B` | mux 3:1 | produce `rs2_effective` |
+| `ALU Source MUX` | mux 2:1 | selecciona `rs2_effective` o inmediato como operando B |
 | ALU | unidad funcional | realiza operación aritmética, lógica, comparación o dirección |
-| Target Adder | combinacional | calcula `pc_relative_target` |
+| `Target Adder` | combinacional | calcula `pc_relative_target` |
 | JALR path | combinacional | calcula `jalr_target` con bit 0 limpio |
-| Link Adder | combinacional | calcula `PC+4` para JAL/JALR |
-| Result path / Result MUX | camino combinacional | produce `ex_result` a partir de ALU, inmediato o link |
-| EX/MEM | registro interetapa | conserva `ex_result`, `store_data` e identidad |
+| `Link Adder` | combinacional | calcula `PC+4` para JAL/JALR |
+| Result path / `Result MUX` | camino combinacional | produce `ex_result` a partir de ALU, inmediato o link |
+| `EX/MEM` | registro interetapa | conserva `ex_result`, `store_data` e identidad |
 | DMEM | memoria | recibe dirección y dato de store; produce dato de load |
 | Load Select / Extend | combinacional | selecciona bytes por dirección y tamaño, ensambla y extiende la lectura lógica para producir `load_value` |
-| WB Value MUX | mux 2:1 | produce `wb_value` a partir de `ex_result` o `load_value` |
-| MEM/WB | registro interetapa | conserva `wb_value` e identidad hasta WB |
+| `WB Value MUX` | mux 2:1 | produce `wb_value` a partir de `ex_result` o `load_value` |
+| `MEM/WB` | registro interetapa | conserva `wb_value` e identidad hasta WB |
 
 No se incluyen en esta tabla bloques cuyo rol principal sea decidir acciones, detectar hazards, arbitrar comandos o confirmar faults, porque pertenecen al plano de control.
 
 ---
 
-# Qué deliberadamente no cubre este documento
+<a id="referencias-a-los-documentos-de-control-y-de-etapa"></a>
 
-Para mantener una separación clara, este documento no desarrolla:
-
-- cómo se generan las señales de control;
-- cómo se decide forwarding;
-- cuándo se inserta un stall `load-use`;
-- cuándo se descarta trabajo por redirect;
-- cómo se detectan y confirman faults;
-- cómo se selecciona el próximo PC desde el punto de vista del control;
-- cómo RUN, STEP u HOLD autorizan ciclos;
-- ni cómo se arbitran LOAD, RUN y STEP.
-
-Todos esos temas se apoyan en el datapath, pero no forman parte del datapath mismo.
-
----
-
-# Referencias a los documentos de control y de etapa
+## Referencias y trazabilidad
 
 Los caminos de datos descritos aquí se complementan con los siguientes documentos:
 
-- [Etapa IF](stage_if.md): realización local de fetch y captura en IF/ID.
-- [Etapa ID](stage_id.md): estructura local de lecturas, inmediatos y datos que entran a ID/EX.
+- [Etapa IF](stage_if.md): realización local de fetch y captura en `IF/ID`.
+- [Etapa ID](stage_id.md): estructura local de lecturas, inmediatos y datos que entran a `ID/EX`.
 - [Etapa EX](stage_ex.md): realización local de operandos efectivos, ALU, targets, link y `ex_result`.
 - [Etapa MEM](stage_mem.md): realización local de `load_value`, stores y selección de `wb_value`.
-- [Etapa WB](stage_wb.md): commit final de `wb_value` en el Register File.
+- [Etapa WB](stage_wb.md): commit final de `wb_value` en el `Register File`.
 - [Control del pipeline y hazards](control_and_hazards.md): forwarding, stalls, bubbles, flushes y acciones del pipeline.
 - [Faults, redirects y terminación](faults_and_termination.md): redirects, confirmación de `halt` o fault y drain.
 - [Control de ejecución y sesión](execution_control.md): autorización de ciclos de la CPU.

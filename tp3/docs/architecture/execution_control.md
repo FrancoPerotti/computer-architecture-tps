@@ -1,18 +1,59 @@
 # Control de ejecución y sesión
 
-## Imagen, sesión y ejecución
+- **Tipo:** arquitectura. 
+- **Estado documental:** especificación vigente.
 
-El procesador distingue entre el programa que está almacenado y una ejecución concreta de ese programa. La **imagen** es el contenido confirmado de IMEM; una **sesión** es una ejecución de esa imagen desde un estado inicial limpio hasta que termina normalmente o por fault.
+**Índice**
 
-Esta separación permite reutilizar una misma imagen varias veces. Después de una ejecución, el programa puede seguir cargado en IMEM, pero una sesión nueva vuelve a comenzar con un estado de ejecución reinicializado: `PC=0`, Register File en cero, pipeline vacío, DMEM lógicamente en cero y `cycle_count=0`.
+- [Propósito y alcance](#propósito-y-alcance)
+- [Clock físico y ciclo de la CPU](#clock-físico-y-ciclo-de-la-cpu)
+- [Por qué hace falta un control global](#por-qué-hace-falta-un-control-global)
+- [Comenzar desde una imagen inexistente](#comenzar-desde-una-imagen-inexistente)
+- [RUN: ejecución continua](#run-ejecución-continua)
+- [STEP: ejecución de un solo ciclo](#step-ejecución-de-un-solo-ciclo)
+- [Cuando se confirma halt o fault](#cuando-se-confirma-halt-o-fault)
+- [Después de FINISHED o FAULT](#después-de-finished-o-fault)
+- [LOAD durante una sesión existente](#load-durante-una-sesión-existente)
+- [RESET](#reset)
+- [FSM global](#fsm-global)
+- [Estado global asociado a la sesión](#estado-global-asociado-a-la-sesión)
+- [Aceptación de LOAD, RUN y STEP](#aceptación-de-load-run-y-step)
+- [Autorización de un ciclo de la CPU](#autorización-de-un-ciclo-de-la-cpu)
+- [Origen del ciclo](#origen-del-ciclo)
+- [Resultado de un ciclo](#resultado-de-un-ciclo)
+- [Pipeline vacío](#pipeline-vacío)
+- [HOLD](#hold)
+- [Preparación y prioridad global](#preparación-y-prioridad-global)
+- [Contador lógico de ciclos](#contador-lógico-de-ciclos)
+- [Señales derivadas de global_state](#señales-derivadas-de-global_state)
+- [Tabla de transiciones](#tabla-de-transiciones)
+- [Invariantes y condiciones de borde](#invariantes-y-condiciones-de-borde)
+- [Referencias y trazabilidad](#referencias-y-trazabilidad)
 
-Por eso cargar un programa y ejecutarlo no son la misma operación. La carga establece qué instrucciones existen; la preparación establece desde qué estado comienza una ejecución; RUN y STEP determinan cómo esa ejecución avanza en el tiempo.
+<a id="imagen-sesión-y-ejecución"></a>
+
+## Propósito y alcance
+
+Este documento define el control global que administra las sesiones de ejecución del procesador. Su función es coordinar el programa cargado, la preparación del estado inicial, la aceptación de comandos y la autorización de los ciclos efectivos de la CPU.
+
+El alcance comprende:
+
+- La distinción entre la **imagen** almacenada en IMEM y una **sesión** concreta que ejecuta esa imagen.
+- La inicialización del estado de una sesión: `PC=0`, banco de registros en cero, pipeline vacío, DMEM lógicamente en cero y `cycle_count=0`.
+- La diferencia entre el clock físico del sistema y un ciclo efectivo indicado por `cpu_cycle_fire`.
+- La aceptación y el significado de `LOAD`, `RUN` y `STEP` según el estado global de la sesión.
+- La autorización de ciclos normales, ciclos de `STEP`, stalls, redirects, drenados y terminaciones por `halt` o fault.
+- Las transiciones de la FSM global, el contador lógico de ciclos y el comportamiento posterior a `FINISHED` o `FAULT`.
+
+La **imagen** es el contenido de IMEM que fue cargado y confirmado; no cambia simplemente porque una sesión avance o termine. Una **sesión** es una ejecución de esa imagen desde un estado inicial limpio hasta una terminación normal o por fault. Por eso la misma imagen puede ejecutarse varias veces: al preparar una nueva sesión se reinicializa el estado de ejecución, aunque las instrucciones permanezcan cargadas en IMEM.
+
+Cargar y ejecutar son operaciones distintas. `LOAD` establece qué instrucciones forman la imagen; la preparación establece desde qué estado comienza la sesión; `RUN` habilita el avance continuo y `STEP` autoriza ciclos individuales. El clock físico puede seguir funcionando durante cualquiera de estas actividades, pero el procesador solo avanza cuando el control global autoriza un ciclo efectivo.
 
 <a id="clock-físico-y-ciclo-cpu"></a>
 
 ## Clock físico y ciclo de la CPU
 
-El clock físico del sistema continúa funcionando incluso cuando el pipeline no está ejecutando instrucciones. Puede haber actividad mientras se carga una imagen, se prepara una sesión, se espera una orden del usuario o se transmite información de Debug.
+El clock físico es el reloj común del sistema y continúa generando flancos aunque la CPU no esté ejecutando instrucciones. Durante una carga, la preparación de una sesión, la espera de un comando o una transferencia de Debug pueden seguir avanzando otros bloques de control, mientras el PC y los registros del pipeline permanecen retenidos. Por eso, que ocurra un flanco físico no implica necesariamente que una instrucción haya avanzado.
 
 La arquitectura distingue entonces entre un flanco físico y un **ciclo efectivo de la CPU**.
 
@@ -28,7 +69,7 @@ Cuando:
 cpu_cycle_fire = 0
 ```
 
-el pipeline no ejecuta un ciclo. El sistema puede seguir activo en otros subsistemas, pero el estado de la CPU permanece retenido salvo que una operación global, como RESET, LOAD aceptado o preparación de sesión, esté modificándolo.
+el pipeline no ejecuta un ciclo. El sistema puede seguir activo en otros subsistemas, pero el estado de la CPU permanece retenido salvo que una operación global, como `RESET`, `LOAD` aceptado o preparación de sesión, esté modificándolo.
 
 Esta separación permite utilizar el mismo clock físico para todo el sistema sin confundir actividad general con avance del procesador.
 
@@ -36,11 +77,28 @@ Esta separación permite utilizar el mismo clock físico para todo el sistema si
 
 El control interno del pipeline responde qué ocurre **dentro de un ciclo de la CPU ya autorizado**. Si aparece una dependencia, decide qué registros retener; si una instrucción redirige el flujo, descarta las posteriores; si se confirma `halt` o un fault, deja de admitir trabajo nuevo y determina qué instrucciones pueden terminar.
 
-Antes de autorizar cualquier ciclo, el sistema necesita saber si hay una imagen cargada, si la sesión ya fue preparada, si se ejecuta en modo continuo o paso a paso, si quedan instrucciones por drenar después de confirmar `halt` o fault, o si la sesión ya terminó.
+Antes de autorizar cualquier ciclo, el sistema necesita conocer:
 
-Además, una misma orden externa puede significar cosas diferentes según ese contexto. Un STEP en una sesión lista ejecuta el primer ciclo; en `STEPPING` ejecuta un ciclo adicional; durante un drain STEP avanza únicamente trabajo anterior; después de `FINISHED` o `FAULT` inicia la preparación de una sesión nueva.
+- Si hay una imagen cargada.
+- Si la sesión ya fue preparada.
+- Si se ejecuta en modo continuo o paso a paso.
+- Si quedan instrucciones por drenar después de confirmar `halt` o fault.
+- Si la sesión ya terminó.
 
-Por eso la arquitectura conserva una fase global mediante `global_state`. La FSM global no reemplaza al control del pipeline; conserva el contexto necesario para decidir qué operaciones son posibles y cuándo corresponde generar `cpu_cycle_fire`.
+Una misma orden externa puede significar cosas diferentes según el contexto. Para `STEP`, los casos son:
+
+| Contexto                        | Efecto de `STEP`                           |
+|---------------------------------|--------------------------------------------|
+| Sesión lista                    | Ejecuta el primer ciclo.                   |
+| `STEPPING`                      | Ejecuta un ciclo adicional.                |
+| Drain `STEP`                    | Avanza únicamente trabajo anterior.        |
+| Después de `FINISHED` o `FAULT` | Inicia la preparación de una sesión nueva. |
+
+Para conservar ese contexto, la arquitectura mantiene una fase global en `global_state`. Ese estado indica, entre otras cosas, si todavía no hay imagen, si la sesión está lista, si se está ejecutando o si debe drenarse o finalizarse el pipeline.
+
+La [representación física aprobada](global_state_encoding.md) utiliza catorce bits one-hot: `NO_IMAGE` ocupa el bit cero y los demás estados ocupan un bit cada uno. Además, existe una conversión combinacional compartida desde esa representación al código UART de ocho bits utilizado por el controlador y Debug. Las transiciones entre estados mantienen el contrato definido para cada situación.
+
+La FSM global no reemplaza al control del pipeline. Su responsabilidad es conservar el contexto de la sesión y, a partir de ese contexto, determinar qué operaciones externas son posibles y cuándo puede generarse `cpu_cycle_fire`.
 
 ```mermaid
 flowchart LR
@@ -68,7 +126,7 @@ En este esquema la FSM conserva la fase de la sesión, `Cycle Authorization` dec
 
 ---
 
-# Comenzar desde una imagen inexistente
+## Comenzar desde una imagen inexistente
 
 Después de reset no existe una imagen ejecutable confirmada. El sistema se encuentra en `NO_IMAGE`, con:
 
@@ -76,9 +134,9 @@ Después de reset no existe una imagen ejecutable confirmada. El sistema se encu
 loaded_image_size_bytes = 0
 ```
 
-En esa situación RUN y STEP no pueden iniciar una ejecución porque todavía no hay programa válido.
+En esa situación `RUN` y `STEP` no pueden iniciar una ejecución porque todavía no hay programa válido.
 
-Una carga aceptada lleva al sistema a `LOADING`. Durante esta fase el Loader recibe y escribe la nueva imagen en IMEM. El progreso de esa carga pertenece al Loader y todavía no forma parte del estado ejecutable de la CPU.
+Una carga aceptada lleva al sistema a `LOADING`. Durante esta fase el `Loader` recibe y escribe la nueva imagen en IMEM. El progreso de esa carga pertenece al `Loader` y todavía no forma parte del estado ejecutable de la CPU.
 
 Si la carga falla, el sistema vuelve a `NO_IMAGE`. Si termina correctamente, aparece `load_ok` y comienza una fase distinta: la imagen ya fue recibida, pero todavía falta preparar el estado inicial de la primera sesión.
 
@@ -92,7 +150,13 @@ flowchart LR
     P -->|prepare_done| R[READY]
 ```
 
-Durante `PREPARING_READY`, Session Preparation establece el estado inicial de ejecución. El PC vuelve a cero, el Register File se observa en cero, los registros interetapa quedan inválidos, DMEM presenta el cero lógico de una sesión nueva y `cycle_count` vuelve a cero.
+Durante `PREPARING_READY`, `Session Preparation` establece el estado inicial de ejecución:
+
+- `PC` vuelve a cero.
+- El banco de registros queda lógicamente en cero.
+- Los registros interetapa quedan inválidos.
+- DMEM presenta el cero lógico de una sesión nueva.
+- `cycle_count` vuelve a cero.
 
 La preparación puede ocupar varios clocks físicos. Mientras no termina, no existe un ciclo de la CPU.
 
@@ -102,15 +166,15 @@ La preparación puede ocupar varios clocks físicos. Mientras no termina, no exi
 
 ---
 
-# RUN: ejecución continua
+## RUN: ejecución continua
 
-RUN inicia o reanuda una ejecución continua.
+`RUN` inicia o reanuda una ejecución continua.
 
-Cuando RUN se acepta en `READY`, el mismo flanco ya constituye el primer ciclo de la CPU. Si ese ciclo no termina la sesión, el estado siguiente es `RUNNING`.
+Cuando `RUN` se acepta en `READY`, el mismo flanco ya constituye el primer ciclo de la CPU. Si ese ciclo no termina la sesión, el estado siguiente es `RUNNING`.
 
 En `RUNNING`, cada flanco habilitado solicita automáticamente otro ciclo de la CPU. El procesador continúa de esta manera hasta que se produce una condición que inicia la terminación de la ejecución.
 
-Esto no implica que todos los ciclos sean iguales. Dentro de `RUNNING`, el control del pipeline puede seleccionar avance normal, stall `load-use`, redirect o confirmación de `halt` o fault. Todos ellos siguen siendo ciclos de la CPU porque `cpu_cycle_fire=1`.
+La ejecución continua no implica que todos los ciclos sean iguales. Dentro de `RUNNING`, el control del pipeline puede seleccionar avance normal, stall `load-use`, redirect o confirmación de `halt` o fault. Todos ellos siguen siendo ciclos de la CPU porque `cpu_cycle_fire=1`.
 
 ```mermaid
 flowchart LR
@@ -122,15 +186,15 @@ Un stall no detiene el modo continuo; solamente altera cómo avanza el pipeline 
 
 ---
 
-# STEP: ejecución de un solo ciclo
+## STEP: ejecución de un solo ciclo
 
-STEP utiliza el mismo datapath que RUN, pero cambia la política temporal.
+`STEP` utiliza el mismo datapath que `RUN`, pero cambia la política temporal.
 
-Con RUN, después de un ciclo se solicita otro automáticamente. Con STEP, se ejecuta exactamente un ciclo y después se vuelve a esperar.
+Con `RUN`, después de un ciclo se solicita otro automáticamente. Con `STEP`, se ejecuta exactamente un ciclo y después se vuelve a esperar.
 
-Si STEP se acepta en `READY`, ese flanco ejecuta el primer ciclo de la sesión. Si no se confirma `halt` o fault, el estado siguiente es `STEPPING`.
+Si `STEP` se acepta en `READY`, ese flanco ejecuta el primer ciclo de la sesión. Si no se confirma `halt` o fault, el estado siguiente es `STEPPING`.
 
-`STEPPING` representa una sesión activa detenida entre dos ciclos. Por sí solo no solicita `cpu_cycle_fire`; necesita una nueva orden RUN o STEP.
+`STEPPING` representa una sesión activa detenida entre dos ciclos. Por sí solo no solicita `cpu_cycle_fire`; necesita una nueva orden `RUN` o `STEP`.
 
 ```mermaid
 flowchart LR
@@ -142,13 +206,13 @@ flowchart LR
 
 Las flechas anteriores muestran el caso en que el ciclo ejecutado no confirma `halt` ni fault.
 
-Un stall `load-use` consume el STEP. Aunque el consumidor permanezca retenido, el ciclo existió: el load y las instrucciones anteriores avanzaron. No se agrega un segundo ciclo automático para completar la dependencia.
+Un stall `load-use` consume el `STEP`. Aunque el consumidor permanezca retenido, el ciclo existió: el load y las instrucciones anteriores avanzaron. No se agrega un segundo ciclo automático para completar la dependencia.
 
 ---
 
 <a id="cuando-una-sesión-encuentra-una-frontera-terminal"></a>
 
-# Cuando se confirma `halt` o fault
+## Cuando se confirma `halt` o fault
 
 Una sesión puede terminar normalmente mediante `halt` o excepcionalmente mediante un fault.
 
@@ -158,9 +222,9 @@ Esas instrucciones conservan sus efectos. Por eso la arquitectura no salta siemp
 
 Si todavía queda trabajo anterior, aparece una fase intermedia de **drain**.
 
-Durante el drain no se admite trabajo nuevo. La instrucción que provoca un fault ya fue descartada, o `halt` ya se consumió en EX. Las instrucciones posteriores también se descartaron; únicamente continúan las anteriores hasta abandonar el pipeline.
+Durante el drain no se admite trabajo nuevo. La instrucción que provoca un fault ya fue descartada, o `halt` ya se consumió en EX. Las instrucciones posteriores también se descartaron; únicamente continúan las instrucciones anteriores hasta abandonar el pipeline.
 
-## Drain después de RUN
+### Drain después de RUN
 
 Si `halt` o fault se confirmó durante la ejecución continua, el drenado también continúa automáticamente.
 
@@ -186,17 +250,17 @@ flowchart LR
     E -->|pipeline vacío| X
 ```
 
-En los estados AUTO, cada flanco elegible solicita un nuevo ciclo de drain hasta que desaparece la última instrucción anterior.
+En los estados `AUTO`, cada flanco elegible solicita un nuevo ciclo de drain hasta que desaparece la última instrucción anterior.
 
 `FINISHED` representa una terminación normal con pipeline vacío. `FAULT` representa una terminación excepcional con pipeline vacío.
 
-## Drain después de STEP
+### Drain después de STEP
 
-Si `halt` o fault se confirmó durante un ciclo originado por STEP, el drenado respeta la modalidad paso a paso.
+Si `halt` o fault se confirmó durante un ciclo originado por `STEP`, el drenado respeta la modalidad paso a paso.
 
-`HALT_DRAIN_STEP` y `FAULT_DRAIN_STEP` no avanzan automáticamente. Cada STEP autoriza un único ciclo adicional de drain.
+`HALT_DRAIN_STEP` y `FAULT_DRAIN_STEP` no avanzan automáticamente. Cada `STEP` autoriza un único ciclo adicional de drain.
 
-RUN también puede aceptarse en esos estados. En ese caso, el ciclo actual se ejecuta y, si todavía queda trabajo después del flanco, el resto del drenado pasa a modalidad AUTO.
+`RUN` también puede aceptarse en esos estados. En ese caso, el ciclo actual se ejecuta y, si todavía queda trabajo después del flanco, el resto del drenado pasa a modalidad `AUTO`.
 
 ```mermaid
 flowchart LR
@@ -222,15 +286,15 @@ Así, la modalidad de ejecución en la que se confirmó `halt` o fault sigue det
 
 ---
 
-# Después de `FINISHED` o `FAULT`
+## Después de `FINISHED` o `FAULT`
 
 Llegar a un estado terminal termina la sesión, pero no elimina necesariamente la imagen confirmada.
 
-La misma imagen puede ejecutarse otra vez. Sin embargo, RUN o STEP desde `FINISHED` o `FAULT` no reanudan la ejecución anterior. La sesión anterior ya terminó y su pipeline está vacío.
+La misma imagen puede ejecutarse otra vez. Sin embargo, `RUN` o `STEP` desde `FINISHED` o `FAULT` no reanudan la ejecución anterior. La sesión anterior ya terminó y su pipeline está vacío.
 
 Antes de ejecutar nuevamente se reconstruye el estado inicial.
 
-Si la nueva orden es RUN, la FSM entra en `PREPARING_RUN`. Si la orden es STEP, entra en `PREPARING_STEP`.
+Si la nueva orden es `RUN`, la FSM entra en `PREPARING_RUN`. Si la orden es `STEP`, entra en `PREPARING_STEP`.
 
 ```mermaid
 flowchart LR
@@ -252,11 +316,11 @@ Cuando la preparación termina, la nueva sesión ya está limpia antes del flanc
 
 ---
 
-# LOAD durante una sesión existente
+## LOAD durante una sesión existente
 
 Una nueva carga abandona la sesión vigente y reemplaza la imagen.
 
-LOAD puede aceptarse desde:
+`LOAD` puede aceptarse desde:
 
 ```text
 NO_IMAGE
@@ -276,17 +340,24 @@ loaded_image_size_bytes = 0
 
 El flanco no ejecuta un ciclo de la CPU de la sesión anterior.
 
-`RUNNING`, los drains AUTO, `LOADING` y los estados de preparación no aceptan LOAD. Una solicitud no elegible se rechaza y no altera por sí sola la ejecución actual. En particular, un LOAD rechazado durante `RUNNING` no cancela el ciclo automático correspondiente.
+`RUNNING`, los drains `AUTO`, `LOADING` y los estados de preparación no aceptan `LOAD`. Una solicitud no elegible se rechaza y no altera por sí sola la ejecución actual. En particular, un `LOAD` rechazado durante `RUNNING` no cancela el ciclo automático correspondiente.
 
 ---
 
-# RESET
+## RESET
 
-RESET tiene prioridad sobre cualquier otro efecto funcional.
+`RESET` tiene prioridad sobre cualquier otro efecto funcional.
 
-La orden UART RESET sigue el [intercambio externo aprobado](../decisions.md#acuerdo-parcial-de-dec-proto-002--intercambio-reset-con-aceptación-antes-del-reset-global): primero transmite `[RESET][ACCEPTED]` completa y luego genera la solicitud global de reset, al finalizar físicamente su segundo byte incluido Stop. El botón físico lo solicita directamente. El reset generado conserva el acondicionamiento y la prioridad funcional aquí definidos; no se agrega un estado global de espera UART.
+El reset puede originarse en la orden UART `RESET` o en el botón físico, pero ambas fuentes terminan convergiendo en la misma solicitud global:
 
-Durante la respuesta automática Debug, la capa de protocolo descarta RX y no reconoce RESET UART; la PC espera la respuesta completa antes de enviarlo. El botón físico sigue pudiendo solicitar reset de inmediato y abortar la transmisión. La exclusión de nuevas solicitudes se aplica desde el instante postciclo observado hasta finalizar físicamente el último byte, incluido Stop; no cambia la prioridad del reset funcional ni agrega estados a la FSM global. Véase el [acuerdo de envío exclusivo](../decisions.md#acuerdo-parcial-de-dec-proto-001--envío-exclusivo-de-debug-con-estado-retenido).
+- **Orden UART:** sigue el [intercambio externo aprobado](../decisions.md#acuerdo-parcial-de-dec-proto-002--intercambio-reset-con-aceptación-antes-del-reset-global). El sistema primero transmite completa la respuesta `[RESET][ACCEPTED]` y recién después genera la solicitud global, cuando finaliza físicamente el segundo byte, incluido su bit de Stop.
+- **Botón físico:** genera la solicitud directamente, sin esperar una respuesta UART.
+
+La solicitud resultante conserva el acondicionamiento y la prioridad funcional definidos para el reset. Las fuentes se reúnen antes del `reset_sync` del TP2, que utiliza dos etapas y entrega una salida común para el consumo funcional síncrono. No se agrega un estado global de espera UART; la integración completa se describe en [Reset Integration](reset_integration.md).
+
+Durante una respuesta automática de Debug, la capa de protocolo descarta los datos recibidos y no reconoce una orden UART `RESET`. La PC debe esperar a que termine la respuesta completa antes de enviar esa orden. El botón físico, en cambio, puede solicitar reset inmediatamente y abortar la transmisión en curso.
+
+La exclusión de nuevas solicitudes UART comienza en el instante postciclo observado y se mantiene hasta que termina físicamente el último byte de la respuesta, incluido su bit de Stop. Esta exclusión no cambia la prioridad del reset funcional ni agrega estados a la FSM global. Véase el [acuerdo de envío exclusivo](../decisions.md#acuerdo-parcial-de-dec-proto-001--envío-exclusivo-de-debug-con-estado-retenido).
 
 Desde cualquier estado lleva al sistema a:
 
@@ -308,85 +379,79 @@ IF/ID.fetch_fault_valid = 0
 loaded_image_size_bytes = 0
 ```
 
-En ese mismo flanco no se realizan stores, writebacks, operaciones del Loader ni operaciones de mantenimiento.
+En ese mismo flanco no se realizan stores, writebacks, operaciones del `Loader` ni operaciones de mantenimiento.
 
 IMEM y DMEM no necesitan borrarse físicamente. El tamaño confirmado invalida la imagen anterior y la preparación de la próxima sesión restablece el cero lógico de DMEM.
 
 ---
 
-# FSM global
+## FSM global
 
 Las situaciones anteriores se representan mediante `global_state`.
 
-La FSM registra únicamente la fase de la sesión. No escribe directamente PC, Register File, memorias o registros interetapa, y tampoco selecciona las acciones internas del pipeline.
+La FSM registra únicamente la fase de la sesión. No escribe directamente PC, banco de registros, memorias o registros interetapa, y tampoco selecciona las acciones internas del pipeline.
 
 Sus estados son:
 
-| Estado | Significado |
-|---|---|
-| `NO_IMAGE` | No existe una imagen ejecutable confirmada. |
-| `LOADING` | Se recibe y valida una imagen nueva. |
-| `PREPARING_READY` | Se prepara la primera sesión de una imagen recién cargada. |
-| `READY` | Imagen y sesión preparadas, esperando RUN o STEP. |
-| `RUNNING` | Ejecución continua. |
-| `STEPPING` | Ejecución paso a paso, detenida entre órdenes. |
-| `HALT_DRAIN_AUTO` | `halt` confirmado con trabajo anterior; drain automático. |
-| `HALT_DRAIN_STEP` | `halt` confirmado con instrucciones anteriores pendientes; drenado mediante órdenes STEP. |
-| `FAULT_DRAIN_AUTO` | fault confirmado con trabajo anterior; drain automático. |
-| `FAULT_DRAIN_STEP` | fault confirmado con instrucciones anteriores pendientes; drenado mediante órdenes STEP. |
-| `FINISHED` | Terminación normal con pipeline vacío. |
-| `FAULT` | Terminación excepcional con pipeline vacío. |
-| `PREPARING_RUN` | Preparación de una sesión nueva con RUN pendiente. |
-| `PREPARING_STEP` | Preparación de una sesión nueva con STEP pendiente. |
+| Estado             | Significado                                                                                 |
+|--------------------|---------------------------------------------------------------------------------------------|
+| `NO_IMAGE`         | No existe una imagen ejecutable confirmada.                                                 |
+| `LOADING`          | Se recibe y valida una imagen nueva.                                                        |
+| `PREPARING_READY`  | Se prepara la primera sesión de una imagen recién cargada.                                  |
+| `READY`            | Imagen y sesión preparadas, esperando `RUN` o `STEP`.                                       |
+| `RUNNING`          | Ejecución continua.                                                                         |
+| `STEPPING`         | Ejecución paso a paso, detenida entre órdenes.                                              |
+| `HALT_DRAIN_AUTO`  | `halt` confirmado con trabajo anterior; drain automático.                                   |
+| `HALT_DRAIN_STEP`  | `halt` confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`. |
+| `FAULT_DRAIN_AUTO` | fault confirmado con trabajo anterior; drain automático.                                    |
+| `FAULT_DRAIN_STEP` | fault confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`.  |
+| `FINISHED`         | Terminación normal con pipeline vacío.                                                      |
+| `FAULT`            | Terminación excepcional con pipeline vacío.                                                 |
+| `PREPARING_RUN`    | Preparación de una sesión nueva con `RUN` pendiente.                                        |
+| `PREPARING_STEP`   | Preparación de una sesión nueva con `STEP` pendiente.                                       |
 
 La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla anterior. No impone la codificación física de la FSM. Véase el [acuerdo de estados](../decisions.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state).
 
-La modalidad AUTO/STEP del drain forma parte de `global_state`; no existe un registro `drain_auto`. El tipo terminal también está representado por el estado; no existe un flip-flop separado `terminal_kind`.
+La modalidad `AUTO`/`STEP` del drain forma parte de `global_state`; no existe un registro `drain_auto`. El tipo terminal también está representado por el estado; no existe un flip-flop separado `terminal_kind`.
 
 ---
 
-# Estado global asociado a la sesión
+## Estado global asociado a la sesión
 
 Además de `global_state`, el sistema conserva otros registros globales:
 
-| Registro | Función |
-|---|---|
-| `fault_cause[2:0]` | Causa del fault confirmado. |
-| `fault_pc[31:0]` | PC de la operación causante. |
-| `loaded_image_size_bytes` | Tamaño de la imagen confirmada. |
-| `cycle_count[63:0]` | Cantidad de ciclos efectivos de la CPU de la sesión. |
+| Registro                  | Función                                              |
+|---------------------------|------------------------------------------------------|
+| `fault_cause[2:0]`        | Causa del fault confirmado.                          |
+| `fault_pc[31:0]`          | PC de la operación causante.                         |
+| `loaded_image_size_bytes` | Tamaño de la imagen confirmada.                      |
+| `cycle_count[63:0]`       | Cantidad de ciclos efectivos de la CPU de la sesión. |
 
-PC, Register File, memorias y registros interetapa pertenecen al datapath.
+PC, banco de registros, memorias y registros interetapa pertenecen al datapath.
 
 Señales como `image_valid`, `program_finished`, `fault_info_valid`, `continuous_mode` o `drain_mode` se derivan combinacionalmente de este estado y no agregan nuevos registros persistentes.
 
 ---
 
-# Aceptación de LOAD, RUN y STEP
+## Aceptación de LOAD, RUN y STEP
 
-LOAD, RUN y STEP son operaciones conceptuales. Su codificación UART se define en el protocolo externo.
+`LOAD`, `RUN` y `STEP` son operaciones conceptuales. Su codificación UART se define en el protocolo externo.
 
-El Command Arbiter primero comprueba si cada operación es elegible en el estado actual y después aplica la prioridad:
+El `Command Arbiter` primero comprueba si cada operación es elegible en el estado actual y después aplica la prioridad:
 
 ```text
-RESET
-    >
-LOAD
-    >
-STEP
-    >
-RUN
+RESET > LOAD > STEP > RUN
 ```
 
-Por eso un LOAD aceptado excluye RUN y STEP, mientras un STEP aceptado excluye RUN.
+Por eso un `LOAD` aceptado excluye `RUN` y `STEP`, mientras un `STEP` aceptado excluye `RUN`.
 
 La elegibilidad es:
 
-| Operación | Estados elegibles |
-|---|---|
-| LOAD | `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT` |
-| RUN | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT` |
-| STEP | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT` |
+| Operación | Estados elegibles                                                                           |
+|-----------|---------------------------------------------------------------------------------------------|
+| `LOAD`    | `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT` |
+| `RUN`     | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`             |
+| `STEP`    | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`             |
 
 `load_accept`, `run_accept` y `step_accept` representan solicitudes que ya superaron este arbitraje.
 
@@ -394,7 +459,7 @@ La elegibilidad es:
 
 <a id="autorización-de-un-ciclo-cpu"></a>
 
-# Autorización de un ciclo de la CPU
+## Autorización de un ciclo de la CPU
 
 Una vez conocido el estado actual y las órdenes aceptadas, `Cycle Authorization` determina si existe un ciclo efectivo de la CPU.
 
@@ -457,11 +522,11 @@ Estas ecuaciones utilizan siempre `global_state` actual. `next_state` no realime
 
 ---
 
-# Origen del ciclo
+## Origen del ciclo
 
 Cuando un ciclo confirma `halt` o fault, el control necesita distinguir si las instrucciones anteriores continuarán automáticamente o por pasos.
 
-Un ciclo es de origen continuo cuando proviene de `RUNNING`, de un drain AUTO, de una orden RUN aceptada en un estado de espera de comandos o del final de `PREPARING_RUN`.
+Un ciclo es de origen continuo cuando proviene de `RUNNING`, de un drain `AUTO`, de una orden `RUN` aceptada en un estado de espera de comandos o del final de `PREPARING_RUN`.
 
 ```text
 continuous_cycle =
@@ -489,40 +554,40 @@ cycle_from_continuous =
     && continuous_cycle
 ```
 
-Los demás ciclos efectivos corresponden a STEP.
+Los demás ciclos efectivos corresponden a `STEP`.
 
 No se registra el origen por separado; al confirmar `halt` o fault, el estado siguiente `*_AUTO` o `*_STEP` ya conserva esa información.
 
 ---
 
-# Resultado de un ciclo
+## Resultado de un ciclo
 
 Para un ciclo ejecutado desde `READY`, `STEPPING`, `RUNNING`, `PREPARING_RUN` o `PREPARING_STEP`, el estado siguiente depende de si se confirmó `halt` o fault y del origen del ciclo.
 
-| Resultado | Origen STEP | Origen continuo |
-|---|---|---|
-| Sin confirmar `halt` o fault | `STEPPING` | `RUNNING` |
-| `halt_confirm` y pipeline vacío | `FINISHED` | `FINISHED` |
-| `halt_confirm` y quedan anteriores | `HALT_DRAIN_STEP` | `HALT_DRAIN_AUTO` |
-| `fault_confirm` y pipeline vacío | `FAULT` | `FAULT` |
+| Resultado                           | Origen `STEP`      | Origen continuo    |
+|-------------------------------------|--------------------|--------------------|
+| Sin confirmar `halt` o fault        | `STEPPING`         | `RUNNING`          |
+| `halt_confirm` y pipeline vacío     | `FINISHED`         | `FINISHED`         |
+| `halt_confirm` y quedan anteriores  | `HALT_DRAIN_STEP`  | `HALT_DRAIN_AUTO`  |
+| `fault_confirm` y pipeline vacío    | `FAULT`            | `FAULT`            |
 | `fault_confirm` y quedan anteriores | `FAULT_DRAIN_STEP` | `FAULT_DRAIN_AUTO` |
 
 Un redirect o un stall `load-use` no cambia esta clasificación.
 
-Durante un drain ya se ha determinado si la terminación es por `halt` o fault, y no se confirma otra condición de terminación. El siguiente estado depende solamente de si quedan instrucciones pendientes y, en los drains STEP, de si la orden aceptada fue STEP o RUN.
+Durante un drain ya se ha determinado si la terminación es por `halt` o fault, y no se confirma otra condición de terminación. El siguiente estado depende solamente de si quedan instrucciones pendientes y, en los drains `STEP`, de si la orden aceptada fue `STEP` o `RUN`.
 
-| Estado | Ciclo | Quedan anteriores | Pipeline vacío |
-|---|---|---|---|
-| `HALT_DRAIN_AUTO` | automático | `HALT_DRAIN_AUTO` | `FINISHED` |
-| `HALT_DRAIN_STEP` | STEP | `HALT_DRAIN_STEP` | `FINISHED` |
-| `HALT_DRAIN_STEP` | RUN | `HALT_DRAIN_AUTO` | `FINISHED` |
-| `FAULT_DRAIN_AUTO` | automático | `FAULT_DRAIN_AUTO` | `FAULT` |
-| `FAULT_DRAIN_STEP` | STEP | `FAULT_DRAIN_STEP` | `FAULT` |
-| `FAULT_DRAIN_STEP` | RUN | `FAULT_DRAIN_AUTO` | `FAULT` |
+| Estado             | Ciclo      | Quedan anteriores  | Pipeline vacío |
+|--------------------|------------|--------------------|----------------|
+| `HALT_DRAIN_AUTO`  | automático | `HALT_DRAIN_AUTO`  | `FINISHED`     |
+| `HALT_DRAIN_STEP`  | `STEP`     | `HALT_DRAIN_STEP`  | `FINISHED`     |
+| `HALT_DRAIN_STEP`  | `RUN`      | `HALT_DRAIN_AUTO`  | `FINISHED`     |
+| `FAULT_DRAIN_AUTO` | automático | `FAULT_DRAIN_AUTO` | `FAULT`        |
+| `FAULT_DRAIN_STEP` | `STEP`     | `FAULT_DRAIN_STEP` | `FAULT`        |
+| `FAULT_DRAIN_STEP` | `RUN`      | `FAULT_DRAIN_AUTO` | `FAULT`        |
 
 ---
 
-# Pipeline vacío
+## Pipeline vacío
 
 Para conocer si existe trabajo activo en el pipeline:
 
@@ -550,48 +615,44 @@ Así, si el ciclo actual consume la última instrucción anterior, la FSM puede 
 
 ---
 
-# HOLD
+## HOLD
 
-HOLD no es un estado adicional.
+`HOLD` no es un estado adicional.
 
 Describe un flanco en el que no existe ciclo de la CPU y tampoco una operación global superior modificando el estado de ejecución.
 
-Durante HOLD permanecen estables el PC, los registros interetapa, el Register File y `cycle_count`, y no se producen nuevos efectos de la CPU.
+Durante `HOLD` permanecen estables el PC, los registros interetapa, el banco de registros y `cycle_count`, y no se producen nuevos efectos de la CPU.
 
-Esto ocurre, por ejemplo, mientras `STEPPING` espera otra orden o mientras un drain STEP espera el siguiente STEP.
+Esto ocurre, por ejemplo, mientras `STEPPING` espera otra orden o mientras un drain `STEP` espera el siguiente `STEP`.
 
-HOLD y un stall `load-use` son situaciones diferentes:
+`HOLD` y un stall `load-use` son situaciones diferentes:
 
-| Situación | `cpu_cycle_fire` | Efecto |
-|---|---:|---|
-| stall `load-use` | 1 | parte del pipeline avanza |
-| HOLD | 0 | no existe avance CPU |
+| Situación        | `cpu_cycle_fire` | Efecto                    |
+|------------------|-----------------:|---------------------------|
+| stall `load-use` |                1 | parte del pipeline avanza |
+| `HOLD`           |                0 | no existe avance CPU      |
 
 ---
 
-# Preparación y prioridad global
+## Preparación y prioridad global
 
 Las acciones globales siguen esta prioridad:
 
 ```text
-RESET
-    >
-LOAD aceptado / preparación efectiva
-    >
-ciclo efectivo de la CPU
-    >
-HOLD
+RESET > LOAD aceptado / preparación efectiva > ciclo efectivo de la CPU > HOLD
 ```
 
-Session Preparation puede modificar PC, Register File, registros interetapa y metadata de DMEM mientras la sesión todavía no está lista.
+`Session Preparation` puede modificar PC, banco de registros, registros interetapa y metadatos de DMEM mientras la sesión todavía no está lista.
 
 `prepare_done=1` certifica que esas modificaciones ya terminaron antes del flanco actual. Por eso `PREPARING_RUN` y `PREPARING_STEP` pueden utilizar ese mismo flanco como primer ciclo de la nueva sesión sin competir con una escritura de preparación.
 
-Para LOAD en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../decisions.md#acuerdo-parcial-de-dec-proto-003--presupuesto-máximo-de-preparación-de-sesión) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en READY. Es una cota de diseño que deberá cumplir la secuencia física todavía pendiente; se completa apenas `prepare_done` lo permita, sin espera fija. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
+Para `LOAD` en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../decisions.md#acuerdo-parcial-de-dec-proto-003--presupuesto-máximo-de-preparación-de-sesión) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en `READY`. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
+
+La [realización aprobada de preparación](session_preparation.md) inicializa RF localmente y recorre los metadatos de DMEM con un índice. Separa la última limpieza de `prepare_done` y se completa apenas `prepare_done` lo permita, sin espera fija.
 
 ---
 
-# Contador lógico de ciclos
+## Contador lógico de ciclos
 
 `cycle_count` es un contador sin signo de 64 bits asociado a la sesión.
 
@@ -609,102 +670,106 @@ cycle_count.next =
 
 Cuenta avance normal, stalls `load-use`, redirects, ciclos que confirman `halt` o fault y cada ciclo de drain.
 
-No cuenta HOLD, clocks de carga, UART, Debug ni mantenimiento que no constituya un ciclo de la CPU.
+No cuenta `HOLD`, clocks de carga, UART, Debug ni mantenimiento que no constituya un ciclo de la CPU.
 
 El wrap de `0xffffffffffffffff` a cero no genera fault ni modifica el modo de ejecución.
 
 ---
 
-# Señales derivadas de `global_state`
+## Señales derivadas de `global_state`
 
 Las siguientes señales son decodificaciones combinacionales:
 
-| Señal | Estados |
-|---|---|
-| `loader_active` | `LOADING` |
-| `prepare_active` | `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP` |
-| `continuous_mode` | `RUNNING`, `HALT_DRAIN_AUTO`, `FAULT_DRAIN_AUTO` |
-| `step_mode` | `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP` |
-| `drain_mode` | los cuatro estados DRAIN |
-| `halt_drain_active` | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP` |
-| `fault_drain_active` | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP` |
-| `program_finished` | `FINISHED` |
-| `fault_active` / `fault_info_valid` | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP`, `FAULT` |
-| `fault_terminal` | `FAULT` |
+| Señal                               | Estados                                              |
+|-------------------------------------|------------------------------------------------------|
+| `loader_active`                     | `LOADING`                                            |
+| `prepare_active`                    | `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP` |
+| `continuous_mode`                   | `RUNNING`, `HALT_DRAIN_AUTO`, `FAULT_DRAIN_AUTO`     |
+| `step_mode`                         | `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`    |
+| `drain_mode`                        | los cuatro estados DRAIN                             |
+| `halt_drain_active`                 | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP`                 |
+| `fault_drain_active`                | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP`               |
+| `program_finished`                  | `FINISHED`                                           |
+| `fault_active` / `fault_info_valid` | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP`, `FAULT`      |
+| `fault_terminal`                    | `FAULT`                                              |
 
 No constituyen nuevos estados persistentes.
 
 ---
 
-# Tabla de transiciones
+## Tabla de transiciones
 
-RESET domina cualquier fila y lleva a `NO_IMAGE`.
+`RESET` domina cualquier fila y lleva a `NO_IMAGE`.
 
-| Estado actual | Evento | Ciclo CPU | Siguiente |
-|---|---|:-:|---|
-| `NO_IMAGE` | LOAD aceptado | no | `LOADING` |
-| `NO_IMAGE` | otro | no | `NO_IMAGE` |
-| `LOADING` | `load_ok` | no | `PREPARING_READY` |
-| `LOADING` | `load_fail` | no | `NO_IMAGE` |
-| `LOADING` | carga en curso | no | `LOADING` |
-| `PREPARING_READY` | `prepare_done` | no | `READY` |
-| `PREPARING_READY` | sin `prepare_done` | no | `PREPARING_READY` |
-| `READY` | LOAD aceptado | no | `LOADING` |
-| `READY` | STEP aceptado | sí | según resultado del ciclo STEP |
-| `READY` | RUN aceptado | sí | según resultado del ciclo continuo |
-| `READY` | sin orden | no | `READY` |
-| `STEPPING` | LOAD aceptado | no | `LOADING` |
-| `STEPPING` | STEP aceptado | sí | según resultado del ciclo STEP |
-| `STEPPING` | RUN aceptado | sí | según resultado del ciclo continuo |
-| `STEPPING` | sin orden | no | `STEPPING` |
-| `RUNNING` | automático | sí | según resultado del ciclo continuo |
-| `HALT_DRAIN_AUTO` | automático | sí | `HALT_DRAIN_AUTO` o `FINISHED` |
-| `FAULT_DRAIN_AUTO` | automático | sí | `FAULT_DRAIN_AUTO` o `FAULT` |
-| `HALT_DRAIN_STEP` | LOAD aceptado | no | `LOADING` |
-| `HALT_DRAIN_STEP` | STEP aceptado | sí | `HALT_DRAIN_STEP` o `FINISHED` |
-| `HALT_DRAIN_STEP` | RUN aceptado | sí | `HALT_DRAIN_AUTO` o `FINISHED` |
-| `HALT_DRAIN_STEP` | sin orden | no | `HALT_DRAIN_STEP` |
-| `FAULT_DRAIN_STEP` | LOAD aceptado | no | `LOADING` |
-| `FAULT_DRAIN_STEP` | STEP aceptado | sí | `FAULT_DRAIN_STEP` o `FAULT` |
-| `FAULT_DRAIN_STEP` | RUN aceptado | sí | `FAULT_DRAIN_AUTO` o `FAULT` |
-| `FAULT_DRAIN_STEP` | sin orden | no | `FAULT_DRAIN_STEP` |
-| `FINISHED` | LOAD aceptado | no | `LOADING` |
-| `FINISHED` | RUN aceptado | no | `PREPARING_RUN` |
-| `FINISHED` | STEP aceptado | no | `PREPARING_STEP` |
-| `FINISHED` | sin orden | no | `FINISHED` |
-| `FAULT` | LOAD aceptado | no | `LOADING` |
-| `FAULT` | RUN aceptado | no | `PREPARING_RUN` |
-| `FAULT` | STEP aceptado | no | `PREPARING_STEP` |
-| `FAULT` | sin orden | no | `FAULT` |
-| `PREPARING_RUN` | `prepare_done` | sí | según resultado del ciclo continuo |
-| `PREPARING_RUN` | sin `prepare_done` | no | `PREPARING_RUN` |
-| `PREPARING_STEP` | `prepare_done` | sí | según resultado del ciclo STEP |
-| `PREPARING_STEP` | sin `prepare_done` | no | `PREPARING_STEP` |
+| Estado actual      | Evento             | Ciclo CPU | Siguiente                          |
+|--------------------|--------------------|:---------:|------------------------------------|
+| `NO_IMAGE`         | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `NO_IMAGE`         | otro               |    no     | `NO_IMAGE`                         |
+| `LOADING`          | `load_ok`          |    no     | `PREPARING_READY`                  |
+| `LOADING`          | `load_fail`        |    no     | `NO_IMAGE`                         |
+| `LOADING`          | carga en curso     |    no     | `LOADING`                          |
+| `PREPARING_READY`  | `prepare_done`     |    no     | `READY`                            |
+| `PREPARING_READY`  | sin `prepare_done` |    no     | `PREPARING_READY`                  |
+| `READY`            | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `READY`            | `STEP` aceptado    |    sí     | según resultado del ciclo `STEP`   |
+| `READY`            | `RUN` aceptado     |    sí     | según resultado del ciclo continuo |
+| `READY`            | sin orden          |    no     | `READY`                            |
+| `STEPPING`         | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `STEPPING`         | `STEP` aceptado    |    sí     | según resultado del ciclo `STEP`   |
+| `STEPPING`         | `RUN` aceptado     |    sí     | según resultado del ciclo continuo |
+| `STEPPING`         | sin orden          |    no     | `STEPPING`                         |
+| `RUNNING`          | automático         |    sí     | según resultado del ciclo continuo |
+| `HALT_DRAIN_AUTO`  | automático         |    sí     | `HALT_DRAIN_AUTO` o `FINISHED`     |
+| `FAULT_DRAIN_AUTO` | automático         |    sí     | `FAULT_DRAIN_AUTO` o `FAULT`       |
+| `HALT_DRAIN_STEP`  | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `HALT_DRAIN_STEP`  | `STEP` aceptado    |    sí     | `HALT_DRAIN_STEP` o `FINISHED`     |
+| `HALT_DRAIN_STEP`  | `RUN` aceptado     |    sí     | `HALT_DRAIN_AUTO` o `FINISHED`     |
+| `HALT_DRAIN_STEP`  | sin orden          |    no     | `HALT_DRAIN_STEP`                  |
+| `FAULT_DRAIN_STEP` | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `FAULT_DRAIN_STEP` | `STEP` aceptado    |    sí     | `FAULT_DRAIN_STEP` o `FAULT`       |
+| `FAULT_DRAIN_STEP` | `RUN` aceptado     |    sí     | `FAULT_DRAIN_AUTO` o `FAULT`       |
+| `FAULT_DRAIN_STEP` | sin orden          |    no     | `FAULT_DRAIN_STEP`                 |
+| `FINISHED`         | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `FINISHED`         | `RUN` aceptado     |    no     | `PREPARING_RUN`                    |
+| `FINISHED`         | `STEP` aceptado    |    no     | `PREPARING_STEP`                   |
+| `FINISHED`         | sin orden          |    no     | `FINISHED`                         |
+| `FAULT`            | `LOAD` aceptado    |    no     | `LOADING`                          |
+| `FAULT`            | `RUN` aceptado     |    no     | `PREPARING_RUN`                    |
+| `FAULT`            | `STEP` aceptado    |    no     | `PREPARING_STEP`                   |
+| `FAULT`            | sin orden          |    no     | `FAULT`                            |
+| `PREPARING_RUN`    | `prepare_done`     |    sí     | según resultado del ciclo continuo |
+| `PREPARING_RUN`    | sin `prepare_done` |    no     | `PREPARING_RUN`                    |
+| `PREPARING_STEP`   | `prepare_done`     |    sí     | según resultado del ciclo `STEP`   |
+| `PREPARING_STEP`   | sin `prepare_done` |    no     | `PREPARING_STEP`                   |
 
 ---
 
-# Invariantes principales
+<a id="invariantes-principales"></a>
+
+## Invariantes y condiciones de borde
 
 - `global_state` pertenece siempre al conjunto de estados definido por la FSM.
 - No existe un ciclo de la CPU antes de que haya una sesión ejecutable.
 - `PREPARING_READY` llega a `READY` sin ejecutar CPU.
 - `PREPARING_RUN` y `PREPARING_STEP` utilizan `prepare_done` para ejecutar el primer ciclo de una sesión reutilizada.
-- RUN mantiene ejecución continua; STEP autoriza un ciclo por aceptación.
-- Un stall `load-use` consume el STEP que lo produjo.
-- Los drains AUTO avanzan automáticamente.
-- Los drains STEP permanecen retenidos hasta otra orden.
-- RUN desde un drain STEP convierte el trabajo restante a modalidad AUTO.
+- `RUN` mantiene ejecución continua; `STEP` autoriza un ciclo por aceptación.
+- Un stall `load-use` consume el `STEP` que lo produjo.
+- Los drains `AUTO` avanzan automáticamente.
+- Los drains `STEP` permanecen retenidos hasta otra orden.
+- `RUN` desde un drain `STEP` convierte el trabajo restante a modalidad `AUTO`.
 - `FINISHED` representa `halt` con pipeline vacío.
 - `FAULT` representa fault con pipeline vacío.
-- RUN o STEP desde un terminal inician una sesión nueva sobre la imagen retenida.
-- RESET prevalece sobre cualquier otro efecto.
-- LOAD aceptado abandona la sesión vigente y suprime un ciclo de la CPU coincidente.
-- Un LOAD rechazado no cancela un ciclo automático.
+- `RUN` o `STEP` desde un terminal inician una sesión nueva sobre la imagen retenida.
+- `RESET` prevalece sobre cualquier otro efecto.
+- `LOAD` aceptado abandona la sesión vigente y suprime un ciclo de la CPU coincidente.
+- Un `LOAD` rechazado no cancela un ciclo automático.
 - `pipeline_empty_next` evita agregar un ciclo vacío al final del drain.
 - `cycle_count` incrementa exactamente una vez por `cpu_cycle_fire`.
-- HOLD no constituye un estado adicional.
+- `HOLD` no constituye un estado adicional.
 
-## Trazabilidad
+<a id="trazabilidad"></a>
+
+## Referencias y trazabilidad
 
 - [Visión del sistema](system_overview.md): carga, sesión y ejecución.
 - [Pipeline CPU](cpu_pipeline.md): estructura del pipeline y ciclo efectivo.

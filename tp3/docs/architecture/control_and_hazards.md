@@ -1,22 +1,45 @@
 # Control del pipeline y hazards
 
-## Función del control del pipeline
+- **Tipo:** arquitectura. 
+- **Estado documental:** especificación vigente.
 
-El pipeline puede avanzar de forma regular cuando cada instrucción encuentra disponibles los datos que necesita y no aparece ningún evento que cambie el flujo de ejecución. En ese caso, cada ciclo efectivo desplaza el trabajo una etapa hacia adelante: IF busca una nueva instrucción, ID prepara la siguiente, EX ejecuta la actual, MEM completa el acceso o transporta el resultado y WB hace commit del resultado de la instrucción más antigua.
+**Índice**
 
-Ese avance deja de ser suficiente en tres situaciones:
+- [Propósito y alcance](#propósito-y-alcance)
+- [Avance normal como referencia](#avance-normal-como-referencia)
+- [Dependencias de datos](#dependencias-de-datos)
+- [Cambios del camino de ejecución](#cambios-del-camino-de-ejecución)
+- [Selección de una única acción](#selección-de-una-única-acción)
+- [Las ocho acciones del pipeline](#las-ocho-acciones-del-pipeline)
+- [Efecto de cada acción sobre el pipeline](#efecto-de-cada-acción-sobre-el-pipeline)
+- [Efectos arquitectónicos de instrucciones anteriores](#efectos-arquitectónicos-de-instrucciones-anteriores)
+- [Drenado del pipeline](#drenado-del-pipeline)
+- [HOLD](#hold)
+- [Invariantes y condiciones de borde](#invariantes-y-condiciones-de-borde)
+- [Referencias y trazabilidad](#referencias-y-trazabilidad)
 
-- una instrucción necesita un resultado anterior que todavía no llegó al Register File;
-- una instrucción en EX cambia el camino mediante un branch o jump;
-- se confirma `halt` o un fault asociado a una instrucción.
+<a id="función-del-control-del-pipeline"></a>
 
-La arquitectura resuelve esos casos manteniendo la ejecución in-order del procesador. Algunas dependencias se corrigen sustituyendo operandos mediante forwarding o bypass; otras exigen retener instrucciones e introducir una bubble. Los redirects y la confirmación de `halt` o fault descartan las instrucciones posteriores que ya habían ingresado al pipeline.
+## Propósito y alcance
 
-`Pipeline Hazard Control` reúne esos eventos y selecciona una única acción coherente para el ciclo. Esa acción determina cómo se actualizan simultáneamente el PC y los cuatro registros interetapa.
+Este documento define el control que coordina el avance del pipeline y resuelve los eventos que impiden un avance normal. `Pipeline Hazard Control` observa las dependencias de datos, los cambios de flujo y los candidatos de `halt` o fault, y selecciona la acción que debe aplicarse durante el ciclo.
+
+El alcance comprende:
+
+- La descripción del avance normal, en el que cada ciclo efectivo desplaza una instrucción una etapa hacia adelante.
+- La resolución de dependencias mediante forwarding, bypass WB→ID o un stall con inserción de bubble cuando existe una dependencia `load-use`.
+- La coordinación de redirects producidos por branches tomados, `JAL` y `JALR`.
+- La confirmación de `halt` y faults, junto con el descarte de las instrucciones posteriores que ya ingresaron al pipeline.
+- La selección de una única acción entre avance, espera, redirect, drenado o terminación.
+- La definición del efecto de esa acción sobre el PC y los cuatro registros interetapa.
+
+El pipeline mantiene el orden del programa: una instrucción más nueva no puede adelantarse a una anterior ni modificar el estado arquitectónico antes que ella. Si el resultado de la instrucción anterior ya está disponible, `forwarding` o bypass entrega directamente ese valor al consumidor, sin esperar a que llegue al banco de registros. Si el resultado todavía no existe, como ocurre con un `load` inmediatamente anterior, el control retiene al consumidor e introduce una `bubble`; de ese modo, la instrucción solo continúa cuando puede recibir el dato correcto. Del mismo modo, una instrucción posterior a un redirect, `halt` o fault se invalida antes de producir efectos arquitectónicos.
+
+La salida central del control es una única acción de ciclo. Esa acción coordina simultáneamente la actualización del PC, `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB`. `HOLD` se maneja aparte como ausencia de ciclo efectivo; RESET, la aceptación de un LOAD y la preparación también tienen prioridad global y no forman parte de estas ocho acciones.
 
 ## Avance normal como referencia
 
-El comportamiento más simple es `act_normal`. Durante este ciclo no se aplica un redirect ni se confirma `halt` o fault, y no hay una dependencia `load-use` que requiera espera.
+El avance normal corresponde a `act_normal`. Durante este ciclo no se aplica un redirect ni se confirma `halt` o fault, y no hay una dependencia `load-use` que requiera espera.
 
 ```mermaid
 flowchart LR
@@ -45,9 +68,9 @@ Cada captura utiliza los valores anteriores al flanco. Por lo tanto, una instruc
 
 Este recorrido sirve como referencia para los demás casos: un hazard modifica únicamente las actualizaciones de los registros necesarias para conservar el resultado correcto.
 
-# Dependencias de datos
+## Dependencias de datos
 
-## Qué problema resuelven
+### Qué problema resuelven
 
 Una instrucción puede consumir un registro antes de que una instrucción anterior haya llegado a WB.
 
@@ -58,60 +81,44 @@ add x1, x4, x5
 sub x2, x1, x3
 ```
 
-Cuando `sub` alcanza EX, la escritura de `x1` todavía puede no haberse producido en el Register File. Sin una corrección, el operando leído previamente en ID sería una versión antigua.
+Cuando `sub` alcanza EX, la escritura de `x1` todavía puede no haberse producido en el banco de registros. Sin una corrección, el operando leído previamente en ID sería una versión antigua.
 
 Esta arquitectura utiliza tres mecanismos complementarios:
 
-- **forwarding hacia EX** para resultados que ya existen en EX/MEM o MEM/WB;
-- **bypass WB→ID** cuando WB escribe el mismo registro que ID está leyendo;
-- **stall `load-use`** cuando el productor inmediato es un load cuyo dato todavía no existe.
+- **Forwarding hacia EX** para resultados que ya existen en `EX/MEM` o `MEM/WB`.
+- **Bypass WB→ID** cuando WB escribe el mismo registro que ID está leyendo.
+- **Stall `load-use`** cuando el productor inmediato es un load cuyo dato todavía no existe.
 
 Los tres mecanismos actúan en puntos distintos del recorrido y no se sustituyen entre sí.
 
-## Forwarding hacia EX
+### Forwarding hacia EX
 
-### Recorrido funcional
+#### Recorrido funcional
 
-EX no consume directamente `ID/EX.rs1_value` y `ID/EX.rs2_value`. Esos campos son valores base. Antes de utilizarlos, dos muxes comprueban si existe una versión más reciente producida por una instrucción anterior.
+EX no consume directamente `ID/EX.rs1_value` y `ID/EX.rs2_value`. Esos campos son valores base. Antes de utilizarlos, `Forwarding Unit` identifica para cada fuente usada al productor pendiente más reciente y determina si su resultado está disponible. La unidad genera las señales de control `forward_a_sel` y `forward_b_sel` para `Forward MUX A` y `Forward MUX B` que aplican esos selectores para producir `rs1_effective` y `rs2_effective`.
 
-```mermaid
-flowchart LR
-    BASE1[ID/EX.rs1_value] --> M1[Forward MUX A]
-    BASE2[ID/EX.rs2_value] --> M2[Forward MUX B]
+![Recorrido funcional](../diagrams/previews/forwarding.png)
 
-    EXMEM[EX/MEM.ex_result] --> M1
-    EXMEM --> M2
-
-    MEMWB[MEM/WB.wb_value] --> M1
-    MEMWB --> M2
-
-    FU[Forwarding Unit] -->|forward_a_sel| M1
-    FU -->|forward_b_sel| M2
-
-    M1 -->|rs1_effective| EX[EX]
-    M2 -->|rs2_effective| EX
-```
-
-Cada fuente se resuelve de manera independiente. Una misma instrucción puede utilizar un operando proveniente de EX/MEM y el otro de MEM/WB.
+Cada fuente se resuelve de manera independiente. Una misma instrucción puede utilizar un operando proveniente de `EX/MEM` y el otro de `MEM/WB`.
 
 El forwarding alcanza todos los usos reales de esos operandos dentro de EX:
 
-- operaciones de ALU;
-- comparación de branches;
-- base de loads y stores;
-- dato de stores;
-- base de JALR.
+- Operaciones de ALU.
+- Comparación de branches.
+- Base de loads y stores.
+- Dato de stores.
+- Base de JALR.
 
 La explicación de esos recorridos se encuentra en [Etapa EX](stage_ex.md).
 
-### Identificación del productor correcto
+#### Identificación del productor correcto
 
 Para cada fuente `rsN`, la unidad busca productores válidos que:
 
-- escriban arquitectónicamente un registro;
-- tengan `rd != x0`;
-- coincidan con el índice consumido;
-- correspondan a una fuente que la instrucción realmente utiliza.
+- Escriban arquitectónicamente un registro.
+- Tengan `rd != x0`.
+- Coincidan con el índice consumido.
+- Correspondan a una fuente que la instrucción realmente utiliza.
 
 Las coincidencias son:
 
@@ -137,15 +144,15 @@ memwb_match_rsN =
 
 <a id="prioridad-por-antigüedad"></a>
 
-### Prioridad según el orden de los productores
+#### Prioridad según el orden de los productores
 
-Si EX/MEM y MEM/WB escriben el mismo registro, EX/MEM contiene la versión más reciente en orden de programa. La prioridad es:
+Si `EX/MEM` y `MEM/WB` escriben el mismo registro, `EX/MEM` contiene la versión más reciente en orden de programa. La prioridad es:
 
 ```text
 EX/MEM > MEM/WB > valor base ID/EX
 ```
 
-Sin embargo, no todo resultado de EX/MEM está disponible para reenviar. Para un load:
+Sin embargo, no todo resultado de `EX/MEM` está disponible para reenviar. Para un load:
 
 ```text
 EX/MEM.ex_result = dirección efectiva
@@ -174,22 +181,22 @@ forward_memwb_rsN =
 
 La negación de la segunda expresión utiliza `exmem_match_rsN`, no `forward_exmem_rsN`.
 
-Esto conserva una propiedad importante: si EX/MEM contiene el productor más reciente pero se trata de un load cuyo valor todavía no está disponible, MEM/WB no puede reemplazarlo por una versión más antigua del mismo registro.
+La negación conserva esta propiedad: si `EX/MEM` contiene el productor más reciente pero se trata de un load cuyo valor todavía no está disponible, `MEM/WB` no puede reemplazarlo por una versión más antigua del mismo registro.
 
-### Selectores
+#### Selectores
 
 Los dos muxes utilizan la misma codificación:
 
-| Selector | Fuente |
-|---|---|
-| `00` | `ID/EX.rsN_value` |
-| `01` | `EX/MEM.ex_result` |
-| `10` | `MEM/WB.wb_value` |
-| `11` | reservado |
+| Selector | Fuente             |
+|----------|--------------------|
+| `00`     | `ID/EX.rsN_value`  |
+| `01`     | `EX/MEM.ex_result` |
+| `10`     | `MEM/WB.wb_value`  |
+| `11`     | reservado          |
 
 La selección A y B es independiente.
 
-## Bypass `WB → ID`
+### Bypass `WB → ID`
 
 El forwarding anterior corrige operandos cuando la instrucción ya se encuentra en EX. Existe otro caso en el que el productor está en WB mientras un consumidor lee el mismo registro en ID.
 
@@ -198,22 +205,9 @@ productor        → WB
 consumidor       → ID
 ```
 
-La escritura del Register File ocurre en ese mismo flanco. La arquitectura no depende de que el almacenamiento físico sea `write-first`, `read-first` o tenga otra semántica específica. En cambio, utiliza un bypass explícito.
+La escritura del banco de registros ocurre en ese mismo flanco. La arquitectura no depende de que el almacenamiento físico sea `write-first`, `read-first` o tenga otra semántica específica. En cambio, utiliza un bypass explícito.
 
-```mermaid
-flowchart LR
-    RF[Register File] --> M1[RS1 Bypass MUX]
-    RF --> M2[RS2 Bypass MUX]
-
-    MEMWB[MEM/WB.wb_value] --> M1
-    MEMWB --> M2
-
-    CTRL[WB Bypass Control] -->|bypass_rs1| M1
-    CTRL -->|bypass_rs2| M2
-
-    M1 -->|rs1_value| IDEX[ID/EX]
-    M2 -->|rs2_value| IDEX
-```
+![Bypass WB → ID](../diagrams/previews/bypass.png)
 
 La escritura efectiva usa el [predicado `rf_write_fire` de WB](stage_wb.md#condición-efectiva-de-writeback), que exige ciclo efectivo, entrada válida, intención de escritura y destino distinto de cero.
 
@@ -229,15 +223,15 @@ bypass_rs2 =
     && (MEM/WB.rd == id_rs2)
 ```
 
-Cada puerto selecciona `MEM/WB.wb_value` cuando existe coincidencia y utiliza la lectura ordinaria del Register File en caso contrario.
+Cada puerto selecciona `MEM/WB.wb_value` cuando existe coincidencia y utiliza la lectura ordinaria del banco de registros en caso contrario.
 
 Los valores posteriores a esta selección se capturan como `ID/EX.rs1_value` e `ID/EX.rs2_value`. Si al llegar a EX aparece un productor todavía más reciente, el forwarding externo vuelve a sustituirlos.
 
 El mecanismo local dentro de ID se desarrolla en [Etapa ID](stage_id.md), y el commit de la escritura se desarrolla en [Etapa WB](stage_wb.md).
 
-## Dependencia `load-use`
+### Dependencia `load-use`
 
-### Por qué el forwarding no alcanza
+#### Por qué el forwarding no alcanza
 
 Un load inmediato seguido por un consumidor presenta un caso distinto:
 
@@ -259,9 +253,9 @@ Si ambas avanzaran normalmente, en el ciclo siguiente el consumidor llegaría a 
 
 La solución es introducir exactamente una espera en el flujo nominal.
 
-### Detección
+#### Detección
 
-El detector compara el destino del load situado en ID/EX con las fuentes que la instrucción de IF/ID consume realmente:
+El detector compara el destino del load situado en `ID/EX` con las fuentes que la instrucción de `IF/ID` consume realmente:
 
 ```text
 ifid_rs1 = IF/ID.instruction[19:15]
@@ -281,7 +275,7 @@ load_use_stall =
 
 Una coincidencia accidental en un campo que la instrucción no utiliza no genera dependencia. Tampoco participa un candidato de fetch, porque ese estado tiene `IF/ID.valid=0`.
 
-### Efecto del stall
+#### Efecto del stall
 
 Cuando `load_use_stall` resulta aplicable, la acción seleccionada es `act_load_use`.
 
@@ -304,27 +298,31 @@ EX/MEM   → capturar EX
 MEM/WB   → capturar MEM
 ```
 
-El consumidor permanece en ID mientras el load continúa. En el avance siguiente se captura al consumidor en ID/EX y al resultado del load en MEM/WB. Durante el ciclo posterior, EX utiliza ese resultado ya registrado mediante forwarding; no consume la entrada que MEM/WB captura en ese mismo flanco.
+La espera y el consumo del dato ocurren en tres momentos:
+
+1. Durante el stall, el consumidor permanece en ID mientras el load continúa.
+2. En el avance siguiente, se captura al consumidor en `ID/EX` y al resultado del load en `MEM/WB`.
+3. Durante el ciclo posterior, EX utiliza ese resultado ya registrado mediante forwarding. No consume la entrada que `MEM/WB` captura en ese mismo flanco.
 
 El mismo mecanismo cubre dependencias sobre `store_data`; no existe un camino especial de forwarding desde MEM para ese caso.
 
-### Stall no equivale a HOLD
+#### Stall no equivale a HOLD
 
 `act_load_use` ocurre dentro de un **ciclo efectivo de la CPU**.
 
 Por lo tanto, durante ese ciclo:
 
-- `cycle_count` incrementa;
-- instrucciones anteriores pueden avanzar;
-- un store anterior puede hacer commit;
-- un writeback anterior puede ocurrir;
-- en modo STEP se consume una orden.
+- `cycle_count` incrementa.
+- Instrucciones anteriores pueden avanzar.
+- Un store anterior puede hacer commit.
+- Un writeback anterior puede ocurrir.
+- En modo `STEP` se consume una orden.
 
-En **HOLD**, en cambio, `cpu_cycle_fire=0` y no se selecciona ninguna acción del pipeline.
+En **`HOLD`**, en cambio, `cpu_cycle_fire=0` y no se selecciona ninguna acción del pipeline.
 
-# Cambios del camino de ejecución
+## Cambios del camino de ejecución
 
-## Redirect
+### Redirect
 
 Branches tomados, `JAL` y `JALR` se resuelven en EX. Cuando la instrucción solicita un cambio de flujo y ningún fault propio ni `halt` lo impide, `Pipeline Hazard Control` selecciona `act_redirect`.
 
@@ -347,7 +345,7 @@ flowchart LR
     MEM[Instrucción anterior en MEM] --> MEMWB[MEM/WB]
 ```
 
-La instrucción que produce el redirect continúa hacia EX/MEM. Esto es necesario para que `JAL` o `JALR` conserven su enlace `PC+4` y puedan escribirlo posteriormente en `rd`.
+La instrucción que produce el redirect continúa hacia `EX/MEM`. Esto es necesario para que `JAL` o `JALR` conserven su enlace `PC+4` y puedan escribirlo posteriormente en `rd`.
 
 Las instrucciones situadas en ID e IF son posteriores a la instrucción de EX y pertenecen al camino abandonado, por lo que se descartan.
 
@@ -355,18 +353,25 @@ El cálculo y la validación de `redirect_target` se desarrollan en [Etapa EX](s
 
 <a id="fronteras-por-fault-y-halt"></a>
 
-## Descarte de instrucciones por fault y `halt`
+### Descarte de instrucciones por fault y `halt`
 
-Cuando se confirma un fault, se descartan la instrucción que lo provocó y las posteriores; las anteriores pueden terminar su ejecución. Cuando se confirma `halt`, esta instrucción se consume en EX, se descartan las posteriores y se deja terminar a las anteriores. En ambos casos se deja de admitir trabajo nuevo.
+La confirmación determina qué instrucciones se descartan:
+
+| Evento confirmado | Instrucción causante | Instrucciones posteriores | Instrucciones anteriores       |
+|-------------------|----------------------|---------------------------|--------------------------------|
+| Fault             | Se descarta.         | Se descartan.             | Pueden terminar su ejecución.  |
+| `halt`            | Se consume en EX.    | Se descartan.             | Pueden terminar su ejecución.  |
+
+En ambos casos se deja de admitir trabajo nuevo.
 
 Los candidatos que pueden provocar esa terminación se generan en:
 
-- EX, para faults propios de ejecución y para `halt`;
+- EX, para faults propios de ejecución y para `halt`.
 - ID, para instrucción ilegal o candidato de fetch transportado desde IF.
 
 La semántica de cada causa pertenece a [Faults, redirects y terminación](faults_and_termination.md). Este documento define cómo la selección de esos candidatos determina la actualización del pipeline.
 
-## Fault propio de EX
+### Fault propio de EX
 
 Una instrucción cuyo fault se confirma en EX no puede continuar como una operación válida hacia MEM.
 
@@ -380,11 +385,11 @@ EX/MEM   → invalidar
 MEM/WB   → capturar MEM
 ```
 
-La instrucción que provocó el fault se elimina antes de EX/MEM. Las instrucciones posteriores, situadas en ID e IF, también se descartan. La instrucción anterior situada en MEM conserva su avance.
+La instrucción que provocó el fault se elimina antes de `EX/MEM`. Las instrucciones posteriores, situadas en ID e IF, también se descartan. La instrucción anterior situada en MEM conserva su avance.
 
 Por eso, por ejemplo, un store anterior puede hacer commit en el mismo ciclo en que se confirma el fault de una instrucción posterior en EX.
 
-## `halt` confirmado en EX
+### `halt` confirmado en EX
 
 La confirmación de `halt` aplica las mismas actualizaciones de los registros del pipeline que la de un fault propio de EX:
 
@@ -398,9 +403,9 @@ MEM/WB   → capturar MEM
 
 La diferencia es semántica: `halt` representa terminación normal y el fault representa terminación excepcional.
 
-La instrucción `halt` se consume en EX y no entra válidamente a EX/MEM. El trabajo anterior sigue disponible para drenado.
+La instrucción `halt` se consume en EX y no entra válidamente a `EX/MEM`. El trabajo anterior sigue disponible para drenado.
 
-## Fault confirmado en ID
+### Fault confirmado en ID
 
 Un fault detectado en ID corresponde a una instrucción posterior a la que se encuentra simultáneamente en EX.
 
@@ -418,9 +423,9 @@ La instrucción que provoca el fault en ID no pasa a EX. La instrucción anterio
 
 Esta diferencia entre `act_ex_fault` y `act_id_fault` responde al orden de las instrucciones en el programa.
 
-# Selección de una única acción
+## Selección de una única acción
 
-## Separación entre autorización y coordinación
+### Separación entre autorización y coordinación
 
 `Pipeline Hazard Control` no decide si la CPU ejecuta un ciclo.
 
@@ -444,7 +449,7 @@ Esto separa dos preguntas:
 
 RESET, un LOAD aceptado y la preparación tienen prioridad global sobre la ejecución de la CPU y se resuelven fuera de estas acciones.
 
-## Estado terminal y drenado
+### Estado terminal y drenado
 
 El control utiliza:
 
@@ -469,7 +474,7 @@ drain_active =
 
 Mientras `terminal_none=1`, pueden seleccionarse las seis acciones ordinarias. Durante un drenado activo se utilizan las dos acciones de drain.
 
-## Prioridad de los eventos no terminales
+### Prioridad de los eventos no terminales
 
 Cuando varios eventos combinacionales aparecen en el mismo ciclo, se priorizan los de las instrucciones anteriores. Dentro de una misma instrucción, su fault propio tiene prioridad sobre su efecto normal.
 
@@ -491,7 +496,7 @@ normal
 
 La secuencia no significa que `halt` tenga prioridad universal sobre cualquier fault. Expresa la situación concreta del pipeline: los eventos de EX corresponden a trabajo más antiguo que los de ID, y un fault propio de la instrucción de EX precede a sus otros efectos.
 
-## Confirmaciones
+### Confirmaciones
 
 Los candidatos se convierten en eventos aplicados durante un ciclo efectivo según [las confirmaciones y la prioridad según el orden del programa](faults_and_termination.md#confirmación-y-prioridad-según-el-orden-del-programa). Ese contrato define `ex_fault_confirm`, `halt_confirm`, `redirect_apply`, `ex_frontier_selected`, `id_fault_confirm` y `fault_confirm`.
 
@@ -515,7 +520,7 @@ normal_advance =
     && !load_use_apply
 ```
 
-# Las ocho acciones del pipeline
+## Las ocho acciones del pipeline
 
 Las seis acciones del funcionamiento no terminal son:
 
@@ -589,24 +594,30 @@ $onehot0({
 })
 ```
 
-En un ciclo efectivo no terminal aparece exactamente una de las seis primeras. En un ciclo efectivo de drenado aparece una de las dos últimas. Durante HOLD o con un terminal ya vacío no se selecciona ninguna.
+La clase de ciclo determina cuántas acciones se seleccionan:
 
-# Efecto de cada acción sobre el pipeline
+| Situación                  | Selección                                           |
+|----------------------------|-----------------------------------------------------|
+| Ciclo efectivo no terminal | Exactamente una de las seis acciones no terminales. |
+| Ciclo efectivo de drenado  | Una de las dos acciones de drenado.                 |
+| `HOLD` o terminal ya vacío | Ninguna acción.                                     |
 
-La tabla siguiente reúne el comportamiento que se explicó por escenario.
+## Efecto de cada acción sobre el pipeline
 
-| Acción | PC | IF/ID.next | ID/EX.next | EX/MEM.next | MEM/WB.next |
-|---|---|---|---|---|---|
-| `act_ex_fault` | Retener | Invalidar ambos flags | Bubble | Invalidar | Capturar MEM |
-| `act_halt` | Retener | Invalidar ambos flags | Bubble | Invalidar | Capturar MEM |
-| `act_redirect` | `redirect_target` | Invalidar ambos flags | Bubble | Capturar EX | Capturar MEM |
-| `act_id_fault` | Retener | Invalidar ambos flags | Bubble | Capturar EX | Capturar MEM |
-| `act_load_use` | Retener | Retener cinco campos | Bubble | Capturar EX | Capturar MEM |
-| `act_normal` | `PC + 4` | Capturar IF | Capturar ID | Capturar EX | Capturar MEM |
-| `act_drain_load_use` | Retener | Retener cinco campos | Bubble | Capturar EX | Capturar MEM |
-| `act_drain_advance` | Retener | Invalidar ambos flags | Capturar ID | Capturar EX | Capturar MEM |
+La tabla resume el efecto de cada acción sobre el PC y los registros interetapa.
 
-En IF/ID, “invalidar ambos flags” significa:
+| Acción               | PC                | `IF/ID.next`          | `ID/EX.next` | `EX/MEM.next` | `MEM/WB.next` |
+|-------------------- -|-------------------|-----------------------|--------------|---------------|---------------|
+| `act_ex_fault`       | Retener           | Invalidar ambos flags | Bubble       | Invalidar     | Capturar MEM  |
+| `act_halt`           | Retener           | Invalidar ambos flags | Bubble       | Invalidar     | Capturar MEM  |
+| `act_redirect`       | `redirect_target` | Invalidar ambos flags | Bubble       | Capturar EX   | Capturar MEM  |
+| `act_id_fault`       | Retener           | Invalidar ambos flags | Bubble       | Capturar EX   | Capturar MEM  |
+| `act_load_use`       | Retener           | Retener cinco campos  | Bubble       | Capturar EX   | Capturar MEM  |
+| `act_normal`         | `PC + 4`          | Capturar IF           | Capturar ID  | Capturar EX   | Capturar MEM  |
+| `act_drain_load_use` | Retener           | Retener cinco campos  | Bubble       | Capturar EX   | Capturar MEM  |
+| `act_drain_advance`  | Retener           | Invalidar ambos flags | Capturar ID  | Capturar EX   | Capturar MEM  |
+
+En `IF/ID`, “invalidar ambos flags” significa:
 
 ```text
 valid = 0
@@ -615,13 +626,13 @@ fetch_fault_valid = 0
 
 Los demás bits pueden conservar residuos sin representar trabajo activo.
 
-En ID/EX y EX/MEM, una bubble o invalidación se expresa mediante `valid=0`. Los demás campos tampoco necesitan borrarse para impedir efectos.
+En `ID/EX` y `EX/MEM`, una bubble o invalidación se expresa mediante `valid=0`. Los demás campos tampoco necesitan borrarse para impedir efectos.
 
-## Controles locales derivados de las acciones
+### Controles locales derivados de las acciones
 
 Los bloques de actualización de cada etapa convierten la acción seleccionada en señales locales.
 
-### PC
+#### PC
 
 ```text
 pc_write_enable =
@@ -634,7 +645,7 @@ next_pc_sel =
 
 Cuando `pc_write_enable=0`, el PC conserva su valor. No existe una tercera entrada especial para stall, fault o `halt`.
 
-### IF/ID
+#### IF/ID
 
 ```text
 ifid_capture_if =
@@ -652,7 +663,7 @@ ifid_invalidate =
     || act_drain_advance
 ```
 
-### ID/EX
+#### ID/EX
 
 ```text
 idex_capture_id =
@@ -668,7 +679,7 @@ idex_bubble =
     || act_drain_load_use
 ```
 
-### EX/MEM
+#### EX/MEM
 
 ```text
 exmem_capture_ex =
@@ -684,7 +695,7 @@ exmem_invalidate =
     || act_ex_fault
 ```
 
-### MEM/WB
+#### MEM/WB
 
 ```text
 memwb_capture_mem =
@@ -695,7 +706,7 @@ Estos controles no autorizan ciclos por sí mismos. Únicamente materializan la 
 
 Las entradas y salidas concretas de cada bloque de actualización se desarrollan en [Etapa IF](stage_if.md), [Etapa ID](stage_id.md), [Etapa EX](stage_ex.md) y [Etapa MEM](stage_mem.md).
 
-# Efectos arquitectónicos de instrucciones anteriores
+## Efectos arquitectónicos de instrucciones anteriores
 
 Invalidar una entrada nueva no cancela los efectos de una instrucción anterior que ya puede hacer commit durante el mismo ciclo.
 
@@ -703,17 +714,17 @@ El [writeback de WB mediante `rf_write_fire`](stage_wb.md#condición-efectiva-de
 
 Por esta razón:
 
-- una instrucción en WB puede escribir aunque se confirme el fault o `halt` de una instrucción posterior;
-- un store en MEM puede hacer commit aunque se confirme el fault o `halt` de una instrucción posterior;
-- la instrucción causante no produce su propio efecto si fue invalidada antes de alcanzar la etapa de commit correspondiente.
+- Una instrucción en WB puede escribir aunque se confirme el fault o `halt` de una instrucción posterior.
+- Un store en MEM puede hacer commit aunque se confirme el fault o `halt` de una instrucción posterior.
+- La instrucción causante no produce su propio efecto si fue invalidada antes de alcanzar la etapa de commit correspondiente.
 
 La escritura del Register File se desarrolla en [Etapa WB](stage_wb.md) y la escritura de DMEM en [Etapa MEM](stage_mem.md).
 
-# Drenado del pipeline
+## Drenado del pipeline
 
 <a id="estado-alcanzable-después-de-una-frontera-terminal"></a>
 
-## Estado alcanzable después de confirmar `halt` o fault
+### Estado alcanzable después de confirmar `halt` o fault
 
 Después de confirmar `halt` o fault, la arquitectura deja de admitir instrucciones nuevas. Esa confirmación deja:
 
@@ -754,9 +765,9 @@ flowchart LR
     MEMWB --> WB
 ```
 
-En modo AUTO esos ciclos se autorizan automáticamente. En modo STEP cada avance de drenado requiere su propio STEP. Esa política pertenece a [Control de ejecución y sesión](execution_control.md).
+En modo `AUTO` esos ciclos se autorizan automáticamente. En modo `STEP` cada avance de drenado requiere su propio `STEP`. Esa política pertenece a [Control de ejecución y sesión](execution_control.md).
 
-## `act_drain_load_use`
+### `act_drain_load_use`
 
 `act_drain_load_use` permanece dentro del contrato combinacional de las ocho acciones, pero no es alcanzable desde una sesión legal con la arquitectura vigente.
 
@@ -764,14 +775,14 @@ Puede verificarse mediante una prueba artificial que fuerce simultáneamente:
 
 - estado de drain activo;
 - ciclo efectivo;
-- un load válido en ID/EX;
-- un consumidor dependiente válido en IF/ID.
+- un load válido en `ID/EX`;
+- un consumidor dependiente válido en `IF/ID`.
 
 La prueba comprueba la ecuación, la exclusión mutua y la fila correspondiente de actualización. No representa una secuencia end-to-end alcanzable desde reset y no modifica la FSM para hacerla alcanzable.
 
-# HOLD
+## HOLD
 
-HOLD no es una novena acción del pipeline.
+`HOLD` no es una novena acción del pipeline.
 
 Cuando:
 
@@ -793,34 +804,38 @@ HOLD
     → el pipeline no avanza
 ```
 
-La distinción es especialmente importante en STEP, porque un stall consume un paso mientras una espera entre comandos no lo hace.
+La distinción es especialmente importante en `STEP`, porque un stall consume un paso mientras una espera entre comandos no lo hace.
 
-# Invariantes principales del control
+<a id="invariantes-principales-del-control"></a>
+
+## Invariantes y condiciones de borde
 
 El comportamiento anterior puede resumirse mediante las siguientes propiedades:
 
-- como máximo una acción `act_*` está activa simultáneamente;
-- un productor EX/MEM más reciente oculta a uno coincidente en MEM/WB;
-- un load en EX/MEM nunca reenvía su dirección efectiva como dato de `rd`;
-- `x0` no genera forwarding, bypass ni writeback;
-- `load-use` retiene PC e IF/ID pero permite avanzar el trabajo anterior;
-- un redirect descarta solamente las instrucciones posteriores a la de EX;
-- un fault de ID no cancela la instrucción anterior situada en EX;
-- un fault propio de EX o `halt` impide que su propia instrucción ingrese válida a EX/MEM;
-- un redirect, `halt` o fault de una instrucción posterior no cancela stores o writebacks anteriores que ya pueden hacer commit;
-- durante un drenado legal solo `act_drain_advance` resulta alcanzable;
-- HOLD no genera efectos de la CPU ni repite commits.
+- Como máximo una acción `act_*` está activa simultáneamente.
+- Un productor `EX/MEM` más reciente oculta a uno coincidente en `MEM/WB`.
+- Un load en `EX/MEM` nunca reenvía su dirección efectiva como dato de `rd`.
+- `x0` no genera forwarding, bypass ni writeback.
+- `load-use` retiene PC e `IF/ID` pero permite avanzar el trabajo anterior.
+- Un redirect descarta solamente las instrucciones posteriores a la de EX.
+- Un fault de ID no cancela la instrucción anterior situada en EX.
+- Un fault propio de EX o `halt` impide que su propia instrucción ingrese válida a `EX/MEM`.
+- Un redirect, `halt` o fault de una instrucción posterior no cancela stores o writebacks anteriores que ya pueden hacer commit.
+- Durante un drenado legal solo `act_drain_advance` resulta alcanzable.
+- `HOLD` no genera efectos de la CPU ni repite commits.
 
 Las propiedades formales y su clasificación entre comportamiento alcanzable y pruebas artificiales se consolidan en [Invariantes arquitectónicos](architectural_invariants.md).
 
-## Trazabilidad
+<a id="trazabilidad"></a>
+
+## Referencias y trazabilidad
 
 - [Pipeline CPU](cpu_pipeline.md): modelo temporal, validez y contenido de los registros interetapa.
-- [Etapa IF](stage_if.md): actualización del PC e IF/ID.
-- [Etapa ID](stage_id.md): bypass WB→ID, detector `load-use` e ID/EX.
-- [Etapa EX](stage_ex.md): forwarding, redirects, faults propios y EX/MEM.
-- [Etapa MEM](stage_mem.md): stores, MEM/WB y efectos anteriores.
+- [Etapa IF](stage_if.md): actualización del PC e `IF/ID`.
+- [Etapa ID](stage_id.md): bypass WB→ID, detector `load-use` e `ID/EX`.
+- [Etapa EX](stage_ex.md): forwarding, redirects, faults propios y `EX/MEM`.
+- [Etapa MEM](stage_mem.md): stores, `MEM/WB` y efectos anteriores.
 - [Etapa WB](stage_wb.md): `rf_write_fire` y commit del Register File.
 - [Faults, redirects y terminación](faults_and_termination.md): candidatos, causas, confirmaciones y precisión.
-- [Control de ejecución y sesión](execution_control.md): `cpu_cycle_fire`, RUN, STEP, HOLD y drenado AUTO/STEP.
+- [Control de ejecución y sesión](execution_control.md): `cpu_cycle_fire`, RUN, `STEP`, `HOLD` y drenado `AUTO`/`STEP`.
 - [Invariantes arquitectónicos](architectural_invariants.md): propiedades de seguridad y cobertura.

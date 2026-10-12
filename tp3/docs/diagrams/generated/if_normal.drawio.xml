@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="9MCICkPiCbYt5278BHzP">
+    <mxGraphModel dx="2405" dy="1472" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="7874" pageHeight="7874" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;/div&gt;" tags="ADD_ID ADD_IF DATAPATH ID IF LW_ID LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="2">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;verticalAlign=top;dashed=1;dashPattern=8 8;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="1129" width="120" x="1513.25" y="50" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="3" edge="1" parent="1" source="74" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="22">
+          <mxGeometry relative="1" x="0.0313" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;PC&lt;/b&gt;&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;PC&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la dirección de la instrucción que se busca en Instruction Memory. Cuando PC Update Control habilita su escritura, toma la dirección elegida por Next PC MUX; si no hay avance, mantiene la dirección actual.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc [31:0] ← Next PC MUX&lt;/li&gt;&lt;li&gt;pc_write_enable ← PC Update Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → IF Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → IF/ID Input Logic&lt;/li&gt;&lt;li&gt;PC [31:0] → Instruction Memory&lt;/li&gt;&lt;li&gt;PC [31:0] → PC Adder&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="4">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="140" width="80" x="430" y="547.2000000000007" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="5" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.375;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;entryPerimeter=0;" target="18">
+          <mxGeometry relative="1" x="0.0556" as="geometry">
+            <Array as="points">
+              <mxPoint x="854.0999999999998" y="616.9099999999999" />
+              <mxPoint x="854.0999999999998" y="592.2099999999991" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Instruction Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Entrega la palabra de instrucción de 32 bits correspondiente a la dirección indicada por el PC. La validez de esa búsqueda se comprueba por separado en IF Fault Check antes de representar la palabra como una instrucción activa.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;instruction[31:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="6">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="160" width="100" x="677.7499999999999" y="536.9099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;PC&lt;/b&gt;&lt;div&gt;&lt;b&gt;Adder&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;PC Adder&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Suma cuatro al PC actual para obtener la dirección de la siguiente instrucción secuencial. Este cálculo pertenece al recorrido de búsqueda y es independiente de las operaciones que ejecuta la ALU.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;pc_plus_4 [31:0] → Next PC MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Puertos con un extremo externo o sin bloque asociado: +4.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="7">
+          <mxCell parent="1" style="shape=mxgraph.basic.polygon;polyline=0;whiteSpace=wrap;html=1;points=[[0,0.2,0,0,0],[0,0.8,0,0,0],[1,0.5,0,0,0]];fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;polyCoords=[[0.09161573,0.97709607],[0.0,0.94285714],[0.0,0.68214286],[0.06747692,0.58282693],[0.13252308,0.54217307],[0.13252308,0.45782693],[0.06747692,0.41717307],[0.0,0.31785714],[0.0,0.05714286],[0.09161573,0.02290393],[0.90838427,0.22709607],[1.0,0.30714286],[1.0,0.69285714],[0.90838427,0.77290393]];polyCurves=[[&quot;Q&quot;,0,1],[],[&quot;Q&quot;,0,0.625],[],[&quot;Q&quot;,0.2,0.5],[],[&quot;Q&quot;,0,0.375],[],[&quot;Q&quot;,0,0],[],[&quot;Q&quot;,1,0.25],[],[&quot;Q&quot;,1,0.75],[]];fontFamily=Inter;" vertex="1">
+            <mxGeometry height="140" width="80" x="687.4999999999999" y="287.90999999999985" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="8" edge="1" parent="1" source="9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Next PC&lt;/b&gt;&lt;div&gt;&lt;b&gt;MUX&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF REDIRECT" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Next PC MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Elige la dirección que podrá cargarse en el PC. La alternativa secuencial viene de PC Adder y la alternativa de salto viene de Target MUX; next_pc_sel determina cuál se utiliza.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc_sel ← PC Update Control&lt;/li&gt;&lt;li&gt;pc_plus_4 [31:0] ← PC Adder&lt;/li&gt;&lt;li&gt;redirect_target [31:0] ← Target MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc [31:0] → PC&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="9">
+          <mxCell parent="1" style="shape=mxgraph.basic.polygon;polyline=0;whiteSpace=wrap;html=1;points=[[0,0.25,0,0,0],[0,0.5,0,0,0],[0,0.75,0,0,0],[0.5,0.128571,0,0,0],[1,0.5,0,0,0]];fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;polyCoords=[[0.0,0.94285714],[0.09161573,0.97709607],[0.90838427,0.77290393],[1.0,0.69285714],[1.0,0.30714286],[0.90838427,0.22709607],[0.09161573,0.02290393],[0.0,0.05714286]];polyCurves=[[&quot;Q&quot;,0,1],[],[&quot;Q&quot;,1,0.75],[],[&quot;Q&quot;,1,0.25],[],[&quot;Q&quot;,0,0],[]];fontFamily=Inter;" vertex="1">
+            <mxGeometry height="140" width="80" x="161.5" y="547.2200000000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="10" edge="1" parent="1" source="11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="9">
+          <mxGeometry relative="1" x="-0.0546" as="geometry">
+            <Array as="points">
+              <mxPoint x="1813.3000000000002" y="646.5100000000002" />
+              <mxPoint x="1813.3000000000002" y="1210.8099999999995" />
+              <mxPoint x="60" y="1210.8099999999995" />
+              <mxPoint x="60" y="652.2099999999991" />
+            </Array>
+            <mxPoint x="148.02634953878044" y="754.5166217996994" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Target&lt;/b&gt;&lt;br&gt;&lt;div&gt;&lt;b&gt;MUX&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX REDIRECT" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Target MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Selecciona entre el destino relativo calculado por Target Adder y el destino de JALR ya corregido por Clear bit 0. target_sel, producido por Flow Control, determina qué dirección se ofrece al camino de redirect.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;jalr_target [31:0] ← Clear bit 0&lt;/li&gt;&lt;li&gt;pc_relative_target [31:0] ← Target Adder&lt;/li&gt;&lt;li&gt;target_sel ← Flow Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;redirect_target [31:0] → EX Fault Check&lt;/li&gt;&lt;li&gt;redirect_target [31:0] → Next PC MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="11">
+          <mxCell parent="1" style="shape=mxgraph.basic.polygon;polyline=0;whiteSpace=wrap;html=1;points=[[0,0.25,0,0,0],[0,0.5,0,0,0],[0,0.75,0,0,0],[0.5,0.875,0,0,0],[1,0.5,0,0,0]];fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;polyCoords=[[0.0,0.94285714],[0.09161573,0.97709607],[0.90838427,0.77290393],[1.0,0.69285714],[1.0,0.30714286],[0.90838427,0.22709607],[0.09161573,0.02290393],[0.0,0.05714286]];polyCurves=[[&quot;Q&quot;,0,1],[],[&quot;Q&quot;,1,0.75],[],[&quot;Q&quot;,1,0.25],[],[&quot;Q&quot;,0,0],[]];fontFamily=Inter;" vertex="1">
+            <mxGeometry height="140" width="80" x="1713.25" y="576.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;IF Fault&lt;/b&gt;&lt;div&gt;&lt;b&gt;Check&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH FAULT IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF Fault Check&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Comprueba que el PC esté alineado y que la instrucción completa quede dentro de la memoria y de la imagen cargada. Si la búsqueda falla, produce un candidato y una causa de fault; la confirmación se decide más adelante, en ID.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;if_fetch_fault_candidate → IF/ID Input Logic&lt;/li&gt;&lt;li&gt;if_fetch_fault_cause [2:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Puertos con un extremo externo o sin bloque asociado: image_valid (external image status), loaded_image_size_bytes (external image status).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="12">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="244.5" width="101" x="677.4999999999999" y="797.9099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="13" edge="1" parent="1" source="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.125;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="25">
+          <mxGeometry relative="1" x="0.0013" as="geometry">
+            <Array as="points">
+              <mxPoint x="1320.5" y="552.2099999999991" />
+              <mxPoint x="1320.5" y="203.51000000000022" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" edge="1" parent="1" source="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=1;exitY=0.3125;exitDx=0;exitDy=0;exitPerimeter=0;" target="26">
+          <mxGeometry relative="1" x="0.0154" as="geometry">
+            <Array as="points">
+              <mxPoint x="1335.7000000000003" y="582.2099999999991" />
+              <mxPoint x="1335.7000000000003" y="243.51000000000022" />
+            </Array>
+            <mxPoint x="1248.3600000000001" y="605.5" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" edge="1" parent="1" source="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" x="-0.0274" as="geometry" />
+        </mxCell>
+        <mxCell id="16" edge="1" parent="1" source="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.6875;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="28">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1363.5" y="642.2099999999991" />
+              <mxPoint x="1363.5" y="323.5100000000002" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="17" edge="1" parent="1" source="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.875;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1377.4" y="672.2099999999991" />
+              <mxPoint x="1377.4" y="363.5100000000002" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;IF/ID Input&lt;/b&gt;&lt;div&gt;&lt;b&gt;Logic&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_IF CONTROL_PATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID Input Logic&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Forma la información que IF/ID podrá capturar a partir de la palabra leída, su PC y el chequeo de búsqueda. Si la búsqueda es correcta, entrega una instrucción válida; si falla, entrega un candidato de fault con su causa y PC, sin tratar esa palabra como una instrucción ejecutable.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;li&gt;if_fetch_fault_candidate ← IF Fault Check&lt;/li&gt;&lt;li&gt;if_fetch_fault_cause [2:0] ← IF Fault Check&lt;/li&gt;&lt;li&gt;instruction[31:0] ← Instruction Memory&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;ifid_in_fetch_fault_cause [2:0] → IF/ID&lt;/li&gt;&lt;li&gt;ifid_in_fetch_fault_valid → IF/ID&lt;/li&gt;&lt;li&gt;ifid_in_instruction [31:0] → IF/ID&lt;/li&gt;&lt;li&gt;ifid_in_pc [31:0] → IF/ID&lt;/li&gt;&lt;li&gt;ifid_in_valid → IF/ID&lt;/li&gt;&lt;li&gt;ifid_in_valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="18">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;points=[[0,0,1,0,0],[0,0.125,0,0,0],[0,0.25,1,0,0],[0,0.375,0,0,0],[0,0.5,1,0,0],[0,0.625,0,0,0],[0,0.75,1,0,0],[0,0.875,0,0,0],[0,1,1,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[1,0,1,0,0],[1,0.0625,0,0,0],[1,0.125,0,0,0],[1,0.1875,0,0,0],[1,0.25,0,0,0],[1,0.3125,0,0,0],[1,0.375,0,0,0],[1,0.4375,0,0,0],[1,0.5,0,0,0],[1,0.5625,0,0,0],[1,0.625,0,0,0],[1,0.6875,0,0,0],[1,0.75,0,0,0],[1,0.8125,0,0,0],[1,0.875,0,0,0],[1,0.9375,0,0,0],[1,1,1,0,0]];strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="160" width="100" x="1064.87" y="532.2199999999993" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="19" edge="1" parent="1" source="20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;PC&lt;/b&gt;&lt;div&gt;&lt;b&gt;Update&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Control&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_IF CONTROL_PATH HAZARD IF LW_IF REDIRECT" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;PC Update Control&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Traduce la acción elegida por Pipeline Hazard Control en la habilitación de escritura del PC y la selección de su próximo valor. Permite el avance secuencial o el redirect cuando corresponde, y retiene el PC en las situaciones que detienen la búsqueda.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;act_normal ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_redirect ← Pipeline Hazard Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc_sel → Next PC MUX&lt;/li&gt;&lt;li&gt;pc_write_enable → PC&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="20">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="244.5" width="101" x="150.5" y="85" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" source_connections="connection-39" id="21">
+          <mxCell edge="1" parent="1" style="html=1;rounded=1;edgeStyle=none;elbow=vertical;fontFamily=Inter;noEdgeStyle=1;arcSize=16;endArrow=classic;endFill=1;entryX=0;entryY=0.8;entryDx=0;entryDy=0;entryPerimeter=0;" target="7">
+            <mxGeometry relative="1" as="geometry">
+              <mxPoint x="618.2200000000001" y="399.90999999999985" as="sourcePoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="Read Address" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Instruction Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Entrega la palabra de instrucción de 32 bits correspondiente a la dirección indicada por el PC. La validez de esa búsqueda se comprueba por separado en IF Fault Check antes de representar la palabra como una instrucción activa.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;instruction[31:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="22">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="677.7499999999999" y="556.9099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Instruction" tags="DATAPATH IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Instruction Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Entrega la palabra de instrucción de 32 bits correspondiente a la dirección indicada por el PC. La validez de esa búsqueda se comprueba por separado en IF Fault Check antes de representar la palabra como una instrucción activa.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;instruction[31:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="23">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="713.7499999999999" y="601.9099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;Instruction Memory&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Instruction Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Entrega la palabra de instrucción de 32 bits correspondiente a la dirección indicada por el PC. La validez de esa búsqueda se comprueba por separado en IF Fault Check antes de representar la palabra como una instrucción activa.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;instruction[31:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="24">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="697.7499999999999" y="656.9099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="valid" tags="ADD_ID ADD_IF CONTROL_PATH DATAPATH EX FAULT GLOBAL_CONTROL HAZARD ID IF LW_ID LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="25">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1533.25" y="183.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="PC&lt;div&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH EX FAULT ID IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="26">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1533.25" y="223.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="instruction&lt;div&gt;[31:0]&lt;/div&gt;" tags="ADD_ID ADD_IF DATAPATH EX FORWARDING HAZARD ID IF LW_ID LW_IF WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="27">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1533.25" y="263.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="fetch_fault&lt;div&gt;_valid&lt;/div&gt;" tags="CONTROL_PATH DATAPATH FAULT ID IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="28">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1533.25" y="303.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="fetch_fault&lt;div&gt;_cause [2:0]&lt;/div&gt;" tags="CONTROL_PATH DATAPATH FAULT ID IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="29">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1533.25" y="343.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;&lt;font style=&quot;font-size: 9px; color: inherit;&quot;&gt;IMEM_CAPACITY&lt;br&gt;_BYTES&lt;/font&gt;&lt;/code&gt;&lt;/pre&gt;" tags="CONTROL_PATH FAULT IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF Fault Check&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Comprueba que el PC esté alineado y que la instrucción completa quede dentro de la memoria y de la imagen cargada. Si la búsqueda falla, produce un candidato y una causa de fault; la confirmación se decide más adelante, en ID.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← PC&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;if_fetch_fault_candidate → IF/ID Input Logic&lt;/li&gt;&lt;li&gt;if_fetch_fault_cause [2:0] → IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Puertos con un extremo externo o sin bloque asociado: image_valid (external image status), loaded_image_size_bytes (external image status).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;" id="30">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingBottom=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="687.9999999999999" y="1012.4099999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="capture" tags="ADD_IF DATAPATH ID IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="31">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="1513.25" y="72.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="hold" tags="DATAPATH ID IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="32">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="1513.25" y="102.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="invalidate" tags="DATAPATH ID IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;IF/ID&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre IF e ID la instrucción buscada y el PC que la identifica, junto con los indicadores de validez y de fault de búsqueda. Los campos dibujados dentro del marco describen el contenido de este registro; IF/ID Update Control decide si se captura, se retiene o se invalida.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;capture ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;fetch_fault _valid ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;hold ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← IF/ID Input Logic&lt;/li&gt;&lt;li&gt;invalidate ← IF/ID Update Control&lt;/li&gt;&lt;li&gt;valid ← IF/ID Input Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;fetch_fault _cause [2:0] → ID Fault Check&lt;/li&gt;&lt;li&gt;fetch_fault _valid → ID Fault Check&lt;/li&gt;&lt;li&gt;instruction [31:0] → Decoder&lt;/li&gt;&lt;li&gt;instruction [31:0] → ID/EX&lt;/li&gt;&lt;li&gt;instruction [31:0] → Immediate Generator&lt;/li&gt;&lt;li&gt;instruction [31:0] → Load-Use Detector&lt;/li&gt;&lt;li&gt;instruction [31:0] → Registers&lt;/li&gt;&lt;li&gt;instruction [31:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → ID Fault Check&lt;/li&gt;&lt;li&gt;valid → ID/EX&lt;/li&gt;&lt;li&gt;valid → Load-Use Detector&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="33">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="1513.25" y="132.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="write_enable" tags="ADD_IF DATAPATH IF LW_IF" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;PC&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la dirección de la instrucción que se busca en Instruction Memory. Cuando PC Update Control habilita su escritura, toma la dirección elegida por Next PC MUX; si no hay avance, mantiene la dirección actual.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc [31:0] ← Next PC MUX&lt;/li&gt;&lt;li&gt;pc_write_enable ← PC Update Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → IF Fault Check&lt;/li&gt;&lt;li&gt;PC [31:0] → IF/ID Input Logic&lt;/li&gt;&lt;li&gt;PC [31:0] → Instruction Memory&lt;/li&gt;&lt;li&gt;PC [31:0] → PC Adder&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="34">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingLeft=0;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="73" x="433.5" y="547.2000000000007" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="sel" tags="DATAPATH IF REDIRECT" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Next PC MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Elige la dirección que podrá cargarse en el PC. La alternativa secuencial viene de PC Adder y la alternativa de salto viene de Target MUX; next_pc_sel determina cuál se utiliza.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc_sel ← PC Update Control&lt;/li&gt;&lt;li&gt;pc_plus_4 [31:0] ← PC Adder&lt;/li&gt;&lt;li&gt;redirect_target [31:0] ← Target MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;next_pc [31:0] → PC&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="35">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingLeft=0;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="73" x="168.5" y="563.2200000000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="sel" tags="DATAPATH EX REDIRECT" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Target MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Selecciona entre el destino relativo calculado por Target Adder y el destino de JALR ya corregido por Clear bit 0. target_sel, producido por Flow Control, determina qué dirección se ofrece al camino de redirect.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;jalr_target [31:0] ← Clear bit 0&lt;/li&gt;&lt;li&gt;pc_relative_target [31:0] ← Target Adder&lt;/li&gt;&lt;li&gt;target_sel ← Flow Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;redirect_target [31:0] → EX Fault Check&lt;/li&gt;&lt;li&gt;redirect_target [31:0] → Next PC MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="36">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="20" width="25.25" x="1740.63" y="679" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;next_pc&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF REDIRECT" id="37">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="353" y="618.9812500000007" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="pc_write_enable" tags="ADD_IF CONTROL_PATH HAZARD IF LW_IF REDIRECT" id="38">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="470" y="507.3875000000007" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;PC&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH FAULT IF LW_IF" id="39">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="34" x="633.7499999999999" y="572.6912499999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; white-space: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;instruction&lt;/span&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF" id="40">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="778.7499999999999" y="617.6912499999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;+4&lt;/span&gt;" tags="DATAPATH IF" id="41">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="16" width="60" x="617.4999999999999" y="401.09749999999985" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;PC&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH FAULT IF LW_IF" id="42">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="619.4999999999999" y="316.69124999999985" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;pc_plus_4&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF REDIRECT" id="43">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="768.4999999999999" y="358.69124999999985" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;redirect_target&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX FAULT IF REDIRECT" id="44">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="71.5" y="653.0012500000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;pc_plus_4&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF REDIRECT" id="45">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="71.5" y="583.0012500000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="next_pc_sel" tags="CONTROL_PATH HAZARD IF REDIRECT" id="46">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="201.89999999999998" y="525.4075000000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;next_pc&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF REDIRECT" id="47">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="241.5" y="618.0012500000012" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_fetch&lt;/span&gt;&lt;span style=&quot;color: inherit; white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;color: inherit; white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_cause&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: inherit; white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;[2:0]&lt;/span&gt;&lt;/div&gt;" tags="CONTROL_PATH ID IF" id="48">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontColor=#4338CA;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="126" x="1387.25" y="362.9106249999986" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_fetch&lt;/span&gt;&lt;span style=&quot;color: inherit; white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;color: inherit; white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_valid&lt;/span&gt;" tags="CONTROL_PATH ID IF" id="49">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontColor=#4338CA;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="123" x="1390.25" y="322.90749999999935" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_instruction&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH ID IF" id="50">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1418.5" y="284.0912499999995" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_pc&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH ID IF" id="51">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="56" x="1456.5" y="243.5912499999995" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_valid&lt;/span&gt;" tags="CONTROL_PATH GLOBAL_CONTROL ID IF" id="52">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="1444.5" y="204.4974999999995" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;redirect_target&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX FAULT IF REDIRECT" id="53">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="1800.25" y="654.78125" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;if_fetch&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_cause&lt;/span&gt;&lt;/span&gt;&lt;div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255); color: inherit;&quot;&gt;[2:0]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH FAULT IF" id="54">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;fontStyle=0;spacingRight=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="45.5" width="107" x="949.4999999999999" y="674.0006250000006" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;if_fetch&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_candidate&lt;/span&gt;&lt;/span&gt;" tags="CONTROL_PATH FAULT IF" id="55">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="126" x="930.4999999999999" y="633.057499999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; white-space: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;instruction&lt;/span&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH IF LW_IF" id="56">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="994.4999999999999" y="592.9112499999992" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;PC&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH FAULT IF LW_IF" id="57">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="995.4999999999999" y="551.9112499999992" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_fetch&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_cause&lt;/span&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px; color: inherit;&quot;&gt;[2:0]&lt;/span&gt;&lt;/div&gt;" tags="CONTROL_PATH ID IF" id="58">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontColor=#4338CA;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="132" x="1164.87" y="671.9106249999986" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_fetch&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_valid&lt;/span&gt;&lt;/span&gt;" tags="CONTROL_PATH ID IF" id="59">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontColor=#4338CA;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="123" x="1164.87" y="641.9074999999993" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_instruction&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH ID IF LW_IF" id="60">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1164.87" y="611.9112499999992" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ifid_in_pc&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH ID IF LW_IF" id="61">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="56" x="1164.87" y="581.9112499999992" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255); color: inherit;&quot;&gt;ifid_in_valid&lt;/span&gt;" tags="ADD_IF CONTROL_PATH GLOBAL_CONTROL ID IF LW_IF" id="62">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="1164.87" y="551.9074999999993" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;PC&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH FAULT IF" id="63">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="34" x="633.4999999999999" y="860.8162499999999" as="geometry">
+              <mxPoint y="4" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;if_fetch&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; font-size: 11px; background-color: rgb(255, 255, 255);&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;white-space: nowrap; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px;&quot;&gt;_cause&lt;/span&gt;&lt;/span&gt;&lt;div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255); color: inherit;&quot;&gt;[2:0]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH FAULT IF" id="64">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;fontStyle=0;spacingLeft=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="45.5" width="73" x="778.9999999999999" y="982.6756249999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: inherit;&quot;&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;if_fetch&lt;/span&gt;&lt;span style=&quot;background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px; white-space: nowrap;&quot;&gt;_fault&lt;/span&gt;&lt;span style=&quot;background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); font-size: 11px; white-space: nowrap;&quot;&gt;_candidate&lt;/span&gt;&lt;/span&gt;" tags="CONTROL_PATH FAULT IF" id="65">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;fontStyle=0;spacingLeft=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="24" width="60" x="778.9999999999999" y="859.2224999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="next_pc_sel" tags="ADD_IF CONTROL_PATH HAZARD IF LW_IF REDIRECT" id="66">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="68" x="251.5" y="269.5625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="pc_write_enable" tags="ADD_IF CONTROL_PATH HAZARD IF LW_IF REDIRECT" id="67">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="251.5" y="147.3125" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="68" edge="1" parent="1" source="20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0.128571;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="9">
+          <mxGeometry relative="1" x="0.2183" as="geometry">
+            <Array as="points">
+              <mxPoint x="329.1" y="268.40999999999985" />
+              <mxPoint x="329.1" y="438.40999999999985" />
+              <mxPoint x="201.5" y="438.40999999999985" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;PC&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_IF DATAPATH FAULT IF LW_IF" id="69">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=0;fontFamily=Inter;spacingLeft=3;" vertex="1">
+            <mxGeometry height="30" width="34" x="510.5" y="619.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="70" edge="1" parent="1" source="4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;" target="71" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510.5" y="616.9099999999999" as="sourcePoint" />
+            <mxPoint x="677.4999999999999" y="571.9099999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="71" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="583.5" y="606.9099999999999" as="geometry" />
+        </mxCell>
+        <mxCell id="72" edge="1" parent="1" source="71" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=0.778;exitY=0.667;exitPerimeter=0;" target="12">
+          <mxGeometry relative="1" x="-0.074" as="geometry">
+            <Array as="points">
+              <mxPoint x="594.5" y="616.9099999999999" />
+              <mxPoint x="594.5" y="859.0100000000002" />
+            </Array>
+            <mxPoint x="594.5" y="789.9099999999999" as="sourcePoint" />
+            <mxPoint x="678.4999999999999" y="744.9099999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73" edge="1" parent="1" source="71" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;" target="74" value="">
+          <mxGeometry relative="1" x="0.0313" as="geometry">
+            <Array as="points" />
+            <mxPoint x="593.5" y="616.9099999999999" as="sourcePoint" />
+            <mxPoint x="677.4999999999999" y="571.9099999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="74" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="583.5" y="561.9099999999999" as="geometry" />
+        </mxCell>
+        <mxCell id="75" edge="1" parent="1" source="80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.2;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;entryPerimeter=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="7">
+          <mxGeometry relative="1" x="-0.2286" as="geometry">
+            <Array as="points">
+              <mxPoint x="594.5" y="315.90999999999985" />
+            </Array>
+            <mxPoint x="516.56" y="493.5799999999999" as="sourcePoint" />
+            <mxPoint x="678.4999999999999" y="733.9099999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="76" edge="1" parent="1" source="7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="9">
+          <mxGeometry relative="1" x="-0.5852" as="geometry">
+            <Array as="points">
+              <mxPoint x="833.4999999999999" y="357.90999999999985" />
+              <mxPoint x="833.4999999999999" y="65.20999999999913" />
+              <mxPoint x="63.5" y="65.20999999999913" />
+              <mxPoint x="63.5" y="582.2099999999991" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="77" edge="1" parent="1" source="12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.625;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="911.5999999999998" y="859.0100000000002" />
+              <mxPoint x="911.5999999999998" y="632.2099999999991" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="78" edge="1" parent="1" source="12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.875;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="943.2000000000002" y="981.3099999999995" />
+              <mxPoint x="943.2000000000002" y="672.2099999999991" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79" edge="1" parent="1" source="74" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;entryPerimeter=0;exitX=0.486;exitY=0.333;exitDx=0;exitDy=0;exitPerimeter=0;" target="80" value="">
+          <mxGeometry relative="1" x="-0.2286" as="geometry">
+            <Array as="points">
+              <mxPoint x="594.5" y="571.9099999999999" />
+            </Array>
+            <mxPoint x="593.5" y="571.9099999999999" as="sourcePoint" />
+            <mxPoint x="687.4999999999999" y="315.90999999999985" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="80" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="583.5" y="494.90999999999985" as="geometry" />
+        </mxCell>
+        <mxCell id="81" edge="1" parent="1" source="80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.125;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=0.681;exitY=0.35;exitPerimeter=0;entryPerimeter=0;" target="18">
+          <mxGeometry relative="1" x="-0.7571" as="geometry">
+            <Array as="points" />
+            <mxPoint x="606.5" y="479.90999999999985" as="sourcePoint" />
+            <mxPoint x="690.4999999999999" y="479.90999999999985" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

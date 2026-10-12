@@ -38,7 +38,7 @@ Debe encargarse de:
 - obtener la instrucción correspondiente;
 - determinar cuál será la próxima dirección de ejecución según el flujo normal o un cambio de control.
 
-La instrucción obtenida debe almacenarse en el registro intermedio correspondiente para que pueda ser procesada por la etapa siguiente.
+La instrucción obtenida debe almacenarse en el registro interetapa correspondiente para que pueda ser procesada por la etapa siguiente.
 
 ---
 
@@ -54,7 +54,7 @@ Debe encargarse de:
 - obtener el valor inmediato cuando corresponda;
 - generar la información de control necesaria para las etapas posteriores.
 
-La información generada debe avanzar hacia la siguiente etapa a través del registro intermedio correspondiente.
+La información generada debe avanzar hacia la siguiente etapa a través del registro interetapa correspondiente.
 
 ---
 
@@ -102,18 +102,20 @@ El valor escrito puede provenir, entre otros casos, de:
 - una lectura de memoria;
 - una instrucción de salto que deba guardar una dirección de retorno.
 
+> **Nota de interpretación del proyecto — 2026-10-06:** En la realización aprobada, la selección del resultado destinado a writeback ocurre en MEM, antes de capturar `MEM/WB`. WB recibe directamente `MEM/WB.wb_value` y actualiza el registro destino cuando la escritura es elegible. La obligación anterior de seleccionar el valor correcto y escribirlo se concreta mediante ese reparto de funciones, conforme a [DEC-ARCH-003](decisions.md#acuerdo-parcial-aprobado--selección-del-valor-arquitectónico-de-write-back-en-mem), el [WB Value MUX de MEM](architecture/stage_mem.md#wb-value-mux) y el [contrato de WB](architecture/stage_wb.md#función-de-la-etapa). [REQ-CPU-008](requirements.md#2-procesador-y-pipeline) recoge esta interpretación. Esta nota distingue la realización del proyecto de la redacción del enunciado conservada arriba.
+
 ---
 
 # 3. Registros intermedios del pipeline
 
-Entre las cinco etapas deben existir registros intermedios que conserven la información necesaria para que cada instrucción continúe su recorrido por el pipeline.
+Entre las cinco etapas deben existir registros interetapa que conserven la información necesaria para que cada instrucción continúe su recorrido por el pipeline.
 
 Conceptualmente deben existir registros equivalentes a:
 
-- IF/ID;
-- ID/EX;
-- EX/MEM;
-- MEM/WB.
+- `IF/ID`;
+- `ID/EX`;
+- `EX/MEM`;
+- `MEM/WB`.
 
 Estos registros deben conservar tanto los datos como la información de control que sea necesaria para las etapas posteriores.
 
@@ -264,7 +266,7 @@ La implementación debe definir claramente qué ocurre con:
 - la memoria de instrucciones anterior;
 - la memoria de datos;
 - el banco de registros;
-- los registros intermedios del pipeline;
+- los registros interetapa del pipeline;
 - el Program Counter;
 - cualquier estado interno adicional.
 
@@ -360,7 +362,7 @@ Debe permitir, como mínimo:
 
 - transmitir información de estado;
 - transmitir el contenido de los registros;
-- transmitir los registros intermedios del pipeline;
+- transmitir los registros interetapa del pipeline;
 - transmitir información de la memoria de datos.
 
 La UART no forma parte del camino normal de ejecución de las instrucciones RISC-V.
@@ -369,7 +371,7 @@ La UART no forma parte del camino normal de ejecución de las instrucciones RISC
 
 # 12. Debug Unit
 
-Debe implementarse una **Debug Unit** encargada de administrar la interacción entre la PC y el procesador.
+Debe implementarse una **`Debug Unit`** encargada de administrar la interacción entre la PC y el procesador.
 
 Sus responsabilidades deben incluir:
 
@@ -381,7 +383,7 @@ Sus responsabilidades deben incluir:
 - recopilar el estado interno requerido;
 - enviar ese estado hacia la PC.
 
-La Debug Unit debe permitir observar el procesador sin modificar incorrectamente su comportamiento funcional.
+La `Debug Unit` debe permitir observar el procesador sin modificar incorrectamente su comportamiento funcional.
 
 ---
 
@@ -400,14 +402,14 @@ La información debe permitir identificar claramente:
 
 ## 13.2. Registros intermedios del pipeline
 
-Debe poder transmitirse el contenido de los registros intermedios asociados al pipeline.
+Debe poder transmitirse el contenido de los registros interetapa asociados al pipeline.
 
 Deben poder observarse los estados correspondientes a:
 
-- IF/ID;
-- ID/EX;
-- EX/MEM;
-- MEM/WB.
+- `IF/ID`;
+- `ID/EX`;
+- `EX/MEM`;
+- `MEM/WB`.
 
 La representación exacta de sus campos puede definirse libremente siempre que permita interpretar correctamente el estado del pipeline.
 
@@ -440,7 +442,7 @@ Debe permitir, como mínimo:
 - iniciar la ejecución continua;
 - ejecutar paso a paso;
 - visualizar los 32 registros;
-- visualizar los registros intermedios del pipeline;
+- visualizar los registros interetapa del pipeline;
 - visualizar la memoria de datos utilizada;
 - mostrar información de estado y errores de comunicación cuando corresponda.
 
@@ -471,7 +473,7 @@ Debe permitir:
 
 - leer los operandos necesarios para una instrucción;
 - escribir resultados en la etapa WB;
-- proporcionar su contenido completo a la Debug Unit.
+- proporcionar su contenido completo a la `Debug Unit`.
 
 La implementación debe respetar el comportamiento definido por RISC-V para los registros arquitectónicos.
 
@@ -597,7 +599,7 @@ Debe soportar:
 - byte sin signo mediante `lbu`;
 - halfword sin signo mediante `lhu`.
 
-La memoria debe interactuar con la Debug Unit para permitir observar el contenido utilizado durante la ejecución.
+La memoria debe interactuar con la `Debug Unit` para permitir observar el contenido utilizado durante la ejecución.
 
 ---
 
@@ -637,8 +639,8 @@ Debe establecerse explícitamente qué ocurre con:
 - memoria de instrucciones;
 - memoria de datos;
 - banco de registros;
-- registros intermedios del pipeline;
-- estado de la Debug Unit;
+- registros interetapa del pipeline;
+- estado de la `Debug Unit`;
 - estado de control.
 
 No existe una única política obligatoria para todos estos elementos, pero la elegida debe garantizar que un programa nuevo pueda ejecutarse correctamente y debe quedar documentada.
@@ -739,7 +741,7 @@ Al finalizar el trabajo debe existir un sistema capaz de:
 10. vaciar correctamente el pipeline al finalizar;
 11. enviar información interna del procesador hacia la PC;
 12. mostrar los 32 registros;
-13. mostrar los registros intermedios del pipeline;
+13. mostrar los registros interetapa del pipeline;
 14. mostrar la memoria de datos utilizada;
 15. permitir cargar un nuevo programa sin volver a sintetizar la FPGA;
 16. operar a una frecuencia justificada mediante análisis temporal.

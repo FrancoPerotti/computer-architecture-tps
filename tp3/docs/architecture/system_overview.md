@@ -1,236 +1,284 @@
-# Visión general del sistema
+# Diseño FPGA consolidado
+
+- **Tipo:** arquitectura.
+- **Estado documental:** especificación vigente.
+
+**Índice**
+
+- [Propósito y alcance](#propósito-y-alcance)
+- [El sistema](#el-sistema)
+- [Plataforma, clock, reset y configuración](#plataforma-clock-reset-y-configuración)
+- [El procesador RISC-V](#el-procesador-risc-v)
+- [El pipeline de cinco etapas](#el-pipeline-de-cinco-etapas)
+- [Organización de memoria](#organización-de-memoria)
+- [Carga de un programa](#carga-de-un-programa)
+- [Control de la ejecución](#control-de-la-ejecución)
+- [Finalización de la ejecución](#finalización-de-la-ejecución)
+- [Debug y observación](#debug-y-observación)
+- [UART y comandos](#uart-y-comandos)
+- [Software de PC](#software-de-pc)
+- [Autoridad documental por tema](#autoridad-documental-por-tema)
+- [Fuentes de detalle y trabajo que sigue](#fuentes-de-detalle-y-trabajo-que-sigue)
+- [Referencias y trazabilidad](#referencias-y-trazabilidad)
+
+## Propósito y alcance
+
+Presenta el diseño FPGA consolidado y orienta la lectura hacia el contrato vigente de cada tema. Los acuerdos y auditorías conservan la historia; esta vista reúne el funcionamiento y sus fuentes actuales.
 
 ## El sistema
 
-El sistema implementa sobre FPGA un **procesador RISC-V de 32 bits con pipeline de cinco etapas**. Alrededor del procesador se integran los bloques necesarios para cargar programas desde una computadora, controlar su ejecución y observar su estado mediante una comunicación UART.
+La FPGA contiene un procesador RISC-V de 32 bits con pipeline de cinco etapas. Recibe un programa por UART, lo carga, ejecuta ciclos en `RUN` o `STEP` y responde con el estado observado cuando corresponde. UART y control de transporte siguen funcionando aunque la CPU esté detenida.
 
-El procesador es el núcleo que ejecuta las instrucciones. La UART y la lógica de Debug no intervienen en el recorrido normal de una instrucción: forman la infraestructura que permite programar y manejar el procesador desde el exterior. Del lado de la computadora, una aplicación se encarga de preparar el programa, enviarlo a la FPGA, solicitar su ejecución y presentar la información recibida.
-
-En conjunto, la arquitectura se divide en tres partes principales:
-
-1. **Procesador RISC-V**, responsable de ejecutar el programa.
-2. **Subsistema de Debug y comunicación**, responsable de conectar el procesador con la computadora y administrar las operaciones externas.
-3. **Software de PC**, responsable de preparar programas y permitir al usuario controlar y observar la ejecución.
+| Módulo principal | Responsabilidad y contenido |
+|---|---|
+| `basys3_top` | Pines Basys 3, selección única de perfil, `clock_generator` (IP Clocking Wizard), `reset_sync` y `system_top` |
+| `system_top` | Conecta `uart_core`, `protocol_controller`, `response_serializer` y `processor_top` |
+| `processor_top` | Conecta cinco etapas, cuatro registros interetapa, hazards, `execution_control`, Loader y preparación |
 
 ```mermaid
 flowchart LR
-    SW[Software de PC] <-->|UART| DBG[Debug / comunicación]
-    DBG <--> CPU[Procesador RISC-V]
+    PC["Computadora / puente USB-UART"] <-->|"bytes UART"| UART["uart_core"]
+    UART -->|"bytes RX"| CTRL["protocol_controller"]
+    CTRL -->|"comandos / carga"| CPU["processor_top"]
+    CPU -->|"estado / aceptación"| CTRL
+    CTRL -->|"respuesta solicitada"| SER["response_serializer"]
+    CPU -->|"RF / DMEM / contexto / latches"| SER
+    SER -->|"bytes TX"| UART
 ```
+
+La jerarquía, los puertos físicos/de tops y los aliases están en [Composición del sistema](system_composition.md). El [Inventario de módulos](module_inventory.md#los-54-bloques-uno-por-uno) sitúa cada uno de los 54 bloques originales en su módulo/archivo: 26 separados y 28 como lógica/estado local. El catálogo contiene 45 tipos, incluido el IP de clock; `fifo` se instancia dos veces. Esta separación organiza el código sin agregar estado ni latencia.
+
+## Plataforma, clock, reset y configuración
+
+- La placa Basys 3 utiliza una entrada de 100 MHz, Clocking Wizard/MMCM/BUFG y un único dominio funcional de **50 MHz**, mínimo docente requerido. Frecuencias mayores son opcionales.
+- La comunicación utiliza el puente USB-UART de la placa y el conector micro-USB J4. UART nominal **19200 baud, 8N1**, sobremuestreo 16 y FIFO RX/TX de cuatro bytes. `s_tick` es un enable; no es otro clock.
+- La plataforma asigna W5 al `clock`, U18 al botón central, B18 a la señal `RX` de la FPGA y A18 a la señal `TX` de la FPGA. Todas utilizan el estándar LVCMOS33.
+- El reset común combina el botón, una petición UART registrada y la falta de locked. `reset_sync` tiene aserción asíncrona y liberación sincronizada; los recursos funcionales consumen reset al flanco. Solo el botón resetea el IP de Clocking Wizard. `RESET` UART espera el último Stop de su ACCEPTED antes de pedir reset.
+- `system_pkg.sv` centraliza definiciones compartidas; cada módulo mantiene sus constantes privadas. El top selecciona el perfil una vez y distribuye capacidades explícitas.
+
+| Perfil | IMEM bytes | DMEM bytes | Alcance |
+|---|---:|---:|---|
+| `REFERENCE`, por defecto | 1024 | 2048 | Simulación e implementación física de referencia |
+| `ALT_1000` | 1000 | 1000 | Elaboración/simulación; sin obligación física adicional |
+
+Fuentes de detalle: [Plataforma](platform_reference.md), [Reset](reset_integration.md) y [Configuración común](common_configuration.md). Capacidad legal de cada memoria: múltiplo de cuatro entre 4 y 2^32 bytes; el build distingue capacidad ilegal y capacidad legal no soportada. Esto no obliga a implementar arrays de todos esos tamaños.
 
 ## El procesador RISC-V
 
 ### Arquitectura de instrucciones
 
-El procesador utiliza **RISC-V** como arquitectura de conjunto de instrucciones. Una arquitectura de instrucciones, o ISA, define el lenguaje máquina que comparten el software y el hardware: establece qué operaciones puede expresar un programa, cómo se codifican y qué efecto produce cada una.
+Se implementan **32 instrucciones RV32I y `halt` exacto 0x0000000B**, todas de 32 bits. La [whitelist y sus campos legales](stage_id.md#codificaciones-legales) son autoridad del `decoder`; otras codificaciones producen instrucción ilegal.
 
-La base utilizada es **RV32I**, la variante entera de 32 bits de RISC-V. El procesador implementa un **subconjunto de 32 instrucciones de RV32I** definido para el sistema, junto con una instrucción adicional denominada `halt`. Las instrucciones RISC-V que quedan fuera de ese subconjunto no forman parte del ISA implementado.
-
-Todas las instrucciones implementadas ocupan 32 bits. Un programa ejecutable está formado, por lo tanto, por una secuencia de palabras de instrucción que la CPU obtiene y procesa en el orden determinado por el flujo del programa.
-
-La codificación de las instrucciones y la lógica de decodificación se desarrollan en [Etapa ID](stage_id.md#decoder). La reconstrucción de inmediatos y sus recorridos de datos se describen en [Datapath](datapath.md).
+| Familia | Instrucciones |
+|---|---|
+| Registros | `ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND` |
+| Inmediatos | `ADDI`, `SLTI`, `SLTIU`, `XORI`, `ORI`, `ANDI`, `SLLI`, `SRLI`, `SRAI` |
+| Loads | `LB`, `LH`, `LW`, `LBU`, `LHU` |
+| Stores | `SB`, `SH`, `SW` |
+| Flujo | `BEQ`, `BNE`, `JAL`, `JALR` |
+| Inmediato superior | `LUI` |
 
 ### Estado de ejecución
 
-El estado sobre el que trabaja la CPU se organiza alrededor de los siguientes elementos:
+El PC, los datos, las instrucciones y las direcciones arquitectónicas tienen 32 bits; los índices de RF tienen cinco bits. `x0` siempre es cero. RF tiene dos lecturas combinacionales y una escritura síncrona; la realización de referencia usa flip-flops para inicialización simultánea. El banco de registros comparte la primera lectura con Debug antes del bypass, sin tercer puerto.
 
-- **Program Counter (PC):** identifica la dirección desde la que se busca la próxima instrucción. Al iniciar una nueva ejecución comienza en la dirección cero y, mientras no haya un cambio de flujo, avanza de cuatro en cuatro bytes.
-- **Banco de registros:** contiene 32 registros arquitectónicos de 32 bits utilizados como operandos y destinos de las instrucciones.
-- **Registro `x0`:** forma parte del banco de registros, pero conserva siempre el valor cero y no puede ser modificado por una escritura.
-- **Instruction Memory (IMEM):** contiene la imagen del programa que puede ser buscada por la etapa IF.
-- **Data Memory (DMEM):** contiene los datos utilizados por las instrucciones de load y store.
-
-IMEM y DMEM pertenecen a espacios lógicos independientes.
+El estado global persistente incluye `global_state` (14 bits one-hot), `fault_cause`, `fault_pc`, `loaded_image_size_bytes` y `cycle_count` (64 bits). `image_valid` y vigencia de fault se derivan de tamaño/estado; no son registros duplicados. El código externo de estado tiene ocho bits y se calcula combinacionalmente.
 
 ## El pipeline de cinco etapas
 
 ### División de la ejecución
 
-Una instrucción no se procesa mediante una única operación indivisible. Su ejecución requiere buscarla, interpretarla, obtener sus operandos, realizar los cálculos correspondientes, acceder a memoria cuando sea necesario y hacer visible el resultado cuando corresponda.
+| Etapa / archivo | Unidades con módulo propio | Bloques locales explícitos |
+|---|---|---|
+| `if_stage.sv` | `instruction_memory`, `fetch_fault_check` | `PC Update Control`, `Next PC MUX`, PC, `PC Adder`, `IF/ID` Input Logic |
+| `id_stage.sv` | `decoder`, `register_file`, `immediate_generator`, `id_fault_check`, `load_use_detector` | `RS1 Bypass MUX`, `RS2 Bypass MUX` |
+| `ex_stage.sv` | `forwarding_unit`, `alu`, `flow_control`, `ex_flow_check` | `Forward MUX A`/B, `ALUSrc MUX`, `Link Adder`, `Result MUX`, `Target Adder`, `JALR` Adder, `Clear bit 0`, `Target MUX` |
+| `mem_stage.sv` | `mem_decode`, `data_memory`, `load_select_extend`, `dmem_write_control` | `WB Value MUX` |
+| `wb_stage.sv` | La responsabilidad se realiza en el propio archivo | **`WB Bypass Control`**, incluida escritura RF y controles de bypass WB→ID |
 
-La CPU distribuye ese trabajo entre cinco etapas:
-
-- **IF — Instruction Fetch:** obtiene la próxima instrucción desde IMEM.
-- **ID — Instruction Decode:** interpreta la instrucción y obtiene la información necesaria para ejecutarla.
-- **EX — Execute:** realiza las operaciones de cálculo y resuelve los cambios de flujo.
-- **MEM — Memory:** atiende los accesos a DMEM.
-- **WB — Write Back:** escribe en el banco de registros los resultados que correspondan.
-
-La separación en etapas permite que distintas instrucciones se encuentren en distintas partes de su ejecución al mismo tiempo. Mientras una instrucción está en EX, otra puede encontrarse en ID y una tercera puede estar siendo buscada en IF.
-
-La organización completa de las etapas y de los registros que las separan se desarrolla en [Pipeline CPU](cpu_pipeline.md).
+WB toma `MEM/WB` actual y escribe solo con `cpu_cycle_fire`, `valid`, `reg_write` y `rd` distinto de `x0`. El dato final se forma en MEM; WB no vuelve a seleccionarlo. Los muxes que aplican el bypass permanecen en ID.
 
 ### Registros intermedios
 
-Para mantener separada la información de esas instrucciones, las etapas se conectan mediante cuatro registros intermedios: **IF/ID**, **ID/EX**, **EX/MEM** y **MEM/WB**.
+`processor_top` contiene los registros interetapa `if_id_register`, `id_ex_register`, `ex_mem_register` y `mem_wb_register`. Sus controles `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` Update Control son lógica local diferenciada del top.
 
-Cada registro conserva la información que la instrucción necesita para continuar hacia la etapa siguiente. De esta forma, el trabajo de una etapa puede avanzar sin perder el contexto de las demás instrucciones que todavía se encuentran dentro del pipeline.
+| Registro interetapa | Campos | Bits funcionales |
+|---|---:|---:|
+| `IF/ID` | 5 | 69 |
+| `ID/EX` | 15 | 193 |
+| `EX/MEM` | 8 | 139 |
+| `MEM/WB` | 6 | 103 |
 
-El pipeline es **in-order**. Las instrucciones ingresan respetando el orden del programa y la arquitectura garantiza ese mismo orden en los efectos que finalmente se hacen visibles.
+Los 34 campos suman 504 bits y se observan directamente en Debug. `valid` decide si la entrada puede producir efectos; invalidar no exige borrar cada payload residual. La actualización utiliza estado/datos previos al flanco. [Pipeline CPU](cpu_pipeline.md) fija los campos y [Interfaces](../interfaces.md) sus conexiones.
 
 ### Situaciones contempladas por el pipeline
 
-El avance ordinario no cubre todos los casos posibles de ejecución. La arquitectura contempla, entre otras, estas situaciones:
+- Forwarding resuelve cada fuente; `EX/MEM` tiene prioridad sobre `MEM/WB`. Un load productor más reciente bloquea la utilización de un valor anterior.
+- Load-use conserva PC e `IF/ID`, introduce bubble en `ID/EX` y permite avanzar al productor. Solo cuenta fuentes realmente utilizadas y destinos distintos de `x0`.
+- EX resuelve branches/jumps; un redirect descarta trabajo joven y conserva los efectos de la instrucción de control.
+- `Pipeline Hazard Control` selecciona ocho acciones exclusivas. Reset, carga/preparación efectiva y `HOLD` conservan la prioridad global aprobada.
+- Los bloques combinacionales pueden variar durante `HOLD`; los registros/memorias no repiten efectos sin su habilitación.
 
-- **Dependencias de datos:** una instrucción depende de un resultado anterior y el pipeline utiliza la versión correcta del operando o introduce la espera necesaria.
-- **Cambios de flujo:** un branch o un jump redirige la ejecución y se descartan las instrucciones posteriores que pertenecen al camino abandonado.
-- **Faults:** una condición inválida termina la ejecución de forma precisa, conservando los efectos válidos de las instrucciones anteriores.
-- **Finalización mediante `halt`:** el programa termina normalmente y el pipeline deja de admitir trabajo posterior mientras completa el anterior.
-
-La resolución de dependencias y la actualización del pipeline se detallan en [Control del pipeline y hazards](control_and_hazards.md). El tratamiento de redirects, faults y `halt` se desarrolla en [Faults, redirects y terminación](faults_and_termination.md).
+[Control y hazards](control_and_hazards.md) fija las ecuaciones. `act_drain_load_use` conserva un contrato combinacional para inyección artificial; no se considera alcanzable en un drenado legal bajo la política vigente.
 
 ## Organización de memoria
 
-La arquitectura utiliza una organización **Harvard lógica**: Instruction Memory y Data Memory ocupan espacios de direcciones independientes y cumplen funciones diferentes dentro del pipeline. La misma dirección numérica puede existir en ambos espacios sin referirse al mismo contenido.
+IMEM y DMEM tienen espacios independientes con base cero, direcciones en bytes y orden little-endian. IMEM recibe palabras completas del Loader; ambas memorias conservan lectura combinacional y escritura síncrona, sin añadir stalls de memoria.
 
-```mermaid
-flowchart LR
-    subgraph I["Espacio de instrucciones"]
-        IMEM["IMEM<br/>base 0x00000000"]
-    end
+Fetch requiere alineación y región completa dentro de IMEM y de la imagen confirmada. EA se forma módulo 2^32; el extremo EA+N se comprueba en 33 bits antes de indexar. Para un mismo acceso, desalineación prevalece sobre rango.
 
-    CPU["CPU RISC-V<br/>IF · ID · EX · MEM · WB"]
+DMEM entrega la palabra alineada de 32 bits; `Load Select/Extend` en MEM elige lanes y extensión. Stores usan máscara relativa de cuatro bits; DMEM alinea máscara/dato por offset y actualiza dato/marcas en el mismo flanco. No se permiten efectos parciales del acceso.
 
-    subgraph D["Espacio de datos"]
-        DMEM["DMEM<br/>base 0x00000000"]
-    end
+Cada byte tiene una marca de utilizado: no escrito se lee como cero lógico; escribir cero también lo marca utilizado. Preparación limpia ese mismo bitmap un byte por clock y conserva los datos físicos. CPU, Debug y preparación comparten los recursos aprobados, sin bitmap/puerto de lectura adicional.
 
-    IMEM -->|Fetch| CPU
-    CPU <-->|Load / Store| DMEM
-```
-
-Las características generales de esta organización son:
-
-- **IMEM y DMEM tienen base `0x00000000`:** cada una comienza en cero dentro de su propio espacio lógico.
-- **El direccionamiento es por bytes:** el PC y las direcciones de datos representan posiciones medidas en bytes.
-- **Las instrucciones ocupan 32 bits:** el flujo secuencial utiliza `PC + 4` y cada fetch obtiene una instrucción completa.
-- **DMEM admite accesos de distinto tamaño:** las instrucciones soportadas pueden operar sobre uno, dos o cuatro bytes.
-- **El orden arquitectónico es little-endian:** dentro de un valor de varios bytes, la dirección menor contiene la parte menos significativa.
-- **IF y MEM pueden utilizar sus memorias en el mismo ciclo:** la búsqueda de una instrucción no introduce un conflicto estructural con un acceso de datos.
-
-La arquitectura mantiene IMEM y DMEM como espacios independientes y permite que IF y MEM accedan a ellos en un mismo ciclo.
-
-Durante la carga, IMEM pasa temporalmente a ser escrita por el subsistema encargado de incorporar el nuevo programa. DMEM, en cambio, pertenece al estado de ejecución de cada sesión.
-
-Las capacidades, reglas de validez, alineación, rango y estado inicial de ambas memorias se detallan en [Arquitectura de memoria](memory_architecture.md).
+Detalle: [Arquitectura de memoria](memory_architecture.md) para semántica y [Acceso DMEM](dmem_access.md) para lanes, marcas, prioridades y guardas contra alias.
 
 ## Carga de un programa
 
-La CPU no contiene un programa fijo dentro de su lógica. El sistema permite tomar un programa escrito en la computadora, convertirlo a las instrucciones que entiende el procesador y cargarlo en IMEM sin volver a sintetizar la FPGA.
-
-El recorrido general de una carga es:
-
-```mermaid
-flowchart LR
-    ASM[Programa assembler]
-    CONV[Conversión a código máquina]
-    SW[Software de PC]
-    UART[UART]
-    LOAD[Subsistema de carga]
-    IMEM[IMEM]
-
-    ASM --> CONV --> SW --> UART --> LOAD --> IMEM
-```
-
 ### Del assembler al código máquina
 
-Los programas se escriben en assembler, pero la CPU ejecuta palabras de código máquina. Antes de transferir un programa a la FPGA, cada instrucción se convierte a su codificación binaria correspondiente.
-
-La traducción utiliza el **subconjunto de instrucciones implementado por el procesador**, incluida la instrucción `halt`.
+La imagen aceptada es no vacía, contigua desde cero, múltiplo de cuatro y dentro de IMEM, con instrucciones little-endian. El assembler de PC sigue pendiente; ese pendiente no modifica el contrato de imagen de FPGA. `LOAD` no valida que las instrucciones sean legales: lo hace el `decoder` al ejecutarlas.
 
 ### Transferencia hacia la FPGA
 
-El software de PC envía el programa traducido mediante UART. Dentro de la FPGA, el subsistema de carga recibe esa información y escribe las instrucciones en IMEM.
+`LOAD` lleva un tamaño original de cinco bytes, validado completo antes de reducir anchos. El controlador conserva tamaño/progreso. El Loader deriva posición, guarda los primeros tres bytes y escribe la palabra al recibir el cuarto. No tiene otra FSM ni otro contador de carga.
 
-La configuración del hardware permanece inalterada; únicamente se reemplaza el programa almacenado. Una carga incompleta o fallida no se utiliza como programa ejecutable.
+El resultado de la carga distingue estos casos:
 
-Una nueva ejecución comienza después de completar correctamente la carga y preparar el estado inicial correspondiente.
+| Evento | Consecuencia |
+|---|---|
+| `LOAD` rechazada | Conserva la sesión previa. |
+| `LOAD` aceptada | Invalida la imagen anterior. |
+| Aborto | Deja `NO_IMAGE` y no restaura la imagen anterior. |
+| `load_ok` | Certifica la última palabra escrita; todavía debe completarse preparación antes de publicar `READY`/DONE. |
 
-La relación entre carga, preparación y comienzo de una sesión se desarrolla en [Control de ejecución y sesión](execution_control.md).
+Detalle: [Loader](loader.md), [Preparación](session_preparation.md) y [Protocolo](../protocol.md).
 
 ## Control de la ejecución
 
-El sistema permite controlar desde el exterior cómo avanza el procesador una vez que existe un programa correctamente cargado y preparado. Para ello dispone de dos modalidades de ejecución: **RUN**, orientada a la ejecución continua del programa, y **STEP**, orientada a observar su evolución ciclo por ciclo.
+`execution_control` contiene `command_arbiter`, `global_fsm`, `cycle_authorization` y `fault_metadata_control`. `Pipeline Empty Logic`, `Global Status Decode` y los registros causa/PC de fault, tamaño confirmado y `Cycle Counter` son locales y explícitos. `pipeline_hazard_control`, `loader` y `session_preparation` se conectan en `processor_top`.
 
-Ambas modalidades actúan sobre la misma CPU y el mismo pipeline. La diferencia se encuentra únicamente en la forma en que se autoriza su avance.
+La FSM global tiene 14 estados, agrupados aquí por fase para facilitar su consulta:
+
+| Fase | Estados |
+|---|---|
+| Imagen y preparación | `NO_IMAGE`, `LOADING`, `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP` |
+| Espera y ejecución | `READY`, `RUNNING`, `STEPPING` |
+| Drenado | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP` |
+| Terminación | `FINISHED`, `FAULT` |
+
+La [tabla de estados/transiciones](execution_control.md#tabla-de-transiciones) y la [codificación](global_state_encoding.md) son referencias de detalle.
 
 ### RUN
 
-El modo **RUN** permite que el procesador avance de forma continua. Una vez iniciada la ejecución, la CPU continúa realizando ciclos sin necesitar una nueva orden desde la PC para cada uno de ellos.
-
-Este modo se mantiene mientras la ejecución continúe activa y hasta que aparezca una condición que la termine.
+`RUN` autoriza ciclos continuos hasta `halt`/fault y drenado. Desde un terminal prepara una sesión nueva con la imagen confirmada. `cycle_count` incrementa una vez por `cpu_cycle_fire`, incluidos stalls y drain, módulo 2^64 sin flags de overflow.
 
 ### STEP
 
-El modo **STEP** permite avanzar exactamente **un ciclo del procesador** por cada orden aceptada. Después de ese ciclo, la CPU vuelve a esperar.
+Cada `STEP` aceptado realiza exactamente un ciclo CPU, no una instrucción completa. En `READY`/`STEPPING`/drain `STEP` puede realizarse en el flanco de aceptación; desde terminal se prepara primero. Durante espera se retiene el estado CPU, mientras UART sigue activa.
 
-Un STEP no representa una instrucción completa. Como varias instrucciones pueden encontrarse simultáneamente en distintas etapas, un único paso puede modificar el estado de varias de ellas.
-
-La coordinación de RUN, STEP, espera, preparación y drenado se detalla en [Control de ejecución y sesión](execution_control.md).
+La preparación inicializa el PC, el RF, los registros interetapa y el contador en su primer flanco. También limpia las marcas de DMEM a razón de un byte por clock. `prepare_done` se activa después de completar esas escrituras. Su flanco de consumo publica `READY` sin ciclo para `LOAD`, o realiza el primer ciclo `RUN`/`STEP`. La preparación dura 2049 clocks en `REFERENCE` y 1001 en `ALT_1000`, dentro del presupuesto de 1 ms a 50 MHz.
 
 ## Finalización de la ejecución
 
 ### Terminación normal
 
-La instrucción `halt` indica la finalización normal de un programa.
-
-En una CPU con pipeline, encontrar `halt` no significa que todo el trabajo anterior haya terminado en ese mismo instante. Pueden existir instrucciones anteriores que todavía se encuentran en etapas posteriores y cuyos efectos siguen perteneciendo legítimamente al programa.
-
-Por esa razón, una vez establecida la terminación, la CPU deja de incorporar trabajo posterior y permite completar únicamente las instrucciones anteriores que todavía permanecen activas. La ejecución se considera terminada cuando ese trabajo pendiente ha finalizado y el pipeline queda vacío.
+`halt` se confirma en EX, deja de admitir instrucciones posteriores y permite completar las anteriores. `FINISHED` se alcanza cuando no queda trabajo válido.
 
 ### Terminación por fault
 
-La ejecución también puede encontrar condiciones inválidas, como una instrucción no soportada o un acceso que no puede realizarse correctamente. Estas situaciones se representan como **faults** y se distinguen de la terminación normal mediante `halt`.
+IF detecta candidatos de fetch, `IF/ID` los transporta e ID los confirma. EX tiene prioridad por edad sobre ID. La causante y el trabajo joven no producen efectos; las instrucciones anteriores pueden terminar. `fault_cause`/`fault_pc` conservan la causa y el PC de la causante.
 
-El tratamiento del fault conserva el orden del programa: las instrucciones anteriores pueden terminar de producir sus efectos válidos, mientras que la instrucción que provoca el fault y las posteriores se descartan antes de producir sus efectos normales.
-
-Las causas de fault, sus puntos de detección y confirmación, la precisión de la terminación y el drenado se detallan en [Faults, redirects y terminación](faults_and_termination.md).
+Existen siete causas legales: fetch desalineado/fuera de rango, instrucción ilegal, load desalineado/fuera de rango y store desalineado/fuera de rango; 011 está reservado. `next.valid` permite detectar el vacío posterior al flanco sin añadir un ciclo final. [Faults y terminación](faults_and_termination.md) fija los casos y prioridades.
 
 ## Debug y observación
 
 ### Función de Debug
 
-Debug permite observar el estado del procesador desde la computadora sin formar parte del datapath normal de las instrucciones.
-
-Su función es especialmente importante durante la ejecución paso a paso, porque permite relacionar cada ciclo con el estado del banco de registros, las instrucciones que se encuentran dentro del pipeline y los datos producidos por el programa.
-
-Al finalizar una ejecución continua, la misma infraestructura permite recuperar el estado necesario para analizar el resultado.
+Debug observa directamente el estado posterior al `STEP` o al último ciclo `RUN`. Desde ese instante hasta el Stop del último byte no hay otro ciclo CPU, `LOAD` ni preparación; UART/serialización siguen activas y RX se descarta. No se crea una copia completa del estado.
 
 ### Información observable
 
-El sistema permite observar el banco completo de registros y los cuatro registros intermedios del pipeline. También expone la información necesaria de la memoria de datos y del estado general de la ejecución.
+La respuesta incluye estado, validez de imagen, PC, ciclo, metadatos de fault, RF, los 34 campos de registros interetapa y la lista creciente de bytes DMEM utilizados. Conserva payload residual de registros interetapa inválidos; la validez indica su significado.
 
-La información transmitida corresponde a un mismo estado lógico del procesador. La UART puede necesitar muchos ciclos físicos para enviar todos los datos, pero la serialización conserva la coherencia de esa instantánea y no mezcla información perteneciente a momentos diferentes de la ejecución.
+La producción sigue este orden:
 
-El contenido observable y las reglas de coherencia del snapshot se detallan en [Arquitectura de Debug](debug_architecture.md).
+1. Contar metadatos DMEM.
+2. Emitir la parte fija.
+3. Recorrer DMEM de nuevo para producir la lista.
+
+`used_count` cero evita la lista y el segundo recorrido.
+
+La respuesta completa ocupa 230 + 5*K bytes para K bytes utilizados. [Protocolo](../protocol.md) fija códigos/orden/padding/plazos; [Arquitectura de Debug](debug_architecture.md) fija el significado; [Serializador](response_serializer.md) fija lectura, captura, encolado y finalización física.
+
+## UART y comandos
+
+`uart_core` contiene `serial_input_sync`, `baud_tick_gen`, `uart_rx`, `uart_tx` y dos `fifo`. `protocol_controller` es consumidor RX y coordina comandos; `response_serializer` es productor TX. Fin físico de cada byte llega al serializador; fin físico de respuesta llega al controlador.
+
+Comandos: `LOAD` (0x01), `RUN` (0x02), `STEP` (0x03), `RESET` (0x04) y `CHECK_READY` (0x05). El controlador tiene 16 estados one-hot; el serializador 10; UART RX cinco y TX cuatro. Los estados/recursos/acciones privados permanecen dentro de sus módulos.
+
+Controlador conserva un descriptor pendiente de respuesta; serializador conserva el activo. Timeouts de cabecera/contenido y silencio de recuperación son 100 ms; recuperación consume RX, conserva TX y no finaliza mientras hay actividad/recepción o respuesta incompleta. La exclusión Debug y prioridades `RUN`/`LOAD`/`RESET` mantienen el contrato de [Protocolo](../protocol.md).
+
+Detalle: [UART](uart_core.md), [Controlador](protocol_controller.md) y [Serializador](response_serializer.md).
 
 ## Software de PC
 
-El software de PC constituye la interfaz del usuario con el procesador.
+El contrato UART y los plazos compartidos ya están definidos. Las decisiones de assembler y aplicación PC siguen pospuestas: DEC-SYS-009 y DEC-SYS-008. No se adopta como aprobada la propuesta de assembler existente ni se exige leerla para entender FPGA.
 
-Desde allí se prepara el programa, se realiza su traducción a código máquina, se inicia la transferencia hacia la FPGA y se solicitan las operaciones de ejecución. El mismo software recibe la información enviada por Debug y la presenta de una forma que permita interpretar el estado del procesador.
+## Autoridad documental por tema
 
-La interacción completa sigue este recorrido:
+El **contrato vigente de consulta** es la especificación consolidada que se usa para implementar y verificar. La **fuente de aprobación/origen** conserva la obligación, la elección, sus motivos y sus revisiones. No es necesario reconstruir una secuencia de acuerdos para conocer el diseño actual.
 
-```mermaid
-flowchart LR
-    ASM[Programa assembler]
-    SW[Software de PC]
-    UART[UART]
-    DBG[Debug / carga / control]
-    IMEM[IMEM]
-    CPU[CPU RISC-V]
-    DMEM[DMEM]
+Las etapas `stage_*` desarrollan los bloques de su etapa. Las reglas compartidas se consultan en los contratos transversales de esta tabla.
 
-    ASM --> SW
-    SW <-->|programa, comandos y estado| UART
-    UART <--> DBG
-    DBG -->|carga| IMEM
-    DBG -->|control| CPU
-    IMEM --> CPU
-    CPU <--> DMEM
-    CPU -->|estado| DBG
-    DMEM -->|datos observables| DBG
-```
+Una discrepancia se registra y se reconcilia contra la revisión aprobada aplicable antes de implementar. La discrepancia no habilita a elegir una versión histórica sustituida ni a modificar la política aprobada.
 
-El flujo comienza con un programa escrito por el usuario y termina con la observación del estado producido por su ejecución. UART y Debug proporcionan el vínculo entre la computadora y la FPGA, mientras que la CPU conserva como responsabilidad central la ejecución de las instrucciones.
+El plan organiza actividades y las auditorías son evidencia fechada. Ninguno reemplaza los contratos vigentes.
+
+| Tema | Contrato vigente de consulta | Aprobación / origen |
+|---|---|---|
+| Obligaciones y aceptación | [Consigna](../consigna.md), [Requisitos](../requirements.md) | [Consigna](../consigna.md) y ADR vinculados en cada requisito |
+| ISA, whitelist y controles ID | [stage_id](stage_id.md#decoder) | [DEC-SYS-010](../decisions.md#dec-sys-010--versión-del-isa), [DEC-ARCH-004](../decisions.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards) |
+| Campos y temporización de registros interetapa | [cpu_pipeline](cpu_pipeline.md) | [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards), [DEC-ARCH-009](../decisions.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug) |
+| Caminos de datos, ALU, enlace e inmediatos | [datapath](datapath.md) | [DEC-ARCH-002](../decisions.md#dec-arch-002--etapa-de-resolución-de-branches-y-jumps), [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards), [DEC-ARCH-007](../decisions.md#dec-arch-007--temporización-del-banco-de-registros) |
+| Forwarding, load-use y ocho acciones | [control_and_hazards](control_and_hazards.md) | [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards) |
+| Faults precisos, confirmación y terminación | [faults_and_termination](faults_and_termination.md) | [DEC-ARCH-004](../decisions.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards), [DEC-SYS-001](../decisions.md#dec-sys-001--representación-y-semántica-de-stophalt), [DEC-SYS-002](../decisions.md#dec-sys-002--comportamiento-ante-ausencia-de-stophalt) |
+| Sesión, FSM, `RUN`/`STEP`/`HOLD` y ciclo lógico | [execution_control](execution_control.md) | [DEC-ARCH-008](../decisions.md#dec-arch-008--reset-y-enables), [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards), [DEC-SYS-003](../decisions.md#dec-sys-003--política-general-de-reprogramación) |
+| Memoria: semántica, ownership, capacidades y perfiles | [memory_architecture](memory_architecture.md) | [DEC-ARCH-001](../decisions.md#dec-arch-001--organización-y-comportamiento-de-las-memorias), [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias), [DEC-SYS-004](../decisions.md#dec-sys-004--capacidades-iniciales-de-memoria), [DEC-SYS-005](../decisions.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada) |
+| DMEM: lanes, máscaras y metadatos | [dmem_access](dmem_access.md) | [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias) |
+| Loader: reconstrucción y escritura IMEM | [loader](loader.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-001](../decisions.md#dec-arch-001--organización-y-comportamiento-de-las-memorias) |
+| Preparación: inicialización, clear y done | [session_preparation](session_preparation.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions.md#dec-arch-008--reset-y-enables) |
+| Estado global: one-hot y conversión externa | [global_state_encoding](global_state_encoding.md), [códigos UART](../protocol.md#global_state) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-003](../decisions.md#dec-arch-003--política-de-hazards), [DEC-PROTO-001](../decisions.md#dec-proto-001--formato-detallado-del-protocolo) |
+| Reset: acondicionamiento funcional común | [reset_integration](reset_integration.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions.md#dec-arch-008--reset-y-enables), [DEC-ARCH-005](../decisions.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock) |
+| Plataforma: clock, pines y constraints previstos | [platform_reference](platform_reference.md) | [DEC-ARCH-005](../decisions.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock) y REQ-TIM-008 |
+| Configuración: paquete, tipos, propagación y validadores | [common_configuration](common_configuration.md) | [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias); perfiles de [DEC-SYS-004](../decisions.md#dec-sys-004--capacidades-iniciales-de-memoria) |
+| Debug: significado y momento observado | [debug_architecture](debug_architecture.md) | [DEC-SYS-006](../decisions.md#dec-sys-006--información-observable-mediante-debug), [DEC-SYS-005](../decisions.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada), [DEC-ARCH-009](../decisions.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug) |
+| Protocolo: bytes, códigos, layout, plazos y recuperación | [Protocolo](../protocol.md) | [DEC-PROTO-001](../decisions.md#dec-proto-001--formato-detallado-del-protocolo), [DEC-PROTO-002](../decisions.md#dec-proto-002--comandos-adicionales), [DEC-PROTO-003](../decisions.md#dec-proto-003--timeouts-y-recuperación) |
+| Controlador: coordinación privada de transporte | [protocol_controller](protocol_controller.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) |
+| Serializador: recorrido y producción de bytes | [response_serializer](response_serializer.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart); representación de [DEC-PROTO-001](../decisions.md#dec-proto-001--formato-detallado-del-protocolo) |
+| UART: integración y unidades | [uart_core](uart_core.md); [uart_rx](uart_rx.md), [uart_tx](uart_tx.md), [uart_fifo](uart_fifo.md), [uart_baud_tick_gen](uart_baud_tick_gen.md) | [DEC-SYS-007](../decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) |
+| Bloques: entradas, salidas, anchos y conexiones | [Interfaces](../interfaces.md) | ADR enlazados por bloque; concreción [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias) |
+| Bloque → módulo/archivo y agrupación | [module_inventory](module_inventory.md) | [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06 |
+| Topología, tops y aliases de integración | [system_composition](system_composition.md) | [DEC-ARCH-006](../decisions.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06 |
+| Invariantes derivados I01–I25 | [architectural_invariants](architectural_invariants.md) | Requisitos y ADR citados en cada invariante |
+
+## Fuentes de detalle y trabajo que sigue
+
+| Consulta | Fuente vigente |
+|---|---|
+| Nombres/archivos y ubicación de todos los bloques | [Inventario](module_inventory.md) |
+| Puertos de tops, aliases y diagrama integrado | [Composición](system_composition.md) |
+| Entradas/salidas/anchos de cada bloque | [Interfaces](../interfaces.md) |
+| Bytes, respuestas, errores y plazos de UART | [Protocolo](../protocol.md) |
+| Qué exige el trabajo práctico | [Consigna](../consigna.md) y [Requisitos](../requirements.md) |
+| Trabajo todavía pendiente | [Pendientes](../pending_decisions.md) |
+
+Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` registra por qué/cuándo se acordó y qué revisión sustituyó a otra. Los informes anteriores están archivados en docs/archive/audits como evidencia fechada; `pending_decisions.md` es el único seguimiento vigente. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
+
+La consolidación y revisión arquitectónica se completaron antes del plan de pruebas. Siguen FPGA-07/08 (casos/resultados/oráculo) y la revisión final FPGA-09 con esos entregables; PC continúa pospuesta. D0/M6 del sistema entero permanece abierto. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
+
+## Referencias y trazabilidad
+
+- [Mapa de autoridad documental](system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
+- [Requisitos](../requirements.md): obligaciones y criterios de aceptación.
+- [Pendientes](../pending_decisions.md): seguimiento actual del trabajo abierto.

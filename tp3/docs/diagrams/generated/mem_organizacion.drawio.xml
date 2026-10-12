@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="piyny9JNdyDXt66Zs0db">
+    <mxGraphModel dx="4696" dy="2546" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="7874" pageHeight="7874" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;/div&gt;" tags="ADD_MEM ADD_WB DATAPATH LW_MEM LW_WB MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="2">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;verticalAlign=top;dashed=1;dashPattern=8 8;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="1126" width="120" x="1549" y="761.9949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;/div&gt;" tags="ADD_EX ADD_MEM DATAPATH EX LW_EX LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="3">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;verticalAlign=top;dashed=1;dashPattern=8 8;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="1126" width="120" x="365" y="761" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="4" edge="1" parent="1" source="26" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="72">
+          <mxGeometry relative="1" x="0.0734" as="geometry">
+            <Array as="points">
+              <mxPoint x="1475.9" y="1505.2" />
+              <mxPoint x="1475.9" y="1427.6" />
+              <mxPoint x="673" y="1427.6" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5" edge="1" parent="1" source="26" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="73">
+          <mxGeometry relative="1" x="0.1374" as="geometry">
+            <Array as="points">
+              <mxPoint x="1519.6" y="1627.4" />
+              <mxPoint x="1519.6" y="1406.4" />
+              <mxPoint x="755" y="1406.4" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6" edge="1" parent="1" source="27" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="74">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7" edge="1" parent="1" source="77" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8" edge="1" parent="1" source="78" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="71">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9" edge="1" parent="1" source="116" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="10" edge="1" parent="1" source="99" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="67">
+          <mxGeometry relative="1" x="0.0003" as="geometry">
+            <Array as="points">
+              <mxPoint x="500.6" y="1195" />
+              <mxPoint x="500.6" y="1329.5" />
+              <mxPoint x="1480.6" y="1329.5" />
+              <mxPoint x="1480.6" y="1114.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" edge="1" parent="1" source="110" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="59">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="517" y="1567.2" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" edge="1" parent="1" source="79" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.875;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="58">
+          <mxGeometry relative="1" x="-0.0008" as="geometry">
+            <Array as="points">
+              <mxPoint x="1153.9" y="1665.2" />
+              <mxPoint x="1153.9" y="1306.2" />
+              <mxPoint x="1364.5" y="1306.2" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" edge="1" parent="1" source="100" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;" target="110" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="465" y="1155" as="sourcePoint" />
+            <mxPoint x="611" y="1567" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" edge="1" parent="1" source="110" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.375;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=0.067;exitY=0.867;exitPerimeter=0;entryPerimeter=0;" target="26">
+          <mxGeometry relative="1" x="-0.5893" as="geometry">
+            <Array as="points">
+              <mxPoint x="1195.5" y="1355" />
+              <mxPoint x="1195.5" y="1535.7" />
+            </Array>
+            <mxPoint x="625" y="1321" as="sourcePoint" />
+            <mxPoint x="699" y="1533" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" edge="1" parent="1" source="76" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;entryX=0;entryY=0.625;entryDx=0;entryDy=0;entryPerimeter=0;" target="26">
+          <mxGeometry relative="1" x="0.0103" as="geometry">
+            <Array as="points">
+              <mxPoint x="1176.4" y="1466.2" />
+              <mxPoint x="1176.4" y="1596.9" />
+            </Array>
+            <mxPoint x="1288.92" y="1579.74" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="16" edge="1" parent="1" source="116" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.875;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=0.333;exitY=0.403;exitPerimeter=0;entryPerimeter=0;" target="26">
+          <mxGeometry relative="1" x="-0.8642" as="geometry">
+            <Array as="points">
+              <mxPoint x="512" y="739.6" />
+              <mxPoint x="340" y="739.6" />
+              <mxPoint x="340" y="1907.7" />
+              <mxPoint x="1197.2" y="1907.7" />
+              <mxPoint x="1197.2" y="1658" />
+            </Array>
+            <mxPoint x="545" y="929" as="sourcePoint" />
+            <mxPoint x="639" y="1141" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="17" edge="1" parent="1" source="29" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.125;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="26">
+          <mxGeometry relative="1" x="-0.3951" as="geometry">
+            <Array as="points">
+              <mxPoint x="319.7" y="1300.5" />
+              <mxPoint x="319.7" y="1924" />
+              <mxPoint x="1213.4" y="1924" />
+              <mxPoint x="1213.4" y="1474.6" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.0625;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.0625;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1074.2" y="293.3" />
+              <mxPoint x="1074.2" y="383.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.1875;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.1875;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1028.4" y="349.2" />
+              <mxPoint x="1028.4" y="414.4" />
+            </Array>
+            <mxPoint x="652.28" y="614.78" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3125;exitDx=0;exitDy=0;entryX=0;entryY=0.3125;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" x="-0.0214" as="geometry">
+            <Array as="points">
+              <mxPoint x="993.4" y="405" />
+              <mxPoint x="993.4" y="445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="21" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.4375;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.4375;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" x="-0.0234" as="geometry">
+            <Array as="points">
+              <mxPoint x="960.1" y="460.8" />
+              <mxPoint x="960.1" y="475.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="22" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5625;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5625;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" x="-0.0221" as="geometry">
+            <Array as="points">
+              <mxPoint x="961.7" y="516.6" />
+              <mxPoint x="961.7" y="506.1" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="23" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.6875;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.6875;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" x="-0.0211" as="geometry">
+            <Array as="points">
+              <mxPoint x="980.9" y="572.4" />
+              <mxPoint x="980.9" y="536.7" />
+            </Array>
+            <mxPoint x="610.61" y="585.89" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="24" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.8125;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.8125;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1006.7" y="628.2" />
+              <mxPoint x="1006.7" y="567.2" />
+            </Array>
+            <mxPoint x="594.78" y="614.22" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="25" edge="1" parent="1" source="28" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.9375;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.9375;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030.9" y="684" />
+              <mxPoint x="1030.9" y="597.8" />
+            </Array>
+            <mxPoint x="603.11" y="673.11" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;DMEM&lt;/b&gt;&lt;div&gt;&lt;b&gt;Write Control&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;DMEM Write Control&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Autoriza la escritura de Data Memory únicamente para un store válido dentro de un ciclo efectivo de CPU. Genera la habilitación de escritura y la máscara de bytes según la operación; para ADD y LW no autoriza una modificación de memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.valid ← EX/MEM&lt;/li&gt;&lt;li&gt;cpu_cycle_fire ← Execution Control&lt;/li&gt;&lt;li&gt;is_store ← MEM Decode&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;byte_enable → Data Memory&lt;/li&gt;&lt;li&gt;dmem_store_fire → Data Memory&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="26">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;points=[[0,0,1,0,0],[0,0.125,0,0,0],[0,0.25,1,0,0],[0,0.375,0,0,0],[0,0.5,1,0,0],[0,0.625,0,0,0],[0,0.75,1,0,0],[0,0.875,0,0,0],[0,1,1,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[1,0,1,0,0],[1,0.25,1,0,0],[1,0.5,1,0,0],[1,0.75,1,0,0],[1,1,1,0,0]];fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="244.5" width="101" x="1315" y="1444.05" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;br&gt;&lt;div&gt;&lt;b&gt;Update&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Control&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_MEM CONTROL_PATH HAZARD LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB Update Control&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Genera la captura de MEM/WB a partir de la acción del pipeline. Permite que los resultados de instrucciones anteriores continúen hacia WB incluso cuando etapas más tempranas deben retenerse, descartarse o dejar de admitir trabajo.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;act_drain_advance ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_drain_load_use ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_ex_fault ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_halt ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_id_fault ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_load_use ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_normal ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_redirect ← Pipeline Hazard Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;capture → MEM/WB&lt;/li&gt;&lt;li&gt;capture → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="27">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;fontColor=#4338CA;align=center;verticalAlign=middle;fontSize=12;fillColor=default;points=[[0,0,1,0,0],[0,0.0625,0,0,0],[0,0.125,0,0,0],[0,0.1875,0,0,0],[0,0.25,1,0,0],[0,0.3125,0,0,0],[0,0.375,0,0,0],[0,0.4375,0,0,0],[0,0.5,1,0,0],[0,0.5625,0,0,0],[0,0.625,0,0,0],[0,0.6875,0,0,0],[0,0.75,1,0,0],[0,0.8125,0,0,0],[0,0.875,0,0,0],[0,0.9375,0,0,0],[0,1,1,0,0],[0.0625,0,0,0,0],[0.125,0,0,0,0],[0.1875,0,0,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.3125,0,0,0,0],[0.375,0,0,0,0],[0.4375,0,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.5625,0,0,0,0],[0.625,0,0,0,0],[0.6875,0,0,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[0.8125,0,0,0,0],[0.875,0,0,0,0],[0.9375,0,0,0,0],[1,0,1,0,0],[1,0.25,1,0,0],[1,0.5,1,0,0],[1,0.75,1,0,0],[1,1,1,0,0]];fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="244.5" width="101" x="1163" y="368.56" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Pipeline&lt;/b&gt;&lt;div&gt;&lt;b&gt;Hazard&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Control&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH GLOBAL_CONTROL HAZARD" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Pipeline Hazard Control&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Elige la acción global del pipeline combinando la autorización del ciclo, los candidatos de fault y halt, los redirects y el hazard load-use. Resuelve sus prioridades y entrega las acciones que los controles locales traducen en avances, retenciones e invalidaciones.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;cpu_cycle_fire ← Execution Control&lt;/li&gt;&lt;li&gt;drain_active ← Execution Control&lt;/li&gt;&lt;li&gt;ex_fault_candidate ← EX Fault Check&lt;/li&gt;&lt;li&gt;ex_halt_candidate ← Flow Control&lt;/li&gt;&lt;li&gt;id_fault_candidate ← ID Fault Check&lt;/li&gt;&lt;li&gt;load_use_stall ← Load-Use Detector&lt;/li&gt;&lt;li&gt;redirect_requested ← Flow Control&lt;/li&gt;&lt;li&gt;terminal_none ← Execution Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;act_drain_advance → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_drain_advance → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_drain_advance → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_drain_advance → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_drain_load_use → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_drain_load_use → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_drain_load_use → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_drain_load_use → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_ex_fault → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_ex_fault → Execution Control&lt;/li&gt;&lt;li&gt;act_ex_fault → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_ex_fault → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_ex_fault → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_halt → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_halt → Execution Control&lt;/li&gt;&lt;li&gt;act_halt → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_halt → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_halt → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_id_fault → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_id_fault → Execution Control&lt;/li&gt;&lt;li&gt;act_id_fault → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_id_fault → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_id_fault → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_load_use → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_load_use → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_load_use → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_load_use → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_normal → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_normal → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_normal → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_normal → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_normal → PC Update Control&lt;/li&gt;&lt;li&gt;act_redirect → EX/MEM Update Control&lt;/li&gt;&lt;li&gt;act_redirect → ID/EX Update Control&lt;/li&gt;&lt;li&gt;act_redirect → IF/ID Update Control&lt;/li&gt;&lt;li&gt;act_redirect → MEM/WB Update Control&lt;/li&gt;&lt;li&gt;act_redirect → PC Update Control&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="28">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;fontColor=#4338CA;align=center;verticalAlign=middle;fontSize=12;fillColor=default;points=[[0,0,1,0,0],[0,0.03125,0,0,0],[0,0.0625,0,0,0],[0,0.09375,0,0,0],[0,0.125,0,0,0],[0,0.15625,0,0,0],[0,0.1875,0,0,0],[0,0.21875,0,0,0],[0,0.25,1,0,0],[0,0.28125,0,0,0],[0,0.3125,0,0,0],[0,0.34375,0,0,0],[0,0.375,0,0,0],[0,0.40625,0,0,0],[0,0.4375,0,0,0],[0,0.46875,0,0,0],[0,0.5,1,0,0],[0,0.53125,0,0,0],[0,0.5625,0,0,0],[0,0.59375,0,0,0],[0,0.625,0,0,0],[0,0.65625,0,0,0],[0,0.6875,0,0,0],[0,0.71875,0,0,0],[0,0.75,1,0,0],[0,0.78125,0,0,0],[0,0.8125,0,0,0],[0,0.84375,0,0,0],[0,0.875,0,0,0],[0,0.90625,0,0,0],[0,0.9375,0,0,0],[0,0.96875,0,0,0],[0,1,1,0,0],[0.0625,0,0,0,0],[0.125,0,0,0,0],[0.1875,0,0,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.3125,0,0,0,0],[0.375,0,0,0,0],[0.4375,0,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.5625,0,0,0,0],[0.625,0,0,0,0],[0.6875,0,0,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[0.8125,0,0,0,0],[0.875,0,0,0,0],[0.9375,0,0,0,0],[1,0,1,0,0],[1,0.03125,0,0,0],[1,0.0625,0,0,0],[1,0.09375,0,0,0],[1,0.125,0,0,0],[1,0.15625,0,0,0],[1,0.1875,0,0,0],[1,0.21875,0,0,0],[1,0.25,1,0,0],[1,0.28125,0,0,0],[1,0.3125,0,0,0],[1,0.34375,0,0,0],[1,0.375,0,0,0],[1,0.40625,0,0,0],[1,0.4375,0,0,0],[1,0.46875,0,0,0],[1,0.5,1,0,0],[1,0.53125,0,0,0],[1,0.5625,0,0,0],[1,0.59375,0,0,0],[1,0.625,0,0,0],[1,0.65625,0,0,0],[1,0.6875,0,0,0],[1,0.71875,0,0,0],[1,0.75,1,0,0],[1,0.78125,0,0,0],[1,0.8125,0,0,0],[1,0.84375,0,0,0],[1,0.875,0,0,0],[1,0.90625,0,0,0],[1,0.9375,0,0,0],[1,0.96875,0,0,0],[1,1,1,0,0]];fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="446.5" width="242.5" x="309.25" y="265.44" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Execution&lt;/b&gt;&lt;div&gt;&lt;b&gt;Control&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_WB CONTROL_PATH GLOBAL_CONTROL LW_WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Execution Control&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;act_ex_fault ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;act_id_fault ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;halt_confirm ← Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;pipeline_empty ← Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;pipeline_empty_next ← Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;cpu_cycle_fire → DMEM Write Control&lt;/li&gt;&lt;li&gt;cpu_cycle_fire → Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;cpu_cycle_fire → WB Bypass Control&lt;/li&gt;&lt;li&gt;drain_active → Pipeline Hazard Control&lt;/li&gt;&lt;li&gt;terminal_none → Pipeline Hazard Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Puertos con un extremo externo o sin bloque asociado: RUN, STEP, reset.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="29">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;fontColor=#4338CA;align=center;verticalAlign=middle;fontSize=12;fillColor=default;points=[[0,0,1,0,0],[0,0.03125,0,0,0],[0,0.0625,0,0,0],[0,0.09375,0,0,0],[0,0.125,0,0,0],[0,0.15625,0,0,0],[0,0.1875,0,0,0],[0,0.21875,0,0,0],[0,0.25,1,0,0],[0,0.28125,0,0,0],[0,0.3125,0,0,0],[0,0.34375,0,0,0],[0,0.375,0,0,0],[0,0.40625,0,0,0],[0,0.4375,0,0,0],[0,0.46875,0,0,0],[0,0.5,1,0,0],[0,0.53125,0,0,0],[0,0.5625,0,0,0],[0,0.59375,0,0,0],[0,0.625,0,0,0],[0,0.65625,0,0,0],[0,0.6875,0,0,0],[0,0.71875,0,0,0],[0,0.75,1,0,0],[0,0.78125,0,0,0],[0,0.8125,0,0,0],[0,0.84375,0,0,0],[0,0.875,0,0,0],[0,0.90625,0,0,0],[0,0.9375,0,0,0],[0,0.96875,0,0,0],[0,1,1,0,0],[0.0625,0,0,0,0],[0.125,0,0,0,0],[0.1875,0,0,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.3125,0,0,0,0],[0.375,0,0,0,0],[0.4375,0,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.5625,0,0,0,0],[0.625,0,0,0,0],[0.6875,0,0,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[0.8125,0,0,0,0],[0.875,0,0,0,0],[0.9375,0,0,0,0],[1,0.5,0,0,0]];fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="446.5" width="242.5" x="-11" y="1077.28" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.valid&lt;/span&gt;" tags="CONTROL_PATH EX FORWARDING GLOBAL_CONTROL HAZARD MEM WB" id="30">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1195" y="1660.425" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="is_store" tags="CONTROL_PATH MEM" id="31">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1193" y="1598" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;mem_op&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;[3:0]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" tags="CONTROL_PATH EX FORWARDING HAZARD MEM" id="32">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="113" x="1193" y="1537.13" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="cpu_cycle_fire" tags="CONTROL_PATH FORWARDING GLOBAL_CONTROL HAZARD ID MEM WB" id="33">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1193" y="1474.8" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="byte_enable" tags="CONTROL_PATH MEM" id="34">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="98" x="1416" y="1627.6125" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="dmem_store_fire" tags="CONTROL_PATH MEM" id="35">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="98" x="1416" y="1505.3625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_drain_load_use" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="36">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="118" x="1036" y="598.2475" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_id_fault" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="37">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1059" y="567.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_ex_fault" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="38">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1060" y="536.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_halt" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="39">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1060" y="505.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_redirect" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM REDIRECT" id="40">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1060" y="475.8075" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_load_use" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="41">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1059" y="444.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div&gt;act_drain_advance&lt;/div&gt;" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="42">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="1042" y="415.3775" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_normal" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM REDIRECT" id="43">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="94" x="1060" y="383.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="capture" tags="ADD_MEM CONTROL_PATH GLOBAL_CONTROL HAZARD LW_MEM MEM WB" id="44">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="1264.5" y="491.9975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_drain_load_use" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="45">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="553" y="685.2212999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_id_fault" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="46">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="553" y="629.2487" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_ex_fault" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="47">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="552" y="573.9963" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_halt" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="48">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="552" y="516.9937" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_redirect" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM REDIRECT" id="49">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="552" y="461.0013" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_load_use" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="50">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="552" y="404.99870000000004" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div&gt;act_drain_advance&lt;/div&gt;" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM" id="51">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="551.75" y="348.9963" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="act_normal" tags="CONTROL_PATH EX GLOBAL_CONTROL HAZARD ID IF MEM REDIRECT" id="52">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="112" x="551.75" y="294.00370000000004" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="cpu_cycle_fire" tags="ADD_WB CONTROL_PATH FORWARDING GLOBAL_CONTROL HAZARD ID LW_WB MEM WB" id="53">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="116" x="232" y="1301.9050499999998" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Data&lt;/b&gt;&lt;div&gt;&lt;b&gt;Memory&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="54">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="181" width="170" x="628" y="1099.1949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="55" edge="1" parent="1" source="54" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;Load Select/Extend&lt;/b&gt;&lt;/div&gt;" tags="DATAPATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Load Select/Extend&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Convierte los datos de lectura de memoria en el valor de 32 bits que requiere el load. Selecciona el tamaño indicado y aplica extensión de signo o de ceros para bytes y medias palabras; en LW entrega la palabra completa sin extenderla.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] ← MEM Decode&lt;/li&gt;&lt;li&gt;load_unsigned ← MEM Decode&lt;/li&gt;&lt;li&gt;mem_read_data [31:0] ← Data Memory&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;load_value [31:0] → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="56">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="112" width="170" x="1006" y="1132.975" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="57" edge="1" parent="1" source="58" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1459.8" y="1204.5" />
+              <mxPoint x="1459.8" y="1075.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;WB Value&lt;/b&gt;&lt;div&gt;&lt;b&gt;MUX&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_MEM DATAPATH LW_MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;WB Value MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Elige el resultado arquitectónico que se guardará en MEM/WB.wb_value. Para un load toma load_value; para una operación que ya obtuvo su resultado en EX toma ex_result, de modo que WB reciba un único valor final.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;load_value [31:0] ← Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel ← MEM Decode&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;wb_value [31:0] → MEM/WB&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="58">
+          <mxCell parent="1" style="shape=mxgraph.basic.polygon;polyline=0;whiteSpace=wrap;html=1;points=[[0,0.25,0,0,0],[0,0.5,0,0,0],[0,0.75,0,0,0],[0.5,0.875,0,0,0],[1,0.5,0,0,0]];fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#1E293B;rounded=1;absoluteArcSize=1;arcSize=16;polyCoords=[[0.0,0.94285714],[0.09161573,0.97709607],[0.90838427,0.77290393],[1.0,0.69285714],[1.0,0.30714286],[0.90838427,0.22709607],[0.09161573,0.02290393],[0.0,0.05714286]];polyCurves=[[&quot;Q&quot;,0,1],[],[&quot;Q&quot;,1,0.75],[],[&quot;Q&quot;,1,0.25],[],[&quot;Q&quot;,0,0],[]];fontFamily=Inter;" vertex="1">
+            <mxGeometry height="140" width="80" x="1324.5" y="1134.495" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;div class=&quot;diagram-module-label&quot;&gt;&lt;b&gt;MEM&lt;/b&gt;&lt;div&gt;&lt;b&gt;Decode&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;" tags="ADD_MEM CONTROL_PATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" link="data:action/json,{&quot;title&quot;:&quot;Enfocar Vista completa&quot;,&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;x&quot;:6650,&quot;y&quot;:7050,&quot;width&quot;:6350,&quot;height&quot;:4740,&quot;smooth&quot;:true}}]}" id="59">
+          <mxCell parent="1" style="whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;points=[[0,0,1,0,0],[0,0.25,1,0,0],[0,0.5,1,0,0],[0,0.75,1,0,0],[0,1,1,0,0],[0.25,0,1,0,0],[0.25,1,1,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.75,0,1,0,0],[0.75,1,1,0,0],[1,0,1,0,0],[1,0.0625,0,0,0],[1,0.125,0,0,0],[1,0.1875,0,0,0],[1,0.25,1,0,0],[1,0.3125,0,0,0],[1,0.375,0,0,0],[1,0.4375,0,0,0],[1,0.5,1,0,0],[1,0.5625,0,0,0],[1,0.625,0,0,0],[1,0.6875,0,0,0],[1,0.75,1,0,0],[1,0.8125,0,0,0],[1,0.875,0,0,0],[1,0.9375,0,0,0],[1,1,1,0,0]];movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fillColor=#EEF2FF;rounded=1;absoluteArcSize=1;arcSize=16;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="264" width="223" x="611" y="1435.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Adress" tags="DATAPATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="60">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="628" y="1139.6949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Write&amp;nbsp;&lt;div&gt;Data&lt;/div&gt;" tags="DATAPATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="61">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="628" y="1198.6949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Read&lt;div&gt;Data&lt;/div&gt;" tags="DATAPATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="62">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="738" y="1176.6949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="valid" tags="ADD_MEM ADD_WB CONTROL_PATH DATAPATH EX FORWARDING GLOBAL_CONTROL HAZARD ID LW_MEM LW_WB MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="63">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="895.4949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="PC&lt;div&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="64">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="935.4949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="instruction&lt;div&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="65">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="975.4949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="rd&lt;div&gt;[4:0]&lt;/div&gt;" tags="ADD_MEM ADD_WB DATAPATH EX FORWARDING HAZARD ID LW_MEM LW_WB MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="66">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="1015.4949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="reg_write" tags="ADD_MEM ADD_WB CONTROL_PATH DATAPATH EX FORWARDING HAZARD ID LW_MEM LW_WB MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="67">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="1094.495" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="wb_value&lt;div&gt;[31:0]&lt;/div&gt;" tags="ADD_MEM ADD_WB DATAPATH EX FORWARDING ID LW_MEM LW_WB MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="68">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="1569" y="1055.495" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="sel" tags="DATAPATH WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;WB Value MUX&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Elige el resultado arquitectónico que se guardará en MEM/WB.wb_value. Para un load toma load_value; para una operación que ya obtuvo su resultado en EX toma ex_result, de modo que WB reciba un único valor final.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;load_value [31:0] ← Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel ← MEM Decode&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;wb_value [31:0] → MEM/WB&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="69">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="20" width="25.25" x="1351.88" y="1233.995" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="access_size&lt;div&gt;[1:0]&lt;/div&gt;" tags="DATAPATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Load Select/Extend&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Convierte los datos de lectura de memoria en el valor de 32 bits que requiere el load. Selecciona el tamaño indicado y aplica extensión de signo o de ceros para bytes y medias palabras; en LW entrega la palabra completa sin extenderla.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] ← MEM Decode&lt;/li&gt;&lt;li&gt;load_unsigned ← MEM Decode&lt;/li&gt;&lt;li&gt;mem_read_data [31:0] ← Data Memory&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;load_value [31:0] → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="70">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingRight=0;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="33" width="72" x="1012" y="1210.475" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="load_unsigned" tags="DATAPATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Load Select/Extend&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Convierte los datos de lectura de memoria en el valor de 32 bits que requiere el load. Selecciona el tamaño indicado y aplica extensión de signo o de ceros para bytes y medias palabras; en LW entrega la palabra completa sin extenderla.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] ← MEM Decode&lt;/li&gt;&lt;li&gt;load_unsigned ← MEM Decode&lt;/li&gt;&lt;li&gt;mem_read_data [31:0] ← Data Memory&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;load_value [31:0] → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="71">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingRight=0;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="33" width="72" x="1096" y="1212.475" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="write_enable" tags="CONTROL_PATH DATAPATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="72">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingRight=0;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="33" width="72" x="637" y="1247.1949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="byte_enable" tags="DATAPATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;Data Memory&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Proporciona los datos leídos en la dirección calculada por EX y recibe el dato que un store podría escribir. Las escrituras solo se confirman cuando DMEM Write Control las habilita, con las posiciones de byte indicadas por byte_enable; una lectura no modifica la memoria.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.ex_result [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;EX/MEM.store_data [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;byte_enable ← DMEM Write Control&lt;/li&gt;&lt;li&gt;write_enable ← DMEM Write Control&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;mem_read_data [31:0] → Load Select/Extend&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="73">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;spacingRight=0;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="33" width="72" x="719" y="1247.1949999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="capture" tags="ADD_MEM DATAPATH LW_MEM MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM/WB&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva la instrucción que llega a WB junto con su validez, PC, destino, reg_write y resultado final wb_value. WB usa ese resultado para actualizar Registers y también lo ofrece a los caminos de bypass y forwarding; PC e instruction permiten identificar la instrucción.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;capture ← MEM/WB Update Control&lt;/li&gt;&lt;li&gt;instruction [31:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;rd [4:0] ← EX/MEM&lt;/li&gt;&lt;li&gt;reg_write ← EX/MEM&lt;/li&gt;&lt;li&gt;valid ← EX/MEM&lt;/li&gt;&lt;li&gt;wb_value [31:0] ← WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → Registers&lt;/li&gt;&lt;li&gt;rd [4:0] → WB Bypass Control&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → WB Bypass Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;li&gt;valid → WB Bypass Control&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX A&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Forward MUX B&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS1 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → RS2 Bypass MUX&lt;/li&gt;&lt;li&gt;wb_value [31:0] → Registers&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="74">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="1549" y="784.4949999999999" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="mem_op&lt;div&gt;[3:0]&lt;/div&gt;" tags="CONTROL_PATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="75">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="611" y="1552.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="is_store" tags="CONTROL_PATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="76">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="52" x="782" y="1451.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="access_size&lt;div&gt;[1:0]&lt;/div&gt;" tags="CONTROL_PATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="77">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="754" y="1520.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="load_unsigned" tags="CONTROL_PATH LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="78">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="754" y="1586.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="wb_value_sel" tags="CONTROL_PATH MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;MEM Decode&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Interpreta mem_op de EX/MEM para distinguir loads, stores y operaciones sin acceso de memoria. Deriva el tamaño del acceso, la política de extensión de loads, la indicación de store y la selección del valor que continuará hacia WB.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;EX/MEM.mem_op [3:0] ← EX/MEM&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;access_size [1:0] → Load Select/Extend&lt;/li&gt;&lt;li&gt;is_store → DMEM Write Control&lt;/li&gt;&lt;li&gt;load_unsigned → Load Select/Extend&lt;/li&gt;&lt;li&gt;wb_value_sel → WB Value MUX&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="79">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="80" x="754" y="1650.235" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ex_result&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX FORWARDING LW_MEM MEM WB" id="80">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="505" y="1156.4762499999997" as="geometry">
+              <mxPoint x="5" y="8" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;mem_read_data&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH LW_MEM MEM" id="81">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=0;fontFamily=Inter;spacingRight=3;" vertex="1">
+            <mxGeometry height="30" width="89" x="907" y="1189.25625" as="geometry">
+              <mxPoint y="6" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="load_unsigned" tags="CONTROL_PATH LW_MEM MEM" id="82">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="1132" y="1255.1625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="access_size&lt;div&gt;[1:0]&lt;/div&gt;" tags="CONTROL_PATH LW_MEM MEM" id="83">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="1048" y="1254.365625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;wb_value&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH MEM WB" id="84">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1436" y="1076.27625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;load_value&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH LW_MEM MEM WB" id="85">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;spacingLeft=3;" vertex="1">
+            <mxGeometry height="30" width="60" x="1176" y="1189.25625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="wb_value_sel" tags="CONTROL_PATH MEM WB" id="86">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="1364.5" y="1268.1825" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;wb_value&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="ADD_MEM DATAPATH LW_MEM MEM WB" id="87">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="52" x="1404.5" y="1204.77625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.mem_op&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;[3:0]&lt;/span&gt;&lt;/div&gt;" tags="ADD_MEM CONTROL_PATH EX FORWARDING HAZARD LW_MEM MEM" id="88">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontColor=#4338CA;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="490" y="1568.625625" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="wb_value_sel" tags="ADD_MEM CONTROL_PATH LW_MEM MEM WB" id="89">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="834.5" y="1665.4225" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="load_unsigned" tags="CONTROL_PATH LW_MEM MEM" id="90">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="834.5" y="1601.4225" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="access_size&lt;div&gt;[1:0]&lt;/div&gt;" tags="CONTROL_PATH LW_MEM MEM" id="91">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="77.5" x="834.5" y="1535.625625" as="geometry">
+              <mxPoint y="5" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="valid" tags="ADD_EX ADD_MEM CONTROL_PATH DATAPATH EX FAULT FORWARDING GLOBAL_CONTROL HAZARD ID LW_EX LW_MEM MEM REDIRECT WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="92">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="894.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="93" edge="1" parent="1" source="94" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="PC&lt;div&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX ID MEM REDIRECT WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="94">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="934.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="95" edge="1" parent="1" source="96" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="instruction&lt;div&gt;[31:0]&lt;/div&gt;" tags="DATAPATH EX FORWARDING HAZARD ID MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="96">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="974.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="97" edge="1" parent="1" source="98" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="66">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="rd&lt;div&gt;[4:0]&lt;/div&gt;" tags="ADD_EX ADD_MEM DATAPATH EX FORWARDING HAZARD ID LW_EX LW_MEM MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="98">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="1014.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="reg_write" tags="ADD_EX ADD_MEM CONTROL_PATH DATAPATH EX FORWARDING HAZARD ID LW_EX LW_MEM MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="99">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="1175" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="mem_op&lt;div&gt;[3:0]&lt;/div&gt;" tags="ADD_EX ADD_MEM CONTROL_PATH DATAPATH EX FAULT FORWARDING HAZARD ID LW_EX LW_MEM MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="100">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#818CF8;align=center;verticalAlign=middle;fontSize=12;fontColor=#4338CA;fillColor=default;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="1135" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="101" edge="1" parent="1" source="112" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="60">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="567" y="1154.7" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="ex_result" tags="ADD_EX ADD_MEM DATAPATH EX FORWARDING LW_EX LW_MEM MEM WB" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="102">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="1054.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="103" edge="1" parent="1" source="104" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="61">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="541.2" y="1114.5" />
+              <mxPoint x="541.2" y="1213.7" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="store_data" tags="DATAPATH EX FORWARDING MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="104">
+          <mxCell parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="40" width="80" x="385" y="1094.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="capture" tags="ADD_EX DATAPATH EX LW_EX MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="105">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="365" y="783.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="invalidate" tags="DATAPATH EX MEM" tooltip="&lt;div style=&quot;font:14px Helvetica,Arial,sans-serif;width:350px;max-width:80vw;white-space:normal&quot;&gt;&lt;b&gt;EX/MEM&lt;/b&gt;&lt;p style=&quot;line-height:1.5&quot;&gt;Conserva entre EX y MEM la identidad y validez de la instrucción, su destino, los controles de memoria y escritura, ex_result y store_data. ex_result contiene un resultado para una operación aritmética o una dirección para un acceso de memoria; store_data solo tiene significado funcional para stores.&lt;/p&gt;&lt;p style=&quot;color:#55718f&quot;&gt;Participa del recorrido destacado.&lt;/p&gt;&lt;div style=&quot;max-height:220px;overflow:auto&quot;&gt;&lt;p&gt;&lt;b&gt;Entradas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;capture ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;ex_result ← Result MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] ← ID/EX&lt;/li&gt;&lt;li&gt;invalidate ← EX/MEM Update Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] ← ID/EX&lt;/li&gt;&lt;li&gt;rd [4:0] ← ID/EX&lt;/li&gt;&lt;li&gt;reg_write ← ID/EX&lt;/li&gt;&lt;li&gt;store_data ← Forward MUX B&lt;/li&gt;&lt;li&gt;valid ← ID/EX&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Salidas&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PC [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;ex_result → Data Memory&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX A&lt;/li&gt;&lt;li&gt;ex_result → Forward MUX B&lt;/li&gt;&lt;li&gt;ex_result → WB Value MUX&lt;/li&gt;&lt;li&gt;instruction [31:0] → MEM/WB&lt;/li&gt;&lt;li&gt;mem_op [3:0] → DMEM Write Control&lt;/li&gt;&lt;li&gt;mem_op [3:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;mem_op [3:0] → MEM Decode&lt;/li&gt;&lt;li&gt;rd [4:0] → Forwarding Unit&lt;/li&gt;&lt;li&gt;rd [4:0] → MEM/WB&lt;/li&gt;&lt;li&gt;reg_write → Forwarding Unit&lt;/li&gt;&lt;li&gt;reg_write → MEM/WB&lt;/li&gt;&lt;li&gt;store_data → Data Memory&lt;/li&gt;&lt;li&gt;valid → DMEM Write Control&lt;/li&gt;&lt;li&gt;valid → Forwarding Unit&lt;/li&gt;&lt;li&gt;valid → MEM/WB&lt;/li&gt;&lt;li&gt;valid → Pipeline Empty Logic&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;" id="106">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingLeft=3;fontSize=12;fontColor=#4338CA;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="60" x="365" y="813.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;mem_read_data&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH LW_MEM MEM" id="107">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="89" x="798" y="1190.3199999999997" as="geometry">
+              <mxPoint y="6" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <mxCell id="108" edge="1" parent="1" source="56" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;" target="58">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;load_value&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH LW_MEM MEM WB" id="109">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;spacingLeft=0;spacingRight=3;" vertex="1">
+            <mxGeometry height="30" width="60" x="1255" y="1240.3199999999997" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="110" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;strokeColor=#6366F1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="507" y="1345" as="geometry" />
+        </mxCell>
+        <mxCell id="111" edge="1" parent="1" source="102" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;" target="112" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="465" y="1075" as="sourcePoint" />
+            <mxPoint x="628" y="1115" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="112" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="557" y="1065" as="geometry" />
+        </mxCell>
+        <mxCell id="113" edge="1" parent="1" source="112" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#000000;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endFill=1;fillColor=default;exitX=0.555;exitY=0.967;exitPerimeter=0;entryPerimeter=0;" target="58">
+          <mxGeometry relative="1" x="-0.8131" as="geometry">
+            <Array as="points">
+              <mxPoint x="1267.5" y="1075" />
+              <mxPoint x="1267.5" y="1169.5" />
+            </Array>
+            <mxPoint x="590" y="1089" as="sourcePoint" />
+            <mxPoint x="671" y="1129" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;ex_result&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX FORWARDING LW_MEM MEM WB" id="114">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1202" y="1169.69" as="geometry">
+              <mxPoint x="5" y="8" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <mxCell id="115" edge="1" parent="1" source="92" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryDx=0;entryDy=0;strokeColor=#6366F1;align=center;verticalAlign=middle;arcSize=16;fontFamily=Inter;fontSize=12;fontColor=#4338CA;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=none;endFill=0;fillColor=default;" target="116" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="465" y="915" as="sourcePoint" />
+            <mxPoint x="1569" y="915" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="116" parent="1" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;strokeColor=#6366F1;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="502" y="904.5" as="geometry" />
+        </mxCell>
+        <UserObject label="capture" tags="ADD_MEM CONTROL_PATH GLOBAL_CONTROL HAZARD LW_MEM MEM WB" id="117">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingLeft=0;fontSize=12;fontColor=#4338CA;fontFamily=Inter;spacingRight=2;" vertex="1">
+            <mxGeometry height="30" width="60" x="1480" y="800" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.rd&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH MEM WB" id="118">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1436" y="1036" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.instruction&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;" tags="DATAPATH MEM WB" id="119">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1436" y="996" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.PC&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;[31:0]&lt;/span&gt;&lt;/div&gt;" tags="DATAPATH MEM WB" id="120">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=12;fontColor=default;fontStyle=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="1435" y="956" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="EX/MEM.valid" tags="CONTROL_PATH MEM WB" id="121">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="83" x="1465" y="916" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="EX/MEM.&lt;div&gt;reg_write&lt;/div&gt;" tags="CONTROL_PATH MEM WB" id="122">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="83" x="1465" y="1115" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="dmem_store&lt;div&gt;_fire&lt;/div&gt;" tags="CONTROL_PATH MEM" id="123">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="98" x="674" y="1290" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="byte_enable" tags="CONTROL_PATH MEM" id="124">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="98" x="754" y="1292" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;strore_data&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX FORWARDING LW_MEM MEM WB" id="125">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="113" x="505" y="1215.19" as="geometry">
+              <mxPoint x="5" y="8" as="offset" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="is_store" tags="CONTROL_PATH MEM" id="126">
+          <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;spacingRight=0;fontSize=12;fontColor=#4338CA;spacingLeft=3;fontFamily=Inter;" vertex="1">
+            <mxGeometry height="30" width="98" x="834.5" y="1468" as="geometry" />
+          </mxCell>
+        </UserObject>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
