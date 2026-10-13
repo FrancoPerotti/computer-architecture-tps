@@ -31,9 +31,9 @@ El alcance comprende:
 - las constantes, tipos, funciones de validación y fórmulas de anchos que comparten los módulos;
 - los valores ya aprobados de clock, UART, controles de CPU, protocolo y estado global, conservando sus contratos.
 
-La [tabla de perfiles](memory_architecture.md#perfiles-definidos) es la fuente oficial de capacidades. [Composición](system_composition.md) define el empaquetado de puertos y registros interetapa. Los pines y constraints de placa permanecen en el XDC ya especificado: no se trasladan a constantes HDL ni se duplican como una segunda autoridad.
+La [tabla de perfiles](memory/memory_architecture.md#perfiles-definidos) es la fuente oficial de capacidades. [Composición](system_composition.md) define el empaquetado de puertos y registros interetapa. Los pines y constraints de placa permanecen en el XDC ya especificado: no se trasladan a constantes HDL ni se duplican como una segunda autoridad.
 
-El formato de configuración de la aplicación PC sigue pospuesto. Cuando se diseñe, tomará el mismo perfil de esa tabla. UART no transporta un puerto de perfil ni un generador de software.
+El formato de configuración de la aplicación PC se concretará junto con su diseño y tomará el mismo perfil de esa tabla. UART no transporta un puerto de perfil ni un generador de software.
 
 <a id="fuente-y-selección-propuestas"></a>
 
@@ -70,7 +70,7 @@ El paquete ofrece dos perfiles: `REFERENCE` y `ALT_1000`. Para cada uno guarda l
 El parámetro de elaboración `MEMORY_PROFILE` selecciona el perfil. Su valor por defecto es `REFERENCE`. Cada nivel tiene una responsabilidad:
 
 | Nivel | Responsabilidad |
-|---|---|---|---|
+|---|---|
 | Wrapper de placa | Recibe `MEMORY_PROFILE`, lo convierte una sola vez en `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`, e instancia el sistema pasando esos dos valores. Ningún módulo interno vuelve a elegir el perfil. |
 | Top funcional | Recibe `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`. |
 | Módulos internos | Reciben solo las capacidades que necesitan, siempre por conexión explícita de parámetros del padre. |
@@ -212,10 +212,10 @@ La implementación de los validadores, sus mensajes y la distinción entre `CONF
 
 Esta evidencia es documental y matemática. No sustituye las pruebas de simulación, síntesis ni hardware, y no acredita soporte físico para todas las capacidades del dominio. Aún no hay elaboración RTL. Este acuerdo no modifica el diseño de la aplicación PC ni autoriza implementación.
 
-[Acuerdo de configuración común](../decisions.md#acuerdo-de-concreción-de-dec-arch-006--paquete-común-y-propagación-de-configuración).
+[Acuerdo de configuración común](../decisions/DEC-ARCH-006.md#acuerdo-de-concreción-de-dec-arch-006--paquete-común-y-propagación-de-configuración).
 
 ## Referencias y trazabilidad
 
 - [Mapa de autoridad documental](system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../requirements.md): obligaciones y criterios de aceptación.
-- [Pendientes](../pending_decisions.md): seguimiento actual del trabajo abierto.
+- [Decisiones pendientes](../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

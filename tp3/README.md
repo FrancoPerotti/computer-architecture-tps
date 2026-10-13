@@ -4,4 +4,6 @@ Diseño en SystemVerilog de un procesador RISC-V de 32 bits con pipeline de cinc
 
 El proyecto se encuentra en etapa de diseño. La documentación describe las etapas del pipeline, el manejo de riesgos, las memorias, el control de ejecución y la interfaz UART. La implementación, las pruebas y la aplicación de PC están pendientes.
 
+[Ver el índice general de documentación](docs/README.md)
+
 [Ver la documentación de arquitectura](docs/architecture/system_overview.md)

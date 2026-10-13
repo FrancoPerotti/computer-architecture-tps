@@ -65,7 +65,7 @@ Un redirect, `halt` o fault de una instrucción posterior no impide el commit de
 
 Los efectos arquitectónicos permanentes tienen predicados de commit explícitos.
 
-Los predicados de commit se definen en [WB para el Register File](stage_wb.md#condición-efectiva-de-writeback) y en [MEM para stores](stage_mem.md#dmem-write-control). Estas invariantes verifican su aplicación sobre cada instancia dinámica de instrucción.
+Los predicados de commit se definen en [WB para el Register File](cpu/stage_wb.md#condición-efectiva-de-writeback) y en [MEM para stores](cpu/stage_mem.md#dmem-write-control). Estas invariantes verifican su aplicación sobre cada instancia dinámica de instrucción.
 
 Las propiedades correspondientes son:
 
@@ -242,7 +242,7 @@ La arquitectura valida una región completa antes de indexar la memoria.
 |---|---|---|
 | `I23` | Un acceso cubre todos sus bytes sin aliasing por truncamiento | La dirección efectiva se forma módulo `2^32`, pero `EA+N` se calcula y compara con aritmética unsigned de 33 bits antes de indexar. |
 
-La [validación de toda la región](memory_architecture.md#validación-de-toda-la-región) usa la dirección efectiva modular y un extremo ensanchado; no reemplaza la comprobación de alineación.
+La [validación de toda la región](memory/memory_architecture.md#validación-de-toda-la-región) usa la dirección efectiva modular y un extremo ensanchado; no reemplaza la comprobación de alineación.
 
 Un store que falla alineación o rango no modifica ningún byte. Para un store válido, `dmem_metadata_write_fire = dmem_store_fire`; los bytes seleccionados actualizan conjuntamente dato y validez y los demás conservan ambos valores.
 
@@ -272,7 +272,7 @@ El estado observado externamente corresponde a una única situación lógica del
 |---|---|---|
 | `I25` | La observación mantiene coherencia e aislamiento de sesión | Un snapshot no mezcla estados pertenecientes a momentos distintos ni presenta residuos de una sesión anterior como actuales. Los bytes no escritos de DMEM se observan como cero lógico y los agentes incompatibles no usan simultáneamente el mismo recurso. |
 
-El significado y la coherencia observables se describen en [Arquitectura de Debug](debug_architecture.md); la representación externa concreta está aprobada en `protocol.md`. Esta invariante fija únicamente la coherencia que esa representación conserva.
+El significado y la coherencia observables se describen en [Arquitectura de Debug](debug/debug_architecture.md); la representación externa concreta está aprobada en `protocol.md`. Esta invariante fija únicamente la coherencia que esa representación conserva.
 
 ---
 
@@ -323,7 +323,7 @@ Las invariantes anteriores se reflejan en familias de pruebas.
 | RUN / `STEP` / `HOLD` | Primer ciclo, `STEP` único, stall que consume `STEP`, cambio `STEP`→RUN, drain `STEP`, conversión a AUTO y `HOLD` sin commits repetidos. |
 | Sesión | `RESET`, `LOAD` aceptado, `load_fail`, imagen nueva más corta, reutilización de imagen desde terminal y primer ciclo con `cycle_count: 0→1`. |
 | Memoria | Perfiles `REFERENCE` y `ALT_1000`, límites de byte/halfword/word, carry modular de EA, extremo ensanchado, atomicidad de stores y cero lógico. |
-| Contador | Valores cercanos a wrap y wrap durante distintos tipos de acción sin modificar control ni estado terminal. |
+| Contador | Valores cercanos a wrap, retención en HOLD, prioridad de reset/preparación y wrap durante avance normal sin modificar control ni estado terminal. Las trazas de avance, stall y drain comprueban el incremento por ciclo efectivo. |
 | Drain | End-to-end para `I21`; prueba artificial separada para `act_drain_load_use` sin atribuirle alcanzabilidad legal. |
 
 ---
@@ -362,9 +362,9 @@ Las invariantes anteriores se reflejan en familias de pruebas.
 
 ## Referencias y trazabilidad
 
-- [Pipeline CPU](cpu_pipeline.md): validez, registros interetapa y avance.
-- [Control del pipeline y hazards](control_and_hazards.md): acciones, forwarding, load-use y redirects.
-- [Faults, redirects y terminación](faults_and_termination.md): precisión, metadatos y drain.
-- [Arquitectura de memoria](memory_architecture.md): rango, atomicidad, imagen y cero lógico.
-- [Control de ejecución y sesión](execution_control.md): `cpu_cycle_fire`, `STEP`, `HOLD`, preparación y estados terminales.
-- [Arquitectura de Debug](debug_architecture.md): snapshot y observación externa.
+- [Pipeline CPU](cpu/cpu_pipeline.md): validez, registros interetapa y avance.
+- [Control del pipeline y hazards](cpu/control_and_hazards.md): acciones, forwarding, load-use y redirects.
+- [Faults, redirects y terminación](session/faults_and_termination.md): precisión, metadatos y drain.
+- [Arquitectura de memoria](memory/memory_architecture.md): rango, atomicidad, imagen y cero lógico.
+- [Control de ejecución y sesión](session/execution_control.md): `cpu_cycle_fire`, `STEP`, `HOLD`, preparación y estados terminales.
+- [Arquitectura de Debug](debug/debug_architecture.md): snapshot y observación externa.

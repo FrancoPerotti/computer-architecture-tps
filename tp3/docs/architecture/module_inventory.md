@@ -159,10 +159,10 @@ La agrupación aprobada tiene 45 tipos de módulo, incluido el IP; 44 archivos .
 
 Se contrastaron los 54 IDs/nombres/naturalezas con interfaces, cada bloque con su módulo/archivo y cada módulo específico con su padre. Se comprobaron nombres únicos, jerarquía sin ciclos y correspondencia con `system_composition`. Ningún bloque desaparece por compartir archivo; el criterio deja 26 bloques separados y 28 explícitamente locales. Es revisión documental, no simulación RTL ni evidencia de timing.
 
-La organización selectiva fue aprobada el 2026-10-06, con cobertura explícita de los 54 bloques, incluido `WB Bypass Control`. La [revisión local de composición](system_composition.md#revisión-local-y-cierre-de-composición) completó conexiones/anchos/propiedad: FPGA-05/06 cerrados en diseño documental. La correspondencia uno a uno queda como alternativa evaluada, sin aprobar ni implementar. FPGA-07/08 y FPGA-09 siguen pendientes.
+La organización selectiva fue aprobada el 2026-10-06, con cobertura explícita de los 54 bloques, incluido `WB Bypass Control`. La [revisión local de composición](system_composition.md#revisión-local-y-cierre-de-composición) completó conexiones/anchos/propiedad: FPGA-05/06 cerrados en diseño documental. La correspondencia uno a uno queda como alternativa evaluada, sin aprobar ni implementar. El plan de verificación, sus criterios de comparación y la correspondencia integral del diseño están cerrados documentalmente en FPGA-07/08/09.
 
 ## Referencias y trazabilidad
 
 - [Mapa de autoridad documental](system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../requirements.md): obligaciones y criterios de aceptación.
-- [Pendientes](../pending_decisions.md): seguimiento actual del trabajo abierto.
+- [Decisiones pendientes](../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

@@ -3,7 +3,7 @@
 - **Tipo:** protocolo.
 - **Estado documental:** documentación vigente.
 
-**Autoridad vigente:** representación externa, mensajes, códigos, bytes, offsets, layout, plazos y recuperación. Aprobación/origen: [DEC-PROTO-001](decisions.md#dec-proto-001--formato-detallado-del-protocolo), [DEC-PROTO-002](decisions.md#dec-proto-002--comandos-adicionales) y [DEC-PROTO-003](decisions.md#dec-proto-003--timeouts-y-recuperación). El [significado y momento observado](architecture/debug_architecture.md) y el [recorrido de producción de bytes](architecture/response_serializer.md) tienen contratos propios.
+**Autoridad vigente:** representación externa, mensajes, códigos, bytes, offsets, layout, plazos y recuperación. Aprobación/origen: [DEC-PROTO-001](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo), [DEC-PROTO-002](decisions/DEC-PROTO-002.md#dec-proto-002--comandos-adicionales) y [DEC-PROTO-003](decisions/DEC-PROTO-003.md#dec-proto-003--timeouts-y-recuperación). El [significado y momento observado](architecture/debug/debug_architecture.md) y el [recorrido de producción de bytes](architecture/debug/response_serializer.md) tienen contratos propios.
 
 **Índice**
 
@@ -34,7 +34,7 @@ El protocolo fija tres cosas inseparables:
 - cuándo un intercambio comienza y cuándo termina;
 - qué ocurre si la recepción queda incompleta, aparece un error UART o se pierde una respuesta.
 
-La semántica interna de la CPU no se redefine aquí. `RUN`, `STEP`, preparación, drain, terminales y elegibilidad arquitectónica pertenecen a [Control de ejecución y sesión](architecture/execution_control.md). El contenido persistente que puede observarse y la coherencia de un snapshot pertenecen a [Arquitectura de Debug](architecture/debug_architecture.md). Este documento toma esos contratos y define cómo se representan y secuencian sobre UART.
+La semántica interna de la CPU no se redefine aquí. `RUN`, `STEP`, preparación, drain, terminales y elegibilidad arquitectónica pertenecen a [Control de ejecución y sesión](architecture/session/execution_control.md). El contenido persistente que puede observarse y la coherencia de un snapshot pertenecen a [Arquitectura de Debug](architecture/debug/debug_architecture.md). Este documento toma esos contratos y define cómo se representan y secuencian sobre UART.
 
 PC y FPGA forman un sistema diseñado conjuntamente para este trabajo práctico. La PC prepara completamente una imagen antes de solicitar `LOAD`, transmite exactamente la cantidad declarada y respeta las esperas entre operaciones. Las reglas de recuperación cubren errores básicos de recepción, respuestas truncadas y pérdida de sincronización sin repetir automáticamente operaciones que podrían haber producido efectos.
 
@@ -82,7 +82,7 @@ La recepción continúa procesando bytes a medida que llegan. Si TX no puede ace
 
 ### Perfil de memoria
 
-PC y FPGA seleccionan previamente el mismo perfil. Las capacidades provienen de la [tabla de perfiles de memoria](architecture/memory_architecture.md#perfiles-definidos).
+PC y FPGA seleccionan previamente el mismo perfil. Las capacidades provienen de la [tabla de perfiles de memoria](architecture/memory/memory_architecture.md#perfiles-definidos).
 
 | Perfil | IMEM | DMEM | Alcance |
 |---|---:|---:|---|
@@ -822,7 +822,7 @@ Esa `LOAD` no produce aceptación ni rechazo, no se guarda para después y no mo
 
 Si antes del instante terminal observado ya se había preparado una respuesta breve para `LOAD`, esa respuesta se conserva y completa primero; después se atiende `RUN` terminal con Debug. Lo mismo vale para una respuesta de error ya determinada. Los eventos se resuelven con estado y flags previos al flanco, conservando el orden aprobado de respuestas.
 
-Esta prioridad concreta el cruce entre recepción completa de cabecera y descarte desde el instante observado. No agrega un comando, recurso o cola. La secuencia normal PC durante `RUN` sigue siendo `CHECK_READY` o `RESET` cuando el transporte lo admite. Véase el [acuerdo del 2026-10-05](decisions.md#acuerdo-parcial-de-dec-sys-007--prioridad-del-terminal-run-sobre-cabecera-load-sin-resolver).
+Esta prioridad concreta el cruce entre recepción completa de cabecera y descarte desde el instante observado. No agrega un comando, recurso o cola. La secuencia normal PC durante `RUN` sigue siendo `CHECK_READY` o `RESET` cuando el transporte lo admite. Véase el [acuerdo del 2026-10-05](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--prioridad-del-terminal-run-sobre-cabecera-load-sin-resolver).
 
 ### Estado CPU y fase de transporte
 
@@ -969,7 +969,7 @@ total   = 76 bytes
 
 ### Controles registrados
 
-Los controles conservan los códigos de [Etapa ID](architecture/stage_id.md#codificación-de-los-controles).
+Los controles conservan los códigos de [Etapa ID](architecture/cpu/stage_id.md#codificación-de-los-controles).
 
 Cada campo ocupa un byte con padding superior en cero.
 
@@ -1393,18 +1393,18 @@ Para volver a un estado conocido, el usuario puede aplicar `RESET` y cargar otra
 
 El protocolo fija formatos, condiciones, secuencias, tiempos, respuestas, descarte y contenido del snapshot.
 
-El diseño de [uart_core](architecture/uart_core.md) y sus bloques físicos define los puertos de actividad RX, recepción en curso y fin físico TX, el generador de ticks desde 50 MHz, las FIFO y la separación entre control y acciones de las máquinas de estado del TP2.
+El diseño de [uart_core](architecture/uart/uart_core.md) y sus bloques físicos define los puertos de actividad RX, recepción en curso y fin físico TX, el generador de ticks desde 50 MHz, las FIFO y la separación entre control y acciones de las máquinas de estado del TP2.
 
 El diseño documental ya concreta:
 
-- arbitraje y FSM privadas de recepción/serialización: [controlador](architecture/protocol_controller.md#diseño-conjunto-vigente-del-controlador-completo), [RX](architecture/uart_rx.md#tabla-de-acciones) y [serializador](architecture/response_serializer.md#estados-de-la-fsm-del-serializador);
-- seguimiento del fin físico de las respuestas: [seguimiento de transmisión](architecture/response_serializer.md#seguimiento-de-transmisión);
-- comprobación documental del presupuesto de consumo RX y continuidad durante espera TX: [presupuesto de integración UART](architecture/uart_core.md#presupuesto-de-integración);
-- puertos y recorrido de DMEM utilizada: [recorrido del serializador](architecture/response_serializer.md#recorrido-de-dmem-y-orden-de-producción) y [lectura CPU/Debug](architecture/dmem_access.md#lectura-cpu-y-debug);
-- ownership de recursos: [conexiones de integración](architecture/uart_core.md#conexiones-y-dependencias-de-control) y [composición del sistema](architecture/system_composition.md#conexiones-entre-componentes-del-sistema);
-- preparación por recurso: [órdenes y fin de preparación](architecture/session_preparation.md#órdenes-y-fin-de-preparación).
+- arbitraje y FSM privadas de recepción/serialización: [controlador](architecture/debug/protocol_controller.md#diseño-conjunto-vigente-del-controlador-completo), [RX](architecture/uart/uart_rx.md#tabla-de-acciones) y [serializador](architecture/debug/response_serializer.md#estados-de-la-fsm-del-serializador);
+- seguimiento del fin físico de las respuestas: [seguimiento de transmisión](architecture/debug/response_serializer.md#seguimiento-de-transmisión);
+- comprobación documental del presupuesto de consumo RX y continuidad durante espera TX: [presupuesto de integración UART](architecture/uart/uart_core.md#presupuesto-de-integración);
+- puertos y recorrido de DMEM utilizada: [recorrido del serializador](architecture/debug/response_serializer.md#recorrido-de-dmem-y-orden-de-producción) y [lectura CPU/Debug](architecture/memory/dmem_access.md#lectura-de-cpu);
+- ownership de recursos: [conexiones de integración](architecture/uart/uart_core.md#conexiones-y-dependencias-de-control) y [composición del sistema](architecture/system_composition.md#conexiones-entre-componentes-del-sistema);
+- preparación por recurso: [órdenes y fin de preparación](architecture/session/session_preparation.md#señales-de-salida).
 
-[DEC-SYS-007](decisions.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) está aprobada; [interfaces](interfaces.md#152-estado-de-los-detalles-de-realización-por-módulo) reúne las concreciones vigentes. La implementación y la validación RTL, de timing y de placa siguen pendientes. El plan de verificación, el modelo de referencia y la revisión final se siguen en el [único registro de pendientes](pending_decisions.md#5-cpu-y-arquitectura).
+[DEC-SYS-007](decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) está aprobada; [interfaces](interfaces.md#152-estado-de-los-detalles-de-realización-por-módulo) reúne las concreciones vigentes. La implementación y la validación RTL, de timing y de placa siguen pendientes. El plan de verificación y los criterios de comparación con resultados esperados se consultan en el [Plan de verificación](verification/verification_plan.md); el cierre documental del diseño FPGA, en [Diseño FPGA consolidado](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue).
 
 DEC-SYS-008 y DEC-SYS-009 completan aplicación PC y assembler.
 
@@ -1414,9 +1414,9 @@ El cierre del protocolo no completa D0 del sistema ni adelanta implementación.
 
 ## Referencias y trazabilidad
 
-- [Decisiones aprobadas](decisions.md#dec-proto-001--formato-detallado-del-protocolo): DEC-PROTO-001/002/003, DEC-ARCH-009 y DEC-SYS-005; diseño consolidado el 2026-10-01.
-- [Arquitectura de memoria](architecture/memory_architecture.md): capacidades, imagen contigua, little-endian y bytes escritos de la sesión.
-- [Control de ejecución y sesión](architecture/execution_control.md): aceptación, preparación, ciclos y terminación.
-- [Arquitectura de Debug](architecture/debug_architecture.md): contenido persistente, coherencia e interpretación.
+- [Decisiones aprobadas](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): DEC-PROTO-001/002/003, DEC-ARCH-009 y DEC-SYS-005; diseño consolidado el 2026-10-01.
+- [Arquitectura de memoria](architecture/memory/memory_architecture.md): capacidades, imagen contigua, little-endian y bytes escritos de la sesión.
+- [Control de ejecución y sesión](architecture/session/execution_control.md): aceptación, preparación, ciclos y terminación.
+- [Arquitectura de Debug](architecture/debug/debug_architecture.md): contenido persistente, coherencia e interpretación.
 - [Contratos de interfaces](interfaces.md): conexiones y detalles de diseño FPGA concretados; comprobación RTL/física posterior.
-- [Revisión documental del protocolo](archive/audits/debug_protocol_audit.md): recorridos, ejemplos, tablas y cálculos del contrato aprobado.
+- [Aprobación y consolidación del protocolo](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): revisión documental de recorridos, ejemplos, tablas y cálculos del contrato aprobado.

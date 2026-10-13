@@ -128,7 +128,7 @@ El `Wizard.clk_out1` alimenta el `clk` funcional. `Wizard.locked` contribuye a `
 
 `reset_sync` entrega el único `reset` funcional a `system_top`. La fuente de 100 MHz se limita a la generación del clock. El `clk` funcional de la CPU y la UART es de 50 MHz. `reset_sync` también utiliza ese `clk`; sus consumidores reciben la salida de `reset` acondicionada.
 
-[Plataforma](platform_reference.md) especifica los pines, las polaridades, el `reset` y los constraints.
+[Plataforma](platform/platform_reference.md) especifica los pines, las polaridades, el `reset` y los constraints.
 
 ### system_top
 
@@ -220,7 +220,7 @@ Los 34 puertos siguientes son salidas directas desde los campos actuales de cuat
 | `debug_memwb_reg_write` | 1 | `MEM/WB.reg_write` |
 | `debug_memwb_wb_value` | 32 | `MEM/WB.wb_value` |
 
-Totales funcionales 69/193/139/103 bits, 504 en conjunto. Campos y esquema UART continúan en [observación del serializador](response_serializer.md#observación-y-selección-de-bytes-de-los-cuatro-latches); se conservan bits residuales de entradas inválidas y los paddings se forman solo al serializar. Contexto y registros interetapa son cables de observación, no realimentaciones al control.
+Totales funcionales 69/193/139/103 bits, 504 en conjunto. Campos y esquema UART continúan en [observación del serializador](debug/response_serializer.md#observación-y-selección-de-bytes-de-los-cuatro-latches); se conservan bits residuales de entradas inválidas y los paddings se forman solo al serializar. Contexto y registros interetapa son cables de observación, no realimentaciones al control.
 
 ## Conexiones entre componentes del sistema
 
@@ -386,12 +386,12 @@ Cada ID pertenece una sola vez a `processor_top` y conserva fuente/destino/tempo
 | Plataforma y configuración | Cuatro pines, clock/`reset` y origen de petición UART coinciden con plataforma; capacidades se seleccionan una vez y se distribuyen a consumidores; señales de un bit y anchos fijos/derivados se conservan. |
 | Representación | Mermaid de integración y recorrido por etapas concuerda con las tablas; CPU agrupada remite a los 54 contratos y mapa de archivos. Draw.io/HTML complementarios no se alteran ni se certifican cable por cable. |
 
-La revisión usa los contratos existentes y el mapa de fronteras: no es elaboración/simulación RTL, síntesis, timing, CDC físico ni prueba de placa. Los identificadores locales y selectores de netlist/XDC se materializan al implementar; no son nuevas políticas funcionales. FPGA-05/06 se cierran en diseño documental con esta representación integrada y cobertura. La revisión global del plan y de textos históricos sigue en FPGA-09.
+La revisión usa los contratos existentes y el mapa de fronteras: no es elaboración/simulación RTL, síntesis, timing, CDC físico ni prueba de placa. Los identificadores locales y selectores de netlist/XDC se materializan al implementar; no son nuevas políticas funcionales. FPGA-05/06 se cierran en diseño documental con esta representación integrada y cobertura. El plan de verificación y sus criterios de comparación corresponden a estas fronteras y a la representación integrada, conforme al cierre documental de FPGA-09.
 
-FPGA-07/08 continúan con plan de verificación y contrato del oráculo; FPGA-09 con revisión integral final. PC sigue pospuesta. Este cierre no habilita implementación antes del cierre global acordado.
+FPGA-07/08/09 están cerrados documentalmente. El diseño del assembler y de la aplicación PC sigue pendiente. Este cierre no habilita implementación antes del cierre global acordado.
 
 ## Referencias y trazabilidad
 
 - [Mapa de autoridad documental](system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../requirements.md): obligaciones y criterios de aceptación.
-- [Pendientes](../pending_decisions.md): seguimiento actual del trabajo abierto.
+- [Decisiones pendientes](../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

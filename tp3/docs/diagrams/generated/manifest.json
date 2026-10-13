@@ -58042,188 +58042,188 @@
       "source": "EX/MEM",
       "target": "Load Select/Extend",
       "signal": "ex_result[1:0]",
-      "reference": "docs/architecture/stage_mem.md#load-select--extend",
+      "reference": "docs/architecture/cpu/stage_mem.md#load-select--extend",
       "status": "Absent from source XML; not drawn or invented in extracted views."
     }
   ],
   "replacements": [
     {
-      "document": "docs/architecture/stage_if.md",
+      "document": "docs/architecture/cpu/stage_if.md",
       "section": "Flujo normal de una búsqueda",
       "view": "if_normal"
     },
     {
-      "document": "docs/architecture/stage_id.md",
+      "document": "docs/architecture/cpu/stage_id.md",
       "section": "Organización interna",
       "view": "id_organizacion"
     },
     {
-      "document": "docs/architecture/stage_id.md",
+      "document": "docs/architecture/cpu/stage_id.md",
       "section": "Flujo normal de decodificación",
       "view": "id_normal"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "Organización general",
       "view": "ex_organizacion"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "Operaciones R-type",
       "view": "ex_r"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "Operaciones I-type aritméticas y shifts",
       "view": "ex_i"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "`LUI`",
       "view": "ex_lui"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "Loads",
       "view": "ex_load"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "Stores",
       "view": "ex_store"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "`BEQ` y `BNE`",
       "view": "ex_branch"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "`JAL`",
       "view": "ex_jal"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "`JALR`",
       "view": "ex_jalr"
     },
     {
-      "document": "docs/architecture/stage_ex.md",
+      "document": "docs/architecture/cpu/stage_ex.md",
       "section": "`halt`",
       "view": "ex_halt"
     },
     {
-      "document": "docs/architecture/stage_mem.md",
+      "document": "docs/architecture/cpu/stage_mem.md",
       "section": "Organización general",
       "view": "mem_organizacion"
     },
     {
-      "document": "docs/architecture/stage_mem.md",
+      "document": "docs/architecture/cpu/stage_mem.md",
       "section": "Loads",
       "view": "mem_load"
     },
     {
-      "document": "docs/architecture/stage_mem.md",
+      "document": "docs/architecture/cpu/stage_mem.md",
       "section": "Stores",
       "view": "mem_store"
     },
     {
-      "document": "docs/architecture/stage_mem.md",
+      "document": "docs/architecture/cpu/stage_mem.md",
       "section": "Instrucciones con resultado producido en EX",
       "view": "mem_result"
     },
     {
-      "document": "docs/architecture/stage_wb.md",
+      "document": "docs/architecture/cpu/stage_wb.md",
       "section": "Organización interna",
       "view": "wb_organizacion"
     },
     {
-      "document": "docs/architecture/stage_wb.md",
+      "document": "docs/architecture/cpu/stage_wb.md",
       "section": "Instrucciones que escriben un registro",
       "view": "wb_escritura"
     },
     {
-      "document": "docs/architecture/control_and_hazards.md",
+      "document": "docs/architecture/cpu/control_and_hazards.md",
       "section": "Recorrido funcional",
       "view": "forwarding"
     },
     {
-      "document": "docs/architecture/control_and_hazards.md",
+      "document": "docs/architecture/cpu/control_and_hazards.md",
       "section": "Bypass `WB → ID`",
       "view": "bypass"
     },
     {
-      "document": "docs/architecture/faults_and_termination.md",
+      "document": "docs/architecture/session/faults_and_termination.md",
       "section": "Transporte mediante IF/ID",
       "view": "fetch_fault"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Vista general del recorrido de datos",
       "view": "datapath"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Loads",
       "view": "load_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Stores",
       "view": "store_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Instrucciones aritméticas",
       "view": "aritmetica_completa"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "LUI",
       "occurrence": 0,
       "view": "lui_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Aritméticas registro-registro",
       "view": "aritmetica_completa"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Aritméticas inmediatas",
       "view": "inmediata_completa"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "LUI",
       "occurrence": 1,
       "view": "lui_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Loads",
       "occurrence": 1,
       "view": "load_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Stores",
       "occurrence": 1,
       "view": "store_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "Branches",
       "occurrence": 1,
       "view": "ex_branch"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "JAL",
       "view": "jal_completo"
     },
     {
-      "document": "docs/architecture/datapath.md",
+      "document": "docs/architecture/cpu/datapath.md",
       "section": "JALR",
       "view": "jalr_completo"
     }
