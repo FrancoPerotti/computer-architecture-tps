@@ -28,30 +28,6 @@ Una comprobación futura que descubra un defecto debe incorporarse con fuente y 
 
 ## 3. Software de PC
 
-### DEC-SYS-009 — Estrategia del assembler
-
-**Estado:** Pendiente
-
-**Dominio:** Software / Assembler
-
-**Debe resolverse antes de:** M3 — ISA Freeze y antes de implementar el assembler.
-
-**Depende de:** `DEC-SYS-001`, `DEC-SYS-004`, `DEC-SYS-010` y `DEC-ARCH-001`, ya aprobadas.
-
-**Contexto:** Debe decidirse si se implementará un assembler propio o se integrará una herramienta existente de manera controlada.
-
-También debe decidirse en qué componente del toolchain se verificará que la imagen generada es una secuencia little-endian no vacía, contigua, sin huecos, con origen cero, tamaño múltiplo de cuatro y dentro de la capacidad soportada del perfil seleccionado. Esta responsabilidad no se asigna necesariamente de forma exclusiva al assembler y no deberá hardcodear los valores del perfil de referencia.
-
-La estrategia deberá aceptar `halt` sin operandos y emitir exactamente `0x0000000B`, conforme a `DEC-SYS-001` y `REQ-SW-012`; integrar una herramienta RV32I conserva esa obligación custom.
-
-**Opciones a analizar:** assembler propio para el subconjunto; herramienta externa; biblioteca existente con validación del subconjunto.
-
-La estrategia elegida debe concretar el tratamiento de etiquetas, la codificación del subconjunto más `halt` y el empaquetado y la validación de la imagen según el perfil. Su diseño y aprobación siguen pendientes.
-
-**Requisitos afectados:** `REQ-MEM-010` a `REQ-MEM-012`, `REQ-MEM-015`, `REQ-MEM-021` a `REQ-MEM-024`, `REQ-SW-002` a `REQ-SW-004`, `REQ-SW-010`, `REQ-SW-012`.
-
----
-
 ### DEC-SYS-008 — Formato de la aplicación de PC
 
 **Estado:** Pendiente

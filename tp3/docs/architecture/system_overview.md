@@ -137,7 +137,7 @@ Detalle: [Arquitectura de memoria](memory/memory_architecture.md) para semántic
 
 ### Del assembler al código máquina
 
-La imagen aceptada es no vacía, contigua desde cero, múltiplo de cuatro y dentro de IMEM, con instrucciones little-endian. El assembler de PC sigue pendiente; ese pendiente no modifica el contrato de imagen de FPGA. `LOAD` no valida que las instrucciones sean legales: lo hace el `decoder` al ejecutarlas.
+La imagen aceptada es no vacía, contigua desde cero, múltiplo de cuatro y dentro de IMEM, con instrucciones little-endian. El [assembler de PC](../software/assembler_interface.md) está diseñado y aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md); traduce sin comprobar capacidad de IMEM. `LOAD` no valida que las instrucciones sean legales: lo hace el `decoder` al ejecutarlas.
 
 ### Transferencia hacia la FPGA
 
@@ -223,7 +223,7 @@ Detalle: [UART](uart/uart_core.md), [Controlador](debug/protocol_controller.md) 
 
 ## Software de PC
 
-El contrato UART y los plazos compartidos ya están definidos. Las decisiones de assembler y aplicación PC siguen pospuestas: DEC-SYS-009 y DEC-SYS-008. No se adopta como aprobada la propuesta de assembler existente ni se exige leerla para entender FPGA.
+El contrato UART y los plazos compartidos ya están definidos. [DEC-SYS-009](../decisions/DEC-SYS-009.md) aprueba el diseño completo de un assembler propio en Python, acotado al lenguaje del TP3. Permanece pendiente el diseño de la aplicación PC de DEC-SYS-008. Esta elección no modifica los contratos FPGA.
 
 ## Autoridad documental por tema
 
@@ -275,7 +275,7 @@ El plan organiza actividades y las auditorías son evidencia fechada. Ninguno re
 
 Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` registra por qué/cuándo se acordó y qué revisión sustituyó a otra. `pending_decisions.md` registra las decisiones de diseño todavía abiertas. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
 
-La arquitectura FPGA, su plan de verificación, los criterios de comparación y su correspondencia integral están cerrados documentalmente en FPGA-01–09. Siguen pendientes el diseño del assembler y de la aplicación PC, y el cierre conjunto del sistema antes de D0/M6. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
+La arquitectura FPGA, su plan de verificación, los criterios de comparación y su correspondencia integral están cerrados documentalmente en FPGA-01–09. El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md). Siguen pendientes el diseño de la aplicación PC y el cierre conjunto del sistema antes de D0/M6. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
 
 ## Referencias y trazabilidad
 

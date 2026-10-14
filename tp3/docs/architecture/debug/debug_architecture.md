@@ -622,7 +622,7 @@ Observación, representación externa, recursos/conexiones y control de serializ
 
 El diseño FPGA, incluidos los lanes/metadatos de DMEM, la plataforma, la composición, el plan de verificación y su correspondencia integral, está cerrado documentalmente en FPGA-01–09. Selectores CPU/Debug, preparación de metadatos y codificador global tienen contratos concretos; la implementación debe respetarlos. No se ha implementado ni verificado RTL.
 
-Assembler (DEC-SYS-009) y aplicación PC (DEC-SYS-008) conservan sus decisiones pendientes. El orden de trabajo prioriza cerrar FPGA primero; no afectan el significado de los snapshots ni los comandos ya aprobados.
+El diseño del assembler está aprobado en [DEC-SYS-009](../../decisions/DEC-SYS-009.md); la aplicación PC conserva su decisión pendiente DEC-SYS-008. Estos diseños no afectan el significado de los snapshots ni los comandos ya aprobados.
 
 ---
 

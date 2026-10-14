@@ -3,7 +3,7 @@
 - **Tipo:** plan.
 - **Estado documental:** documentación vigente.
 
-**Prioridad vigente:** completar el diseño del assembler y de la aplicación de PC, y el cierre conjunto del sistema antes de D0/M6 y de la implementación. Las decisiones abiertas y sus condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
+**Prioridad vigente:** completar el diseño de la aplicación de PC y el cierre conjunto del sistema antes de D0/M6 y de la implementación. El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). Las decisiones abiertas y sus condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
 
 **Índice**
 
@@ -103,11 +103,11 @@ La implementación debe materializar una arquitectura previamente definida, no c
 
 Antes de escribir RTL, software o testbenches deben estar definidos y revisados:
 
-- los dos ADR de software abiertos en [Decisiones pendientes](decisions/pending_decisions.md), los entregables del [plan de verificación](verification/verification_plan.md), los [criterios de comparación](verification/verification_plan.md#resultados-esperados-y-criterios-de-comparación) y la revisión final del [diseño FPGA](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue), respetando sus dependencias;
+- la decisión de aplicación PC `DEC-SYS-008` abierta en [Decisiones pendientes](decisions/pending_decisions.md) y el diseño aprobado del assembler en [DEC-SYS-009](decisions/DEC-SYS-009.md), los entregables del [plan de verificación](verification/verification_plan.md), los [criterios de comparación](verification/verification_plan.md#resultados-esperados-y-criterios-de-comparación) y la revisión final del [diseño FPGA](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue), respetando sus dependencias;
 - el criterio de DMEM utilizada, contenido observable y mecanismo de captura coherente;
 - los servicios UART, comandos, paquetes, respuestas, errores, timeouts y recuperación;
 - la microarquitectura de Debug, recepción/carga y preparación: estados privados, eventos, secuencias, ownership y relación con la FSM global;
-- la estrategia del assembler y validación de imagen, las capas de software, sus interfaces y los flujos de uso;
+- la estrategia del assembler, las responsabilidades de traducción y validación de imagen del sistema, las capas de software, sus interfaces y los flujos de uso; el [acuerdo de DEC-SYS-009](decisions/DEC-SYS-009.md#acuerdo-parcial-de-dec-sys-009--responsabilidad-de-traducción-y-validación-de-tamaño) conserva la validación de capacidad en FPGA;
 - la concordancia de puertos, parámetros, tipos, codificaciones, adaptaciones físicas y composición de tops con [Interfaces](interfaces.md) y [Composición](architecture/system_composition.md), ya concretadas documentalmente;
 - la integración prevista de clock/reset, recursos y restricciones de plataforma;
 - los casos de prueba, resultados esperados, assertions previstas y matriz requisito → diseño → prueba, documentados sin programar todavía los tests.
@@ -757,7 +757,7 @@ UART y Debug deben funcionar independientemente del CPU antes de integrarlos con
 
 ## 21. Fase 18 — Software de PC
 
-**Diseño previo obligatorio:** antes de D0 se resuelven `DEC-SYS-009` y `DEC-SYS-008`, se especifican las capas e interfaces siguientes y se documentan los flujos y errores conforme al protocolo. La implementación de esas capas comienza después de D0 y M6.
+**Diseño previo obligatorio:** `DEC-SYS-009` está aprobada. Antes de D0 se resuelve `DEC-SYS-008`, se especifican las capas e interfaces siguientes y se documentan los flujos y errores conforme al protocolo. La implementación de esas capas comienza después de D0 y M6.
 
 ### Actividades de diseño
 
@@ -1002,7 +1002,7 @@ Nunca aceptar código generado únicamente porque compila.
 13. Definir memoria utilizada, campos Debug y captura coherente
 14. Diseñar protocolo, comandos, respuestas, errores y recuperación
 15. Diseñar Debug, Loader y preparación de sesión en detalle
-16. Diseñar assembler, validación de imagen, capas de PC e interfaz de usuario
+16. Diseñar assembler y capas de PC con sus responsabilidades de traducción, carga e interfaz de usuario
 17. Concretar plataforma, clock/reset y restricciones previstas
 18. Completar interfaces físicas y composición de tops
 19. Definir pruebas, resultados esperados, criterios de comparación y matriz de trazabilidad
@@ -1038,7 +1038,7 @@ El origen y alcance del cierre UART se consultan en [DEC-SYS-007](decisions/DEC-
 
 ### Prioridad vigente — FPGA primero, 2026-10-05
 
-Concretar assembler y aplicación de PC, y completar el cierre conjunto del sistema antes de D0/M6 y de la implementación. Las decisiones abiertas, sus fuentes y condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
+El assembler está diseñado y aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). Concretar la aplicación de PC y completar el cierre conjunto del sistema antes de D0/M6 y de la implementación. Las decisiones abiertas, sus fuentes y condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
 
 ## Referencias y trazabilidad
 

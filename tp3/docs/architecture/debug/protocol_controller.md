@@ -528,7 +528,7 @@ Controlador y servicios tienen aprobados recorridos, estados, recursos, anchos, 
 
 ### Alcance del siguiente paso
 
-El diseño UART y servicios asociados queda cerrado según la [comprobación](../uart/uart_core.md#presupuesto-de-integración) y [DEC-SYS-007](../../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart). La ruta continúa con las [decisiones pendientes de assembler y aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc). La verificación RTL y de placa se realizará después de completar el diseño global y autorizar implementación.
+El diseño UART y servicios asociados queda cerrado según la [comprobación](../uart/uart_core.md#presupuesto-de-integración) y [DEC-SYS-007](../../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart). La ruta continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc). La verificación RTL y de placa se realizará después de completar el diseño global y autorizar implementación.
 
 ## Referencias y trazabilidad
 

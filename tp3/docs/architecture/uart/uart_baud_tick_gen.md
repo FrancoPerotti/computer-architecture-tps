@@ -107,7 +107,7 @@ Los límites del divisor y la frecuencia resultante están en [Divisor y frecuen
 
 Quedan definidos el divisor, la cuenta, el pulso registrado, la relación con sus consumidores, el reset y los puertos del generador. Las [FIFO RX y TX](uart_fifo.md) tienen definido su funcionamiento. [uart_core](uart_core.md) conecta una única instancia del generador a RX y TX; el control del protocolo y su coordinación con los servicios quedaron aprobados y comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración).
 
-El diseño del clock de plataforma está aprobado en [plataforma](../platform/platform_reference.md). La generación de la IP y la validación temporal del enlace en simulación y FPGA corresponden a implementación y permanecen pendientes. La revisión de este documento no acredita esas pruebas. DEC-SYS-007 está aprobada; el trabajo continúa con las [decisiones pendientes de assembler y aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc).
+El diseño del clock de plataforma está aprobado en [plataforma](../platform/platform_reference.md). La generación de la IP y la validación temporal del enlace en simulación y FPGA corresponden a implementación y permanecen pendientes. La revisión de este documento no acredita esas pruebas. DEC-SYS-007 está aprobada; el trabajo continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc).
 
 ## Referencias y trazabilidad
 

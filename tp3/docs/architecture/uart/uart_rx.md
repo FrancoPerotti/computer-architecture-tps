@@ -304,7 +304,7 @@ El receptor tiene definidos su organización interna, los recursos y controles, 
 
 El [transmisor UART](uart_tx.md), el [generador de ticks compartido](uart_baud_tick_gen.md) y las [FIFO](uart_fifo.md) tienen definidos sus diseños. Sus conexiones están definidas en [uart_core](uart_core.md), que expone `rx_activity` y `rx_receiving` directamente al control del protocolo. La organización interna de ese control está aprobada en [protocol_controller](../debug/protocol_controller.md).
 
-El control del protocolo, sus servicios y el presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con las [decisiones pendientes de assembler y aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
+El control del protocolo, sus servicios y el presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
 
 ## Referencias y trazabilidad
 

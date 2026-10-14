@@ -201,7 +201,7 @@ La matriz también incluye comprobaciones documentales, de timing y de placa. Es
 | ------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------- | ------------- | ------------------------------------------- |
 | [REQ-SW-001](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
 | [REQ-SW-002](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
-| [REQ-SW-003](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
+| [REQ-SW-003](../requirements.md#8-software-de-pc) | [Interfaz del assembler](../software/assembler_interface.md) y [lenguaje](../software/assembler_language.md) | [TEST-ASM-001 a TEST-ASM-008](../software/assembler_tests.md#cobertura-y-condición-de-aprobación). | PC/assembler | Catálogo de software aprobado; sin ejecutar. |
 | [REQ-SW-004](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
 | [REQ-SW-005](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
 | [REQ-SW-006](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
@@ -210,7 +210,7 @@ La matriz también incluye comprobaciones documentales, de timing y de placa. Es
 | [REQ-SW-009](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
 | [REQ-SW-010](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
 | [REQ-SW-011](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
-| [REQ-SW-012](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc) | Fuera del alcance de la verificación de hardware. | PC/aplicación | Pospuesto; no cubierto por este entregable. |
+| [REQ-SW-012](../requirements.md#8-software-de-pc) | [DEC-SYS-001](../decisions/DEC-SYS-001.md) y [lenguaje](../software/assembler_language.md) | [TEST-ASM-001/C033](../software/assembler_tests.md#test-asm-001), [TEST-ASM-005/C003](../software/assembler_tests.md#test-asm-005). | PC/assembler | Catálogo de software aprobado; sin ejecutar. |
 
 ### TIM
 

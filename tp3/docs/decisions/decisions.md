@@ -92,6 +92,14 @@ Cada decisión aprobada contiene:
 
 ---
 
+### DEC-SYS-009 — Estrategia del assembler
+
+**Estado:** Aprobada.
+
+[DEC-SYS-009](DEC-SYS-009.md)
+
+---
+
 ### DEC-SYS-010 — Versión del ISA
 
 **Estado:** Aprobada

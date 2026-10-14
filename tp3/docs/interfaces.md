@@ -2228,7 +2228,7 @@ Operaciones, resultados, códigos de estado, orden de intercambios, errores, pla
 | DEC-SYS-009 | toolchain / imagen del `Loader` | assembler y validación de imagen emitida |
 | DEC-SYS-008 | aplicación PC | CLI/TUI/GUI y presentación de estado |
 
-Las decisiones de assembler y aplicación PC se registran en [Decisiones pendientes](decisions/pending_decisions.md); las condiciones de cierre global se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto). DEC-ARCH-009, DEC-SYS-005 y DEC-SYS-007 están aprobadas; sus fronteras se consultan en los contratos especializados, sin reabrirlas por textos históricos.
+El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). La decisión de aplicación PC se registra en [Decisiones pendientes](decisions/pending_decisions.md); las condiciones de cierre global se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto). DEC-ARCH-009, DEC-SYS-005 y DEC-SYS-007 están aprobadas; sus fronteras se consultan en los contratos especializados, sin reabrirlas por textos históricos.
 
 <a id="152-detalles-de-realización-que-deben-concretarse-por-módulo"></a>
 
@@ -2350,7 +2350,7 @@ Contrato vigente: [representación física global](architecture/session/global_s
 
 ### 15.23 Revisión integral de pendientes FPGA
 
-FPGA-01–09 están cerrados documentalmente. Las decisiones de assembler y aplicación PC se registran en [Decisiones pendientes](decisions/pending_decisions.md). Las condiciones globales de D0/M6 se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto).
+FPGA-01–09 están cerrados documentalmente. El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). La decisión de aplicación PC se registra en [Decisiones pendientes](decisions/pending_decisions.md). Las condiciones globales de D0/M6 se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto).
 
 ### 15.24 Diseño conjunto de acceso y mantenimiento DMEM
 

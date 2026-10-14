@@ -388,7 +388,7 @@ Cada ID pertenece una sola vez a `processor_top` y conserva fuente/destino/tempo
 
 La revisión usa los contratos existentes y el mapa de fronteras: no es elaboración/simulación RTL, síntesis, timing, CDC físico ni prueba de placa. Los identificadores locales y selectores de netlist/XDC se materializan al implementar; no son nuevas políticas funcionales. FPGA-05/06 se cierran en diseño documental con esta representación integrada y cobertura. El plan de verificación y sus criterios de comparación corresponden a estas fronteras y a la representación integrada, conforme al cierre documental de FPGA-09.
 
-FPGA-07/08/09 están cerrados documentalmente. El diseño del assembler y de la aplicación PC sigue pendiente. Este cierre no habilita implementación antes del cierre global acordado.
+FPGA-07/08/09 están cerrados documentalmente. El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md); permanece pendiente el diseño de la aplicación PC. Este cierre no habilita implementación antes del cierre global acordado.
 
 ## Referencias y trazabilidad
 

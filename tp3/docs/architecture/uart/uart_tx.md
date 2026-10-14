@@ -246,7 +246,7 @@ La organización, los cuatro estados, su codificación one-hot, las transiciones
 
 El [generador de ticks compartido](uart_baud_tick_gen.md) y las [FIFO RX y TX](uart_fifo.md) tienen definidos sus diseños. [uart_core](uart_core.md) conecta el byte y la solicitud de envío, retira el byte de FIFO al terminar Stop y expone `tx_done_tick` al control del protocolo sin registro adicional.
 
-El control del protocolo, sus servicios, seguimiento y presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con las [decisiones pendientes de assembler y aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
+El control del protocolo, sus servicios, seguimiento y presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
 
 ## Referencias y trazabilidad
 
