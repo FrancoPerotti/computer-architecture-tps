@@ -16,6 +16,7 @@
 - [LOAD durante una sesión existente](#load-durante-una-sesión-existente)
 - [RESET](#reset)
 - [FSM global](#fsm-global)
+  - [Diagrama completo de estados](#diagrama-completo-de-estados)
 - [Estado global asociado a la sesión](#estado-global-asociado-a-la-sesión)
 - [Aceptación de LOAD, RUN y STEP](#aceptación-de-load-run-y-step)
 - [Autorización de un ciclo de la CPU](#autorización-de-un-ciclo-de-la-cpu)
@@ -409,6 +410,16 @@ Sus estados son:
 | `FAULT`            | Terminación excepcional con pipeline vacío.                                                 |
 | `PREPARING_RUN`    | Preparación de una sesión nueva con `RUN` pendiente.                                        |
 | `PREPARING_STEP`   | Preparación de una sesión nueva con `STEP` pendiente.                                       |
+
+### Diagrama completo de estados
+
+El diagrama reúne los catorce estados y las transiciones de carga, preparación, ejecución, drenado y reutilización de la imagen. Las condiciones corresponden a la [tabla de transiciones](#tabla-de-transiciones) y al [resultado de un ciclo](#resultado-de-un-ciclo).
+
+[![FSM global de ejecución y sesión](../../diagrams/previews/fsm_global.png)](../../diagrams/generated/fsm_global.drawio.svg)
+
+Los seis círculos del recuadro de estados elegibles para `LOAD` son referencias a estados del diagrama. Las reglas globales se aplican con prioridad `reset > load_accept > transiciones locales`; si ninguna transición es aplicable, se conserva `global_state`. `pipeline_empty_next` indica si el pipeline queda vacío después del ciclo actual.
+
+[Abrir la versión SVG](../../diagrams/generated/fsm_global.drawio.svg) · [Fuente editable de draw.io](../../diagrams/generated/fsm_global.drawio.xml).
 
 La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla anterior. No impone la codificación física de la FSM. Véase el [acuerdo de estados](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state).
 
