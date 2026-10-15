@@ -20,8 +20,6 @@ El alcance comprende:
 
 El documento describe la lógica y los datos propios de la búsqueda. La selección de acciones como avance normal, stall, redirect, flush o `HOLD` pertenece al [Control del pipeline y hazards](control_and_hazards.md); la confirmación y terminación por faults se desarrolla en [Faults, redirects y terminación](../session/faults_and_termination.md).
 
-<a id="entradas-1"></a>
-
 ## Organización
 
 ### Organización interna

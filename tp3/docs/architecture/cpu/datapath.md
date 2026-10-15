@@ -623,7 +623,6 @@ Para todas las instrucciones que no son load:
 Para un load:
 
 - `wb_value = load_value`
-- `wb_value = load_value`
 
 Este es el último punto donde el camino principal de resultados cambia de significado. Después de este mux, WB no necesita distinguir si el valor provino de una operación aritmética, de un inmediato, de un enlace o de una carga desde memoria.
 
