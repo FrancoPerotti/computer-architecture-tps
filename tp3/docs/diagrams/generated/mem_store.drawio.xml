@@ -277,7 +277,7 @@
             <mxGeometry height="30" width="98" x="338" y="315.4" as="geometry" />
           </mxCell>
         </UserObject>
-        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;strore_data&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX FORWARDING LW_MEM MEM WB" id="49">
+        <UserObject label="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;EX/MEM.&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;store_data&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;font-size: 11px; white-space: nowrap;&quot;&gt;[31:0]&lt;/div&gt;&lt;/div&gt;" tags="DATAPATH EX FORWARDING LW_MEM MEM WB" id="49">
           <mxCell parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;spacingRight=3;fontFamily=Inter;" vertex="1">
             <mxGeometry height="30" width="113" x="89" y="238.59000000000003" as="geometry">
               <mxPoint x="5" y="8" as="offset" />
