@@ -392,7 +392,7 @@ D06 queda completo en el nivel de contrato; la [secuencia de dos recorridos de D
 | Parte fija de 228 bytes | 319 ms tras cabecera |
 | Lista de 5*K bytes | Transmisión nominal +200 ms desde `used_count`; sin espera para K=0 |
 
-La recuperación aprobada en C06 informa fallo y descarta el parcial. Fuera de `LOAD`, descarta RX por `W_debug` de 6100/3400 ms, limpia el pendiente local y consulta `CHECK_READY`, sin repetir `STEP`/`RUN`/`RESET`.
+La recuperación aprobada en C06 informa fallo y descarta el parcial. Fuera de `LOAD`, lee y descarta RX hasta completar `W_debug` de 6100/3400 ms de silencio continuo: cada recepción reinicia la cuenta. Después consulta `CHECK_READY` sin limpiar RX y valida únicamente los primeros dos bytes (`05 03` o `05 04`) dentro de 200 ms. Si empieza un terminal RUN u otra secuencia, vuelve al descarte; no busca esos pares dentro del payload. Conserva los bytes posteriores a una consulta válida y no repite `STEP`/`RUN`/`RESET`. El [contrato de recuperación PC](../../protocol.md#perder-una-respuesta-o-conexión) concreta buffers, vencimientos y supuestos del transporte.
 
 ---
 
@@ -640,4 +640,6 @@ El diseño del assembler está aprobado en [DEC-SYS-009](../../decisions/DEC-SYS
 - [DEC-ARCH-009](../../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug): selección y representación externas aprobadas.
 - [DEC-PROTO-002](../../decisions/DEC-PROTO-002.md#dec-proto-002--comandos-adicionales) y [DEC-PROTO-003](../../decisions/DEC-PROTO-003.md#dec-proto-003--timeouts-y-recuperación): comandos auxiliares y tiempos/recuperación aprobados.
 - [Protocolo definitivo](../../protocol.md) y [DEC-PROTO-001](../../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): decisión aprobada y consolidada.
-- [DEC-SYS-007](../../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart): aprobada; [DEC-SYS-008/009](../../decisions/pending_decisions.md#7-software-de-pc): software pendiente, pospuesto por prioridad FPGA.
+- [DEC-SYS-007](../../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart): servicios UART aprobados.
+- [DEC-SYS-009](../../decisions/DEC-SYS-009.md): diseño del assembler aprobado.
+- [DEC-SYS-008](../../decisions/pending_decisions.md#7-software-de-pc): aplicación PC pendiente.

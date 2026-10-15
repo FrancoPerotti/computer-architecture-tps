@@ -519,7 +519,8 @@ El estado inicial determina la acción de `RUN`:
 |---|---|
 | `READY` | Comienza la ejecución |
 | `STEPPING` | Continúa la sesión |
-| Drain `STEP` | Continúa automáticamente |
+| `HALT_DRAIN_STEP` | Ejecuta un ciclo de drain, consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo. |
+| `FAULT_DRAIN_STEP` | Ejecuta un ciclo de drain: alcanza `FAULT` si el pipeline queda vacío; si queda trabajo, continúa en `FAULT_DRAIN_AUTO`. |
 | `FINISHED` o `FAULT` | Primero prepara una sesión nueva de la misma imagen |
 
 ```mermaid
@@ -1349,7 +1350,9 @@ REFERENCE → W_debug = 6100 ms
 ALT_1000  → W_debug = 3400 ms
 ```
 
-La ventana comienza después de abandonar el intercambio o retomar el enlace tras una desconexión.
+`W_debug(C)` es un intervalo de **silencio continuo de RX en PC**, medido con un reloj monótono. La cuenta comienza después de abandonar el intercambio o retomar el enlace tras una desconexión, y vuelve a cero cada vez que PC recibe uno o más bytes. Mientras espera, PC lee y descarta los datos; los bytes pendientes en sus buffers también cuentan como recepción y reinician el intervalo. No basta con que transcurra ese tiempo desde el comienzo de la recuperación.
+
+La cota cubre una respuesta Debug ya iniciada, incluido su contenido máximo y los márgenes de transporte aprobados. No limita cuándo termina RUN. Si RUN empieza a transmitir durante el descarte, sus bytes prolongan la espera hasta que haya terminado la transmisión y transcurra un intervalo completo sin recibir datos. Se mantienen los supuestos del transporte de laboratorio: el enlace retomado entrega bytes en orden y cumple los presupuestos de recepción; una nueva pérdida, desconexión o error reinicia la recuperación. No se garantiza alineación ante bytes retenidos por el transporte durante un tiempo arbitrario.
 
 ```mermaid
 sequenceDiagram
@@ -1357,27 +1360,34 @@ sequenceDiagram
     participant FPGA as FPGA
     Note over PC,FPGA: Timeout, desconexión o respuesta truncada fuera de LOAD
     PC->>PC: Informar fallo y abandonar parcial sin repetir la operación
-    loop Hasta recuperar una consulta completa válida
-        Note right of PC: Descartar RX durante W_debug(C)
-        Note right of FPGA: Puede completar respuesta pendiente o continuar RUN
-        PC->>PC: Limpiar RX local pendiente
+    loop Hasta recuperar una consulta completa válida desde su primer byte
+        Note right of PC: Leer y descartar RX hasta W_debug(C) de silencio continuo
+        Note right of PC: Cada recepción reinicia la cuenta; no limpiar RX al salir
+        Note right of FPGA: Puede continuar RUN o emitir su terminal
         PC->>FPGA: CHECK_READY (05)
-        alt Respuesta válida dentro de 200 ms
+        alt Los primeros bytes son 05 03 o 05 04 dentro de 200 ms
             FPGA-->>PC: READY (05 03) o BUSY (05 04)
             Note right of PC: Comunicación restablecida
-        else Sin respuesta válida
-            Note right of PC: Repetir ventana y consulta
+        else Primer byte distinto de 05, resultado inválido o timeout
+            Note right of PC: Abandonar consulta y volver al descarte con silencio continuo
         end
     end
 ```
 
-Durante `W_debug(C)` la PC descarta RX. Después limpia lo pendiente y envía `CHECK_READY`.
+La recuperación utiliza estas dos fases:
 
-Una respuesta completa `05 03` o `05 04` restablece comunicación. Si no llega en 200 ms, se repite ventana y consulta.
+| Fase | Regla |
+|---|---|
+| Descarte | Consumir RX sin interpretar cabeceras. Cada recepción reinicia la cuenta. Solo después de `W_debug(C)` completo sin bytes se envía una única consulta `CHECK_READY`. |
+| Consulta | Conservar todos los bytes recibidos desde el envío. El primer byte debe ser `05` y el siguiente `03` o `04`, ambos dentro de los 200 ms desde el inicio del envío. Solo ese par consecutivo, comenzando en el primer byte, restablece comunicación. |
+
+Al salir del descarte **no se vacía ni limpia RX**: se mantiene el mismo flujo de lectura y su buffer. Si hay bytes recibidos pendientes al vencer el intervalo, se procesan primero y reinician la cuenta; no se envía la consulta en ese vencimiento. Las entregas parciales del driver no modifican las fronteras y una entrega puede contener varios mensajes. Los bytes posteriores a una respuesta `CHECK_READY` válida se conservan para el lector normal.
+
+Si el primer byte de consulta es `02`, puede haber comenzado el terminal de un RUN que seguía ejecutando. La PC abandona esa consulta y descarta ese byte y los siguientes, reiniciando el intervalo con cada recepción. Aunque en el cuerpo aparezca `05 03` o `05 04`, no se vuelve a interpretar durante ese descarte. También se vuelve al descarte ante cualquier otro primer byte, resultado inválido, timeout o nuevo fallo de enlace. La nueva cuenta comienza al abandonar la consulta o, si se reciben más datos, con su última recepción. No se busca otro par dentro de los bytes ya recibidos.
 
 Solo `CHECK_READY` se repite automáticamente porque es informativa.
 
-La PC no busca cabeceras dentro del cuerpo de una respuesta pendiente ni reanuda automáticamente una ejecución desconocida.
+Una respuesta breve válida puede preceder a un terminal RUN: la FPGA termina primero esa respuesta, sin intercalarla con Debug. Recuperar comunicación no significa que RUN haya terminado ni que no pueda emitir su terminal inmediatamente después. La PC conserva ese mensaje posterior y no reanuda automáticamente una ejecución desconocida.
 
 `READY` o `BUSY` no reconstruyen sesión ni `cycle_count`.
 
@@ -1386,6 +1396,8 @@ Para volver a un estado conocido, el usuario puede aplicar `RESET` y cargar otra
 `W_debug` no limita la duración de `RUN`: el programa puede continuar y `CHECK_READY` responder `BUSY`.
 
 `LOAD` conserva su recuperación mediante `W_load`; `W_debug` no la reemplaza.
+
+La verificación del cliente debe incluir ambos perfiles y estos recorridos: terminal que empieza cerca del vencimiento durante el descarte, terminal que empieza después del silencio y gana a la consulta, cuerpo con `05 03`/`05 04`, cabecera de consulta fragmentada, respuesta breve seguida de terminal en la misma entrega del driver, bytes pendientes al vencer el silencio, timeout y desconexión durante consulta. En ningún caso un par del payload restablece comunicación. Estas pruebas pertenecen al cliente PC; no agregan casos al catálogo de hardware.
 
 ---
 

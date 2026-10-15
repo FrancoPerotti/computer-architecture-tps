@@ -643,7 +643,9 @@ COMPLETADO acredita que ocurrió el ciclo solicitado. La situación de la ejecuc
 
 `FAULT_DRAIN_STEP` y `FAULT` incluyen causa y PC de la instrucción causante como metadatos vigentes. La representación externa de estados y metadatos sigue pendiente en D05/C03, sin agregar otro resultado `STEP` para distinguir estas situaciones.
 
-Durante drenado `STEP`, cada nuevo `STEP` realiza un único ciclo del trabajo anterior y devuelve su Debug posterior. Al completar la última instrucción anterior, ese mismo snapshot ya muestra `FINISHED` o `FAULT`; no se solicita un ciclo vacío adicional ni se genera una segunda respuesta terminal. Se mantienen `HOLD` entre pasos, el conteo de ciclos efectivos y la posibilidad arquitectónica de pasar a drenado automático con `RUN`.
+Durante drenado `STEP`, cada nuevo `STEP` realiza un único ciclo del trabajo anterior y devuelve su Debug posterior. Al completar la última instrucción anterior, ese mismo snapshot ya muestra `FINISHED` o `FAULT`; no se solicita un ciclo vacío adicional ni se genera una segunda respuesta terminal. Se mantienen `HOLD` entre pasos y el conteo de ciclos efectivos.
+
+Un `RUN` aceptado durante drain `STEP` ejecuta el ciclo actual de drenado. Desde `HALT_DRAIN_STEP` consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo. Desde `FAULT_DRAIN_STEP` alcanza `FAULT` si el pipeline queda vacío; solo si queda trabajo después del ciclo pasa a `FAULT_DRAIN_AUTO` y continúa drenando automáticamente.
 
 Desde `FINISHED`/`FAULT`, un `STEP` posterior sigue iniciando una sesión nueva sobre la imagen confirmada, conforme a S01 y la arquitectura; no se reanuda la sesión terminal. Los rechazos conservan `SIN_IMAGEN`/`NO_DISPONIBLE` y no se presentan como ciclos realizados.
 

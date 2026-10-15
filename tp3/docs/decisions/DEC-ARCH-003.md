@@ -2041,11 +2041,9 @@ Si `reset` o `LOAD`/preparación dominan el flanco, no se comprometen writeback,
 
 #### Acuerdo parcial aprobado — FSM global de ejecución y autorización de ciclos
 
-> **Revisado por el acuerdo 47 (2026-09-26).** Este cuerpo conserva la redacción histórica. Sus referencias a confirmación de fetch en IF, a una acción adicional por load-use y a los conteos/ecuaciones derivados quedan sustituidas por el acuerdo 47. IF solo detecta y todo fetch fault se confirma en ID; los demás contratos de este acuerdo se conservan.
-
 **Fecha:** 2026-09-25
 
-Se fija una **FSM Moore explícita de 14 estados** para el ciclo de vida global de la sesión. La FSM registra únicamente `global_state`, calcula `next_state` desde eventos aceptados y emite modos derivados del estado actual; **no** escribe PC, RF, IMEM, DMEM, pipeline o contador ni genera directamente `cpu_cycle_fire`. El `Command Arbiter` acepta comandos bajo `RESET` > `LOAD` > `STEP` > `RUN`; `Cycle Authorization`, Loader, `Session Preparation` y el datapath efectúan las acciones. Esta subdecisión **revisa explícitamente la representación física** de los acuerdos 36 y 40–43: `terminal_kind[1:0]` y `drain_auto` dejan de ser registros globales, así como sus ecuaciones de escritura del acuerdo 43. Permanecen las fronteras semánticas, las confirmaciones, las nueve acciones, el gating de RF/DMEM/metadatos/fault y la regla `cycle_counter_increment=cpu_cycle_fire`. Las ecuaciones anteriores que leen `terminal_kind`/`drain_auto` se reinterpretan mediante predicados **combinacionales** del estado, nunca como una segunda fuente registrada de verdad.
+Se fija una **FSM Moore explícita de 14 estados** para el ciclo de vida global de la sesión. La FSM registra únicamente `global_state`, calcula `next_state` desde eventos aceptados y emite modos derivados del estado actual; **no** escribe PC, RF, IMEM, DMEM, pipeline o contador ni genera directamente `cpu_cycle_fire`. El `Command Arbiter` acepta comandos bajo `RESET` > `LOAD` > `STEP` > `RUN`; `Cycle Authorization`, Loader, `Session Preparation` y el datapath efectúan las acciones. La fase terminal y la modalidad de drenado se derivan de `global_state`, sin registros `terminal_kind` ni `drain_auto`. Las confirmaciones, las ocho acciones del pipeline, el gating de RF/DMEM/metadatos/fault y la regla `cycle_counter_increment=cpu_cycle_fire` conservan sus contratos.
 
 | Estado | Semántica |
 |---|---|
@@ -2057,8 +2055,8 @@ Se fija una **FSM Moore explícita de 14 estados** para el ciclo de vida global 
 | `READY` | Imagen y sesión inicial confirmadas, ejecución aún no iniciada. |
 | `RUNNING` | Ejecución continua normal. |
 | `STEPPING` | Ejecución paso a paso entre autorizaciones. |
-| `HALT_DRAIN_AUTO` / `HALT_DRAIN_STEP` | Drenado de anteriores tras `halt` confirmado, automático o por `STEP`. |
-| `FAULT_DRAIN_AUTO` / `FAULT_DRAIN_STEP` | Drenado de anteriores tras fault confirmado, automático o por `STEP`. |
+| `HALT_DRAIN_AUTO` / `HALT_DRAIN_STEP` | `halt` confirmado con una entrada anterior pendiente en `MEM/WB`; el siguiente ciclo efectivo termina la sesión. |
+| `FAULT_DRAIN_AUTO` / `FAULT_DRAIN_STEP` | Fault confirmado con instrucciones anteriores pendientes en `EX/MEM` o `MEM/WB`; requieren como máximo dos ciclos efectivos de drenado. |
 | `FINISHED` | Terminación normal con pipeline vacío. |
 | `FAULT` | Terminación excepcional con pipeline vacío. |
 
@@ -2078,11 +2076,13 @@ Se precisan las fases de preparación sin cambiar la prioridad global. `prepare_
 
 Aunque `prepare_active` refleje el estado Moore previo al flanco, `PREPARING_RUN/STEP && prepare_done` es un flanco de **ciclo CPU**, no de acciones efectivas de preparación: el primer ciclo usa ese estado inicial preflanco, consume el `RUN` o `STEP` pendiente y deja `cycle_count=1`. Con `prepare_done=0` no hay ciclo. `PREPARING_READY && prepare_done` hace el commit completo de sesión e imagen **sin** ciclo CPU y llega a `READY`.
 
+El primer ciclo desde `READY`, `PREPARING_RUN` o `PREPARING_STEP` comienza con los cuatro registros interetapa inválidos y `IF/ID.fetch_fault_valid=0`. Solo realiza el primer fetch: no hay candidatos en ID o EX y `halt_confirm=fault_confirm=0`. Por eso su destino es `RUNNING` o `STEPPING` según el origen del ciclo, incluso si la primera palabra es `halt` o una instrucción ilegal. IF solo detecta candidatos de fetch; su confirmación ocurre posteriormente en ID.
+
 En particular, `load_ok` solo indica imagen recibida/validada y su tamaño queda privado del Loader; no publica aún `loaded_image_size_bytes`. El único write no nulo de ese tamaño sucede en el commit de `PREPARING_READY`, una vez preparada íntegramente la sesión. `PREPARING_RUN/STEP` reutilizan la imagen confirmada y no escriben su tamaño.
 
 Así se conserva `RESET` > `LOAD` aceptado/preparación **efectiva** > ciclo CPU > `HOLD`, y una imagen parcial nunca es ejecutable.
 
-Las transiciones (además de `reset` universal y `LOAD` aceptado desde los estados elegibles) quedan:
+Las transiciones alcanzables durante una sesión quedan en la tabla siguiente. `reset` universal y `LOAD` aceptado desde los estados elegibles conservan prioridad sobre las condiciones locales.
 
 | Estado previo | Condición preflanco / evento | Estado siguiente |
 |---|---|---|
@@ -2094,29 +2094,40 @@ Las transiciones (además de `reset` universal y `LOAD` aceptado desde los estad
 | `PREPARING_READY` | `prepare_done` | `READY` (commit completo, sin CPU) |
 | `PREPARING_READY` | en curso | `PREPARING_READY` |
 | `READY` | `load_accept` | `LOADING` |
-| `READY` | `step_accept` / `run_accept` | Resultado de **un** ciclo `STEP` / continuo en ese flanco |
+| `READY` | `step_accept` | `STEPPING` (primer fetch) |
+| `READY` | `run_accept` | `RUNNING` (primer fetch) |
 | `READY` | sin aceptación | `READY` |
 | `STEPPING` | `load_accept` | `LOADING` |
 | `STEPPING` | `step_accept` / `run_accept` | Resultado de **un** ciclo `STEP` / continuo en ese flanco |
 | `STEPPING` | sin aceptación | `STEPPING` |
 | `RUNNING` | ciclo continuo | Resultado de **un** ciclo continuo en ese flanco |
-| `HALT_DRAIN_AUTO` / `FAULT_DRAIN_AUTO` | ciclo automático | Drenado del mismo tipo o su estado final |
-| `HALT_DRAIN_STEP` / `FAULT_DRAIN_STEP` | `load_accept` | `LOADING` |
-| `HALT_DRAIN_STEP` / `FAULT_DRAIN_STEP` | `step_accept` / `run_accept` | Drenado `STEP` / AUTO del mismo tipo o su estado final |
-| `HALT_DRAIN_STEP` / `FAULT_DRAIN_STEP` | sin aceptación | Retener estado |
+| `HALT_DRAIN_AUTO` | ciclo automático | `FINISHED` |
+| `HALT_DRAIN_STEP` | `load_accept` | `LOADING` |
+| `HALT_DRAIN_STEP` | `step_accept` / `run_accept` | `FINISHED` |
+| `HALT_DRAIN_STEP` | sin aceptación | `HALT_DRAIN_STEP` (HOLD, sin ciclo CPU) |
+| `FAULT_DRAIN_AUTO` | ciclo automático | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
+| `FAULT_DRAIN_STEP` | `load_accept` | `LOADING` |
+| `FAULT_DRAIN_STEP` | `step_accept` | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_STEP` |
+| `FAULT_DRAIN_STEP` | `run_accept` | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
+| `FAULT_DRAIN_STEP` | sin aceptación | `FAULT_DRAIN_STEP` (HOLD, sin ciclo CPU) |
 | `FINISHED` / `FAULT` | `load_accept` | `LOADING` |
-| `FINISHED` / `FAULT` | `step_accept` / `run_accept` | `PREPARING_STEP` / `PREPARING_RUN` |
+| `FINISHED` / `FAULT` | `step_accept` | `PREPARING_STEP` |
+| `FINISHED` / `FAULT` | `run_accept` | `PREPARING_RUN` |
 | `FINISHED` / `FAULT` | sin aceptación | Retener estado |
-| `PREPARING_RUN` / `PREPARING_STEP` | `prepare_done` | Resultado de **un** ciclo continuo / `STEP` en ese flanco |
-| `PREPARING_RUN` / `PREPARING_STEP` | en curso | Retener estado |
+| `PREPARING_RUN` | `prepare_done` | `RUNNING` (primer fetch) |
+| `PREPARING_RUN` | sin `prepare_done` | `PREPARING_RUN` |
+| `PREPARING_STEP` | `prepare_done` | `STEPPING` (primer fetch) |
+| `PREPARING_STEP` | sin `prepare_done` | `PREPARING_STEP` |
 
-Para cualquier fila «resultado de un ciclo», se aplica este orden:
+Las filas «resultado de un ciclo» corresponden únicamente a `STEPPING` y `RUNNING`. Para esos ciclos se aplica este orden:
 
 1. `fault_confirm`: `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO/STEP`.
 2. `halt_confirm`: `FINISHED` si `pipeline_empty_next`; si no, `HALT_DRAIN_AUTO/STEP`.
 3. Sin frontera terminal: `RUNNING` o `STEPPING` según el **origen del ciclo**.
 
-Para ciclos de drenado ya terminales no se confirma otra frontera: `pipeline_empty_next` elige `FINISHED`/`FAULT` o conserva el drenado de su clase y origen; `RUN` aceptado durante drenado `STEP` lo convierte en AUTO si no se vacía.
+Durante drenado no se confirma otra frontera y no hay trabajo en `IF/ID` ni `ID/EX`. Al confirmar `halt` en EX, `EX/MEM.next.valid=0` y solo puede quedar una entrada anterior en `MEM/WB`. El siguiente ciclo efectivo la consume y lleva a `FINISHED`, tanto en `HALT_DRAIN_AUTO` como al aceptar `STEP` o `RUN` en `HALT_DRAIN_STEP`. Sin una orden aceptada, `HALT_DRAIN_STEP` conserva su estado y el pipeline en HOLD.
+
+Un fault confirmado en ID puede conservar anteriores en `EX/MEM` y `MEM/WB`; uno confirmado en EX solo puede conservar `MEM/WB`. En los drains de fault, `pipeline_empty_next` selecciona `FAULT` si el ciclo consume el último trabajo. Si todavía queda trabajo, el drenado conserva su modalidad con un ciclo automático o un `STEP`; un `RUN` aceptado desde `FAULT_DRAIN_STEP` selecciona `FAULT_DRAIN_AUTO`. Después de un ciclo de drenado que deja trabajo, solo queda WB, y el siguiente ciclo efectivo termina en `FAULT`.
 
 `pipeline_empty_next` se obtiene del próximo estado de registros interetapa del acuerdo 42, sin evaluar salidas de la FSM siguiente ni crear un lazo; por ello `FINISHED`/`FAULT` surge en **el mismo flanco** que vacía el último `valid`, sin ciclo de drenado vacío.
 
@@ -2202,9 +2213,9 @@ Se auditan las **coincidencias funcionales globales e interacciones entre hazard
 |---|---|
 | `RESET`, `LOAD` aceptado, preparación efectiva y ciclo CPU | `RESET` domina todo; `LOAD` aceptado y escrituras efectivas de preparación dominan efectos CPU. Un `LOAD` **rechazado** no interrumpe el ciclo continuo. Entre comandos aceptables rige `RESET` > `LOAD` > `STEP` > `RUN`. |
 | Loader y nueva imagen | `load_ok` valida pero no publica imagen. `PREPARING_READY && prepare_done` publica sesión e imagen coherentes **sin** ciclo CPU; fallo deja tamaño confirmado cero. |
-| Reutilización de imagen y primer ciclo | `RUN`/`STEP` desde `FINISHED` o `FAULT` inician **nueva** sesión por `PREPARING_RUN`/`STEP`. Si `prepare_done=1`, estado inicial completo antes del flanco y sin escrituras de mantenimiento concurrentes, ese flanco autoriza el primer ciclo y consume el `RUN`/`STEP` pendiente. |
+| Reutilización de imagen y primer ciclo | `RUN`/`STEP` desde `FINISHED` o `FAULT` inician **nueva** sesión por `PREPARING_RUN`/`STEP`. Con `prepare_done=1`, estado inicial completo antes del flanco y sin mantenimiento concurrente, se ejecuta el primer fetch y se pasa a `RUNNING`/`STEPPING`, respectivamente, sin confirmar `halt` ni fault. |
 | Ejecución paso a paso y `LOAD` | `LOAD` aceptado en `STEPPING` o drenado `STEP` domina el flanco, inhibe CPU y abandona la sesión previa. `LOAD` rechazado en `RUNNING` o drenado AUTO no inhibe ciclos. |
-| Cambio de drenado `STEP`→AUTO | `RUN` aceptado durante drenado `STEP` autoriza el ciclo actual y conserva modalidad AUTO si quedan anteriores; `STEP` aceptado produce solo un ciclo, incluso con stall. |
+| `RUN` o `STEP` durante drenado por pasos | Ambas órdenes ejecutan un ciclo. Desde `HALT_DRAIN_STEP` se llega a `FINISHED`. Desde `FAULT_DRAIN_STEP` se llega a `FAULT` si queda vacío; si queda WB, `RUN` selecciona `FAULT_DRAIN_AUTO` y `STEP` conserva `FAULT_DRAIN_STEP`. |
 | Confirmación terminal y vaciado | `halt_confirm`/`fault_confirm` y `pipeline_empty_next` eligen directamente `FINISHED`/`FAULT` cuando el último `valid_next` baja a cero, sin ciclo vacío adicional; con anteriores eligen DRAIN AUTO/`STEP` según `cycle_from_continuous`. |
 | Fronteras EX, ID e IF excepcional | Dentro de la instrucción EX, fault propio precede a `halt` y redirect; entre instrucciones distintas prevalece la más antigua EX→ID→IF excepcional. Redirect/`halt` EX descartan candidatos jóvenes; fault ID permite avanzar la EX anterior. |
 | `load-use` y frontera | La frontera anterior prevalece sobre stalls solo de trabajo joven descartado; el stall necesario entre anteriores supervivientes se preserva. Fault IF excepcional con `load-use` retiene íntegro al consumidor `IF/ID`, inserta bubble y deja avanzar el load anterior sin capturar el fetch causante. |
@@ -2252,8 +2263,8 @@ La matriz consolida los acuerdos 1–45 y la revisión explícita del acuerdo 47
 | Antigüedad, ocho acciones, enables e invalidaciones | Acuerdos 30–31 y 40–45, revisados por el 47: frontera EX → ID; IF solo detecta y transporta candidatos conforme al acuerdo 47; `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_load_use`, `act_normal`, `act_drain_load_use` y `act_drain_advance` excluyentes, aplicadas a PC y registros interetapa con valores preflanco y sin ciclo adicional de `HOLD`. |
 | Fetch candidato durante load-use | Acuerdo 47: solo `act_load_use`, sin confirmación ni captura del candidato; PC retenido permite redetectarlo, capturarlo después y resolverlo en ID. Probar consumidor branch/jalr y load/store con fault propio antes del fetch joven. |
 | Gating RF/DMEM/fault/contador; `cpu_cycle_fire` | Acuerdos 36, 40 y 42–45, revisados por el 47: ningún efecto CPU sin ciclo, validez y control local; el writeback/store anterior a frontera joven completa una sola vez; el contador incrementa también en stall, redirect, frontera y drenado. |
-| FSM de 14 estados, autorización y comandos | Acuerdos 36 y 40–45, con revisión expresa del 44: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión; `PREPARING_RUN/STEP && prepare_done` ejecuta primer ciclo solo con preparación preflanco completa. |
-| Drenado y terminación | Acuerdos 28–31 y 36, 40–45: anteriores progresan en AUTO o por un `STEP` aceptado por ciclo; `pipeline_empty_next=1` con confirmación/vaciado final lleva a `FINISHED` o `FAULT` en ese flanco sin ciclo vacío. |
+| FSM de 14 estados, autorización y comandos | Acuerdos 36 y 40–45: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión. El primer ciclo desde `READY` o al consumir `prepare_done` en `PREPARING_RUN/STEP` realiza fetch sin confirmar `halt` ni fault y lleva a `RUNNING`/`STEPPING` según su origen. |
+| Drenado y terminación | Acuerdos 28–31 y 36, 40–45: halt-drain contiene solo WB y termina en `FINISHED` en su único ciclo efectivo; fault-drain requiere como máximo dos ciclos efectivos y el último llega a `FAULT`. Los drains `STEP` conservan estado sin orden; `RUN` desde `HALT_DRAIN_STEP` termina y desde `FAULT_DRAIN_STEP` selecciona AUTO solo si queda trabajo. No hay ciclo vacío adicional. |
 | Coincidencias globales e integración | Acuerdo 45: auditar `RESET`/`LOAD`/preparación, comandos concurrentes, fronteras/`load-use`, forwarding/selectores durante `HOLD` y drenado, commits anteriores y fetch IF + acceso MEM simultáneos sobre IMEM/DMEM independientes, sin hazard estructural artificial. |
 
 Los invariantes conjuntos de aceptación son:

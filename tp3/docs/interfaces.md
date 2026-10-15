@@ -1797,9 +1797,11 @@ Este bloque es lógica combinacional auxiliar; no contiene estado.
 
 **Tipo:** Estado registrado y decodificación Moore. **Responsabilidad:** Conservar la fase global de sesión y calcular su próximo estado.
 
-**Contrato:** 14 estados aprobados; reset→`NO_IMAGE`; `LOAD` aceptado→`LOADING`; `load_ok`→`PREPARING_READY`; `prepare_done` publica `READY` sin ciclo. Ciclos usan confirmación y `pipeline_empty_next` para terminal/drain según origen. Terminal `RUN`/`STEP` prepara sesión nueva. No escribe directamente datapath ni autoriza el ciclo actual con `next_state`.
+**Contrato:** 14 estados aprobados; reset→`NO_IMAGE`; `LOAD` aceptado→`LOADING`; `load_ok`→`PREPARING_READY`; `PREPARING_READY && prepare_done` publica imagen y pasa a `READY` sin ciclo CPU. El primer ciclo autorizado desde `READY` o al consumir `prepare_done` en `PREPARING_RUN`/`PREPARING_STEP` realiza fetch sin confirmar halt ni fault y alcanza `RUNNING`/`STEPPING` según su origen. Desde `RUNNING`/`STEPPING`, las confirmaciones y `pipeline_empty_next` seleccionan terminal o drain según el origen del ciclo. Terminal `RUN`/`STEP` prepara sesión nueva. No escribe directamente datapath ni autoriza el ciclo actual con `next_state`.
 
-**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#tabla-de-transiciones). **Verificación futura:** Todas las transiciones, rechazo `LOAD` continuo, resultado de confirmación, drain `STEP`→`AUTO` y sesiones reutilizadas.
+En un drain alcanzable de halt queda únicamente WB: el siguiente ciclo efectivo lleva a `FINISHED`. Desde `FAULT_DRAIN_STEP`, un `RUN` aceptado lleva a `FAULT` si ese ciclo vacía el pipeline, o a `FAULT_DRAIN_AUTO` si queda trabajo. Sin orden aceptada, los drains `STEP` conservan el estado.
+
+**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#tabla-de-transiciones). **Verificación futura:** Transiciones alcanzables, primer fetch sin confirmación terminal, rechazo `LOAD` continuo, resultado de confirmación, halt-drain completado en un ciclo efectivo, conversión `FAULT_DRAIN_STEP`→`FAULT_DRAIN_AUTO` por `RUN` solo si queda trabajo y sesiones reutilizadas. Las filas de FSM con entradas forzadas se comprueban por separado, conforme a [TEST-EXEC-006](verification/execution.md#test-exec-006); no se exige su alcanzabilidad en una sesión legal.
 
 FSM Moore de catorce estados con registro one-hot de catorce bits, reset a `NO_IMAGE` en bit cero. Código `global_state_code` de ocho bits combinacional, compartido con `debug_state_code` del serializador, según [representación aprobada](architecture/session/global_state_encoding.md).
 
@@ -2225,7 +2227,6 @@ Operaciones, resultados, códigos de estado, orden de intercambios, errores, pla
 
 | Decisión | Interfaz / entregable afectado | Alcance abierto |
 |---|---|---|
-| DEC-SYS-009 | toolchain / imagen del `Loader` | assembler y validación de imagen emitida |
 | DEC-SYS-008 | aplicación PC | CLI/TUI/GUI y presentación de estado |
 
 El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). La decisión de aplicación PC se registra en [Decisiones pendientes](decisions/pending_decisions.md); las condiciones de cierre global se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto). DEC-ARCH-009, DEC-SYS-005 y DEC-SYS-007 están aprobadas; sus fronteras se consultan en los contratos especializados, sin reabrirlas por textos históricos.
