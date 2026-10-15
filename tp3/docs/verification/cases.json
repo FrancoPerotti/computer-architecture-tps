@@ -1,7 +1,7 @@
 {
   "schema": "tp3-verification-cases-v1",
   "status": "designed-not-executed",
-  "date": "2026-10-12",
+  "date": "2026-10-15",
   "scope": "finite logical cases; replays listed separately",
   "latch_fixture": {
     "ifid": [
@@ -17650,27 +17650,1144 @@
     {
       "id": "TEST-PIPE-010",
       "source": "pipeline.md#test-pipe-010",
-      "case_count": 1,
+      "case_count": 20,
       "reuse_groups": [
+        "TEST-PIPE-007",
         "TEST-PIPE-008"
       ],
       "cases": [
         {
           "id": "TEST-PIPE-010/C001",
+          "kind": "program",
           "inputs": {
             "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
             "image_size": 8,
-            "word0": 7
+            "word0": 7,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "ALU"
           },
           "expected": {
             "x1": 7,
             "x2": 14,
             "cause": 1,
-            "fault_pc": 8
+            "fault_pc": 8,
+            "state": "FAULT",
+            "effective_cycles": 7,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_id_fault",
+              "act_drain_advance",
+              "act_drain_advance"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1,
+              "4": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
           },
-          "kind": "program",
           "origins": [
-            "Fetch detrás de load-use"
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C002",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); beq x1,x0,-4",
+            "words": [
+              "00002083",
+              "FE008EE3"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "branch_taken"
+          },
+          "expected": {
+            "x1": 0,
+            "cause": null,
+            "fault_pc": null,
+            "state": "RUNNING",
+            "effective_cycles": 20,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0
+            ],
+            "stall_count": 4,
+            "fault_confirm_count": 0,
+            "rf_commits_by_pc": {
+              "0": 4
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C003",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); beq x1,x0,-4",
+            "words": [
+              "00002083",
+              "FE008EE3"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "branch_not_taken"
+          },
+          "expected": {
+            "x1": 7,
+            "cause": 1,
+            "fault_pc": 8,
+            "state": "FAULT",
+            "effective_cycles": 7,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_id_fault",
+              "act_drain_advance",
+              "act_drain_advance"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C004",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); jalr x5,x1,0",
+            "words": [
+              "00002083",
+              "000082E7"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "jalr_aligned"
+          },
+          "expected": {
+            "x1": 0,
+            "x5": 8,
+            "cause": null,
+            "fault_pc": null,
+            "state": "RUNNING",
+            "effective_cycles": 20,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0
+            ],
+            "stall_count": 4,
+            "fault_confirm_count": 0,
+            "rf_commits_by_pc": {
+              "0": 4,
+              "4": 3
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C005",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); jalr x5,x1,0",
+            "words": [
+              "00002083",
+              "000082E7"
+            ],
+            "image_size": 8,
+            "word0": 2,
+            "initial_rf": {
+              "x5": 55
+            },
+            "mode": "RUN",
+            "scenario": "jalr_misaligned"
+          },
+          "expected": {
+            "x1": 2,
+            "x5": 55,
+            "cause": 0,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C006",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); sw x1,2(x0)",
+            "words": [
+              "00002083",
+              "00102123"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "store_misaligned"
+          },
+          "expected": {
+            "x1": 0,
+            "cause": 6,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C007",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); lw x2,2(x1)",
+            "words": [
+              "00002083",
+              "0020A103"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {
+              "x2": 55
+            },
+            "mode": "RUN",
+            "scenario": "load_misaligned"
+          },
+          "expected": {
+            "x1": 0,
+            "x2": 55,
+            "cause": 4,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C008",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,2(x0); add x2,x1,x1",
+            "words": [
+              "00202083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "initial_rf": {
+              "x2": 55
+            },
+            "mode": "RUN",
+            "scenario": "producer_fault"
+          },
+          "expected": {
+            "x1": 0,
+            "x2": 55,
+            "cause": 4,
+            "fault_pc": 0,
+            "state": "FAULT",
+            "effective_cycles": 3,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8
+            ],
+            "stall_count": 0,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {},
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C009",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); halt",
+            "words": [
+              "00002083",
+              "0000000B"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "initial_rf": {},
+            "mode": "RUN",
+            "scenario": "older_halt"
+          },
+          "expected": {
+            "x1": 7,
+            "cause": null,
+            "fault_pc": null,
+            "state": "FINISHED",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_normal",
+              "act_halt",
+              "act_drain_advance"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              12,
+              12,
+              12
+            ],
+            "stall_count": 0,
+            "fault_confirm_count": 0,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C010",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "initial_rf": {},
+            "mode": "STEP",
+            "scenario": "ALU",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 7,
+            "x2": 14,
+            "cause": 1,
+            "fault_pc": 8,
+            "state": "FAULT",
+            "effective_cycles": 7,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_id_fault",
+              "act_drain_advance",
+              "act_drain_advance"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1,
+              "4": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C011",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); beq x1,x0,-4",
+            "words": [
+              "00002083",
+              "FE008EE3"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "STEP",
+            "scenario": "branch_taken",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 0,
+            "cause": null,
+            "fault_pc": null,
+            "state": "STEPPING",
+            "effective_cycles": 20,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0
+            ],
+            "stall_count": 4,
+            "fault_confirm_count": 0,
+            "rf_commits_by_pc": {
+              "0": 4
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C012",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); beq x1,x0,-4",
+            "words": [
+              "00002083",
+              "FE008EE3"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "initial_rf": {},
+            "mode": "STEP",
+            "scenario": "branch_not_taken",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 7,
+            "cause": 1,
+            "fault_pc": 8,
+            "state": "FAULT",
+            "effective_cycles": 7,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_id_fault",
+              "act_drain_advance",
+              "act_drain_advance"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C013",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); jalr x5,x1,0",
+            "words": [
+              "00002083",
+              "000082E7"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "STEP",
+            "scenario": "jalr_aligned",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 0,
+            "x5": 8,
+            "cause": null,
+            "fault_pc": null,
+            "state": "STEPPING",
+            "effective_cycles": 20,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect",
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_redirect"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0,
+              4,
+              8,
+              8,
+              12,
+              0
+            ],
+            "stall_count": 4,
+            "fault_confirm_count": 0,
+            "rf_commits_by_pc": {
+              "0": 4,
+              "4": 3
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C014",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); jalr x5,x1,0",
+            "words": [
+              "00002083",
+              "000082E7"
+            ],
+            "image_size": 8,
+            "word0": 2,
+            "initial_rf": {
+              "x5": 55
+            },
+            "mode": "STEP",
+            "scenario": "jalr_misaligned",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 2,
+            "x5": 55,
+            "cause": 0,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C015",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); sw x1,2(x0)",
+            "words": [
+              "00002083",
+              "00102123"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {},
+            "mode": "STEP",
+            "scenario": "store_misaligned",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 0,
+            "cause": 6,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C016",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); lw x2,2(x1)",
+            "words": [
+              "00002083",
+              "0020A103"
+            ],
+            "image_size": 8,
+            "word0": 0,
+            "initial_rf": {
+              "x2": 55
+            },
+            "mode": "STEP",
+            "scenario": "load_misaligned",
+            "hold_after_cycles": [
+              2,
+              3,
+              4
+            ],
+            "hold_clocks_each": 50
+          },
+          "expected": {
+            "x1": 0,
+            "x2": 55,
+            "cause": 4,
+            "fault_pc": 4,
+            "state": "FAULT",
+            "effective_cycles": 5,
+            "actions": [
+              "act_normal",
+              "act_normal",
+              "act_load_use",
+              "act_normal",
+              "act_ex_fault"
+            ],
+            "pc_after_cycle": [
+              4,
+              8,
+              8,
+              12,
+              12
+            ],
+            "stall_count": 1,
+            "fault_confirm_count": 1,
+            "rf_commits_by_pc": {
+              "0": 1
+            },
+            "dmem_store_commits": 0,
+            "dmem_and_used_unchanged": true,
+            "hold_preserves_state": true
+          },
+          "origins": [
+            "Acuerdo 47: candidato fetch y antigüedad"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C017",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "mode": "STEP",
+            "initial_rf": {},
+            "stop_after_cycle": 3,
+            "intervention": "RESET",
+            "new_image": null
+          },
+          "expected": {
+            "state": "NO_IMAGE",
+            "cpu_cycle_fire": false,
+            "fault_confirm": false,
+            "rf_write_fire": false,
+            "dmem_store_fire": false,
+            "image_size": 0,
+            "cycle_count": 0,
+            "ifid_flags_after": [
+              0,
+              0
+            ],
+            "latches_after": "invalid",
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "registers_all_zero": true
+          },
+          "origins": [
+            "Acuerdo 47: prioridad global sobre candidato"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C018",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "mode": "STEP",
+            "initial_rf": {},
+            "stop_after_cycle": 4,
+            "intervention": "RESET",
+            "new_image": null
+          },
+          "expected": {
+            "state": "NO_IMAGE",
+            "cpu_cycle_fire": false,
+            "fault_confirm": false,
+            "rf_write_fire": false,
+            "dmem_store_fire": false,
+            "image_size": 0,
+            "cycle_count": 0,
+            "ifid_flags_after": [
+              0,
+              0
+            ],
+            "latches_after": "invalid",
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "registers_all_zero": true
+          },
+          "origins": [
+            "Acuerdo 47: prioridad global sobre candidato"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C019",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "mode": "STEP",
+            "initial_rf": {},
+            "stop_after_cycle": 3,
+            "intervention": "LOAD",
+            "new_image": "halt"
+          },
+          "expected": {
+            "state": "LOADING",
+            "cpu_cycle_fire": false,
+            "fault_confirm": false,
+            "rf_write_fire": false,
+            "dmem_store_fire": false,
+            "image_size": 0,
+            "cycle_count": 3,
+            "ifid_flags_after": [
+              1,
+              0
+            ],
+            "latches_after": "retained",
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "registers_all_zero": true,
+            "after_preparation": {
+              "state": "READY",
+              "image_size": 4,
+              "PC": 0,
+              "cycle_count": 0,
+              "ifid_flags": [
+                0,
+                0
+              ],
+              "pipeline_empty": true,
+              "registers_all_zero": true,
+              "used_count": 0,
+              "fault_confirm": false
+            }
+          },
+          "origins": [
+            "Acuerdo 47: prioridad global sobre candidato"
+          ]
+        },
+        {
+          "id": "TEST-PIPE-010/C020",
+          "kind": "program",
+          "inputs": {
+            "program": "lw x1,0(x0); add x2,x1,x1",
+            "words": [
+              "00002083",
+              "00108133"
+            ],
+            "image_size": 8,
+            "word0": 7,
+            "mode": "STEP",
+            "initial_rf": {},
+            "stop_after_cycle": 4,
+            "intervention": "LOAD",
+            "new_image": "halt"
+          },
+          "expected": {
+            "state": "LOADING",
+            "cpu_cycle_fire": false,
+            "fault_confirm": false,
+            "rf_write_fire": false,
+            "dmem_store_fire": false,
+            "image_size": 0,
+            "cycle_count": 4,
+            "ifid_flags_after": [
+              0,
+              1
+            ],
+            "latches_after": "retained",
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "registers_all_zero": true,
+            "after_preparation": {
+              "state": "READY",
+              "image_size": 4,
+              "PC": 0,
+              "cycle_count": 0,
+              "ifid_flags": [
+                0,
+                0
+              ],
+              "pipeline_empty": true,
+              "registers_all_zero": true,
+              "used_count": 0,
+              "fault_confirm": false
+            }
+          },
+          "origins": [
+            "Acuerdo 47: prioridad global sobre candidato"
           ]
         }
       ]

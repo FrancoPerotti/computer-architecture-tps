@@ -22,7 +22,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-007 — Ocho acciones y actualizaciones preflanco](#test-pipe-007)
 - [TEST-PIPE-008 — Wrong-path y fronteras por antigüedad](#test-pipe-008)
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
-- [TEST-PIPE-010 — Fetch candidato retenido durante load-use](#test-pipe-010)
+- [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
 
 <a id="test-pipe-001"></a>
 
@@ -730,71 +730,83 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 <a id="test-pipe-010"></a>
 
-## TEST-PIPE-010 — Fetch candidato retenido durante load-use
+## TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores
 
-- **Nivel:** CPU e integración IF/ID.
-- **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Nivel:** CPU e integración CPU/control.
+- **Tipo de estímulo:** secuencias de CPU y comandos elegibles, con datos iniciales de fixture explícitos; no se fuerzan candidatos ni latches.
+- **Estado:** diseñada, sin ejecutar contra RTL.
 
-**Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
+**Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
-**Contratos:** [stage_if](../architecture/cpu/stage_if.md); [faults_and_termination](../architecture/session/faults_and_termination.md).
+**Contratos:** [acuerdo 47](../decisions/DEC-ARCH-003.md#acuerdo-47-aprobado--confirmación-de-todo-fetch-fault-en-id-y-revisión-de-aud-001); [stage_if](../architecture/cpu/stage_if.md); [faults_and_termination](../architecture/session/faults_and_termination.md); [execution_control](../architecture/session/execution_control.md).
 
 ### Qué comprueba y por qué
 
-Esta prueba comprueba que un candidato de fault de fetch espere mientras un stall load-use retiene el consumidor en IF/ID.
+Esta prueba recorre la coincidencia de un load-use con un candidato de fetch fuera de imagen, su retención, captura posterior y resolución frente a la instrucción consumidora anterior. Debe detectar tanto confirmaciones prematuras como la pérdida del redirect, fault propio o commit del consumidor.
 
-Busca detectar una captura o confirmación prematura del candidato, la pérdida del ADD retenido o la clasificación de los bits residuales del fetch como una instrucción ilegal.
-
-El ADD es anterior al fault de `PC=8` y debe conservar su resultado.
+También comprueba la prioridad del fault del load productor, halt frente al candidato y el abandono de sesión por reset o LOAD aceptado. Las coincidencias se alcanzan ejecutando las instrucciones indicadas, sin inyectar señales de fault. Los casos de STEP incluyen HOLD entre ciclos efectivos.
 
 ### Condiciones iniciales
 
-La imagen confirmada tiene ocho bytes: `lw x1,0(x0)` en `PC=0` y `add x2,x1,x1` en `PC=4`. No contiene `halt`. La palabra de DMEM en dirección cero contiene 7.
+Se utiliza REFERENCE, sesión preparada, PC y contador cero, latches vacíos e imagen confirmada de ocho bytes. No se agrega una continuación ni halt implícito. El fixture CPU instala únicamente `word0` de DMEM y las excepciones RF de la tabla; RF y el resto de DMEM son cero. Con `word0` distinto de cero se instalan sus cuatro marcas de validez, sin contar como store CPU; con `word0=0` se conserva DMEM en cero lógico y sin marcas utilizadas. Se conserva una copia inicial de datos/marcas para detectar cambios. No se presenta este setup como una carga de datos por UART ni como un programa completo de placa.
 
-Al alcanzar `PC=8`, el candidato existe inicialmente en IF, sin haberse capturado en IF/ID. Ese latch todavía conserva el consumidor dependiente.
+### Variantes cerradas y programas concretos
 
-### Variantes cerradas
+La prueba tiene 20 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-PIPE-010/Cnnn`, palabras de instrucción, entradas, acciones, PCs y resultados. No hay producto cartesiano implícito.
 
-La prueba tiene 1 caso canónico. El [manifiesto](cases.json) enumera los IDs `TEST-PIPE-010/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+Cada fila coloca la primera instrucción en PC=0 y la segunda en PC=4. Las cantidades son decimales; las causas conservan sus códigos arquitectónicos.
 
-El único caso propio ejecuta el programa sin `halt` y observa el fetch fuera de imagen durante el stall del consumidor.
+| Caso RUN | Caso STEP/HOLD | Programa de ocho bytes | `word0` / RF adicional | Resultado |
+|---|---|---|---|---|
+| C001 | C010 | `lw x1,0(x0); add x2,x1,x1` | 7 | FAULT, causa 1, PC=8; x1=7, x2=14; 7 ciclos |
+| C002 | C011 | `lw x1,0(x0); beq x1,x0,-4` | 0 | Loop a PC=0 sin fault; observar 20 ciclos |
+| C003 | C012 | `lw x1,0(x0); beq x1,x0,-4` | 7 | Branch no tomado; FAULT, causa 1, PC=8; 7 ciclos |
+| C004 | C013 | `lw x1,0(x0); jalr x5,x1,0` | 0 | Loop a PC=0, enlace x5=8, sin fault; observar 20 ciclos |
+| C005 | C014 | `lw x1,0(x0); jalr x5,x1,0` | 2; x5=55 | FAULT, causa 0, PC=4; x5 conserva 55; 5 ciclos |
+| C006 | C015 | `lw x1,0(x0); sw x1,2(x0)` | 0 | FAULT, causa 6, PC=4; sin store ni cambio de marcas; 5 ciclos |
+| C007 | C016 | `lw x1,0(x0); lw x2,2(x1)` | 0; x2=55 | FAULT, causa 4, PC=4; x2 conserva 55; 5 ciclos |
+| C008 | — | `lw x1,2(x0); add x2,x1,x1` | 7; x2=55 | Gana fault del productor: causa 4, PC=0; x1=0, x2=55; 3 ciclos |
+| C009 | — | `lw x1,0(x0); halt` | 7 | Halt descarta candidato ID; FINISHED con x1=7; 5 ciclos |
 
-La eliminación de un candidato por un redirect anterior se comprueba mediante la reutilización indicada.
+En C010–C016 se solicita un STEP por ciclo, incluidos stall y drains, y se insertan 50 clocks de HOLD después de los ciclos efectivos 2, 3 y 4 de la primera iteración. En los loops, el límite de 20 ciclos no equivale a FINISHED: al terminar la observación permanecen RUNNING o STEPPING según el modo, y se recuperan por reset externo. C009 no tiene load-use: halt no consume x1; comprueba por separado la frontera anterior exigida por la matriz.
 
-También se ejecutan las comprobaciones reutilizadas de [TEST-PIPE-008](#test-pipe-008). Se conservan sus IDs originales y no se suman otra vez como casos propios.
+Las cuatro variantes restantes utilizan `lw x1,0(x0); add x2,x1,x1`, `word0=7`, RF cero y avance STEP:
 
-### Programas concretos
+| Caso | Momento postflanco alcanzado | Intervención en el siguiente flanco | Resultado inmediato |
+|---|---|---|---|
+| C017 | Ciclo 3: stall realizado; consumidor retenido y candidato solo en IF | RESET | NO_IMAGE, contador/PC/RF cero, latches inválidos |
+| C018 | Ciclo 4: candidato registrado en IF/ID; consumidor en EX y load en WB | RESET | Mismo reset; no se confirma candidato ni compromete WB |
+| C019 | Ciclo 3 | LOAD aceptado desde STEPPING | LOADING, tamaño cero, contador 3; latches retenidos, sin ciclo ni commits |
+| C020 | Ciclo 4 | LOAD aceptado desde STEPPING | LOADING, tamaño cero, contador 4; candidato registrado retenido, sin ciclo ni commits |
 
-Las instrucciones ocupan palabras sucesivas desde PC=0, salvo el mapa explícito de la variante. `word0` en el [manifiesto](cases.json) significa la palabra ilegal `0x00000000`; aquí se escribe `.word 0x00000000`. Las inicializaciones del fixture se indican por separado.
+En C019/C020 se completa después una nueva imagen de cuatro bytes que contiene halt y su preparación. La inicialización de preparación limpia PC/RF/latches/contador; completar PREPARING_READY publica la imagen en READY, contador cero y DMEM sin posiciones utilizadas. No se exige borrar el candidato físicamente en el flanco de aceptación de LOAD: queda abandonado con la sesión y se limpia antes de que la nueva imagen pueda ejecutar. Los intercambios usan el contrato existente; no se crea una orden para instalar latches.
 
-Para el caso `C001`, se utiliza el siguiente programa:
+### Traza de referencia y procedimiento
 
-```asm
-lw x1,0(x0)
-add x2,x1,x1
-```
+Los ciclos se numeran desde el primer fetch efectivo, después de preparar la sesión. Las fuentes son preflanco. Para C001–C007 y sus repeticiones STEP, la secuencia inicial es:
 
-### Procedimiento
+| Ciclo efectivo | Situación preflanco | Acción y estado postflanco |
+|---|---|---|
+| 1 | PC=0, pipeline vacío | Normal: IF/ID contiene load PC0; PC=4 |
+| 2 | Load en ID, PC=4 | Normal: consumidor en IF/ID, load en ID/EX; PC=8 |
+| 3 | Load EX, consumidor ID, candidato IF en PC8 | Solo load-use: PC=8 e IF/ID conservan sus cinco campos; bubble ID/EX; load pasa a EX/MEM; no fault ni captura de candidato |
+| 4 | Bubble EX, load MEM, consumidor ID | Normal: consumidor pasa a ID/EX; candidato entra en IF/ID con valid=0, flag=1, causa=1, PC=8 e instrucción cero; load pasa a MEM/WB; PC=12 |
+| 5 | Consumidor EX, candidato ID, load WB | WB compromete x1. Redirect descarta candidato; fault EX propio lo desplaza; sin frontera EX, ID confirma fetch y conserva el avance de la EX anterior |
 
-1. **Preparar y ejecutar la imagen.** Avanzar hasta que el load esté en EX, ADD en ID e IF intente buscar `PC=8`.
+En C001/C003, ciclos 6 y 7 drenan EX/MEM y MEM/WB; ADD compromete x2 solamente en el 7. En C002/C004 se repite el patrón normal/normal/stall/normal/redirect cuatro veces: los redirects ocurren en ciclos 5/10/15/20 y dejan PC=0. El load compromete cuatro veces; JALR compromete tres enlaces antes del límite de observación, en ciclos 7/12/17. Cada instancia compromete una vez.
 
-2. **Observar el flanco de stall.** Comprobar que IF/ID retenga el consumidor y sus flags. El candidato de IF no debe capturarse ni confirmarse en ese flanco.
+En C008, el ciclo 3 aplica fault EX del productor, aun con dependencia y candidato IF presentes: no aplica stall, no captura candidato y termina en FAULT sin writes. En C009, el ciclo 3 es normal y registra el candidato junto al halt que pasa a EX; el 4 confirma halt, deja únicamente WB del load y el 5 termina el drain en FINISHED. No confirma el fetch joven.
 
-3. **Observar el siguiente avance normal.** Verificar la captura de `IF/ID.valid=0`, `fetch_fault_valid=1`, causa 1 y PC 8.
-
-4. **Seguir la confirmación en ID.** Cuando el candidato se confirme, comprobar que ADD, más antiguo y ubicado en EX, continúe hacia su commit.
-
-5. **Comparar el terminal.** Exigir `x1=7`, `x2=14` y FAULT con PC 8. En la comprobación reutilizada, observar que el redirect anterior elimine el candidato.
+1. Poblar IMEM con las dos palabras publicadas y preparar el fixture de datos/RF. Guardar la referencia completa de DMEM y marcas.
+2. Comparar en cada ciclo efectivo acción única, PC, identidades/flags de los latches, contador, metadatos y commits. Usar las acciones y PCs explícitos del manifiesto; no obtener el resultado esperado de las salidas del DUT.
+3. En STEP, fotografiar PC, los cinco campos IF/ID, demás latches, RF, DMEM/marcas, contador y metadatos antes de cada HOLD. Durante sus 50 clocks no cambian y no hay acciones, confirmaciones ni commits. La redetección de IF no cuenta un ciclo.
+4. Aplicar las intervenciones C017–C020 en sus estados alcanzados y observar tanto el flanco inmediato como, para LOAD, la preparación posterior. No atribuir a LOAD el borrado que corresponde a preparación.
+5. Comparar el terminal o el límite finito del loop y la cantidad de commits por PC/instancia. Las únicas escrituras RF son las publicadas; DMEM y marcas conservan el estado inicial en todos los programas sin intervención.
 
 ### Resultados y criterio de aprobación
 
-El stall conserva el consumidor en IF/ID y no adelanta la captura ni la confirmación del candidato. El avance normal siguiente transporta el fault de fetch con causa 1 y PC 8.
+La confirmación de fetch solo ocurre desde ID y con el PC registrado de su candidato. El stall no captura ni confirma; redirect y halt descartan el candidato; un fault EX anterior conserva su causa/PC y suprime los efectos de su causante. El resultado del load previo se conserva cuando corresponde. HOLD y operaciones globales respetan sus prioridades.
 
-ID lo confirma de acuerdo con la prioridad del pipeline. No debe clasificar la palabra residual como ilegal ni impedir el commit del ADD anterior.
+Las comprobaciones reutilizadas de [TEST-PIPE-007](#test-pipe-007) cubren las ocho acciones/$onehot0; las de [TEST-PIPE-008](#test-pipe-008), otras fronteras wrong-path y commits anteriores. Conservan sus IDs y no sustituyen las secuencias conjuntas C001–C020.
 
-Antes de alcanzar FAULT, el Register File contiene `x1=7` y `x2=14`. El resultado no debe ser FINISHED ni un fault por instrucción ilegal. El redirect de la comprobación reutilizada elimina el candidato posterior.
-
-La aprobación exige una traza que distinga detección en IF, captura en IF/ID y confirmación en ID, conservando la instrucción consumidora durante el stall.
-
-Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+Para aprobar se requiere la traza y los resultados de los 20 casos propios y las comprobaciones reutilizadas. El diseño de estas pruebas y sus recálculos documentales no acreditan ejecución contra RTL. Ante una contradicción, el contrato vigente conserva autoridad.

@@ -2,7 +2,7 @@
 
 - **Tipo:** plan de verificación.
 - **Estado documental:** plan cerrado documentalmente; pruebas diseñadas, sin ejecutar.
-- **Fecha:** 2026-10-12.
+- **Fecha:** 2026-10-15.
 
 ## Propósito y alcance
 
@@ -40,7 +40,7 @@ Cada sección identifica el motivo de sus casos mediante los requisitos y las fu
 
 Un mismo vector puede compartirse entre una prueba unitaria y una prueba de integración cuando ambas comprueban la misma semántica. La integración agrega casos propios cuando es necesario observar temporización, ownership o efectos que una prueba unitaria aislada no puede demostrar. Cambiar únicamente el registro o la dirección dentro de una misma clase no justifica, por sí solo, un caso nuevo.
 
-El [manifiesto](cases.json) enumera 1338 variantes canónicas en 56 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
+El [manifiesto](cases.json) enumera 1357 variantes canónicas en 56 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
 
 ## Convenciones comunes
 
