@@ -231,11 +231,11 @@ Estos tres campos permiten identificar qué instrucción ocupa una etapa y dónd
 El [acuerdo de exposición completa](../../decisions/DEC-ARCH-009.md#acuerdo-parcial-de-dec-arch-009--exposición-completa-de-campos-registrados-del-pipeline) incluye todos los campos funcionales registrados existentes:
 
 | Registro | Cantidad de campos |
-|---|---:|
-| `IF/ID` | 5 |
-| `ID/EX` | 15 |
-| `EX/MEM` | 8 |
-| `MEM/WB` | 6 |
+|----------|-------------------:|
+| `IF/ID`  |                  5 |
+| `ID/EX`  |                 15 |
+| `EX/MEM` |                  8 |
+| `MEM/WB` |                  6 |
 
 Debug transmite los campos registrados e indicadores sin filtrarlos por valid. Interpretarlos corresponde al lector. 
 
@@ -373,24 +373,24 @@ UART y recorrido/lectura Debug continúan funcionando, respetando ownership. No 
 
 Durante ese intercambio se aplican estas reglas:
 
-| Caso | Comportamiento |
-|---|---|
-| Nueva solicitud desde la PC | La PC espera la respuesta completa antes de enviarla. |
-| RX recibido durante la exclusión | La FPGA lo consume y descarta, sin respuesta ni comandos encolados. |
-| Consultas y `RESET` UART | También quedan incluidos en el descarte. `RESET` UART se envía después del intercambio. |
-| Botón físico | Conserva reset inmediato y puede abortar el envío. La PC descarta la observación incompleta. |
-| Fin de la exclusión | La admisión vuelve al terminar físicamente el último byte, incluido Stop. |
-| Orden de `RUN` | La aceptación completa precede a su resultado final con Debug. |
+| Caso                             | Comportamiento                                                                               |
+|----------------------------------|----------------------------------------------------------------------------------------------|
+| Nueva solicitud desde la PC      | La PC espera la respuesta completa antes de enviarla.                                        |
+| RX recibido durante la exclusión | La FPGA lo consume y descarta, sin respuesta ni comandos encolados.                          |
+| Consultas y `RESET` UART         | También quedan incluidos en el descarte. `RESET` UART se envía después del intercambio.      |
+| Botón físico                     | Conserva reset inmediato y puede abortar el envío. La PC descarta la observación incompleta. |
+| Fin de la exclusión              | La admisión vuelve al terminar físicamente el último byte, incluido Stop.                    |
+| Orden de `RUN`                   | La aceptación completa precede a su resultado final con Debug.                               |
 
 D06 queda completo en el nivel de contrato; la [secuencia de dos recorridos de DMEM](response_serializer.md#recorrido-de-dmem-y-orden-de-producción) está aprobada. Puertos, recursos de conteo/posición, índices, anchos y control privado están concretados en [response_serializer](response_serializer.md) y [protocol_controller](protocol_controller.md), con [comprobación UART](../uart/uart_core.md#presupuesto-de-integración).
 
 [C06](../../decisions/DEC-PROTO-003.md#acuerdo-parcial-de-dec-proto-003--plazos-de-reset-step-y-recepción-de-debug) aprueba los siguientes plazos PC:
 
-| Tramo | Plazo |
-|---|---|
-| Cabecera `STEP` | 200 ms |
-| Parte fija de 228 bytes | 319 ms tras cabecera |
-| Lista de 5*K bytes | Transmisión nominal +200 ms desde `used_count`; sin espera para K=0 |
+| Tramo                   | Plazo                                                               |
+|-------------------------|---------------------------------------------------------------------|
+| Cabecera `STEP`         | 200 ms                                                              |
+| Parte fija de 228 bytes | 319 ms tras cabecera                                                |
+| Lista de 5*K bytes      | Transmisión nominal +200 ms desde `used_count`; sin espera para K=0 |
 
 La recuperación aprobada en C06 informa fallo y descarta el parcial. Fuera de `LOAD`, lee y descarta RX hasta completar `W_debug` de 6100/3400 ms de silencio continuo: cada recepción reinicia la cuenta. Después consulta `CHECK_READY` sin limpiar RX y valida únicamente los primeros dos bytes (`05 03` o `05 04`) dentro de 200 ms. Si empieza un terminal RUN u otra secuencia, vuelve al descarte; no busca esos pares dentro del payload. Conserva los bytes posteriores a una consulta válida y no repite `STEP`/`RUN`/`RESET`. El [contrato de recuperación PC](../../protocol.md#perder-una-respuesta-o-conexión) concreta buffers, vencimientos y supuestos del transporte.
 
@@ -512,19 +512,19 @@ La coherencia de Debug sigue la semántica de sesión, no la mera permanencia f�
 
 Con las decisiones actuales, la arquitectura fija como contenido observable necesario:
 
-| Información | Interpretación |
-|---|---|
-| `cycle_count[63:0]` | Ciclo lógico de la sesión. |
-| PC global | Frente actual de fetch. |
-| Estado global | Fase actual de la sesión y tipo de terminación. |
-| Imagen válida | Distinción entre imagen ejecutable y ausencia de programa. |
-| `x0...x31` | Banco de registros completo. |
-| `IF/ID` | Todos sus 5 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `ID/EX` | Todos sus 15 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `EX/MEM` | Todos sus 8 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `MEM/WB` | Todos sus 6 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| DMEM utilizada | Lista ordenada de bytes escritos en la sesión, incluidos ceros; cantidad de cinco bytes little-endian y entradas dirección cuatro bytes/valor uno aprobadas. |
-| `fault_cause`, `fault_pc` | Válidos cuando el estado global representa fault confirmado. |
+| Información               | Interpretación                                                                                                                                               |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cycle_count[63:0]`       | Ciclo lógico de la sesión.                                                                                                                                   |
+| PC global                 | Frente actual de fetch.                                                                                                                                      |
+| Estado global             | Fase actual de la sesión y tipo de terminación.                                                                                                              |
+| Imagen válida             | Distinción entre imagen ejecutable y ausencia de programa.                                                                                                   |
+| `x0...x31`                | Banco de registros completo.                                                                                                                                 |
+| `IF/ID`                   | Todos sus 5 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| `ID/EX`                   | Todos sus 15 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                   |
+| `EX/MEM`                  | Todos sus 8 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| `MEM/WB`                  | Todos sus 6 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| DMEM utilizada            | Lista ordenada de bytes escritos en la sesión, incluidos ceros; cantidad de cinco bytes little-endian y entradas dirección cuatro bytes/valor uno aprobadas. |
+| `fault_cause`, `fault_pc` | Válidos cuando el estado global representa fault confirmado.                                                                                                 |
 
 Internamente existen otros campos que pueden contribuir a la implementación o a diagnósticos particulares, pero su existencia no los convierte automáticamente en parte obligatoria del snapshot externo.
 

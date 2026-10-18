@@ -39,10 +39,10 @@ Cada palabra aporta exactamente cuatro bytes, comenzando por sus ocho bits menos
 
 | Posición dentro de la instrucción | Bits de `word` | Dirección en `image` |
 |----------------------------------:|----------------|----------------------|
-| 0                                 | 7:0            | `pc`.                |
-| 1                                 | 15:8           | `pc + 1`.            |
-| 2                                 | 23:16          | `pc + 2`.            |
-| 3                                 | 31:24          | `pc + 3`.            |
+|                                 0 | 7:0            | `pc`.                |
+|                                 1 | 15:8           | `pc + 1`.            |
+|                                 2 | 23:16          | `pc + 2`.            |
+|                                 3 | 31:24          | `pc + 3`.            |
 
 Para cada posición `j`, desde cero hasta tres:
 
@@ -117,8 +117,8 @@ Los registros codificados y sus bytes son:
 
 | `line` | `pc` | `word`       | Bytes en orden de imagen |
 |-------:|-----:|--------------|--------------------------|
-| 3      | 0    | `0x00500093` | `93 00 50 00`.           |
-| 4      | 4    | `0x0000000b` | `0B 00 00 00`.           |
+|      3 |    0 | `0x00500093` | `93 00 50 00`.           |
+|      4 |    4 | `0x0000000b` | `0B 00 00 00`.           |
 
 El resultado contiene:
 
@@ -136,12 +136,12 @@ Las palabras del [programa con etiquetas resueltas](assembler_encoding.md#progra
 
 | `line` | `pc` | `word`       | Bytes en orden de imagen |
 |-------:|-----:|--------------|--------------------------|
-| 4      | 0    | `0x00300093` | `93 00 30 00`.           |
-| 5      | 4    | `0xfff08093` | `93 80 F0 FF`.           |
-| 6      | 8    | `0xfe009ee3` | `E3 9E 00 FE`.           |
-| 7      | 12   | `0x0080006f` | `6F 00 80 00`.           |
-| 8      | 16   | `0x06300113` | `13 01 30 06`.           |
-| 9      | 20   | `0x0000000b` | `0B 00 00 00`.           |
+|      4 |    0 | `0x00300093` | `93 00 30 00`.           |
+|      5 |    4 | `0xfff08093` | `93 80 F0 FF`.           |
+|      6 |    8 | `0xfe009ee3` | `E3 9E 00 FE`.           |
+|      7 |   12 | `0x0080006f` | `6F 00 80 00`.           |
+|      8 |   16 | `0x06300113` | `13 01 30 06`.           |
+|      9 |   20 | `0x0000000b` | `0B 00 00 00`.           |
 
 La imagen ocupa 24 bytes y el mapa es:
 

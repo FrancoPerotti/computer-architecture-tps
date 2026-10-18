@@ -21,20 +21,20 @@ Las selecciones se documentan en los acuerdos parciales anteriores.
 
 **Decisión:** Los bloques se concretan con los siguientes contratos. La [revisión de interfaz con Execution Control](#revisión-de-dec-sys-007--interfaz-del-protocolo-con-execution-control) actualiza la aceptación y los indicadores que utiliza el controlador.
 
-| Bloque o frontera | Contrato aprobado |
-|---|---|
-| UART | Opera nominalmente a 19200 8N1, con sobremuestreo 16 y dominio común 50 MHz, divisor 163 y tick registrado |
-| RX/TX y FIFO | RX/TX utilizan sus FSM y recursos aprobados; las FIFO independientes contienen cuatro bytes y `uart_core` produce eventos de recepción/error/actividad/fin físico |
-| `protocol_controller` | Usa FSM one-hot de dieciséis estados y un descriptor pendiente |
-| Control CPU / protocolo | Solicitudes directas, aceptación común e indicadores de disponibilidad, preparación y terminación |
-| `response_serializer` | Usa diez estados one-hot, generación progresiva y finalización en el último Stop |
-| Respuestas y terminal `RUN` | Se coordinan por estado y marcas existentes, sin registro de clases |
-| Debug | Lee estado retenido con exclusión desde el instante observado hasta fin físico; comparte RF/DMEM según sus selectores |
-| Loader | Reutiliza posición/tamaño, conserva tres bytes y escribe palabra con cuarto, incluyendo `load_ok` final |
-| Preparación | Inicializa RF/PC/ciclos/pipeline y limpia metadatos DMEM por índice, con `prepare_done` sin mantenimiento concurrente |
-| RF | Se realiza con flip-flops e inicialización simultánea |
-| Reset | Combina fuentes antes de `reset_sync` TP2 de dos etapas |
-| FSM CPU | Utiliza catorce bits one-hot y código UART combinacional hacia `Response Serializer` |
+| Bloque o frontera           | Contrato aprobado                                                                                                                                                 |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| UART                        | Opera nominalmente a 19200 8N1, con sobremuestreo 16 y dominio común 50 MHz, divisor 163 y tick registrado                                                        |
+| RX/TX y FIFO                | RX/TX utilizan sus FSM y recursos aprobados; las FIFO independientes contienen cuatro bytes y `uart_core` produce eventos de recepción/error/actividad/fin físico |
+| `protocol_controller`       | Usa FSM one-hot de dieciséis estados y un descriptor pendiente                                                                                                    |
+| Control CPU / protocolo     | Solicitudes directas, aceptación común e indicadores de disponibilidad, preparación y terminación                                                                 |
+| `response_serializer`       | Usa diez estados one-hot, generación progresiva y finalización en el último Stop                                                                                  |
+| Respuestas y terminal `RUN` | Se coordinan por estado y marcas existentes, sin registro de clases                                                                                               |
+| Debug                       | Lee estado retenido con exclusión desde el instante observado hasta fin físico; comparte RF/DMEM según sus selectores                                             |
+| Loader                      | Reutiliza posición/tamaño, conserva tres bytes y escribe palabra con cuarto, incluyendo `load_ok` final                                                           |
+| Preparación                 | Inicializa RF/PC/ciclos/pipeline y limpia metadatos DMEM por índice, con `prepare_done` sin mantenimiento concurrente                                             |
+| RF                          | Se realiza con flip-flops e inicialización simultánea                                                                                                             |
+| Reset                       | Combina fuentes antes de `reset_sync` TP2 de dos etapas                                                                                                           |
+| FSM CPU                     | Utiliza catorce bits one-hot y código UART combinacional hacia `Response Serializer`                                                                              |
 
 Formatos, comandos, prioridades y recuperación conservan `protocol.md` y los acuerdos vigentes.
 
@@ -155,13 +155,13 @@ Los controles se consumen en el flanco del clock funcional común, sin un ciclo 
 
 La FSM conserva `IDLE`, `START`, `DATA`, `STOP` y `RECOVER`.
 
-| Estado RX | Función |
-|---|---|
-| `IDLE` | Espera un posible comienzo de trama |
-| `START` | Comprueba el nivel bajo después de ocho ticks de sobremuestreo |
-| `DATA` | Ordena las ocho capturas separadas por dieciséis ticks |
-| `STOP` | Comprueba el nivel alto dieciséis ticks después de D7 y anuncia el byte válido |
-| `RECOVER` | Espera el retorno de la línea a alto después de un error |
+| Estado RX | Función                                                                        |
+|-----------|--------------------------------------------------------------------------------|
+| `IDLE`    | Espera un posible comienzo de trama                                            |
+| `START`   | Comprueba el nivel bajo después de ocho ticks de sobremuestreo                 |
+| `DATA`    | Ordena las ocho capturas separadas por dieciséis ticks                         |
+| `STOP`    | Comprueba el nivel alto dieciséis ticks después de D7 y anuncia el byte válido |
+| `RECOVER` | Espera el retorno de la línea a alto después de un error                       |
 
 Se conserva el reporte de Start falso o Stop inválido y la entrega del byte solo con Stop válido.
 
@@ -301,12 +301,12 @@ La codificación pertenece a la FSM privada de `uart_tx`. Se conservan el compor
 
 **Decisión:** `tx_output_select[1:0]` utiliza HIGH=00, LOW=01, `CURRENT_BIT`=10 y `NEXT_BIT`=11.
 
-| Selección TX | Valor preparado |
-|---|---|
-| HIGH | Uno para reposo y Stop |
-| LOW | Cero para Start |
-| `CURRENT_BIT` | `data_reg[0]` para comenzar D0 |
-| `NEXT_BIT` | `data_reg[1]` previo al flanco para comenzar D1 a D7 mientras se desplaza el registro del byte |
+| Selección TX  | Valor preparado                                                                                |
+|---------------|------------------------------------------------------------------------------------------------|
+| HIGH          | Uno para reposo y Stop                                                                         |
+| LOW           | Cero para Start                                                                                |
+| `CURRENT_BIT` | `data_reg[0]` para comenzar D0                                                                 |
+| `NEXT_BIT`    | `data_reg[1]` previo al flanco para comenzar D1 a D7 mientras se desplaza el registro del byte |
 
 El selector controla la lógica combinacional de entrada del registro de salida. `tx_write_enable` autoriza la captura al flanco del clock funcional. Sin ese enable, el registro conserva su nivel. Ambos controles permanecen dentro de `uart_tx`; la FSM indica qué valor corresponde y la lógica del recurso realiza la selección y la actualización.
 
@@ -896,14 +896,14 @@ La entrada de estado contiene el código externo aprobado y no presupone una cod
 
 **Decisión:** La selección es combinacional y utiliza el índice de recorrido existente, sin agregar un contador de contexto ni un índice de byte registrado.
 
-| Posición | Selección |
-|---|---|
-| Dos | `debug_state_code` |
-| Tres | `debug_image_valid` con siete ceros superiores |
-| Cuatro a siete | Los cuatro bytes de `debug_pc` |
-| Ocho a 15 | Los ocho bytes de `debug_cycle_count` |
-| 16 | `debug_fault_cause` con cinco ceros superiores |
-| 17 a 20 | Los cuatro bytes de `debug_fault_pc` |
+| Posición       | Selección                                      |
+|----------------|------------------------------------------------|
+| Dos            | `debug_state_code`                             |
+| Tres           | `debug_image_valid` con siete ceros superiores |
+| Cuatro a siete | Los cuatro bytes de `debug_pc`                 |
+| Ocho a 15      | Los ocho bytes de `debug_cycle_count`          |
+| 16             | `debug_fault_cause` con cinco ceros superiores |
+| 17 a 20        | Los cuatro bytes de `debug_fault_pc`           |
 
 En campos de varios bytes, la posición menos el inicio del campo produce j y se seleccionan los bits [8*j + 7 : 8*j], conservando little-endian. La selección se consume al producir contexto con Debug. La FSM controla la captura del próximo byte con valores preflanco; capturarlo no adelanta el índice. El índice solo avanza por escritura TX aceptada y durante espera se conserva el byte preparado.
 
@@ -952,11 +952,11 @@ Los valores permanecen retenidos durante la ventana exclusiva Debug y se consume
 **Decisión:** `response_serializer` recibe directamente todos los campos funcionales registrados actuales de los cuatro registros interetapa mediante entradas `debug_<latch>_<campo>`, con prefijos ifid, idex, exmem y memwb.
 
 | Registro interetapa | Campos conservados | Bits |
-|---|---:|---:|
-| `IF/ID` | Cinco | 69 |
-| `ID/EX` | 15 | 193 |
-| `EX/MEM` | Ocho | 139 |
-| `MEM/WB` | Seis | 103 |
+|---------------------|-------------------:|-----:|
+| `IF/ID`             |              Cinco |   69 |
+| `ID/EX`             |                 15 |  193 |
+| `EX/MEM`            |               Ocho |  139 |
+| `MEM/WB`            |               Seis |  103 |
 
 Los nombres, anchos y posiciones completos quedan fijados en las [tablas del serializador](../architecture/debug/response_serializer.md#observación-y-selección-de-bytes-de-los-cuatro-latches). No se agregan copias del pipeline ni contadores por registro interetapa.
 
@@ -1269,13 +1269,13 @@ Se reutiliza el contador de tiempo de `LOAD` porque las fases temporizadas son e
 
 **Decisión:** Se deriva la acción de finalización desde el estado controlador y marcas ya aprobadas, según la [coordinación aprobada](../architecture/debug/protocol_controller.md#coordinación-derivada-del-estado-y-marcas-existentes).
 
-| Estado de espera | Acción al finalizar |
-|---|---|
-| `WAIT_LOAD_ACCEPT` | Inicia recepción |
-| `WAIT_LOAD_DONE` | Vuelve a `IDLE` |
-| `WAIT_RESET_ACCEPT` | Solicita `reset` |
+| Estado de espera               | Acción al finalizar                  |
+|--------------------------------|--------------------------------------|
+| `WAIT_LOAD_ACCEPT`             | Inicia recepción                     |
+| `WAIT_LOAD_DONE`               | Vuelve a `IDLE`                      |
+| `WAIT_RESET_ACCEPT`            | Solicita `reset`                     |
 | `WAIT_RUN_ACCEPT`/`WAIT_BRIEF` | Vuelven a `IDLE` o atienden terminal |
-| `WAIT_DEBUG` | Libera retención y vuelve a `IDLE` |
+| `WAIT_DEBUG`                   | Libera retención y vuelve a `IDLE`   |
 
 `RECOVER` limpia retención si terminó Debug y conserva recuperación hasta sus condiciones de salida.
 
@@ -1466,28 +1466,28 @@ Una respuesta breve ya preparada para `LOAD` se conserva y completa primero, con
 
 **Decisión:** `Protocol Controller` conserva la fase del intercambio UART y solicita operaciones a `Execution Control`. Las conexiones se concretan en [Protocol Controller](../architecture/debug/protocol_controller.md#puertos-del-controlador-aprobados), [Composición](../architecture/system_composition.md#processor_top-comandos-carga-y-consultas) e [Interfaces](../interfaces.md#bloque-8-1):
 
-| Conexión | Señales | Uso |
-|---|---|---|
-| `Protocol Controller` → `Execution Control` | `load_request`, `run_request`, `step_request` | Solicitudes en `CHECK_SIZE`, `EXEC_RUN` y `EXEC_STEP`, respectivamente. |
-| `Execution Control` → `Protocol Controller` | `command_accepted` | Aceptación de la solicitud presentada. |
-| `Execution Control` → `Protocol Controller` | `load_available` | Responder `CHECK_READY` con `READY` si vale uno o `BUSY` si vale cero. |
-| `Execution Control` → `Protocol Controller` | `prepare_active` | Admitir comandos con preparación inactiva, sujeto a disponibilidad local de transporte. |
-| `Execution Control` → `Protocol Controller` | `program_finished`, `fault_terminal` | Detectar y clasificar el terminal de un `RUN` debido, con pipeline vacío. |
-| `Execution Control` → `Protocol Controller` | `cpu_cycle_fire` | Identificar el ciclo efectivo de `STEP`. |
-| `Execution Control` → `Protocol Controller` | `image_valid` | Clasificar el rechazo de `RUN`/`STEP` como `NO_IMAGE` o `BUSY`. |
-| `Session Preparation` → `Protocol Controller` | `prepare_done` | Completar la espera de preparación de `LOAD`; con `cpu_cycle_fire`, completar la de `STEP`. |
-| `Execution Control` → `Response Serializer` | `global_state_code[7:0]` → `debug_state_code[7:0]` | Producir el byte de estado del contexto Debug. |
+| Conexión                                      | Señales                                            | Uso                                                                                         |
+|-----------------------------------------------|----------------------------------------------------|---------------------------------------------------------------------------------------------|
+| `Protocol Controller` → `Execution Control`   | `load_request`, `run_request`, `step_request`      | Solicitudes en `CHECK_SIZE`, `EXEC_RUN` y `EXEC_STEP`, respectivamente.                     |
+| `Execution Control` → `Protocol Controller`   | `command_accepted`                                 | Aceptación de la solicitud presentada.                                                      |
+| `Execution Control` → `Protocol Controller`   | `load_available`                                   | Responder `CHECK_READY` con `READY` si vale uno o `BUSY` si vale cero.                      |
+| `Execution Control` → `Protocol Controller`   | `prepare_active`                                   | Admitir comandos con preparación inactiva, sujeto a disponibilidad local de transporte.     |
+| `Execution Control` → `Protocol Controller`   | `program_finished`, `fault_terminal`               | Detectar y clasificar el terminal de un `RUN` debido, con pipeline vacío.                   |
+| `Execution Control` → `Protocol Controller`   | `cpu_cycle_fire`                                   | Identificar el ciclo efectivo de `STEP`.                                                    |
+| `Execution Control` → `Protocol Controller`   | `image_valid`                                      | Clasificar el rechazo de `RUN`/`STEP` como `NO_IMAGE` o `BUSY`.                             |
+| `Session Preparation` → `Protocol Controller` | `prepare_done`                                     | Completar la espera de preparación de `LOAD`; con `cpu_cycle_fire`, completar la de `STEP`. |
+| `Execution Control` → `Response Serializer`   | `global_state_code[7:0]` → `debug_state_code[7:0]` | Producir el byte de estado del contexto Debug.                                              |
 
 Las solicitudes y los indicadores de control son de un bit. El controlador presenta una sola solicitud por ciclo, generada según su fase y las condiciones de transporte, independientemente de la aceptación. Ambas FSM consumen solicitud y `command_accepted` en el mismo flanco. Con solicitud activa, cero indica rechazo; sin solicitud, cero no constituye un evento.
 
 **Consumo de la aceptación común:**
 
-| Fase UART | Condición | Acción |
-|---|---|---|
-| `CHECK_SIZE` | `load_request && command_accepted` | Capturar faltantes y guardar `LOAD`/`ACCEPTED`. |
-| `EXEC_RUN` | `run_request && command_accepted` | Activar `run_terminal_owed` y guardar `RUN`/`ACCEPTED`. |
-| `EXEC_STEP` | `step_request && command_accepted && cpu_cycle_fire` | Activar retención y guardar `STEP`/`DONE` con Debug. |
-| `EXEC_STEP` | `step_request && command_accepted && !cpu_cycle_fire` | Pasar a `WAIT_STEP_PREP`. |
+| Fase UART    | Condición                                             | Acción                                                  |
+|--------------|-------------------------------------------------------|---------------------------------------------------------|
+| `CHECK_SIZE` | `load_request && command_accepted`                    | Capturar faltantes y guardar `LOAD`/`ACCEPTED`.         |
+| `EXEC_RUN`   | `run_request && command_accepted`                     | Activar `run_terminal_owed` y guardar `RUN`/`ACCEPTED`. |
+| `EXEC_STEP`  | `step_request && command_accepted && cpu_cycle_fire`  | Activar retención y guardar `STEP`/`DONE` con Debug.    |
+| `EXEC_STEP`  | `step_request && command_accepted && !cpu_cycle_fire` | Pasar a `WAIT_STEP_PREP`.                               |
 
 `load_request` se presenta después de validar los cuarenta bits de tamaño. Ante rechazo de `RUN`/`STEP`, `image_valid=0` selecciona `NO_IMAGE` e `image_valid=1` selecciona `BUSY`. `load_available` expresa disponibilidad de sesión para `LOAD`; la consulta conserva las condiciones locales de admisión y la validación posterior de la carga.
 

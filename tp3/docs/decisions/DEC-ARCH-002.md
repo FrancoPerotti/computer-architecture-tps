@@ -138,10 +138,10 @@ Introducir después predicción, BTB o resolución temprana requerirá revisar e
 
 El avance provisional de IF por `PC + 4` mientras `beq` o `bne` llega a EX es **observablemente equivalente** a una política estática `not taken`:
 
-| Resultado del branch | Comportamiento |
-|---|---|
-| No se toma | El camino secuencial conserva su validez |
-| Se toma | Se redirige el PC y se descarta el trabajo joven `wrong-path` |
+| Resultado del branch | Comportamiento                                                |
+|----------------------|---------------------------------------------------------------|
+| No se toma           | El camino secuencial conserva su validez                      |
+| Se toma              | Se redirige el PC y se descarta el trabajo joven `wrong-path` |
 
 Esta equivalencia de comportamiento **no constituye un predictor estático `always not taken` implementado explícitamente**. No habrá estructura de predicción ni decisión de predicción asociada al branch: `PC + 4` es simplemente el fetch por defecto mientras no se haya resuelto una redirección válida y el avance esté habilitado.
 

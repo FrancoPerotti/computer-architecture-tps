@@ -28,7 +28,7 @@ El documento describe la lógica y los datos propios de la decodificación. La s
 La etapa está compuesta por los siguientes bloques y registros:
 
 | Módulo                 | Tipo      | Pertenece a     |
-|----------------------|---------|---------------|
+|------------------------|-----------|-----------------|
 | `Decoder`              | Submódulo | `id_stage`      |
 | `Register File`        | Estado    | `id_stage`      |
 | `Immediate Generator`  | Submódulo | `id_stage`      |
@@ -95,10 +95,10 @@ La clasificación de uso de registros fuente queda resumida así:
 
 | Clase de instrucción                        | `uses_rs1` | `uses_rs2` |
 |---------------------------------------------|-----------:|-----------:|
-| R-type, `BEQ`/`BNE`, stores                 | 1          | 1          |
-| Aritmética/shifts inmediatos, loads, `JALR` | 1          | 0          |
-| `JAL`, `LUI`, `halt`                        | 0          | 0          |
-| Codificación ilegal                         | 0          | 0          |
+| R-type, `BEQ`/`BNE`, stores                 |          1 |          1 |
+| Aritmética/shifts inmediatos, loads, `JALR` |          1 |          0 |
+| `JAL`, `LUI`, `halt`                        |          0 |          0 |
+| Codificación ilegal                         |          0 |          0 |
 
 Una codificación no reconocida produce `decode_legal=0` y controles funcionalmente neutros. Estos valores solo mantienen determinista la lógica combinacional: la entrada no se interpreta como otra instrucción ni produce efectos arquitectónicos normales.
 
@@ -227,17 +227,17 @@ En estas instrucciones, algunos controles se fijan aunque el resultado de la ALU
 
 Una codificación no reconocida produce `decode_legal=0` y controles funcionalmente neutros. Los valores por defecto son:
 
-| Señal         | Código por defecto | Interpretación         |
-|---------------|--------------------|------------------------|
-| `decode_legal`| `0`                | Codificación ilegal    |
-| `alu_op`      | `100000`           | `ADD`                  |
-| `alu_src`     | `0`                | `RS2`                  |
-| `result_sel`  | `00`               | `ALU`                  |
-| `flow_op`     | `000`              | `NONE`                 |
-| `mem_op`      | `0000`             | `NONE`                 |
-| `reg_write`   | `0`                | Sin escritura en el RF |
-| `uses_rs1`    | `0`                | No consume `rs1`       |
-| `uses_rs2`    | `0`                | No consume `rs2`       |
+| Señal          | Código por defecto | Interpretación         |
+|----------------|--------------------|------------------------|
+| `decode_legal` | `0`                | Codificación ilegal    |
+| `alu_op`       | `100000`           | `ADD`                  |
+| `alu_src`      | `0`                | `RS2`                  |
+| `result_sel`   | `00`               | `ALU`                  |
+| `flow_op`      | `000`              | `NONE`                 |
+| `mem_op`       | `0000`             | `NONE`                 |
+| `reg_write`    | `0`                | Sin escritura en el RF |
+| `uses_rs1`     | `0`                | No consume `rs1`       |
+| `uses_rs2`     | `0`                | No consume `rs2`       |
 
 Estos valores solo mantienen determinista la lógica combinacional; no convierten la palabra ilegal en una instrucción ejecutable. `ID Fault Check` genera el candidato de fault a partir de `decode_legal=0`, y la confirmación del fault impide que la entrada se capture como válida en `ID/EX`. Los selectores de forwarding pertenecen a [Control del pipeline y hazards](control_and_hazards.md); los selectores de target y writeback se derivan localmente en EX y MEM.
 
@@ -275,11 +275,11 @@ Su interfaz funcional comprende:
 
 `x0` es el registro constante de la arquitectura. Siempre representa el valor cero y no puede modificarse mediante una escritura del procesador.
 
-| Situación             | Comportamiento                                      |
-|-----------------------|-----------------------------------------------------|
-| Lectura de `x0`       | Devuelve siempre `0`.                               |
-| Escritura a `x0`      | Se ignora y no modifica ningún estado.              |
-| Writeback con `rd=0`  | No escribe en el RF ni habilita el bypass hacia ID. |
+| Situación            | Comportamiento                                      |
+|----------------------|-----------------------------------------------------|
+| Lectura de `x0`      | Devuelve siempre `0`.                               |
+| Escritura a `x0`     | Se ignora y no modifica ningún estado.              |
+| Writeback con `rd=0` | No escribe en el RF ni habilita el bypass hacia ID. |
 
 Esta regla se aplica tanto a las escrituras normales de WB como a las lecturas de operandos en ID. `x0` no depende de la inicialización de sesión ni del reset para conservar su valor.
 
@@ -497,10 +497,10 @@ id_fault_candidate =
 
 Cuando existe un candidato, `ID Fault Check` también entrega la causa y el PC de la entrada que lo originó:
 
-| Candidato activo             | `id_fault_cause`              | `id_fault_pc` |
-|------------------------------|-------------------------------|---------------|
-| `illegal_candidate`          | `3'b010`                      | `IF/ID.pc`    |
-| `id_fetch_fault_candidate`   | `IF/ID.fetch_fault_cause`     | `IF/ID.pc`    |
+| Candidato activo           | `id_fault_cause`          | `id_fault_pc` |
+|----------------------------|---------------------------|---------------|
+| `illegal_candidate`        | `3'b010`                  | `IF/ID.pc`    |
+| `id_fetch_fault_candidate` | `IF/ID.fetch_fault_cause` | `IF/ID.pc`    |
 
 La selección se expresa conceptualmente así:
 
@@ -671,16 +671,16 @@ Cuando no se solicita ninguna de estas operaciones por una acción válida del p
 
 Todas las entradas provienen de `Pipeline Hazard Control`:
 
-| Señal                 | Origen                    | Tipo    |
-|-----------------------|---------------------------|---------|
-| `act_ex_fault`        | `Pipeline Hazard Control` | Control |
-| `act_halt`            | `Pipeline Hazard Control` | Control |
-| `act_redirect`        | `Pipeline Hazard Control` | Control |
-| `act_id_fault`        | `Pipeline Hazard Control` | Control |
-| `act_load_use`        | `Pipeline Hazard Control` | Control |
-| `act_normal`          | `Pipeline Hazard Control` | Control |
-| `act_drain_load_use`  | `Pipeline Hazard Control` | Control |
-| `act_drain_advance`   | `Pipeline Hazard Control` | Control |
+| Señal                | Origen                    | Tipo    |
+|----------------------|---------------------------|---------|
+| `act_ex_fault`       | `Pipeline Hazard Control` | Control |
+| `act_halt`           | `Pipeline Hazard Control` | Control |
+| `act_redirect`       | `Pipeline Hazard Control` | Control |
+| `act_id_fault`       | `Pipeline Hazard Control` | Control |
+| `act_load_use`       | `Pipeline Hazard Control` | Control |
+| `act_normal`         | `Pipeline Hazard Control` | Control |
+| `act_drain_load_use` | `Pipeline Hazard Control` | Control |
+| `act_drain_advance`  | `Pipeline Hazard Control` | Control |
 
 #### Salidas
 

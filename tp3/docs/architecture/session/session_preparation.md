@@ -39,11 +39,11 @@ La preparación se ocupa de:
 
 Esta secuencia se utiliza en tres estados globales:
 
-| Estado | Para qué se prepara | Qué decide la FSM global al finalizar |
-|---|---|---|
-| `PREPARING_READY` | Completar la preparación posterior a `LOAD`. | Publicar la imagen y quedar en `READY`, sin ejecutar instrucciones. |
-| `PREPARING_RUN` | Iniciar una ejecución continua sobre la imagen ya confirmada. | Ejecutar el primer ciclo de la CPU. |
-| `PREPARING_STEP` | Iniciar una ejecución paso a paso sobre la imagen ya confirmada. | Ejecutar el primer ciclo de la CPU. |
+| Estado            | Para qué se prepara                                              | Qué decide la FSM global al finalizar                               |
+|-------------------|------------------------------------------------------------------|---------------------------------------------------------------------|
+| `PREPARING_READY` | Completar la preparación posterior a `LOAD`.                     | Publicar la imagen y quedar en `READY`, sin ejecutar instrucciones. |
+| `PREPARING_RUN`   | Iniciar una ejecución continua sobre la imagen ya confirmada.    | Ejecutar el primer ciclo de la CPU.                                 |
+| `PREPARING_STEP`  | Iniciar una ejecución paso a paso sobre la imagen ya confirmada. | Ejecutar el primer ciclo de la CPU.                                 |
 
 Los tres estados utilizan el **mismo mecanismo de inicialización**. `Session Preparation` recibe `prepare_active` y devuelve `prepare_done`, sin recibir el estado global ni una indicación de publicación. La FSM global conserva el destino de la operación y decide si activa `image_publish` o `cpu_cycle_fire` al finalizar.
 
@@ -55,16 +55,16 @@ La preparación no modifica el contenido de IMEM. La imagen de instrucciones per
 
 `Session Preparation` combina un índice secuencial con señales de control combinacionales. No mantiene una copia de los datos de memoria, ni un bitmap adicional, ni un registro privado para recordar el modo de la sesión.
 
-| Elemento | Naturaleza | Responsabilidad |
-|---|---|---|
-| `Global FSM` | Control externo | Selecciona `PREPARING_READY`, `PREPARING_RUN` o `PREPARING_STEP`, genera `prepare_active` y determina el destino al finalizar. |
-| `prepare_active` | Decodificación combinacional | Indica que la FSM global está en cualquiera de los tres estados de preparación. |
-| `prepare_index` | Registro de progreso | Identifica el byte de DMEM cuya marca corresponde limpiar en el flanco actual. |
-| Lógica de preparación | Control combinacional | Produce `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done`. |
-| PC y `cycle_count` | Estado de la CPU | Se ponen en cero durante `prepare_init`. |
-| `Register File` | Estado arquitectónico | Inicializa `x1`–`x31` en un solo flanco. |
-| Registros interetapa | Estado del pipeline | Invalidan las entradas anteriores y los candidatos de fetch transportados. |
-| Metadata de DMEM | Estado de memoria | Limpia la marca de validez del byte seleccionado. |
+| Elemento              | Naturaleza                   | Responsabilidad                                                                                                                |
+|-----------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `Global FSM`          | Control externo              | Selecciona `PREPARING_READY`, `PREPARING_RUN` o `PREPARING_STEP`, genera `prepare_active` y determina el destino al finalizar. |
+| `prepare_active`      | Decodificación combinacional | Indica que la FSM global está en cualquiera de los tres estados de preparación.                                                |
+| `prepare_index`       | Registro de progreso         | Identifica el byte de DMEM cuya marca corresponde limpiar en el flanco actual.                                                 |
+| Lógica de preparación | Control combinacional        | Produce `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done`.                                            |
+| PC y `cycle_count`    | Estado de la CPU             | Se ponen en cero durante `prepare_init`.                                                                                       |
+| `Register File`       | Estado arquitectónico        | Inicializa `x1`–`x31` en un solo flanco.                                                                                       |
+| Registros interetapa  | Estado del pipeline          | Invalidan las entradas anteriores y los candidatos de fetch transportados.                                                     |
+| Metadata de DMEM      | Estado de memoria            | Limpia la marca de validez del byte seleccionado.                                                                              |
 
 El recorrido funcional es:
 
@@ -190,11 +190,11 @@ Por ejemplo, si `data[5]=8'hAA` pero `valid[5]=0`, leer la dirección 5 devuelve
 Una escritura efectiva de `SB`, `SH` o `SW` modifica los bytes seleccionados y pone sus marcas en uno. Esto ocurre incluso si el valor almacenado es cero. En consecuencia, **un byte utilizado que contiene cero no es lo mismo que un byte cuya marca está inactiva**:
 
 | Dato físico | `valid[a]` | Lectura lógica | Byte considerado utilizado |
-|---|---:|---|---|
-| `0xAA` | 0 | `0x00` | No |
-| `0xAA` | 1 | `0xAA` | Sí |
-| `0x00` | 1 | `0x00` | Sí |
-| `0x00` | 0 | `0x00` | No |
+|-------------|-----------:|----------------|----------------------------|
+| `0xAA`      |          0 | `0x00`         | No                         |
+| `0xAA`      |          1 | `0xAA`         | Sí                         |
+| `0x00`      |          1 | `0x00`         | Sí                         |
+| `0x00`      |          0 | `0x00`         | No                         |
 
 La misma marca sustenta tanto el cero lógico como el resultado `debug_dmem_used` y la lista de posiciones utilizadas. No existe otro bitmap independiente que deba ponerse en cero.
 
@@ -256,10 +256,10 @@ PREP_INDEX_WIDTH =
 
 El `+1` en la fórmula es importante: el índice debe poder representar tanto las direcciones desde `0` hasta `PREP_LIMIT-1` como el valor final `PREP_LIMIT`, que significa **recorrido terminado**.
 
-| Perfil | `DMEM_CAPACITY_BYTES` | Direcciones limpiadas | `PREP_INDEX_WIDTH` |
-|---|---:|---|---:|
-| `REFERENCE` | 2048 | 0 a 2047 | 12 bits |
-| `ALT_1000` | 1000 | 0 a 999 | 10 bits |
+| Perfil      | `DMEM_CAPACITY_BYTES` | Direcciones limpiadas | `PREP_INDEX_WIDTH` |
+|-------------|----------------------:|-----------------------|-------------------:|
+| `REFERENCE` |                  2048 | 0 a 2047              |            12 bits |
+| `ALT_1000`  |                  1000 | 0 a 999               |            10 bits |
 
 En `REFERENCE`, once bits alcanzarían para direccionar las posiciones `0` a `2047`, pero no para representar `2048`; por eso el contador necesita doce bits.
 
@@ -315,22 +315,22 @@ El registro de progreso no constituye una nueva FSM. Las fases `PREPARING_READY`
 
 `Session Preparation` recibe o utiliza las siguientes condiciones:
 
-| Señal o parámetro | Origen | Función |
-|---|---|---|
-| `clk` | Reloj común | Sincroniza inicialización, limpieza y avance de índice. |
-| `reset` | Control funcional global | Tiene prioridad y suprime las operaciones normales de preparación. |
-| `prepare_active` | `Global FSM`, mediante `Execution Control` | Activa el mismo trabajo de preparación en cualquiera de los tres estados. |
-| `DMEM_CAPACITY_BYTES` | Configuración | Define el número de marcas que deben limpiarse. |
+| Señal o parámetro     | Origen                                     | Función                                                                   |
+|-----------------------|--------------------------------------------|---------------------------------------------------------------------------|
+| `clk`                 | Reloj común                                | Sincroniza inicialización, limpieza y avance de índice.                   |
+| `reset`               | Control funcional global                   | Tiene prioridad y suprime las operaciones normales de preparación.        |
+| `prepare_active`      | `Global FSM`, mediante `Execution Control` | Activa el mismo trabajo de preparación en cualquiera de los tres estados. |
+| `DMEM_CAPACITY_BYTES` | Configuración                              | Define el número de marcas que deben limpiarse.                           |
 
 ### Señales de salida
 
-| Señal | Destino | Significado |
-|---|---|---|
-| `prepare_init` | PC, `Register File`, registros interetapa y contador local de `Execution Control` | Inicializa los recursos en el primer flanco. |
-| `prepare_dmem_clear` | Metadata de DMEM | Autoriza limpiar una sola marca en el flanco actual. |
-| `prepare_dmem_addr` | Metadata de DMEM | Dirección de byte de la marca seleccionada. |
-| `prepare_done` | `Global FSM`, mediante `Execution Control` | Indica que terminó el mantenimiento, para decidir publicación o primer ciclo. |
-| `prepare_done` | `Protocol Controller`, por `processor_top` y `system_top` | Permite reconocer la finalización de LOAD o, junto con `cpu_cycle_fire`, el primer ciclo de STEP tras preparación. |
+| Señal                | Destino                                                                           | Significado                                                                                                        |
+|----------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `prepare_init`       | PC, `Register File`, registros interetapa y contador local de `Execution Control` | Inicializa los recursos en el primer flanco.                                                                       |
+| `prepare_dmem_clear` | Metadata de DMEM                                                                  | Autoriza limpiar una sola marca en el flanco actual.                                                               |
+| `prepare_dmem_addr`  | Metadata de DMEM                                                                  | Dirección de byte de la marca seleccionada.                                                                        |
+| `prepare_done`       | `Global FSM`, mediante `Execution Control`                                        | Indica que terminó el mantenimiento, para decidir publicación o primer ciclo.                                      |
+| `prepare_done`       | `Protocol Controller`, por `processor_top` y `system_top`                         | Permite reconocer la finalización de LOAD o, junto con `cpu_cycle_fire`, el primer ciclo de STEP tras preparación. |
 
 Las señales de control tienen un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits.
 
@@ -435,12 +435,12 @@ Esta separación es fundamental: **la última escritura de limpieza y el flanco 
 
 ### Resumen del recorrido
 
-| Condición anterior al flanco | Inicialización CPU | Marca DMEM | Índice posterior | `prepare_done` |
-|---|---|---|---|---:|
-| `prepare_active=0` | No | Ninguna | 0 | 0 |
-| `prepare_index=0` | Sí | Dirección 0 | 1 | 0 |
-| `0 < prepare_index < PREP_LIMIT` | No | Dirección `prepare_index` | `prepare_index+1` | 0 |
-| `prepare_index=PREP_LIMIT` | No | Ninguna | Conserva límite hasta salir de preparación | 1 |
+| Condición anterior al flanco     | Inicialización CPU | Marca DMEM                | Índice posterior                           | `prepare_done` |
+|----------------------------------|--------------------|---------------------------|--------------------------------------------|---------------:|
+| `prepare_active=0`               | No                 | Ninguna                   | 0                                          |              0 |
+| `prepare_index=0`                | Sí                 | Dirección 0               | 1                                          |              0 |
+| `0 < prepare_index < PREP_LIMIT` | No                 | Dirección `prepare_index` | `prepare_index+1`                          |              0 |
+| `prepare_index=PREP_LIMIT`       | No                 | Ninguna                   | Conserva límite hasta salir de preparación |              1 |
 
 ## Finalización según el origen de la sesión
 
@@ -481,10 +481,10 @@ El control global determina posteriormente el ritmo de ejecución paso a paso. *
 ### Diferencia entre los tres destinos
 
 | Estado de preparación | `image_publish` de la FSM | `cpu_cycle_fire` de la FSM | `cycle_count` después del flanco final |
-|---|---|---|---:|
-| `PREPARING_READY` | 1 | 0 | 0 |
-| `PREPARING_RUN` | 0 | 1 | 1 |
-| `PREPARING_STEP` | 0 | 1 | 1 |
+|-----------------------|---------------------------|----------------------------|---------------------------------------:|
+| `PREPARING_READY`     | 1                         | 0                          |                                      0 |
+| `PREPARING_RUN`       | 0                         | 1                          |                                      1 |
+| `PREPARING_STEP`      | 0                         | 1                          |                                      1 |
 
 Los valores de la tabla corresponden al flanco de finalización con `prepare_done=1` y sin reset. `prepare_done` solo declara que el mantenimiento terminó; la FSM global interpreta esa condición según su estado actual. Aunque `prepare_active` todavía vale uno antes de ese flanco, `prepare_init` y `prepare_dmem_clear` ya valen cero.
 
@@ -557,10 +557,10 @@ El primer flanco incluye la inicialización completa de CPU y la limpieza del by
 
 Con un reloj de 50 MHz, cada flanco está separado por 20 ns:
 
-| Perfil | Bytes de DMEM | Flancos de limpieza | Flancos hasta finalización | Duración |
-|---|---:|---:|---:|---:|
-| `REFERENCE` | 2048 | 2048 | 2049 | 40,98 µs |
-| `ALT_1000` | 1000 | 1000 | 1001 | 20,02 µs |
+| Perfil      | Bytes de DMEM | Flancos de limpieza | Flancos hasta finalización | Duración |
+|-------------|--------------:|--------------------:|---------------------------:|---------:|
+| `REFERENCE` |          2048 |                2048 |                       2049 | 40,98 µs |
+| `ALT_1000`  |          1000 |                1000 |                       1001 | 20,02 µs |
 
 Ambos recorridos están por debajo del límite de 50.000 clocks, equivalente a 1 ms, asignado a la preparación. No hay una espera fija agregada después del último clear.
 
@@ -583,21 +583,21 @@ PREP_INDEX_WIDTH    = 3
 Supongamos que, antes de preparar una sesión nueva, DMEM contiene:
 
 | Dirección | Dato físico | Marca anterior |
-|---:|---|---:|
-| 0 | `0x11` | 1 |
-| 1 | `0x22` | 1 |
-| 2 | `0x33` | 0 |
-| 3 | `0x44` | 1 |
+|----------:|-------------|---------------:|
+|         0 | `0x11`      |              1 |
+|         1 | `0x22`      |              1 |
+|         2 | `0x33`      |              0 |
+|         3 | `0x44`      |              1 |
 
 Después de que el estado global pasa a `PREPARING_*`, el recorrido es:
 
-| Flanco de preparación | Índice previo | Operación | Índice posterior |
-|---:|---:|---|---:|
-| 1 | 0 | Inicializar CPU y limpiar `valid[0]`. | 1 |
-| 2 | 1 | Limpiar `valid[1]`. | 2 |
-| 3 | 2 | Limpiar `valid[2]`. | 3 |
-| 4 | 3 | Limpiar `valid[3]`. | 4 |
-| 5 | 4 | Consumir `prepare_done`; sin limpieza. | Sale de preparación. |
+| Flanco de preparación | Índice previo | Operación                              |     Índice posterior |
+|----------------------:|--------------:|----------------------------------------|---------------------:|
+|                     1 |             0 | Inicializar CPU y limpiar `valid[0]`.  |                    1 |
+|                     2 |             1 | Limpiar `valid[1]`.                    |                    2 |
+|                     3 |             2 | Limpiar `valid[2]`.                    |                    3 |
+|                     4 |             3 | Limpiar `valid[3]`.                    |                    4 |
+|                     5 |             4 | Consumir `prepare_done`; sin limpieza. | Sale de preparación. |
 
 Al finalizar:
 

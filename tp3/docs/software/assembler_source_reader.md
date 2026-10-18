@@ -23,11 +23,11 @@ Este documento especifica la primera etapa interna del assembler. El [lenguaje a
 
 ## Interfaces y contratos
 
-| Dirección        | Dato               | Representación conceptual       | Productor                          | Consumidor                                              | Función                                             |
-|------------------|--------------------|---------------------------------|------------------------------------|---------------------------------------------------------|-----------------------------------------------------|
-| Entrada          | Código fuente      | Texto completo, `source_text`   | Aplicación, a través del assembler | Lectura                                                 | Programa escrito en el lenguaje del TP3.            |
-| Salida correcta  | Líneas reconocidas | Secuencia ordenada de registros | Lectura                            | Asignación de direcciones                               | Etiquetas, instrucciones y su ubicación original.   |
-| Salida con error | Diagnóstico        | Línea y motivo                  | Lectura                            | Operación pública de ensamblado                         | Informar una construcción que no puede reconocerse. |
+| Dirección        | Dato               | Representación conceptual       | Productor                          | Consumidor                      | Función                                             |
+|------------------|--------------------|---------------------------------|------------------------------------|---------------------------------|-----------------------------------------------------|
+| Entrada          | Código fuente      | Texto completo, `source_text`   | Aplicación, a través del assembler | Lectura                         | Programa escrito en el lenguaje del TP3.            |
+| Salida correcta  | Líneas reconocidas | Secuencia ordenada de registros | Lectura                            | Asignación de direcciones       | Etiquetas, instrucciones y su ubicación original.   |
+| Salida con error | Diagnóstico        | Línea y motivo                  | Lectura                            | Operación pública de ensamblado | Informar una construcción que no puede reconocerse. |
 
 Una lectura correcta entrega todos los registros reconocidos en el orden del programa. Una lectura con error entrega un único diagnóstico y descarta su resultado parcial. La operación pública conserva las condiciones de error de `AssemblyResult`: `image=None`, `pc_to_line={}` y un diagnóstico.
 
@@ -145,12 +145,12 @@ La salida contiene los siguientes registros, en orden:
 
 | `line` | `label`  | `mnemonic` | `operands`           |
 |-------:|----------|------------|----------------------|
-| 3      | `inicio` | Ausente    | Vacío.               |
-| 4      | Ausente  | `addi`     | `x1`, `x0`, `3`.     |
-| 5      | `ciclo`  | `addi`     | `x1`, `x1`, `-1`.    |
-| 6      | Ausente  | `bne`      | `x1`, `x0`, `ciclo`. |
-| 7      | Ausente  | `sw`       | `x1`, `4(x0)`.       |
-| 8      | Ausente  | `halt`     | Vacío.               |
+|      3 | `inicio` | Ausente    | Vacío.               |
+|      4 | Ausente  | `addi`     | `x1`, `x0`, `3`.     |
+|      5 | `ciclo`  | `addi`     | `x1`, `x1`, `-1`.    |
+|      6 | Ausente  | `bne`      | `x1`, `x0`, `ciclo`. |
+|      7 | Ausente  | `sw`       | `x1`, `4(x0)`.       |
+|      8 | Ausente  | `halt`     | Vacío.               |
 
 Las líneas 1 y 2 no producen registros. La definición de `inicio` se conserva en su propia línea, mientras que `ciclo` comparte registro con su instrucción. El comentario de la línea 4 se descarta y el operando de memoria de la línea 7 se normaliza sin cambiar sus tokens.
 

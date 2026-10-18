@@ -92,10 +92,10 @@ Antes de autorizar cualquier ciclo, el sistema necesita conocer:
 Una misma orden externa puede significar cosas diferentes según el contexto. Para `STEP`, los casos son:
 
 | Contexto                        | Efecto de `STEP`                           |
-| ------------------------------ | ------------------------------------------ |
-| Sesión lista                   | Ejecuta el primer ciclo.                   |
-| `STEPPING`                     | Ejecuta un ciclo adicional.                |
-| Drain `STEP`                   | Avanza únicamente trabajo anterior.        |
+|---------------------------------|--------------------------------------------|
+| Sesión lista                    | Ejecuta el primer ciclo.                   |
+| `STEPPING`                      | Ejecuta un ciclo adicional.                |
+| Drain `STEP`                    | Avanza únicamente trabajo anterior.        |
 | Después de `FINISHED` o `FAULT` | Inicia la preparación de una sesión nueva. |
 
 Para conservar ese contexto, la arquitectura mantiene una fase global en `global_state`. Ese estado indica, entre otras cosas, si todavía no hay imagen, si la sesión está lista, si se está ejecutando o si debe drenarse o finalizarse el pipeline.
@@ -409,40 +409,40 @@ La FSM combina salidas Moore, que dependen del estado registrado, y salidas Meal
 
 Sus estados son:
 
-| Estado               | Significado                                                                                   |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| `NO_IMAGE`           | No existe una imagen ejecutable confirmada.                                                   |
-| `LOADING`            | Se recibe y valida una imagen nueva.                                                          |
-| `PREPARING_READY`    | Se prepara la primera sesión de una imagen recién cargada.                                    |
-| `READY`              | Imagen y sesión preparadas, esperando `RUN` o `STEP`.                                         |
-| `RUNNING`            | Ejecución continua.                                                                           |
-| `STEPPING`           | Ejecución paso a paso, detenida entre órdenes.                                                |
-| `HALT_DRAIN_AUTO`    | `halt` confirmado con trabajo anterior; drain automático.                                     |
-| `HALT_DRAIN_STEP`    | `halt` confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`.   |
-| `FAULT_DRAIN_AUTO`   | fault confirmado con trabajo anterior; drain automático.                                      |
-| `FAULT_DRAIN_STEP`   | fault confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`.    |
-| `FINISHED`           | Terminación normal con pipeline vacío.                                                        |
-| `FAULT`              | Terminación excepcional con pipeline vacío.                                                   |
-| `PREPARING_RUN`      | Preparación de una sesión nueva con `RUN` pendiente.                                          |
-| `PREPARING_STEP`     | Preparación de una sesión nueva con `STEP` pendiente.                                         |
+| Estado             | Significado                                                                                 |
+|--------------------|---------------------------------------------------------------------------------------------|
+| `NO_IMAGE`         | No existe una imagen ejecutable confirmada.                                                 |
+| `LOADING`          | Se recibe y valida una imagen nueva.                                                        |
+| `PREPARING_READY`  | Se prepara la primera sesión de una imagen recién cargada.                                  |
+| `READY`            | Imagen y sesión preparadas, esperando `RUN` o `STEP`.                                       |
+| `RUNNING`          | Ejecución continua.                                                                         |
+| `STEPPING`         | Ejecución paso a paso, detenida entre órdenes.                                              |
+| `HALT_DRAIN_AUTO`  | `halt` confirmado con trabajo anterior; drain automático.                                   |
+| `HALT_DRAIN_STEP`  | `halt` confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`. |
+| `FAULT_DRAIN_AUTO` | fault confirmado con trabajo anterior; drain automático.                                    |
+| `FAULT_DRAIN_STEP` | fault confirmado con instrucciones anteriores pendientes; drenado mediante órdenes `STEP`.  |
+| `FINISHED`         | Terminación normal con pipeline vacío.                                                      |
+| `FAULT`            | Terminación excepcional con pipeline vacío.                                                 |
+| `PREPARING_RUN`    | Preparación de una sesión nueva con `RUN` pendiente.                                        |
+| `PREPARING_STEP`   | Preparación de una sesión nueva con `STEP` pendiente.                                       |
 
 ### Entradas de la FSM
 
 Esta interfaz corresponde a `global_fsm`, no a todos los puertos de `execution_control`.
 
 | Entrada               | Ancho | Origen                                      | Función                                                                    |
-| --------------------- | ----: | ------------------------------------------- | -------------------------------------------------------------------------- |
-| `clk`                 | 1     | Reloj funcional común                       | Capturar el estado en el flanco positivo.                                  |
-| `reset`               | 1     | Reset funcional acondicionado               | Suprimir controles Mealy y volver a `NO_IMAGE`.                            |
-| `load_request`        | 1     | `protocol_controller`                       | Solicitar una carga.                                                       |
-| `run_request`         | 1     | `protocol_controller`                       | Solicitar ejecución continua.                                              |
-| `step_request`        | 1     | `protocol_controller`                       | Solicitar un paso.                                                         |
-| `load_ok`             | 1     | `Loader`                                    | Indicar carga completada.                                                  |
-| `load_fail`           | 1     | `Loader`                                    | Indicar carga abortada.                                                    |
-| `prepare_done`        | 1     | `Session Preparation`                       | Indicar mantenimiento completado antes del flanco.                         |
-| `halt_confirm`        | 1     | `Pipeline Hazard Control`                   | Indicar confirmación de `halt`.                                            |
-| `fault_confirm`       | 1     | OR local de `act_ex_fault` y `act_id_fault` | Indicar confirmación de fault ya seleccionada por el control del pipeline. |
-| `pipeline_empty_next` | 1     | Lógica local sobre los cuatro `next.valid`  | Indicar si el ciclo deja el pipeline vacío.                                |
+|-----------------------|------:|---------------------------------------------|----------------------------------------------------------------------------|
+| `clk`                 |     1 | Reloj funcional común                       | Capturar el estado en el flanco positivo.                                  |
+| `reset`               |     1 | Reset funcional acondicionado               | Suprimir controles Mealy y volver a `NO_IMAGE`.                            |
+| `load_request`        |     1 | `protocol_controller`                       | Solicitar una carga.                                                       |
+| `run_request`         |     1 | `protocol_controller`                       | Solicitar ejecución continua.                                              |
+| `step_request`        |     1 | `protocol_controller`                       | Solicitar un paso.                                                         |
+| `load_ok`             |     1 | `Loader`                                    | Indicar carga completada.                                                  |
+| `load_fail`           |     1 | `Loader`                                    | Indicar carga abortada.                                                    |
+| `prepare_done`        |     1 | `Session Preparation`                       | Indicar mantenimiento completado antes del flanco.                         |
+| `halt_confirm`        |     1 | `Pipeline Hazard Control`                   | Indicar confirmación de `halt`.                                            |
+| `fault_confirm`       |     1 | OR local de `act_ex_fault` y `act_id_fault` | Indicar confirmación de fault ya seleccionada por el control del pipeline. |
+| `pipeline_empty_next` |     1 | Lógica local sobre los cuatro `next.valid`  | Indicar si el ciclo deja el pipeline vacío.                                |
 
 `load_ok` y `load_fail` son excluyentes. También lo son `halt_confirm` y `fault_confirm`, porque proceden de acciones mutuamente excluyentes. Las tablas de transiciones respetan estas restricciones de los productores.
 
@@ -451,18 +451,18 @@ Esta interfaz corresponde a `global_fsm`, no a todos los puertos de `execution_c
 Las salidas Mealy se calculan antes del flanco y tienen valor cero por defecto. Las salidas Moore reflejan el estado registrado actual.
 
 | Salida                   | Ancho | Tipo  | Consumidor y función                                                                                                                 |
-| ------------------------ | ----: | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `command_accepted`       | 1     | Mealy | `protocol_controller`: indicar aceptación de la solicitud presentada.                                                                |
-| `load_start`             | 1     | Mealy | `Loader` y registro de tamaño: iniciar la carga e invalidar la imagen anterior.                                                      |
-| `cpu_cycle_fire`         | 1     | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, contador y `protocol_controller`: autorizar un ciclo efectivo. |
-| `image_publish`          | 1     | Mealy | Registro de tamaño: capturar el tamaño pendiente de la imagen preparada.                                                             |
-| `loader_active`          | 1     | Moore | `Loader`: habilitar la fase `LOADING`.                                                                                               |
-| `prepare_active`         | 1     | Moore | `Session Preparation` y `protocol_controller`: indicar preparación activa.                                                           |
-| `drain_mode`             | 1     | Moore | `Pipeline Hazard Control`: identificar un ciclo de drenado junto con `cpu_cycle_fire`.                                               |
-| `load_available`         | 1     | Moore | `protocol_controller`: informar disponibilidad de sesión para `LOAD`.                                                                |
-| `program_finished`       | 1     | Moore | `protocol_controller`: indicar terminación normal con pipeline vacío.                                                                |
-| `fault_terminal`         | 1     | Moore | `protocol_controller`: indicar terminación por fault con pipeline vacío.                                                             |
-| `global_state_code[7:0]` | 8     | Moore | `response_serializer`: representar el estado en Debug.                                                                               |
+|--------------------------|------:|-------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `command_accepted`       |     1 | Mealy | `protocol_controller`: indicar aceptación de la solicitud presentada.                                                                |
+| `load_start`             |     1 | Mealy | `Loader` y registro de tamaño: iniciar la carga e invalidar la imagen anterior.                                                      |
+| `cpu_cycle_fire`         |     1 | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, contador y `protocol_controller`: autorizar un ciclo efectivo. |
+| `image_publish`          |     1 | Mealy | Registro de tamaño: capturar el tamaño pendiente de la imagen preparada.                                                             |
+| `loader_active`          |     1 | Moore | `Loader`: habilitar la fase `LOADING`.                                                                                               |
+| `prepare_active`         |     1 | Moore | `Session Preparation` y `protocol_controller`: indicar preparación activa.                                                           |
+| `drain_mode`             |     1 | Moore | `Pipeline Hazard Control`: identificar un ciclo de drenado junto con `cpu_cycle_fire`.                                               |
+| `load_available`         |     1 | Moore | `protocol_controller`: informar disponibilidad de sesión para `LOAD`.                                                                |
+| `program_finished`       |     1 | Moore | `protocol_controller`: indicar terminación normal con pipeline vacío.                                                                |
+| `fault_terminal`         |     1 | Moore | `protocol_controller`: indicar terminación por fault con pipeline vacío.                                                             |
+| `global_state_code[7:0]` |     8 | Moore | `response_serializer`: representar el estado en Debug.                                                                               |
 
 ### Diagrama completo de estados
 
@@ -484,12 +484,12 @@ La modalidad `AUTO`/`STEP` del drain forma parte de `global_state`; no existe un
 
 Además de `global_state`, el sistema conserva otros registros globales:
 
-| Registro                    | Función                                                |
-| --------------------------- | ------------------------------------------------------ |
-| `fault_cause[2:0]`          | Causa del fault confirmado.                            |
-| `fault_pc[31:0]`            | PC de la operación causante.                           |
-| `loaded_image_size_bytes`   | Tamaño de la imagen confirmada.                        |
-| `cycle_count[63:0]`         | Cantidad de ciclos efectivos de la CPU de la sesión.   |
+| Registro                  | Función                                              |
+|---------------------------|------------------------------------------------------|
+| `fault_cause[2:0]`        | Causa del fault confirmado.                          |
+| `fault_pc[31:0]`          | PC de la operación causante.                         |
+| `loaded_image_size_bytes` | Tamaño de la imagen confirmada.                      |
+| `cycle_count[63:0]`       | Cantidad de ciclos efectivos de la CPU de la sesión. |
 
 PC, banco de registros, memorias y registros interetapa pertenecen al datapath.
 
@@ -500,7 +500,7 @@ Los registros de causa y PC se habilitan con `fault_confirm`, formado por `act_e
 El registro de tamaño se actualiza por las órdenes de la FSM:
 
 | Condición                 | Tamaño confirmado después del flanco                          |
-| ------------------------- | ------------------------------------------------------------- |
+|---------------------------|---------------------------------------------------------------|
 | `reset`                   | Cero.                                                         |
 | `load_start`              | Cero; la imagen anterior queda invalidada.                    |
 | `image_publish`           | Tamaño pendiente validado de `Loader`.                        |
@@ -524,11 +524,11 @@ Por eso un `LOAD` aceptado excluye `RUN` y `STEP`, mientras un `STEP` aceptado e
 
 La elegibilidad es:
 
-| Operación   | Estados elegibles                                                                             |
-| ----------- | --------------------------------------------------------------------------------------------- |
-| `LOAD`      | `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`   |
-| `RUN`       | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`               |
-| `STEP`      | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`               |
+| Operación | Estados elegibles                                                                           |
+|-----------|---------------------------------------------------------------------------------------------|
+| `LOAD`    | `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT` |
+| `RUN`     | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`             |
+| `STEP`    | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`             |
 
 La selección se realiza en la lógica combinacional de la FSM teniendo en cuenta condiciones del estado actual. Las solicitudes que no interesan al estado se ignoran.
 
@@ -610,7 +610,7 @@ Cuando un ciclo confirma `halt` o fault, el control necesita distinguir si las i
 El origen se determina dentro de la FSM, en la misma rama que autoriza el ciclo:
 
 | Situación durante un ciclo autorizado                                                           | Origen    |
-| ----------------------------------------------------------------------------------------------- | --------- |
+|-------------------------------------------------------------------------------------------------|-----------|
 | `RUNNING`, `HALT_DRAIN_AUTO` o `FAULT_DRAIN_AUTO`                                               | Continuo. |
 | `READY`, `STEPPING`, `HALT_DRAIN_STEP` o `FAULT_DRAIN_STEP`, con `run_request && !step_request` | Continuo. |
 | `READY`, `STEPPING`, `HALT_DRAIN_STEP` o `FAULT_DRAIN_STEP`, con `step_request`                 | `STEP`.   |
@@ -627,26 +627,26 @@ No se registra el origen por separado; al confirmar `halt` o fault, el estado si
 
 Para un ciclo ejecutado desde `STEPPING` o `RUNNING`, el estado siguiente depende de si se confirmó `halt` o fault y del origen del ciclo. Desde `READY`, `PREPARING_RUN` o `PREPARING_STEP` solo es alcanzable la primera fila, porque se ejecuta el primer fetch con el pipeline inicialmente vacío.
 
-| Resultado                             | Origen `STEP`        | Origen continuo      |
-| ------------------------------------- | -------------------- | -------------------- |
-| Sin confirmar `halt` o fault          | `STEPPING`           | `RUNNING`            |
-| `halt_confirm` y pipeline vacío       | `FINISHED`           | `FINISHED`           |
-| `halt_confirm` y quedan anteriores    | `HALT_DRAIN_STEP`    | `HALT_DRAIN_AUTO`    |
-| `fault_confirm` y pipeline vacío      | `FAULT`              | `FAULT`              |
-| `fault_confirm` y quedan anteriores   | `FAULT_DRAIN_STEP`   | `FAULT_DRAIN_AUTO`   |
+| Resultado                           | Origen `STEP`      | Origen continuo    |
+|-------------------------------------|--------------------|--------------------|
+| Sin confirmar `halt` o fault        | `STEPPING`         | `RUNNING`          |
+| `halt_confirm` y pipeline vacío     | `FINISHED`         | `FINISHED`         |
+| `halt_confirm` y quedan anteriores  | `HALT_DRAIN_STEP`  | `HALT_DRAIN_AUTO`  |
+| `fault_confirm` y pipeline vacío    | `FAULT`            | `FAULT`            |
+| `fault_confirm` y quedan anteriores | `FAULT_DRAIN_STEP` | `FAULT_DRAIN_AUTO` |
 
 Un redirect o un stall `load-use` no cambia esta clasificación.
 
 Durante un drain ya se ha determinado si la terminación es por `halt` o fault, y no se confirma otra condición de terminación. El siguiente estado depende solamente de si quedan instrucciones pendientes y, en los drains `STEP`, de si la orden aceptada fue `STEP` o `RUN`.
 
-| Estado               | Ciclo        | Quedan anteriores    | Pipeline vacío   |
-| -------------------- | ------------ | -------------------- | ---------------- |
-| `HALT_DRAIN_AUTO`    | automático   | inalcanzable         | `FINISHED`       |
-| `HALT_DRAIN_STEP`    | `STEP`       | inalcanzable         | `FINISHED`       |
-| `HALT_DRAIN_STEP`    | `RUN`        | inalcanzable         | `FINISHED`       |
-| `FAULT_DRAIN_AUTO`   | automático   | `FAULT_DRAIN_AUTO`   | `FAULT`          |
-| `FAULT_DRAIN_STEP`   | `STEP`       | `FAULT_DRAIN_STEP`   | `FAULT`          |
-| `FAULT_DRAIN_STEP`   | `RUN`        | `FAULT_DRAIN_AUTO`   | `FAULT`          |
+| Estado             | Ciclo      | Quedan anteriores  | Pipeline vacío |
+|--------------------|------------|--------------------|----------------|
+| `HALT_DRAIN_AUTO`  | automático | inalcanzable       | `FINISHED`     |
+| `HALT_DRAIN_STEP`  | `STEP`     | inalcanzable       | `FINISHED`     |
+| `HALT_DRAIN_STEP`  | `RUN`      | inalcanzable       | `FINISHED`     |
+| `FAULT_DRAIN_AUTO` | automático | `FAULT_DRAIN_AUTO` | `FAULT`        |
+| `FAULT_DRAIN_STEP` | `STEP`     | `FAULT_DRAIN_STEP` | `FAULT`        |
+| `FAULT_DRAIN_STEP` | `RUN`      | `FAULT_DRAIN_AUTO` | `FAULT`        |
 
 ---
 
@@ -664,11 +664,11 @@ En consecuencia, ninguno de esos tres estados puede pasar directamente a un drai
 
 Las [acciones del pipeline](../cpu/control_and_hazards.md#efecto-de-cada-acción-sobre-el-pipeline) determinan cuántos ciclos efectivos de drain pueden quedar:
 
-| Confirmación   | `EX/MEM.next.valid`  | `MEM/WB.next.valid`   | Máximo de ciclos de drain posteriores |
-| -------------- | -------------------- | --------------------- | -------------------------------------- |
-| `halt` en EX   | `0`                  | `EX/MEM.valid` actual | 1                                    |
-| Fault en EX    | `0`                  | `EX/MEM.valid` actual | 1                                    |
-| Fault en ID    | `ID/EX.valid` actual | `EX/MEM.valid` actual | 2                                    |
+| Confirmación | `EX/MEM.next.valid`  | `MEM/WB.next.valid`   | Máximo de ciclos de drain posteriores |
+|--------------|----------------------|-----------------------|---------------------------------------|
+| `halt` en EX | `0`                  | `EX/MEM.valid` actual | 1                                     |
+| Fault en EX  | `0`                  | `EX/MEM.valid` actual | 1                                     |
+| Fault en ID  | `ID/EX.valid` actual | `EX/MEM.valid` actual | 2                                     |
 
 En los tres casos `IF/ID.next.valid=ID/EX.next.valid=0`, y el trabajo que estaba en WB termina en el propio ciclo de confirmación. Un drain legal no tiene `load_use_stall` ni admite instrucciones nuevas: cada ciclo desplaza `EX/MEM` a `MEM/WB` e invalida `EX/MEM`.
 
@@ -708,10 +708,10 @@ Esto ocurre, por ejemplo, mientras `STEPPING` espera otra orden o mientras un dr
 
 `HOLD` y un stall `load-use` son situaciones diferentes:
 
-| Situación          | `cpu_cycle_fire` | Efecto                      |
-| ------------------ | ----------------: | --------------------------- |
-| stall `load-use`   |                 1 | parte del pipeline avanza   |
-| `HOLD`             |                 0 | no existe avance CPU        |
+| Situación        | `cpu_cycle_fire` | Efecto                    |
+|------------------|-----------------:|---------------------------|
+| stall `load-use` |                1 | parte del pipeline avanza |
+| `HOLD`           |                0 | no existe avance CPU      |
 
 ---
 
@@ -751,7 +751,7 @@ Se inicializa en cero durante la preparación y aumenta exactamente una vez por 
 Su actualización sigue esta prioridad:
 
 | Condición                 | `cycle_count.next`            |
-| ------------------------- | ----------------------------- |
+|---------------------------|-------------------------------|
 | `reset`                   | Cero.                         |
 | `prepare_init`            | Cero.                         |
 | `cpu_cycle_fire`          | `(cycle_count + 1) mod 2^64`. |
@@ -772,21 +772,21 @@ El wrap de `0xffffffffffffffff` a cero no genera fault ni modifica el modo de ej
 Las seis salidas Moore de control y el código de observación se decodifican del estado registrado actual:
 
 | Estado actual      | `loader_active` | `prepare_active` | `drain_mode` | `load_available` | `program_finished` | `fault_terminal` | `global_state_code[7:0]` |
-| ------------------ | --------------: | ---------------: | -----------: | ---------------: | -----------------: | ---------------: | ------------------------ |
-| `NO_IMAGE`         | 0               | 0                | 0            | 1                | 0                  | 0                | `00000000`               |
-| `LOADING`          | 1               | 0                | 0            | 0                | 0                  | 0                | `00000001`               |
-| `PREPARING_READY`  | 0               | 1                | 0            | 0                | 0                  | 0                | `00000010`               |
-| `READY`            | 0               | 0                | 0            | 1                | 0                  | 0                | `00000011`               |
-| `RUNNING`          | 0               | 0                | 0            | 0                | 0                  | 0                | `00000100`               |
-| `STEPPING`         | 0               | 0                | 0            | 1                | 0                  | 0                | `00000101`               |
-| `HALT_DRAIN_AUTO`  | 0               | 0                | 1            | 0                | 0                  | 0                | `00000110`               |
-| `HALT_DRAIN_STEP`  | 0               | 0                | 1            | 1                | 0                  | 0                | `00000111`               |
-| `FAULT_DRAIN_AUTO` | 0               | 0                | 1            | 0                | 0                  | 0                | `00001000`               |
-| `FAULT_DRAIN_STEP` | 0               | 0                | 1            | 1                | 0                  | 0                | `00001001`               |
-| `FINISHED`         | 0               | 0                | 0            | 1                | 1                  | 0                | `00001010`               |
-| `FAULT`            | 0               | 0                | 0            | 1                | 0                  | 1                | `00001011`               |
-| `PREPARING_RUN`    | 0               | 1                | 0            | 0                | 0                  | 0                | `00001100`               |
-| `PREPARING_STEP`   | 0               | 1                | 0            | 0                | 0                  | 0                | `00001101`               |
+|--------------------|----------------:|-----------------:|-------------:|-----------------:|-------------------:|-----------------:|--------------------------|
+| `NO_IMAGE`         |               0 |                0 |            0 |                1 |                  0 |                0 | `00000000`               |
+| `LOADING`          |               1 |                0 |            0 |                0 |                  0 |                0 | `00000001`               |
+| `PREPARING_READY`  |               0 |                1 |            0 |                0 |                  0 |                0 | `00000010`               |
+| `READY`            |               0 |                0 |            0 |                1 |                  0 |                0 | `00000011`               |
+| `RUNNING`          |               0 |                0 |            0 |                0 |                  0 |                0 | `00000100`               |
+| `STEPPING`         |               0 |                0 |            0 |                1 |                  0 |                0 | `00000101`               |
+| `HALT_DRAIN_AUTO`  |               0 |                0 |            1 |                0 |                  0 |                0 | `00000110`               |
+| `HALT_DRAIN_STEP`  |               0 |                0 |            1 |                1 |                  0 |                0 | `00000111`               |
+| `FAULT_DRAIN_AUTO` |               0 |                0 |            1 |                0 |                  0 |                0 | `00001000`               |
+| `FAULT_DRAIN_STEP` |               0 |                0 |            1 |                1 |                  0 |                0 | `00001001`               |
+| `FINISHED`         |               0 |                0 |            0 |                1 |                  1 |                0 | `00001010`               |
+| `FAULT`            |               0 |                0 |            0 |                1 |                  0 |                1 | `00001011`               |
+| `PREPARING_RUN`    |               0 |                1 |            0 |                0 |                  0 |                0 | `00001100`               |
+| `PREPARING_STEP`   |               0 |                1 |            0 |                0 |                  0 |                0 | `00001101`               |
 
 No constituyen nuevos estados persistentes.
 
@@ -807,14 +807,14 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Reglas globales
 
 | Estado actual               | Condición      | Estado siguiente | Salidas Mealy en 1               |
-| --------------------------- | -------------- | ---------------- | -------------------------------- |
+|-----------------------------|----------------|------------------|----------------------------------|
 | Cualquier estado            | `reset`        | `NO_IMAGE`       | —                                |
 | Estados elegibles para LOAD | `load_request` | `LOADING`        | `command_accepted`, `load_start` |
 
 ### Carga y preparación
 
 | Estado actual     | Condición                | Estado siguiente  | Salidas Mealy en 1 |
-| ----------------- | ------------------------ | ----------------- | ------------------ |
+|-------------------|--------------------------|-------------------|--------------------|
 | `NO_IMAGE`        | `1`                      | `NO_IMAGE`        | —                  |
 | `LOADING`         | `load_ok`                | `PREPARING_READY` | —                  |
 | `LOADING`         | `load_fail`              | `NO_IMAGE`        | —                  |
@@ -829,7 +829,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Sesión preparada
 
 | Estado actual | Condición                       | Estado siguiente | Salidas Mealy en 1                   |
-| ------------- | ------------------------------- | ---------------- | ------------------------------------ |
+|---------------|---------------------------------|------------------|--------------------------------------|
 | `READY`       | `run_request && !step_request`  | `RUNNING`        | `command_accepted`, `cpu_cycle_fire` |
 | `READY`       | `step_request`                  | `STEPPING`       | `command_accepted`, `cpu_cycle_fire` |
 | `READY`       | `!run_request && !step_request` | `READY`          | —                                    |
@@ -837,7 +837,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Ejecución continua
 
 | Estado actual | Condición                               | Estado siguiente   | Salidas Mealy en 1 |
-| ------------- | --------------------------------------- | ------------------ | ------------------ |
+|---------------|-----------------------------------------|--------------------|--------------------|
 | `RUNNING`     | `!halt_confirm && !fault_confirm`       | `RUNNING`          | `cpu_cycle_fire`   |
 | `RUNNING`     | `halt_confirm && pipeline_empty_next`   | `FINISHED`         | `cpu_cycle_fire`   |
 | `RUNNING`     | `halt_confirm && !pipeline_empty_next`  | `HALT_DRAIN_AUTO`  | `cpu_cycle_fire`   |
@@ -847,7 +847,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Ejecución por pasos
 
 | Estado actual | Condición                                                               | Estado siguiente   | Salidas Mealy en 1                   |
-| ------------- | ----------------------------------------------------------------------- | ------------------ | ------------------------------------ |
+|---------------|-------------------------------------------------------------------------|--------------------|--------------------------------------|
 | `STEPPING`    | `!run_request && !step_request`                                         | `STEPPING`         | —                                    |
 | `STEPPING`    | `step_request && !halt_confirm && !fault_confirm`                       | `STEPPING`         | `command_accepted`, `cpu_cycle_fire` |
 | `STEPPING`    | `run_request && !step_request && !halt_confirm && !fault_confirm`       | `RUNNING`          | `command_accepted`, `cpu_cycle_fire` |
@@ -861,7 +861,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Drenado por halt
 
 | Estado actual     | Condición                       | Estado siguiente  | Salidas Mealy en 1                   |
-| ----------------- | ------------------------------- | ----------------- | ------------------------------------ |
+|-------------------|---------------------------------|-------------------|--------------------------------------|
 | `HALT_DRAIN_AUTO` | `1`                             | `FINISHED`        | `cpu_cycle_fire`                     |
 | `HALT_DRAIN_STEP` | `!run_request && !step_request` | `HALT_DRAIN_STEP` | —                                    |
 | `HALT_DRAIN_STEP` | `(run_request OR step_request)` | `FINISHED`        | `command_accepted`, `cpu_cycle_fire` |
@@ -869,7 +869,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Drenado por fault
 
 | Estado actual      | Condición                                              | Estado siguiente   | Salidas Mealy en 1                   |
-| ------------------ | ------------------------------------------------------ | ------------------ | ------------------------------------ |
+|--------------------|--------------------------------------------------------|--------------------|--------------------------------------|
 | `FAULT_DRAIN_AUTO` | `pipeline_empty_next`                                  | `FAULT`            | `cpu_cycle_fire`                     |
 | `FAULT_DRAIN_AUTO` | `!pipeline_empty_next`                                 | `FAULT_DRAIN_AUTO` | `cpu_cycle_fire`                     |
 | `FAULT_DRAIN_STEP` | `!run_request && !step_request`                        | `FAULT_DRAIN_STEP` | —                                    |
@@ -880,7 +880,7 @@ La autorización de un ciclo se calcula antes de consultar sus resultados, como 
 ### Sesión terminada
 
 | Estado actual | Condición                       | Estado siguiente | Salidas Mealy en 1 |
-| ------------- | ------------------------------- | ---------------- | ------------------ |
+|---------------|---------------------------------|------------------|--------------------|
 | `FINISHED`    | `run_request && !step_request`  | `PREPARING_RUN`  | `command_accepted` |
 | `FINISHED`    | `step_request`                  | `PREPARING_STEP` | `command_accepted` |
 | `FINISHED`    | `!run_request && !step_request` | `FINISHED`       | —                  |

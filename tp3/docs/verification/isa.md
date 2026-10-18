@@ -69,28 +69,28 @@ El [manifiesto](cases.json) enumera los IDs `TEST-ISA-001/Cnnn`, sus entradas, e
 
 ### Datos de referencia
 
-| Operación   | rs1        | rs2 / inmediato   | Resultado x3   |
-| ----------- | ---------- | ----------------- | -------------- |
-| ADD         | 00000005   | 00000007          | 0000000C       |
-| ADD         | FFFFFFFF   | 00000001          | 00000000       |
-| ADD         | 7FFFFFFF   | 00000001          | 80000000       |
-| SUB         | 00000009   | 00000004          | 00000005       |
-| SUB         | 00000000   | 00000001          | FFFFFFFF       |
-| SUB         | 80000000   | 00000001          | 7FFFFFFF       |
-| AND         | A5A5A5A5   | 0F0F0F0F          | 05050505       |
-| OR          | A5A5A5A5   | 0F0F0F0F          | AFAFAFAF       |
-| XOR         | A5A5A5A5   | 0F0F0F0F          | AAAAAAAA       |
-| XOR         | FFFFFFFF   | FFFFFFFF          | 00000000       |
-| ADDI        | 0000000A   | 7                 | 00000011       |
-| ADDI        | 00000000   | -2048             | FFFFF800       |
-| ADDI        | FFFFFFFF   | 1                 | 00000000       |
-| ADDI        | 00000000   | 2047              | 000007FF       |
-| ANDI        | 12345678   | -1                | 12345678       |
-| ANDI        | 12345678   | 15                | 00000008       |
-| ORI         | 12345678   | -2048             | FFFFFE78       |
-| ORI         | 12345678   | 15                | 1234567F       |
-| XORI        | 12345678   | -1                | EDCBA987       |
-| XORI        | 12345678   | 0                 | 12345678       |
+| Operación | rs1      | rs2 / inmediato | Resultado x3 |
+|-----------|----------|-----------------|--------------|
+| ADD       | 00000005 | 00000007        | 0000000C     |
+| ADD       | FFFFFFFF | 00000001        | 00000000     |
+| ADD       | 7FFFFFFF | 00000001        | 80000000     |
+| SUB       | 00000009 | 00000004        | 00000005     |
+| SUB       | 00000000 | 00000001        | FFFFFFFF     |
+| SUB       | 80000000 | 00000001        | 7FFFFFFF     |
+| AND       | A5A5A5A5 | 0F0F0F0F        | 05050505     |
+| OR        | A5A5A5A5 | 0F0F0F0F        | AFAFAFAF     |
+| XOR       | A5A5A5A5 | 0F0F0F0F        | AAAAAAAA     |
+| XOR       | FFFFFFFF | FFFFFFFF        | 00000000     |
+| ADDI      | 0000000A | 7               | 00000011     |
+| ADDI      | 00000000 | -2048           | FFFFF800     |
+| ADDI      | FFFFFFFF | 1               | 00000000     |
+| ADDI      | 00000000 | 2047            | 000007FF     |
+| ANDI      | 12345678 | -1              | 12345678     |
+| ANDI      | 12345678 | 15              | 00000008     |
+| ORI       | 12345678 | -2048           | FFFFFE78     |
+| ORI       | 12345678 | 15              | 1234567F     |
+| XORI      | 12345678 | -1              | EDCBA987     |
+| XORI      | 12345678 | 0               | 12345678     |
 
 ### Procedimiento
 
@@ -170,21 +170,21 @@ Los datos y resultados concretos se presentan a continuación.
 ### Datos de referencia
 
 | shamt | SLL / SLLI | SRL / SRLI | SRA / SRAI |
-| ----: | ---------- | ---------- | ---------- |
-| 0     | 80000001   | 80000001   | 80000001   |
-| 1     | 00000002   | 40000000   | C0000000   |
-| 31    | 80000000   | 00000001   | FFFFFFFF   |
+|------:|------------|------------|------------|
+|     0 | 80000001   | 80000001   | 80000001   |
+|     1 | 00000002   | 40000000   | C0000000   |
+|    31 | 80000000   | 00000001   | FFFFFFFF   |
 
 | A        | B / inmediato     | SLT / SLTI | SLTU / SLTIU |
-| -------- | ----------------- | ---------: | -----------: |
-| FFFFFFFF | registro 00000001 | 1          | 0            |
-| 80000000 | registro 7FFFFFFF | 1          | 0            |
-| 00000007 | registro 00000007 | 0          | 0            |
-| 00000001 | registro 00000002 | 1          | 1            |
-| 00000000 | inmediato -1      | 0          | 1            |
-| FFFFFFFF | inmediato -1      | 0          | 0            |
-| FFFFF800 | inmediato -2048   | 0          | 0            |
-| 000007FE | inmediato 2047    | 1          | 1            |
+|----------|-------------------|-----------:|-------------:|
+| FFFFFFFF | registro 00000001 |          1 |            0 |
+| 80000000 | registro 7FFFFFFF |          1 |            0 |
+| 00000007 | registro 00000007 |          0 |            0 |
+| 00000001 | registro 00000002 |          1 |            1 |
+| 00000000 | inmediato -1      |          0 |            1 |
+| FFFFFFFF | inmediato -1      |          0 |            0 |
+| FFFFF800 | inmediato -2048   |          0 |            0 |
+| 000007FE | inmediato 2047    |          1 |            1 |
 
 ### Procedimiento
 

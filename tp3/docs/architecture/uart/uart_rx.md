@@ -56,24 +56,24 @@ La lógica combinacional expresa las decisiones mediante `casez`, usando `?` par
 
 #### Entradas
 
-| Señal | Origen | Función |
-|---|---|---|
-| `rx` | `Serial Input Synchronizer` | Nivel sincronizado de la línea serie. |
-| `s_tick` | `Baud Tick Generator` | Referencia de avance del sobremuestreo. |
-| `sample_count[3:0]` | `Sample Counter` | Permite determinar cuándo corresponde tomar una muestra. |
-| `bit_count[2:0]` | `Bit Counter` | Permite identificar el bit de datos actual y reconocer el último. |
+| Señal               | Origen                      | Función                                                           |
+|---------------------|-----------------------------|-------------------------------------------------------------------|
+| `rx`                | `Serial Input Synchronizer` | Nivel sincronizado de la línea serie.                             |
+| `s_tick`            | `Baud Tick Generator`       | Referencia de avance del sobremuestreo.                           |
+| `sample_count[3:0]` | `Sample Counter`            | Permite determinar cuándo corresponde tomar una muestra.          |
+| `bit_count[2:0]`    | `Bit Counter`               | Permite identificar el bit de datos actual y reconocer el último. |
 
 Las comparaciones de los contadores forman condiciones combinacionales para la FSM. Las transiciones utilizan `sample_count = 7` para comprobar el Start, `sample_count = 15` para muestrear cada bit de datos y el Stop, y `bit_count = 7` para reconocer el último bit de datos. Estas condiciones solo autorizan el muestreo cuando también está activo `s_tick`.
 
 #### Controles de acción
 
-| Señal | Destino | Acción que autoriza |
-|---|---|---|
-| `sample_count_clear` | `Sample Counter` | Poner el contador de sobremuestreo en cero. |
-| `sample_count_inc` | `Sample Counter` | Incrementar el contador de sobremuestreo una vez. |
-| `bit_count_clear` | `Bit Counter` | Poner el índice del bit de datos en cero. |
-| `bit_count_inc` | `Bit Counter` | Avanzar al siguiente índice de bit de datos. |
-| `data_shift_enable` | `RX Shift Register` | Incorporar una muestra de `rx` mediante un desplazamiento. |
+| Señal                | Destino             | Acción que autoriza                                        |
+|----------------------|---------------------|------------------------------------------------------------|
+| `sample_count_clear` | `Sample Counter`    | Poner el contador de sobremuestreo en cero.                |
+| `sample_count_inc`   | `Sample Counter`    | Incrementar el contador de sobremuestreo una vez.          |
+| `bit_count_clear`    | `Bit Counter`       | Poner el índice del bit de datos en cero.                  |
+| `bit_count_inc`      | `Bit Counter`       | Avanzar al siguiente índice de bit de datos.               |
+| `data_shift_enable`  | `RX Shift Register` | Incorporar una muestra de `rx` mediante un desplazamiento. |
 
 Cada control es de un bit. Sin una orden de actualización, el recurso conserva su valor. La tabla de control evita ordenar simultáneamente limpieza e incremento de un mismo contador. El reset común inicializa los contadores y el registro de datos en cero y sitúa el control en reposo.
 
@@ -101,17 +101,17 @@ La salida `data_out[7:0]` presenta el contenido de este registro. Durante la rec
 
 La lista de señales del receptor queda definida de la siguiente manera; la integración debe llevar los dos indicadores nuevos hasta la frontera UART con el control del protocolo.
 
-| Dirección | Señal | Ancho | Origen o destino |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Entrada | `rx` | 1 | Salida del sincronizador de la línea serie. |
-| Entrada | `s_tick` | 1 | Pulso de sobremuestreo del generador de baud. |
-| Salida | `data_out` | 8 | Dato para la FIFO RX, consumido con `rx_done_tick`. |
-| Salida | `rx_done_tick` | 1 | Evento para guardar el byte recibido en la FIFO RX. |
-| Salida | `frame_error_tick` | 1 | Reporte de error de trama hacia la integración UART. |
-| Salida | `rx_receiving` | 1 | Indicador de trama en curso hacia el control del protocolo. |
-| Salida | `rx_activity` | 1 | Indicador de actividad hacia el control del protocolo. |
+| Dirección | Señal              | Ancho | Origen o destino                                            |
+|-----------|--------------------|-------|-------------------------------------------------------------|
+| Entrada   | `clk`              | 1     | Clock funcional común.                                      |
+| Entrada   | `reset`            | 1     | Reset funcional común, activo alto.                         |
+| Entrada   | `rx`               | 1     | Salida del sincronizador de la línea serie.                 |
+| Entrada   | `s_tick`           | 1     | Pulso de sobremuestreo del generador de baud.               |
+| Salida    | `data_out`         | 8     | Dato para la FIFO RX, consumido con `rx_done_tick`.         |
+| Salida    | `rx_done_tick`     | 1     | Evento para guardar el byte recibido en la FIFO RX.         |
+| Salida    | `frame_error_tick` | 1     | Reporte de error de trama hacia la integración UART.        |
+| Salida    | `rx_receiving`     | 1     | Indicador de trama en curso hacia el control del protocolo. |
+| Salida    | `rx_activity`      | 1     | Indicador de actividad hacia el control del protocolo.      |
 
 Los controles de acción de los contadores y del registro de recepción son internos a `uart_rx`. El reporte combinado de error de trama y desbordamiento de FIFO está definido en [uart_core](uart_core.md#reporte-de-errores).
 
@@ -131,10 +131,10 @@ La UART conserva la responsabilidad de recibir y transmitir bytes. El control de
 
 El receptor genera las siguientes salidas informativas, aprobadas en el [acuerdo de indicadores](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--indicadores-de-recepción-uart) y expuestas por la integración UART al control del protocolo:
 
-| Señal | Significado | Uso por el consumidor |
-|---|---|---|
-| `rx_receiving` | Hay una trama en curso, con la FSM en `START`, `DATA` o `STOP`. | Impide declarar la recepción libre mientras se procesa esa trama. |
-| `rx_activity` | La línea sincronizada cambia de nivel, está baja o hay una trama en curso. | Reinicia el contador de silencio durante la recuperación, aunque no se produzca un byte válido. |
+| Señal          | Significado                                                                | Uso por el consumidor                                                                           |
+|----------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `rx_receiving` | Hay una trama en curso, con la FSM en `START`, `DATA` o `STOP`.            | Impide declarar la recepción libre mientras se procesa esa trama.                               |
+| `rx_activity`  | La línea sincronizada cambia de nivel, está baja o hay una trama en curso. | Reinicia el contador de silencio durante la recuperación, aunque no se produzca un byte válido. |
 
 Estas señales informan sobre la recepción; no ordenan capturas ni actualizaciones de los contadores del receptor. El temporizador de 100 ms pertenece al control del protocolo. La condición de finalización también requiere línea en reposo y FIFO RX vacía, según el contrato ya aprobado.
 
@@ -150,11 +150,11 @@ flowchart LR
 
 Fuera de reset, las condiciones son:
 
-| Indicador | Condición para valer uno |
-|---|---|
-| `rx_receiving` | El estado actual es `START`, `DATA` o `STOP`. |
-| `rx_changed` interno | `rx` difiere de `rx_previous`. |
-| `rx_activity` | `rx_changed` o `rx = 0` o `rx_receiving = 1`. |
+| Indicador            | Condición para valer uno                      |
+|----------------------|-----------------------------------------------|
+| `rx_receiving`       | El estado actual es `START`, `DATA` o `STOP`. |
+| `rx_changed` interno | `rx` difiere de `rx_previous`.                |
+| `rx_activity`        | `rx_changed` o `rx = 0` o `rx_receiving = 1`. |
 
 `rx_receiving` se obtiene combinacionalmente del estado registrado. `RX Activity Detection` combina ese indicador con el nivel sincronizado de la línea y la detección de cambios. Permanece dentro de `uart_rx` como lógica auxiliar; no requiere un módulo HDL nuevo.
 
@@ -191,13 +191,13 @@ El [generador de ticks](uart_baud_tick_gen.md) utiliza un divisor de 163 sobre e
 
 Se conservan los cinco estados del TP2 y su comportamiento de recepción. Cada estado identifica una fase de la recepción; sus controles ordenan las acciones sobre los recursos correspondientes.
 
-| Estado | Función |
-|---|---|
-| `IDLE` | Esperar el nivel bajo que puede iniciar una trama. |
-| `START` | Comprobar que la línea sigue baja aproximadamente en el centro del Start. |
-| `DATA` | Ordenar las ocho capturas de datos, desde D0 hasta D7. |
-| `STOP` | Comprobar el nivel alto del Stop y, si es correcto, anunciar el byte completo. |
-| `RECOVER` | Esperar que la línea vuelva a alto después de un error de trama. |
+| Estado    | Función                                                                        |
+|-----------|--------------------------------------------------------------------------------|
+| `IDLE`    | Esperar el nivel bajo que puede iniciar una trama.                             |
+| `START`   | Comprobar que la línea sigue baja aproximadamente en el centro del Start.      |
+| `DATA`    | Ordenar las ocho capturas de datos, desde D0 hasta D7.                         |
+| `STOP`    | Comprobar el nivel alto del Stop y, si es correcto, anunciar el byte completo. |
+| `RECOVER` | Esperar que la línea vuelva a alto después de un error de trama.               |
 
 ```mermaid
 stateDiagram-v2
@@ -218,13 +218,13 @@ Mientras no se cumple una condición de transición, el receptor conserva el est
 
 Se conserva la codificación one-hot del TP2. El registro de estado tiene cinco bits y cada estado legal activa exactamente uno, según el [acuerdo de codificación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-receptor-uart).
 
-| Estado | Valor de `state[4:0]` |
-|---|---|
-| `IDLE` | `00001` |
-| `START` | `00010` |
-| `DATA` | `00100` |
-| `STOP` | `01000` |
-| `RECOVER` | `10000` |
+| Estado    | Valor de `state[4:0]` |
+|-----------|-----------------------|
+| `IDLE`    | `00001`               |
+| `START`   | `00010`               |
+| `DATA`    | `00100`               |
+| `STOP`    | `01000`               |
+| `RECOVER` | `10000`               |
 
 El reset escribe `00001`, correspondiente a `IDLE`. La lógica combinacional calcula el siguiente estado usando estos mismos valores y el registro lo adopta al flanco ascendente del clock funcional. La codificación facilita identificar la fase de recepción al observar el registro en una simulación.
 
@@ -236,10 +236,10 @@ En `IDLE`, la FSM mantiene en cero ambos contadores. Al observar `rx = 0`, pasa 
 
 El contador comienza en cero. Los primeros siete ticks ordenan un incremento. En el octavo, su valor previo al flanco es siete y se toma la muestra:
 
-| Nivel de `rx` | Resultado y acciones | Estado siguiente |
-|---|---|---|
-| Sigue baja | Start válido; limpiar los contadores. | `DATA` |
-| Alta | Anunciar error de trama, como en el TP2. | `RECOVER` |
+| Nivel de `rx` | Resultado y acciones                     | Estado siguiente |
+|---------------|------------------------------------------|------------------|
+| Sigue baja    | Start válido; limpiar los contadores.    | `DATA`           |
+| Alta          | Anunciar error de trama, como en el TP2. | `RECOVER`        |
 
 La espera de ocho ticks sitúa la comprobación aproximadamente en el centro del Start. El instante exacto conserva la resolución del sobremuestreo, ya que el comienzo de la trama puede ocurrir entre dos ticks.
 
@@ -265,24 +265,24 @@ El control del protocolo realiza la espera de silencio aprobada de 100 ms fuera 
 
 Los valores de los contadores corresponden al instante previo al flanco. Las señales que no aparecen en la columna de controles permanecen en cero; los recursos sin orden conservan su valor. Las condiciones de cada estado son excluyentes.
 
-| Estado actual | Condición | Estado siguiente | Controles activos |
-|---|---|---|---|
-| `IDLE` | `rx = 1` | `IDLE` | `sample_count_clear`, `bit_count_clear` |
-| `IDLE` | `rx = 0` | `START` | `sample_count_clear`, `bit_count_clear` |
-| `START` | `s_tick = 0` | `START` | Ninguno |
-| `START` | `s_tick = 1`, `sample_count != 7` | `START` | `sample_count_inc` |
-| `START` | `s_tick = 1`, `sample_count = 7`, `rx = 0` | `DATA` | `sample_count_clear`, `bit_count_clear` |
-| `START` | `s_tick = 1`, `sample_count = 7`, `rx = 1` | `RECOVER` | `sample_count_clear`, `frame_error_tick` |
-| `DATA` | `s_tick = 0` | `DATA` | Ninguno |
-| `DATA` | `s_tick = 1`, `sample_count != 15` | `DATA` | `sample_count_inc` |
-| `DATA` | `s_tick = 1`, `sample_count = 15`, `bit_count != 7` | `DATA` | `sample_count_clear`, `data_shift_enable`, `bit_count_inc` |
-| `DATA` | `s_tick = 1`, `sample_count = 15`, `bit_count = 7` | `STOP` | `sample_count_clear`, `data_shift_enable` |
-| `STOP` | `s_tick = 0` | `STOP` | Ninguno |
-| `STOP` | `s_tick = 1`, `sample_count != 15` | `STOP` | `sample_count_inc` |
-| `STOP` | `s_tick = 1`, `sample_count = 15`, `rx = 1` | `IDLE` | `sample_count_clear`, `rx_done_tick` |
-| `STOP` | `s_tick = 1`, `sample_count = 15`, `rx = 0` | `RECOVER` | `sample_count_clear`, `frame_error_tick` |
-| `RECOVER` | `rx = 0` | `RECOVER` | `sample_count_clear`, `bit_count_clear` |
-| `RECOVER` | `rx = 1` | `IDLE` | `sample_count_clear`, `bit_count_clear` |
+| Estado actual | Condición                                           | Estado siguiente | Controles activos                                          |
+|---------------|-----------------------------------------------------|------------------|------------------------------------------------------------|
+| `IDLE`        | `rx = 1`                                            | `IDLE`           | `sample_count_clear`, `bit_count_clear`                    |
+| `IDLE`        | `rx = 0`                                            | `START`          | `sample_count_clear`, `bit_count_clear`                    |
+| `START`       | `s_tick = 0`                                        | `START`          | Ninguno                                                    |
+| `START`       | `s_tick = 1`, `sample_count != 7`                   | `START`          | `sample_count_inc`                                         |
+| `START`       | `s_tick = 1`, `sample_count = 7`, `rx = 0`          | `DATA`           | `sample_count_clear`, `bit_count_clear`                    |
+| `START`       | `s_tick = 1`, `sample_count = 7`, `rx = 1`          | `RECOVER`        | `sample_count_clear`, `frame_error_tick`                   |
+| `DATA`        | `s_tick = 0`                                        | `DATA`           | Ninguno                                                    |
+| `DATA`        | `s_tick = 1`, `sample_count != 15`                  | `DATA`           | `sample_count_inc`                                         |
+| `DATA`        | `s_tick = 1`, `sample_count = 15`, `bit_count != 7` | `DATA`           | `sample_count_clear`, `data_shift_enable`, `bit_count_inc` |
+| `DATA`        | `s_tick = 1`, `sample_count = 15`, `bit_count = 7`  | `STOP`           | `sample_count_clear`, `data_shift_enable`                  |
+| `STOP`        | `s_tick = 0`                                        | `STOP`           | Ninguno                                                    |
+| `STOP`        | `s_tick = 1`, `sample_count != 15`                  | `STOP`           | `sample_count_inc`                                         |
+| `STOP`        | `s_tick = 1`, `sample_count = 15`, `rx = 1`         | `IDLE`           | `sample_count_clear`, `rx_done_tick`                       |
+| `STOP`        | `s_tick = 1`, `sample_count = 15`, `rx = 0`         | `RECOVER`        | `sample_count_clear`, `frame_error_tick`                   |
+| `RECOVER`     | `rx = 0`                                            | `RECOVER`        | `sample_count_clear`, `bit_count_clear`                    |
+| `RECOVER`     | `rx = 1`                                            | `IDLE`           | `sample_count_clear`, `bit_count_clear`                    |
 
 #### Eventos de recepción
 

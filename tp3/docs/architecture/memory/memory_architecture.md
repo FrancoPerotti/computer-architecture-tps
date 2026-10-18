@@ -299,7 +299,7 @@ Para una palabra:
 
 almacenada desde una dirección `A`:
 
-| Dirección | Byte   |
+| Dirección |   Byte |
 |-----------|-------:|
 | `A + 0`   | `0x78` |
 | `A + 1`   | `0x56` |
@@ -737,7 +737,7 @@ La parametrización conserva la semántica de rango explicada anteriormente: los
 
 ### Perfiles definidos
 
-| Perfil      | IMEM       | DMEM       | Alcance                                                             |
+| Perfil      |       IMEM |       DMEM | Alcance                                                             |
 |-------------|-----------:|-----------:|---------------------------------------------------------------------|
 | `REFERENCE` | 1024 bytes | 2048 bytes | elaboración, simulación, síntesis, implementación y validación FPGA |
 | `ALT_1000`  | 1000 bytes | 1000 bytes | elaboración, simulación y smoke tests de parametrización            |

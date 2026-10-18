@@ -284,14 +284,14 @@ Los dos casos artificiales de fetch utilizan PC 1 y PC 1025. Su candidato se tra
 ### Datos de referencia
 
 | Causante / estímulo                                    | Causa | fault_pc |
-| ------------------------------------------------------ | ----: | -------: |
-| JAL x5,+2 en PC12                                      | 0     | 12       |
-| Imagen termina tras ADDI en PC12, sin halt; fetch PC16 | 1     | 16       |
-| Palabra 00000000 en PC12                               | 2     | 12       |
-| LW x3,1(x0)                                            | 4     | 12       |
-| LW x3, 0(x1)                                           | 5     | 12       |
-| SW x2,1(x0)                                            | 6     | 12       |
-| SW x2, 0(x1)                                           | 7     | 12       |
+|--------------------------------------------------------|------:|---------:|
+| JAL x5,+2 en PC12                                      |     0 |       12 |
+| Imagen termina tras ADDI en PC12, sin halt; fetch PC16 |     1 |       16 |
+| Palabra 00000000 en PC12                               |     2 |       12 |
+| LW x3,1(x0)                                            |     4 |       12 |
+| LW x3, 0(x1)                                           |     5 |       12 |
+| SW x2,1(x0)                                            |     6 |       12 |
+| SW x2, 0(x1)                                           |     7 |       12 |
 
 ### Procedimiento
 
@@ -436,10 +436,10 @@ Los dos recorridos legales de `halt` completan el único WB remanente mediante S
 
 Los dos casos locales restantes conservan estas expectativas:
 
-| Caso | Entrada local | Estado siguiente esperado |
-|---|---|---|
-| C006 | `run_request=1`, `pipeline_empty_next=0` | `HALT_DRAIN_AUTO` |
-| C007 | `run_request=1`, `pipeline_empty_next=1` | `FINISHED` |
+| Caso | Entrada local                            | Estado siguiente esperado |
+|------|------------------------------------------|---------------------------|
+| C006 | `run_request=1`, `pipeline_empty_next=0` | `HALT_DRAIN_AUTO`         |
+| C007 | `run_request=1`, `pipeline_empty_next=1` | `FINISHED`                |
 
 C006 comprueba el contrato combinacional artificial de la FSM. En el drain legal de `halt`, el único WB pendiente se consume en un ciclo efectivo y deja `pipeline_empty_next=1`; la transición artificial de C006 queda fuera del grafo de sesiones alcanzables.
 

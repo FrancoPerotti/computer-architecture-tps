@@ -60,20 +60,20 @@ flowchart LR
 
 El paquete ofrece dos perfiles: `REFERENCE` y `ALT_1000`. Para cada uno guarda las capacidades de IMEM y DMEM como valores `unsigned`. También contiene las funciones comunes que calculan anchos y validan la configuración.
 
-| Perfil | `IMEM_CAPACITY_BYTES` | `DMEM_CAPACITY_BYTES` | Uso |
-|---|---:|---:|---|
-| `REFERENCE`, por defecto | 1024 | 2048 | elaboración, simulación y realización física |
-| `ALT_1000` | 1000 | 1000 | elaboración/simulación y smoke tests, sin obligación física |
+| Perfil                   | `IMEM_CAPACITY_BYTES` | `DMEM_CAPACITY_BYTES` | Uso                                                         |
+|--------------------------|----------------------:|----------------------:|-------------------------------------------------------------|
+| `REFERENCE`, por defecto |                  1024 |                  2048 | elaboración, simulación y realización física                |
+| `ALT_1000`               |                  1000 |                  1000 | elaboración/simulación y smoke tests, sin obligación física |
 
 ### Selección y jerarquía
 
 El parámetro de elaboración `MEMORY_PROFILE` selecciona el perfil. Su valor por defecto es `REFERENCE`. Cada nivel tiene una responsabilidad:
 
-| Nivel | Responsabilidad |
-|---|---|
+| Nivel            | Responsabilidad                                                                                                                                                                                        |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Wrapper de placa | Recibe `MEMORY_PROFILE`, lo convierte una sola vez en `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`, e instancia el sistema pasando esos dos valores. Ningún módulo interno vuelve a elegir el perfil. |
-| Top funcional | Recibe `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`. |
-| Módulos internos | Reciben solo las capacidades que necesitan, siempre por conexión explícita de parámetros del padre. |
+| Top funcional    | Recibe `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`.                                                                                                                                                  |
+| Módulos internos | Reciben solo las capacidades que necesitan, siempre por conexión explícita de parámetros del padre.                                                                                                    |
 
 Esta distribución permite elaborar el top funcional y bloques en simulación sin el Clocking Wizard ni la placa. Las capacidades alternativas para las pruebas locales de aritmética se suministran al bloque probado.
 
@@ -124,13 +124,13 @@ Los tipos distinguen tres papeles:
 
 La siguiente tabla relaciona cada valor con su propósito, su representación y la regla que deben seguir el paquete y los módulos que lo importan:
 
-| Valor | Para qué se usa | Representación | Regla de uso |
-|---|---|---|---|
-| Capacidad `C` y parámetros | Definir durante la elaboración cuántos bytes tiene una memoria y configurar los módulos | `longint unsigned` de 64 bits | Permite representar `2^32` y calcular `C + 1` sin overflow de 32 bits. |
-| Dirección arquitectónica (PC/EA) | Representar las direcciones que utiliza la CPU | `logic unsigned [31:0]` | Conserva los 32 bits que utiliza la arquitectura. La EA se forma módulo `2^32`. |
-| Capacidad y extremos de validación | Comprobar que un acceso completo permanece dentro de la memoria | `logic unsigned [32:0]` | Se usa después de validar `4 <= C <= 2^32`. El bit adicional conserva el acarreo para comparar `EA + N` y `fetch PC + 4` sin perder un desbordamiento. |
-| Anchos derivados | Dimensionar índices, direcciones internas y recursos a partir de `C` | Constante entera positiva; las señales usan `logic unsigned` del ancho calculado | Se calcula con las funciones comunes para capacidades válidas. No se pasa como parámetro independiente, para evitar que contradiga a `C`. El máximo requerido es 33 bits. |
-| Tamaño LOAD original | Conservar y validar el tamaño recibido por el protocolo | `logic unsigned [39:0]` | Se valida el valor completo contra la capacidad y el múltiplo de cuatro antes de reducirlo. Nunca se truncan bits altos para fabricar un tamaño legal. |
+| Valor                              | Para qué se usa                                                                         | Representación                                                                   | Regla de uso                                                                                                                                                              |
+|------------------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Capacidad `C` y parámetros         | Definir durante la elaboración cuántos bytes tiene una memoria y configurar los módulos | `longint unsigned` de 64 bits                                                    | Permite representar `2^32` y calcular `C + 1` sin overflow de 32 bits.                                                                                                    |
+| Dirección arquitectónica (PC/EA)   | Representar las direcciones que utiliza la CPU                                          | `logic unsigned [31:0]`                                                          | Conserva los 32 bits que utiliza la arquitectura. La EA se forma módulo `2^32`.                                                                                           |
+| Capacidad y extremos de validación | Comprobar que un acceso completo permanece dentro de la memoria                         | `logic unsigned [32:0]`                                                          | Se usa después de validar `4 <= C <= 2^32`. El bit adicional conserva el acarreo para comparar `EA + N` y `fetch PC + 4` sin perder un desbordamiento.                    |
+| Anchos derivados                   | Dimensionar índices, direcciones internas y recursos a partir de `C`                    | Constante entera positiva; las señales usan `logic unsigned` del ancho calculado | Se calcula con las funciones comunes para capacidades válidas. No se pasa como parámetro independiente, para evitar que contradiga a `C`. El máximo requerido es 33 bits. |
+| Tamaño LOAD original               | Conservar y validar el tamaño recibido por el protocolo                                 | `logic unsigned [39:0]`                                                          | Se valida el valor completo contra la capacidad y el múltiplo de cuatro antes de reducirlo. Nunca se truncan bits altos para fabricar un tamaño legal.                    |
 
 Las operaciones de configuración deben realizarse con un tipo `unsigned` suficientemente ancho desde el principio. Por ejemplo, `2^32` se representa como `64'h0000000100000000`, porque una dirección de 32 bits llega hasta `2^32 - 1`, mientras que la capacidad máxima puede ser `2^32`. No debe calcularse como `1 << 32` usando un entero de 32 bits y convertir el resultado después: el desbordamiento ya habría ocurrido y el valor obtenido sería incorrecto.
 
@@ -140,12 +140,12 @@ Para una capacidad válida `C`, con `Q = C/4`, el paquete proporciona las funcio
 
 La siguiente tabla muestra los resultados de las fórmulas para varias capacidades:
 
-| Propiedad | Fórmula matemática | `C=4` | `C=1000` | `C=1024` | `C=2048` | `C=2^32` |
-|---|---|---:|---:|---:|---:|---:|
-| `BYTE_ADDRESS_WIDTH` | max(1,ceil(log2(C))) | 2 | 10 | 10 | 11 | 32 |
-| `WORD_INDEX_WIDTH` | max(1,ceil(log2(Q))) | 1 | 8 | 8 | 9 | 30 |
-| `ROW_INDEX_WIDTH` | max(1,ceil(log2(Q))) | 1 | 8 | 8 | 9 | 30 |
-| `CAPACITY_INCLUSIVE_WIDTH` | max(1,ceil(log2(C+1))) | 3 | 10 | 11 | 12 | 33 |
+| Propiedad                  | Fórmula matemática     | `C=4` | `C=1000` | `C=1024` | `C=2048` | `C=2^32` |
+|----------------------------|------------------------|------:|---------:|---------:|---------:|---------:|
+| `BYTE_ADDRESS_WIDTH`       | max(1,ceil(log2(C)))   |     2 |       10 |       10 |       11 |       32 |
+| `WORD_INDEX_WIDTH`         | max(1,ceil(log2(Q)))   |     1 |        8 |        8 |        9 |       30 |
+| `ROW_INDEX_WIDTH`          | max(1,ceil(log2(Q)))   |     1 |        8 |        8 |        9 |       30 |
+| `CAPACITY_INCLUSIVE_WIDTH` | max(1,ceil(log2(C+1))) |     3 |       10 |       11 |       12 |       33 |
 
 `CAPACITY_INCLUSIVE_WIDTH` se utiliza para representar capacidades y límites inclusivos, como el tamaño de una imagen y los bytes faltantes durante una carga. Los índices y contadores de cada bloque se derivan de la capacidad de la memoria correspondiente mediante las funciones comunes. Los detalles de aplicación —como lanes, máscaras, direcciones internas y serialización— pertenecen a los contratos de cada módulo.
 
@@ -155,17 +155,17 @@ Los padres intermedios reenvían a sus hijos las capacidades que recibieron. Nin
 
 Cada hijo recibe del padre una capacidad y deriva de ella las propiedades que usa:
 
-| Consumidor funcional | Parámetro recibido del padre | Propiedades que deriva/usa |
-|---|---|---|
-| IMEM | `IMEM_CAPACITY_BYTES` | palabras, índice de escritura y guard de fila |
-| `Fetch Fault Check` / IF | `IMEM_CAPACITY_BYTES` | límite de 33 bits, región completa y ancho de tamaño confirmado |
-| Loader | `IMEM_CAPACITY_BYTES` | dirección de byte e índice de palabra; tamaño/posición vienen del controlador existente |
-| `Global FSM` / estado de imagen | `IMEM_CAPACITY_BYTES` | `IMAGE_SIZE_WIDTH`; único tamaño confirmado persistente |
-| `protocol_controller` | `IMEM_CAPACITY_BYTES` | tamaño validado, `remaining_bytes` y `load_byte_offset`; tamaño original sigue de 40 bits |
-| `Data Memory` | `DMEM_CAPACITY_BYTES` | filas/lanes, direcciones CPU/Debug/preparación, bitmap único |
-| `EX Fault Check` | `DMEM_CAPACITY_BYTES` | límite y región completa en 33 bits |
-| `Session Preparation` | `DMEM_CAPACITY_BYTES` | índice inclusivo, dirección y límite de recorrido |
-| `response_serializer` | `DMEM_CAPACITY_BYTES` | dirección de consulta y count/recorrido/lista; layout UART fijo |
+| Consumidor funcional            | Parámetro recibido del padre | Propiedades que deriva/usa                                                                |
+|---------------------------------|------------------------------|-------------------------------------------------------------------------------------------|
+| IMEM                            | `IMEM_CAPACITY_BYTES`        | palabras, índice de escritura y guard de fila                                             |
+| `Fetch Fault Check` / IF        | `IMEM_CAPACITY_BYTES`        | límite de 33 bits, región completa y ancho de tamaño confirmado                           |
+| Loader                          | `IMEM_CAPACITY_BYTES`        | dirección de byte e índice de palabra; tamaño/posición vienen del controlador existente   |
+| `Global FSM` / estado de imagen | `IMEM_CAPACITY_BYTES`        | `IMAGE_SIZE_WIDTH`; único tamaño confirmado persistente                                   |
+| `protocol_controller`           | `IMEM_CAPACITY_BYTES`        | tamaño validado, `remaining_bytes` y `load_byte_offset`; tamaño original sigue de 40 bits |
+| `Data Memory`                   | `DMEM_CAPACITY_BYTES`        | filas/lanes, direcciones CPU/Debug/preparación, bitmap único                              |
+| `EX Fault Check`                | `DMEM_CAPACITY_BYTES`        | límite y región completa en 33 bits                                                       |
+| `Session Preparation`           | `DMEM_CAPACITY_BYTES`        | índice inclusivo, dirección y límite de recorrido                                         |
+| `response_serializer`           | `DMEM_CAPACITY_BYTES`        | dirección de consulta y count/recorrido/lista; layout UART fijo                           |
 
 > **Nota:** La capacidad física de IMEM y DMEM se define durante la elaboración. El tamaño de la imagen cargada solo indica cuánto contenido se utiliza durante una sesión: no modifica la capacidad de IMEM ni determina la capacidad de DMEM.
 

@@ -357,10 +357,10 @@ El cálculo y la validación de `redirect_target` se desarrollan en [Etapa EX](s
 
 La confirmación determina qué instrucciones se descartan:
 
-| Evento confirmado | Instrucción causante | Instrucciones posteriores | Instrucciones anteriores       |
-|-------------------|----------------------|---------------------------|--------------------------------|
-| Fault             | Se descarta.         | Se descartan.             | Pueden terminar su ejecución.  |
-| `halt`            | Se consume en EX.    | Se descartan.             | Pueden terminar su ejecución.  |
+| Evento confirmado | Instrucción causante | Instrucciones posteriores | Instrucciones anteriores      |
+|-------------------|----------------------|---------------------------|-------------------------------|
+| Fault             | Se descarta.         | Se descartan.             | Pueden terminar su ejecución. |
+| `halt`            | Se consume en EX.    | Se descartan.             | Pueden terminar su ejecución. |
 
 En ambos casos se deja de admitir trabajo nuevo.
 
@@ -429,15 +429,15 @@ Esta diferencia entre `act_ex_fault` y `act_id_fault` responde al orden de las i
 
 `Global FSM` genera `cpu_cycle_fire` y `drain_mode`, distribuidas por `Execution Control`. `Pipeline Hazard Control` utiliza esas señales y los eventos del pipeline para seleccionar la acción del ciclo.
 
-| Entrada | Origen |
-|---|---|
-| `cpu_cycle_fire` | `Execution Control` |
-| `drain_mode` | `Execution Control` |
-| `ex_fault_candidate` | `EX Fault Check` |
-| `ex_halt_candidate` | `Flow Control` |
-| `redirect_requested` | `Flow Control` |
-| `id_fault_candidate` | `ID Fault Check` |
-| `load_use_stall` | `Load-Use Detector` |
+| Entrada              | Origen              |
+|----------------------|---------------------|
+| `cpu_cycle_fire`     | `Execution Control` |
+| `drain_mode`         | `Execution Control` |
+| `ex_fault_candidate` | `EX Fault Check`    |
+| `ex_halt_candidate`  | `Flow Control`      |
+| `redirect_requested` | `Flow Control`      |
+| `id_fault_candidate` | `ID Fault Check`    |
+| `load_use_stall`     | `Load-Use Detector` |
 
 RESET, un LOAD aceptado y la preparación tienen prioridad global sobre la ejecución de la CPU y se resuelven fuera de estas acciones.
 
@@ -445,11 +445,11 @@ RESET, un LOAD aceptado y la preparación tienen prioridad global sobre la ejecu
 
 `cpu_cycle_fire` habilita el ciclo y `drain_mode` selecciona su contexto:
 
-| `cpu_cycle_fire` | `drain_mode` | Selección |
-|---:|---:|---|
-| 0 | Cualquiera | Todas las acciones en cero. |
-| 1 | 0 | Una de las seis acciones ordinarias. |
-| 1 | 1 | Una de las dos acciones de drain. |
+| `cpu_cycle_fire` | `drain_mode` | Selección                            |
+|-----------------:|-------------:|--------------------------------------|
+|                0 |   Cualquiera | Todas las acciones en cero.          |
+|                1 |            0 | Una de las seis acciones ordinarias. |
+|                1 |            1 | Una de las dos acciones de drain.    |
 
 En una sesión legal, cada ciclo autorizado corresponde a ejecución ordinaria o a drenado con instrucciones pendientes. `Execution Control` determina la finalización mediante `pipeline_empty_next` y pasa al estado terminal cuando se completa ese trabajo.
 
@@ -610,7 +610,7 @@ La clase de ciclo determina cuántas acciones se seleccionan:
 |----------------------------|-----------------------------------------------------|
 | Ciclo efectivo no terminal | Exactamente una de las seis acciones no terminales. |
 | Ciclo efectivo de drenado  | Una de las dos acciones de drenado.                 |
-| `cpu_cycle_fire=0`          | Ninguna acción.                                     |
+| `cpu_cycle_fire=0`         | Ninguna acción.                                     |
 
 ## Efecto de cada acción sobre el pipeline
 

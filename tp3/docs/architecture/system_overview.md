@@ -29,11 +29,11 @@ Presenta el diseño FPGA consolidado y orienta la lectura hacia el contrato vige
 
 La FPGA contiene un procesador RISC-V de 32 bits con pipeline de cinco etapas. Recibe un programa por UART, lo carga, ejecuta ciclos en `RUN` o `STEP` y responde con el estado observado cuando corresponde. UART y control de transporte siguen funcionando aunque la CPU esté detenida.
 
-| Módulo principal | Responsabilidad y contenido |
-|---|---|
-| `basys3_top` | Pines Basys 3, selección única de perfil, `clock_generator` (IP Clocking Wizard), `reset_sync` y `system_top` |
-| `system_top` | Conecta `uart_core`, `protocol_controller`, `response_serializer` y `processor_top` |
-| `processor_top` | Conecta cinco etapas, cuatro registros interetapa, hazards, `execution_control`, Loader y preparación |
+| Módulo principal | Responsabilidad y contenido                                                                                   |
+|------------------|---------------------------------------------------------------------------------------------------------------|
+| `basys3_top`     | Pines Basys 3, selección única de perfil, `clock_generator` (IP Clocking Wizard), `reset_sync` y `system_top` |
+| `system_top`     | Conecta `uart_core`, `protocol_controller`, `response_serializer` y `processor_top`                           |
+| `processor_top`  | Conecta cinco etapas, cuatro registros interetapa, hazards, `execution_control`, Loader y preparación         |
 
 ```mermaid
 flowchart LR
@@ -56,10 +56,10 @@ La jerarquía, los puertos físicos/de tops y los aliases están en [Composició
 - El reset común combina el botón, una petición UART registrada y la falta de locked. `reset_sync` tiene aserción asíncrona y liberación sincronizada; los recursos funcionales consumen reset al flanco. Solo el botón resetea el IP de Clocking Wizard. `RESET` UART espera el último Stop de su ACCEPTED antes de pedir reset.
 - `system_pkg.sv` centraliza definiciones compartidas; cada módulo mantiene sus constantes privadas. El top selecciona el perfil una vez y distribuye capacidades explícitas.
 
-| Perfil | IMEM bytes | DMEM bytes | Alcance |
-|---|---:|---:|---|
-| `REFERENCE`, por defecto | 1024 | 2048 | Simulación e implementación física de referencia |
-| `ALT_1000` | 1000 | 1000 | Elaboración/simulación; sin obligación física adicional |
+| Perfil                   | IMEM bytes | DMEM bytes | Alcance                                                 |
+|--------------------------|-----------:|-----------:|---------------------------------------------------------|
+| `REFERENCE`, por defecto |       1024 |       2048 | Simulación e implementación física de referencia        |
+| `ALT_1000`               |       1000 |       1000 | Elaboración/simulación; sin obligación física adicional |
 
 Fuentes de detalle: [Plataforma](platform/platform_reference.md), [Reset](platform/reset_integration.md) y [Configuración común](common_configuration.md). Capacidad legal de cada memoria: múltiplo de cuatro entre 4 y 2^32 bytes; el build distingue capacidad ilegal y capacidad legal no soportada. Esto no obliga a implementar arrays de todos esos tamaños.
 
@@ -69,14 +69,14 @@ Fuentes de detalle: [Plataforma](platform/platform_reference.md), [Reset](platfo
 
 Se implementan **32 instrucciones RV32I y `halt` exacto 0x0000000B**, todas de 32 bits. La [whitelist y sus campos legales](cpu/stage_id.md#codificaciones-legales) son autoridad del `decoder`; otras codificaciones producen instrucción ilegal.
 
-| Familia | Instrucciones |
-|---|---|
-| Registros | `ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND` |
-| Inmediatos | `ADDI`, `SLTI`, `SLTIU`, `XORI`, `ORI`, `ANDI`, `SLLI`, `SRLI`, `SRAI` |
-| Loads | `LB`, `LH`, `LW`, `LBU`, `LHU` |
-| Stores | `SB`, `SH`, `SW` |
-| Flujo | `BEQ`, `BNE`, `JAL`, `JALR` |
-| Inmediato superior | `LUI` |
+| Familia            | Instrucciones                                                          |
+|--------------------|------------------------------------------------------------------------|
+| Registros          | `ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND`   |
+| Inmediatos         | `ADDI`, `SLTI`, `SLTIU`, `XORI`, `ORI`, `ANDI`, `SLLI`, `SRLI`, `SRAI` |
+| Loads              | `LB`, `LH`, `LW`, `LBU`, `LHU`                                         |
+| Stores             | `SB`, `SH`, `SW`                                                       |
+| Flujo              | `BEQ`, `BNE`, `JAL`, `JALR`                                            |
+| Inmediato superior | `LUI`                                                                  |
 
 ### Estado de ejecución
 
@@ -88,13 +88,13 @@ El estado global persistente incluye `global_state` (14 bits one-hot, interno de
 
 ### División de la ejecución
 
-| Etapa / archivo | Unidades con módulo propio | Bloques locales explícitos |
-|---|---|---|
-| `if_stage.sv` | `instruction_memory`, `fetch_fault_check` | `PC Update Control`, `Next PC MUX`, PC, `PC Adder`, `IF/ID` Input Logic |
-| `id_stage.sv` | `decoder`, `register_file`, `immediate_generator`, `id_fault_check`, `load_use_detector` | `RS1 Bypass MUX`, `RS2 Bypass MUX` |
-| `ex_stage.sv` | `forwarding_unit`, `alu`, `flow_control`, `ex_flow_check` | `Forward MUX A`/B, `ALUSrc MUX`, `Link Adder`, `Result MUX`, `Target Adder`, `JALR` Adder, `Clear bit 0`, `Target MUX` |
-| `mem_stage.sv` | `mem_decode`, `data_memory`, `load_select_extend`, `dmem_write_control` | `WB Value MUX` |
-| `wb_stage.sv` | La responsabilidad se realiza en el propio archivo | **`WB Bypass Control`**, incluida escritura RF y controles de bypass WB→ID |
+| Etapa / archivo | Unidades con módulo propio                                                               | Bloques locales explícitos                                                                                             |
+|-----------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `if_stage.sv`   | `instruction_memory`, `fetch_fault_check`                                                | `PC Update Control`, `Next PC MUX`, PC, `PC Adder`, `IF/ID` Input Logic                                                |
+| `id_stage.sv`   | `decoder`, `register_file`, `immediate_generator`, `id_fault_check`, `load_use_detector` | `RS1 Bypass MUX`, `RS2 Bypass MUX`                                                                                     |
+| `ex_stage.sv`   | `forwarding_unit`, `alu`, `flow_control`, `ex_flow_check`                                | `Forward MUX A`/B, `ALUSrc MUX`, `Link Adder`, `Result MUX`, `Target Adder`, `JALR` Adder, `Clear bit 0`, `Target MUX` |
+| `mem_stage.sv`  | `mem_decode`, `data_memory`, `load_select_extend`, `dmem_write_control`                  | `WB Value MUX`                                                                                                         |
+| `wb_stage.sv`   | La responsabilidad se realiza en el propio archivo                                       | **`WB Bypass Control`**, incluida escritura RF y controles de bypass WB→ID                                             |
 
 WB toma `MEM/WB` actual y escribe solo con `cpu_cycle_fire`, `valid`, `reg_write` y `rd` distinto de `x0`. El dato final se forma en MEM; WB no vuelve a seleccionarlo. Los muxes que aplican el bypass permanecen en ID.
 
@@ -103,11 +103,11 @@ WB toma `MEM/WB` actual y escribe solo con `cpu_cycle_fire`, `valid`, `reg_write
 `processor_top` contiene los registros interetapa `if_id_register`, `id_ex_register`, `ex_mem_register` y `mem_wb_register`. Sus controles `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` Update Control son lógica local diferenciada del top.
 
 | Registro interetapa | Campos | Bits funcionales |
-|---|---:|---:|
-| `IF/ID` | 5 | 69 |
-| `ID/EX` | 15 | 193 |
-| `EX/MEM` | 8 | 139 |
-| `MEM/WB` | 6 | 103 |
+|---------------------|-------:|-----------------:|
+| `IF/ID`             |      5 |               69 |
+| `ID/EX`             |     15 |              193 |
+| `EX/MEM`            |      8 |              139 |
+| `MEM/WB`            |      6 |              103 |
 
 Los 34 campos suman 504 bits y se observan directamente en Debug. `valid` decide si la entrada puede producir efectos; invalidar no exige borrar cada payload residual. La actualización utiliza estado/datos previos al flanco. [Pipeline CPU](cpu/cpu_pipeline.md) fija los campos y [Interfaces](../interfaces.md) sus conexiones.
 
@@ -145,12 +145,12 @@ La imagen aceptada es no vacía, contigua desde cero, múltiplo de cuatro y dent
 
 El resultado de la carga distingue estos casos:
 
-| Evento | Consecuencia |
-|---|---|
-| `LOAD` rechazada | Conserva la sesión previa. |
-| `LOAD` aceptada | La FSM emite `load_start` para iniciar Loader e invalidar la imagen anterior. |
-| Aborto | Deja `NO_IMAGE` y no restaura la imagen anterior. |
-| `load_ok` | Certifica la última palabra escrita y lleva a la FSM a `PREPARING_READY`. |
+| Evento           | Consecuencia                                                                  |
+|------------------|-------------------------------------------------------------------------------|
+| `LOAD` rechazada | Conserva la sesión previa.                                                    |
+| `LOAD` aceptada  | La FSM emite `load_start` para iniciar Loader e invalidar la imagen anterior. |
+| Aborto           | Deja `NO_IMAGE` y no restaura la imagen anterior.                             |
+| `load_ok`        | Certifica la última palabra escrita y lleva a la FSM a `PREPARING_READY`.     |
 
 Detalle: [Loader](session/loader.md), [Preparación](session/session_preparation.md) y [Protocolo](../protocol.md).
 
@@ -162,12 +162,12 @@ La FSM selecciona las solicitudes `LOAD`/`RUN`/`STEP`, informa su aceptación me
 
 La FSM global tiene 14 estados, agrupados aquí por fase para facilitar su consulta:
 
-| Fase | Estados |
-|---|---|
-| Imagen y preparación | `NO_IMAGE`, `LOADING`, `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP` |
-| Espera y ejecución | `READY`, `RUNNING`, `STEPPING` |
-| Drenado | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP` |
-| Terminación | `FINISHED`, `FAULT` |
+| Fase                 | Estados                                                                      |
+|----------------------|------------------------------------------------------------------------------|
+| Imagen y preparación | `NO_IMAGE`, `LOADING`, `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP`  |
+| Espera y ejecución   | `READY`, `RUNNING`, `STEPPING`                                               |
+| Drenado              | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP` |
+| Terminación          | `FINISHED`, `FAULT`                                                          |
 
 La [tabla de estados/transiciones](session/execution_control.md#tabla-de-transiciones) y la [codificación](session/global_state_encoding.md) son referencias de detalle.
 
@@ -239,43 +239,43 @@ Una discrepancia se registra y se reconcilia contra la revisión aprobada aplica
 
 El plan organiza actividades y las auditorías son evidencia fechada. Ninguno reemplaza los contratos vigentes.
 
-| Tema | Contrato vigente de consulta | Aprobación / origen |
-|---|---|---|
-| Obligaciones y aceptación | [Consigna](../consigna.md), [Requisitos](../requirements.md) | [Consigna](../consigna.md) y ADR vinculados en cada requisito |
-| ISA, whitelist y controles ID | [stage_id](cpu/stage_id.md#decoder) | [DEC-SYS-010](../decisions/DEC-SYS-010.md#dec-sys-010--versión-del-isa), [DEC-ARCH-004](../decisions/DEC-ARCH-004.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards) |
-| Campos y temporización de registros interetapa | [cpu_pipeline](cpu/cpu_pipeline.md) | [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-ARCH-009](../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug) |
-| Caminos de datos, ALU, enlace e inmediatos | [datapath](cpu/datapath.md) | [DEC-ARCH-002](../decisions/DEC-ARCH-002.md#dec-arch-002--etapa-de-resolución-de-branches-y-jumps), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-ARCH-007](../decisions/DEC-ARCH-007.md#dec-arch-007--temporización-del-banco-de-registros) |
-| Forwarding, load-use y ocho acciones | [control_and_hazards](cpu/control_and_hazards.md) | [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards) |
-| Faults precisos, confirmación y terminación | [faults_and_termination](session/faults_and_termination.md) | [DEC-ARCH-004](../decisions/DEC-ARCH-004.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-SYS-001](../decisions/DEC-SYS-001.md), [DEC-SYS-002](../decisions/DEC-SYS-002.md#dec-sys-002--comportamiento-ante-ausencia-de-stophalt) |
-| Sesión, FSM, `RUN`/`STEP`/`HOLD` y ciclo lógico | [execution_control](session/execution_control.md) | [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-SYS-003](../decisions/DEC-SYS-003.md#dec-sys-003--política-general-de-reprogramación) |
-| Memoria: semántica, ownership, capacidades y perfiles | [memory_architecture](memory/memory_architecture.md) | [DEC-ARCH-001](../decisions/DEC-ARCH-001.md#dec-arch-001--organización-y-comportamiento-de-las-memorias), [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), [DEC-SYS-004](../decisions/DEC-SYS-004.md#dec-sys-004--capacidades-iniciales-de-memoria), [DEC-SYS-005](../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada) |
-| DMEM: lanes, máscaras y metadatos | [dmem_access](memory/dmem_access.md) | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias) |
-| Loader: reconstrucción y escritura IMEM | [loader](session/loader.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-001](../decisions/DEC-ARCH-001.md#dec-arch-001--organización-y-comportamiento-de-las-memorias) |
-| Preparación: inicialización, clear y done | [session_preparation](session/session_preparation.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables) |
-| Estado global: one-hot y conversión externa | [global_state_encoding](session/global_state_encoding.md), [códigos UART](../protocol.md#global_state) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo) |
-| Reset: acondicionamiento funcional común | [reset_integration](platform/reset_integration.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables), [DEC-ARCH-005](../decisions/DEC-ARCH-005.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock) |
-| Plataforma: clock, pines y constraints previstos | [platform_reference](platform/platform_reference.md) | [DEC-ARCH-005](../decisions/DEC-ARCH-005.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock) y REQ-TIM-008 |
-| Configuración: paquete, tipos, propagación y validadores | [common_configuration](common_configuration.md) | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias); perfiles de [DEC-SYS-004](../decisions/DEC-SYS-004.md#dec-sys-004--capacidades-iniciales-de-memoria) |
-| Debug: significado y momento observado | [debug_architecture](debug/debug_architecture.md) | [DEC-SYS-006](../decisions/DEC-SYS-006.md#dec-sys-006--información-observable-mediante-debug), [DEC-SYS-005](../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada), [DEC-ARCH-009](../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug) |
-| Protocolo: bytes, códigos, layout, plazos y recuperación | [Protocolo](../protocol.md) | [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo), [DEC-PROTO-002](../decisions/DEC-PROTO-002.md#dec-proto-002--comandos-adicionales), [DEC-PROTO-003](../decisions/DEC-PROTO-003.md#dec-proto-003--timeouts-y-recuperación) |
-| Controlador: coordinación privada de transporte | [protocol_controller](debug/protocol_controller.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) |
-| Serializador: recorrido y producción de bytes | [response_serializer](debug/response_serializer.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart); representación de [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo) |
-| UART: integración y unidades | [uart_core](uart/uart_core.md); [uart_rx](uart/uart_rx.md), [uart_tx](uart/uart_tx.md), [uart_fifo](uart/uart_fifo.md), [uart_baud_tick_gen](uart/uart_baud_tick_gen.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) |
-| Bloques: entradas, salidas, anchos y conexiones | [Interfaces](../interfaces.md) | ADR enlazados por bloque; concreción [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias) |
-| Bloque → módulo/archivo y agrupación | [module_inventory](module_inventory.md) | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06 |
-| Topología, tops y aliases de integración | [system_composition](system_composition.md) | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06 |
-| Invariantes derivados I01–I25 | [architectural_invariants](architectural_invariants.md) | Requisitos y ADR citados en cada invariante |
+| Tema                                                     | Contrato vigente de consulta                                                                                                                                             | Aprobación / origen                                                                                                                                                                                                                                                                                                                                                                                  |
+|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Obligaciones y aceptación                                | [Consigna](../consigna.md), [Requisitos](../requirements.md)                                                                                                             | [Consigna](../consigna.md) y ADR vinculados en cada requisito                                                                                                                                                                                                                                                                                                                                        |
+| ISA, whitelist y controles ID                            | [stage_id](cpu/stage_id.md#decoder)                                                                                                                                      | [DEC-SYS-010](../decisions/DEC-SYS-010.md#dec-sys-010--versión-del-isa), [DEC-ARCH-004](../decisions/DEC-ARCH-004.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards)                                                                                                                                   |
+| Campos y temporización de registros interetapa           | [cpu_pipeline](cpu/cpu_pipeline.md)                                                                                                                                      | [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-ARCH-009](../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug)                                                                                                                                                                                                                    |
+| Caminos de datos, ALU, enlace e inmediatos               | [datapath](cpu/datapath.md)                                                                                                                                              | [DEC-ARCH-002](../decisions/DEC-ARCH-002.md#dec-arch-002--etapa-de-resolución-de-branches-y-jumps), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-ARCH-007](../decisions/DEC-ARCH-007.md#dec-arch-007--temporización-del-banco-de-registros)                                                                                                                  |
+| Forwarding, load-use y ocho acciones                     | [control_and_hazards](cpu/control_and_hazards.md)                                                                                                                        | [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards)                                                                                                                                                                                                                                                                                                                       |
+| Faults precisos, confirmación y terminación              | [faults_and_termination](session/faults_and_termination.md)                                                                                                              | [DEC-ARCH-004](../decisions/DEC-ARCH-004.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-SYS-001](../decisions/DEC-SYS-001.md), [DEC-SYS-002](../decisions/DEC-SYS-002.md#dec-sys-002--comportamiento-ante-ausencia-de-stophalt)                                                              |
+| Sesión, FSM, `RUN`/`STEP`/`HOLD` y ciclo lógico          | [execution_control](session/execution_control.md)                                                                                                                        | [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-SYS-003](../decisions/DEC-SYS-003.md#dec-sys-003--política-general-de-reprogramación)                                                                                                                                               |
+| Memoria: semántica, ownership, capacidades y perfiles    | [memory_architecture](memory/memory_architecture.md)                                                                                                                     | [DEC-ARCH-001](../decisions/DEC-ARCH-001.md#dec-arch-001--organización-y-comportamiento-de-las-memorias), [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), [DEC-SYS-004](../decisions/DEC-SYS-004.md#dec-sys-004--capacidades-iniciales-de-memoria), [DEC-SYS-005](../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada) |
+| DMEM: lanes, máscaras y metadatos                        | [dmem_access](memory/dmem_access.md)                                                                                                                                     | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias)                                                                                                                                                                                                                                                                                                     |
+| Loader: reconstrucción y escritura IMEM                  | [loader](session/loader.md)                                                                                                                                              | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-001](../decisions/DEC-ARCH-001.md#dec-arch-001--organización-y-comportamiento-de-las-memorias)                                                                                                                                                                                           |
+| Preparación: inicialización, clear y done                | [session_preparation](session/session_preparation.md)                                                                                                                    | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables)                                                                                                                                                                                                                         |
+| Estado global: one-hot y conversión externa              | [global_state_encoding](session/global_state_encoding.md), [códigos UART](../protocol.md#global_state)                                                                   | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo)                                                                                                                      |
+| Reset: acondicionamiento funcional común                 | [reset_integration](platform/reset_integration.md)                                                                                                                       | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart), [DEC-ARCH-008](../decisions/DEC-ARCH-008.md#dec-arch-008--reset-y-enables), [DEC-ARCH-005](../decisions/DEC-ARCH-005.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock)                                                                                                                 |
+| Plataforma: clock, pines y constraints previstos         | [platform_reference](platform/platform_reference.md)                                                                                                                     | [DEC-ARCH-005](../decisions/DEC-ARCH-005.md#dec-arch-005--frecuencia-objetivo-y-distribución-de-clock) y REQ-TIM-008                                                                                                                                                                                                                                                                                 |
+| Configuración: paquete, tipos, propagación y validadores | [common_configuration](common_configuration.md)                                                                                                                          | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias); perfiles de [DEC-SYS-004](../decisions/DEC-SYS-004.md#dec-sys-004--capacidades-iniciales-de-memoria)                                                                                                                                                                                               |
+| Debug: significado y momento observado                   | [debug_architecture](debug/debug_architecture.md)                                                                                                                        | [DEC-SYS-006](../decisions/DEC-SYS-006.md#dec-sys-006--información-observable-mediante-debug), [DEC-SYS-005](../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada), [DEC-ARCH-009](../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug)                                                                                                     |
+| Protocolo: bytes, códigos, layout, plazos y recuperación | [Protocolo](../protocol.md)                                                                                                                                              | [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo), [DEC-PROTO-002](../decisions/DEC-PROTO-002.md#dec-proto-002--comandos-adicionales), [DEC-PROTO-003](../decisions/DEC-PROTO-003.md#dec-proto-003--timeouts-y-recuperación)                                                                                                                             |
+| Controlador: coordinación privada de transporte          | [protocol_controller](debug/protocol_controller.md)                                                                                                                      | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart)                                                                                                                                                                                                                                                                                                     |
+| Serializador: recorrido y producción de bytes            | [response_serializer](debug/response_serializer.md)                                                                                                                      | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart); representación de [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo)                                                                                                                                                                                    |
+| UART: integración y unidades                             | [uart_core](uart/uart_core.md); [uart_rx](uart/uart_rx.md), [uart_tx](uart/uart_tx.md), [uart_fifo](uart/uart_fifo.md), [uart_baud_tick_gen](uart/uart_baud_tick_gen.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart)                                                                                                                                                                                                                                                                                                     |
+| Bloques: entradas, salidas, anchos y conexiones          | [Interfaces](../interfaces.md)                                                                                                                                           | ADR enlazados por bloque; concreción [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias)                                                                                                                                                                                                                                                                |
+| Bloque → módulo/archivo y agrupación                     | [module_inventory](module_inventory.md)                                                                                                                                  | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06                                                                                                                                                                                                                                                     |
+| Topología, tops y aliases de integración                 | [system_composition](system_composition.md)                                                                                                                              | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06                                                                                                                                                                                                                                                     |
+| Invariantes derivados I01–I25                            | [architectural_invariants](architectural_invariants.md)                                                                                                                  | Requisitos y ADR citados en cada invariante                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Fuentes de detalle y trabajo que sigue
 
-| Consulta | Fuente vigente |
-|---|---|
-| Nombres/archivos y ubicación de todos los bloques | [Inventario](module_inventory.md) |
-| Puertos de tops, aliases y diagrama integrado | [Composición](system_composition.md) |
-| Entradas/salidas/anchos de cada bloque | [Interfaces](../interfaces.md) |
-| Bytes, respuestas, errores y plazos de UART | [Protocolo](../protocol.md) |
-| Qué exige el trabajo práctico | [Consigna](../consigna.md) y [Requisitos](../requirements.md) |
-| Decisiones de diseño pendientes | [Decisiones pendientes](../decisions/pending_decisions.md) |
+| Consulta                                          | Fuente vigente                                                |
+|---------------------------------------------------|---------------------------------------------------------------|
+| Nombres/archivos y ubicación de todos los bloques | [Inventario](module_inventory.md)                             |
+| Puertos de tops, aliases y diagrama integrado     | [Composición](system_composition.md)                          |
+| Entradas/salidas/anchos de cada bloque            | [Interfaces](../interfaces.md)                                |
+| Bytes, respuestas, errores y plazos de UART       | [Protocolo](../protocol.md)                                   |
+| Qué exige el trabajo práctico                     | [Consigna](../consigna.md) y [Requisitos](../requirements.md) |
+| Decisiones de diseño pendientes                   | [Decisiones pendientes](../decisions/pending_decisions.md)    |
 
 Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` registra por qué/cuándo se acordó y qué revisión sustituyó a otra. `pending_decisions.md` registra las decisiones de diseño todavía abiertas. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
 

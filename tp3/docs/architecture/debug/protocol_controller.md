@@ -17,10 +17,10 @@ La [separación de responsabilidades](../../decisions/DEC-SYS-007.md#acuerdo-par
 
 Se distinguen tres responsabilidades:
 
-| Parte funcional | Responsabilidad |
-|---|---|
-| Control del protocolo | Interpretar solicitudes, determinar cuándo consumir o descartar RX y coordinar los servicios y sus respuestas. |
-| Registros y contadores | Conservar código, tamaño, progreso y tiempos de espera; actualizarse mediante las señales de acción del control. |
+| Parte funcional          | Responsabilidad                                                                                                        |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Control del protocolo    | Interpretar solicitudes, determinar cuándo consumir o descartar RX y coordinar los servicios y sus respuestas.         |
+| Registros y contadores   | Conservar código, tamaño, progreso y tiempos de espera; actualizarse mediante las señales de acción del control.       |
 | Generación de respuestas | Formar cabeceras, serializar Debug, conservar el byte pendiente cuando TX está llena y seguir el fin físico del envío. |
 
 ```mermaid
@@ -46,10 +46,10 @@ El diagrama representa responsabilidades e intercambios funcionales. Las flechas
 
 Se utilizan dos módulos, cada uno con sus recursos internos:
 
-| Módulo | Responsabilidad y recursos |
-|---|---|
+| Módulo                | Responsabilidad y recursos                                                                                                                             |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `protocol_controller` | Interpreta solicitudes, consume o descarta RX y coordina las operaciones con `Loader` y control de ejecución. Contiene su FSM, registros y contadores. |
-| `response_serializer` | Forma cabeceras, recorre Debug, entrega bytes a TX y sigue la finalización física de la respuesta. Contiene sus controles, registros y contadores. |
+| `response_serializer` | Forma cabeceras, recorre Debug, entrega bytes a TX y sigue la finalización física de la respuesta. Contiene sus controles, registros y contadores.     |
 
 `protocol_controller` solicita una respuesta a [response_serializer](response_serializer.md). El serializador comunica cuándo termina el último byte, incluido Stop. Mientras el serializador espera espacio en TX, el controlador conserva la atención RX que corresponda a la fase.
 
@@ -79,13 +79,13 @@ Todas estas funciones utilizan el dominio funcional común. `HOLD` de CPU no det
 
 Las señales concretan los recorridos aprobados. Se revisan juntas por función; los nombres de las órdenes internas no requieren decisiones separadas.
 
-| Conexión | Contrato vigente y condición de uso |
-|---|---|
-| UART → controlador | Retirar un byte cuando RX no está vacía. Interpretarlo solo en la fase correspondiente y sin error; descartarlo durante las demás esperas. La espera TX no suspende este consumo. |
-| Controlador → `Loader` | Entregar cada byte válido de contenido `LOAD` con una señal de entrega; indicar último byte y aborto. `Loader` confirma la escritura final. La capacidad de aceptar cada entrega está contrastada documentalmente en [Loader](../session/loader.md#presupuesto-de-load). |
-| Controlador ↔ control CPU | Solicitar `LOAD`/`RUN`/`STEP`; recibir aceptación común, indicadores de sesión, ciclo efectivamente realizado, fin de preparación y validez de imagen. |
-| Controlador ↔ serializador / lectura Debug | Entregar el descriptor pendiente cuando el serializador está libre y usar su fin físico. La misma exclusión ya definida selecciona RF y DMEM para Debug. |
-| Controlador → reset global | Registrar la solicitud al completar físicamente `RESET`/`ACCEPTED` y aplicar reset en el siguiente flanco funcional. No detener anticipadamente la CPU. |
+| Conexión                                   | Contrato vigente y condición de uso                                                                                                                                                                                                                                      |
+|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| UART → controlador                         | Retirar un byte cuando RX no está vacía. Interpretarlo solo en la fase correspondiente y sin error; descartarlo durante las demás esperas. La espera TX no suspende este consumo.                                                                                        |
+| Controlador → `Loader`                     | Entregar cada byte válido de contenido `LOAD` con una señal de entrega; indicar último byte y aborto. `Loader` confirma la escritura final. La capacidad de aceptar cada entrega está contrastada documentalmente en [Loader](../session/loader.md#presupuesto-de-load). |
+| Controlador ↔ control CPU                  | Solicitar `LOAD`/`RUN`/`STEP`; recibir aceptación común, indicadores de sesión, ciclo efectivamente realizado, fin de preparación y validez de imagen.                                                                                                                   |
+| Controlador ↔ serializador / lectura Debug | Entregar el descriptor pendiente cuando el serializador está libre y usar su fin físico. La misma exclusión ya definida selecciona RF y DMEM para Debug.                                                                                                                 |
+| Controlador → reset global                 | Registrar la solicitud al completar físicamente `RESET`/`ACCEPTED` y aplicar reset en el siguiente flanco funcional. No detener anticipadamente la CPU.                                                                                                                  |
 
 Las órdenes internas habilitan captura, avance, limpieza o conservación de los recursos existentes. La FSM decide cuándo; la lógica de cada recurso realiza la operación. Se mantiene la separación aprobada, sin nuevos registros por esas órdenes.
 
@@ -97,22 +97,22 @@ El [Loader aprobado](../session/loader.md#progreso-mantenido-por-el-controlador)
 
 Todos usan el clock funcional común. W representa `IMAGE_SIZE_WIDTH`. Las señales de un bit son controles o condiciones; los datos se muestrean en el flanco habilitado. Las conexiones de servicios están concretadas en la [composición aprobada](../system_composition.md).
 
-| Dirección | Señales | Contrato |
-|---|---|---|
-| Entrada | clk, reset | Clock y reset global de un bit. |
-| Entrada desde UART | `r_data[7:0]`, `rx_empty`, `rx_error_tick`, `rx_activity`, `rx_receiving` | Interfaces RX ya aprobadas. |
-| Salida a UART | `rd_uart` | !reset y !`rx_empty`; procesamiento o descarte según fase. |
-| Entrada desde serializador | `response_busy`, `response_done_tick` | Ocupación y fin físico aprobados; eventos consumidos en el mismo flanco, sin salida nueva de clase/Debug. |
-| Salida a serializador | `response_start`, `response_opcode[7:0]`, `response_result[7:0]`, `response_with_debug` | Solo descriptor pendiente válido con serializador libre; campos registrados. |
-| Entrada desde `Execution Control` | `load_available`, `prepare_active`, `program_finished`, `fault_terminal` | Disponibilidad de sesión para `LOAD`, preparación activa y terminación normal o por fault con pipeline vacío. |
-| Entrada de imagen | `image_valid` | Validez derivada del tamaño confirmado en `Execution Control`. |
-| Salida a `Execution Control` | `load_request`, `run_request`, `step_request` | Pulsos hacia `Global FSM` en `CHECK_SIZE`, `EXEC_RUN` o `EXEC_STEP` con elegibilidad de transporte; solicitud no depende combinacionalmente de su aceptación. |
-| Entrada desde `Execution Control` | `command_accepted` | Aceptación combinacional de la solicitud presentada, consumida en el mismo flanco por ambas FSM. |
-| Entrada de ejecución/preparación | `cpu_cycle_fire`, `prepare_done` | Desde `Execution Control` y `Session Preparation`, respectivamente; identificar ciclo `STEP` realizado y fin de preparación. |
-| Salida a `Loader` | `load_size_bytes[W-1:0]`, `load_byte_valid`, `load_byte_data[7:0]`, `load_byte_offset[BYTE_ADDRESS_WIDTH-1:0]`, `load_last_byte`, `load_abort` | Tamaño validado estable al aceptar la solicitud `LOAD`; un byte por flanco `LOAD_DATA`; último con restantes previos iguales a uno; aborto por error/timeout. |
-| Entrada desde `Loader` | `load_ok` | Certifica última palabra escrita; se distribuye también a FSM global. `Loader` genera `load_fail` por `load_abort`. |
-| Salida a integración reset | `uart_reset_request` | Pulso registrado posterior al último Stop de aceptación `RESET`. |
-| Salida a RF/DMEM | `rf_debug_select`, `dmem_debug_select` | Ambos iguales a `debug_exclusive`, cero durante reset. |
+| Dirección                         | Señales                                                                                                                                        | Contrato                                                                                                                                                      |
+|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Entrada                           | clk, reset                                                                                                                                     | Clock y reset global de un bit.                                                                                                                               |
+| Entrada desde UART                | `r_data[7:0]`, `rx_empty`, `rx_error_tick`, `rx_activity`, `rx_receiving`                                                                      | Interfaces RX ya aprobadas.                                                                                                                                   |
+| Salida a UART                     | `rd_uart`                                                                                                                                      | !reset y !`rx_empty`; procesamiento o descarte según fase.                                                                                                    |
+| Entrada desde serializador        | `response_busy`, `response_done_tick`                                                                                                          | Ocupación y fin físico aprobados; eventos consumidos en el mismo flanco, sin salida nueva de clase/Debug.                                                     |
+| Salida a serializador             | `response_start`, `response_opcode[7:0]`, `response_result[7:0]`, `response_with_debug`                                                        | Solo descriptor pendiente válido con serializador libre; campos registrados.                                                                                  |
+| Entrada desde `Execution Control` | `load_available`, `prepare_active`, `program_finished`, `fault_terminal`                                                                       | Disponibilidad de sesión para `LOAD`, preparación activa y terminación normal o por fault con pipeline vacío.                                                 |
+| Entrada de imagen                 | `image_valid`                                                                                                                                  | Validez derivada del tamaño confirmado en `Execution Control`.                                                                                                |
+| Salida a `Execution Control`      | `load_request`, `run_request`, `step_request`                                                                                                  | Pulsos hacia `Global FSM` en `CHECK_SIZE`, `EXEC_RUN` o `EXEC_STEP` con elegibilidad de transporte; solicitud no depende combinacionalmente de su aceptación. |
+| Entrada desde `Execution Control` | `command_accepted`                                                                                                                             | Aceptación combinacional de la solicitud presentada, consumida en el mismo flanco por ambas FSM.                                                              |
+| Entrada de ejecución/preparación  | `cpu_cycle_fire`, `prepare_done`                                                                                                               | Desde `Execution Control` y `Session Preparation`, respectivamente; identificar ciclo `STEP` realizado y fin de preparación.                                  |
+| Salida a `Loader`                 | `load_size_bytes[W-1:0]`, `load_byte_valid`, `load_byte_data[7:0]`, `load_byte_offset[BYTE_ADDRESS_WIDTH-1:0]`, `load_last_byte`, `load_abort` | Tamaño validado estable al aceptar la solicitud `LOAD`; un byte por flanco `LOAD_DATA`; último con restantes previos iguales a uno; aborto por error/timeout. |
+| Entrada desde `Loader`            | `load_ok`                                                                                                                                      | Certifica última palabra escrita; se distribuye también a FSM global. `Loader` genera `load_fail` por `load_abort`.                                           |
+| Salida a integración reset        | `uart_reset_request`                                                                                                                           | Pulso registrado posterior al último Stop de aceptación `RESET`.                                                                                              |
+| Salida a RF/DMEM                  | `rf_debug_select`, `dmem_debug_select`                                                                                                         | Ambos iguales a `debug_exclusive`, cero durante reset.                                                                                                        |
 
 `load_request` se activa solo si los cuarenta bits son válidos; `Global FSM` decide aceptación. `run_request` y `step_request` se presentan también con imagen inválida. Ante rechazo, `image_valid=0` selecciona `NO_IMAGE` y `image_valid=1` selecciona `BUSY`.
 
@@ -152,16 +152,16 @@ El contrato siguiente integra el cierre DEC-SYS-007, incluidos coordinación, di
 
 **Estado:** Estados y recursos del recorrido `LOAD` aprobados el 2026-10-05, dentro de la única FSM `protocol_controller`; la FSM del serializador es independiente. Véase el [acuerdo parcial](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-y-recursos-del-recorrido-load).
 
-| Estado | Función aprobada | Condición de avance normal |
-|---|---|---|
-| `IDLE`, compartido | Esperar un comando UART. | `LOAD` recibido inicia recepción de tamaño. |
-| `READ_SIZE` | Recibir y guardar los cinco bytes del tamaño. | Tamaño completo. |
-| `CHECK_SIZE` | Validar tamaño y disponibilidad para cargar. | Aceptación solicita `ACCEPTED`; rechazo solicita el resultado correspondiente según protocolo. |
-| `WAIT_LOAD_ACCEPT` | Esperar envío físico de `LOAD`/`ACCEPTED`. | Fin del último Stop de esa respuesta. |
-| `LOAD_DATA` | Entregar cada byte al `Loader` y descontar los faltantes. | Todo el contenido esperado entregado. |
-| `WAIT_LOAD_RESULT` | Esperar confirmación de que las instrucciones quedaron escritas. | Confirmación `Loader`. |
-| `WAIT_LOAD_PREP` | Esperar preparación del estado inicial CPU. | Preparación terminada; solicitar `LOAD`/`DONE`. |
-| `WAIT_LOAD_DONE` | Esperar envío físico de `LOAD`/`DONE`. | Fin del último Stop; volver a `IDLE`. |
+| Estado             | Función aprobada                                                 | Condición de avance normal                                                                     |
+|--------------------|------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| `IDLE`, compartido | Esperar un comando UART.                                         | `LOAD` recibido inicia recepción de tamaño.                                                    |
+| `READ_SIZE`        | Recibir y guardar los cinco bytes del tamaño.                    | Tamaño completo.                                                                               |
+| `CHECK_SIZE`       | Validar tamaño y disponibilidad para cargar.                     | Aceptación solicita `ACCEPTED`; rechazo solicita el resultado correspondiente según protocolo. |
+| `WAIT_LOAD_ACCEPT` | Esperar envío físico de `LOAD`/`ACCEPTED`.                       | Fin del último Stop de esa respuesta.                                                          |
+| `LOAD_DATA`        | Entregar cada byte al `Loader` y descontar los faltantes.        | Todo el contenido esperado entregado.                                                          |
+| `WAIT_LOAD_RESULT` | Esperar confirmación de que las instrucciones quedaron escritas. | Confirmación `Loader`.                                                                         |
+| `WAIT_LOAD_PREP`   | Esperar preparación del estado inicial CPU.                      | Preparación terminada; solicitar `LOAD`/`DONE`.                                                |
+| `WAIT_LOAD_DONE`   | Esperar envío físico de `LOAD`/`DONE`.                           | Fin del último Stop; volver a `IDLE`.                                                          |
 
 Se aprueban cuatro recursos funcionales: registro del tamaño original, índice de sus cinco bytes, contador de bytes faltantes inicializado con el tamaño y contador de tiempo para detectar recepción interrumpida. El contador de faltantes disminuye por byte entregado al `Loader`; el tamaño original se conserva aparte. Las acciones sobre los recursos siguen el criterio de separación FSM/recursos ya aprobado. El ensamblado y escritura de instrucciones pertenecen al `Loader`.
 
@@ -171,12 +171,12 @@ Se aprueban cuatro recursos funcionales: registro del tamaño original, índice 
 
 **Estado:** Recorrido `RUN` aprobado el 2026-10-05, con función, condición de avance y destino de cada estado. Véase el [acuerdo parcial](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-y-marcas-del-recorrido-run).
 
-| Estado | Función aprobada | Condición y destino de avance |
-|---|---|---|
-| `EXEC_RUN` | Solicitar iniciar o continuar `RUN`; si se acepta, solicitar `ACCEPTED`. | Aceptación→`WAIT_RUN_ACCEPT`. Rechazo: solicitar el resultado previsto y pasar a `WAIT_BRIEF`. |
-| `WAIT_RUN_ACCEPT` | Esperar envío físico de `ACCEPTED`, sin pausar ejecución CPU por esa espera. | Último Stop de `ACCEPTED`→`IDLE` si `RUN` continúa; →`WAIT_DEBUG` si ya terminó. |
-| `IDLE`, compartido | Durante ejecución `RUN`, atender solicitudes permitidas como `CHECK_READY` o `RESET`. | Terminal normal/fault del `RUN` debido→`WAIT_DEBUG`. Un comando permitido sigue su recorrido correspondiente. |
-| `WAIT_DEBUG`, compartido | Coordinar respuesta terminal y Debug, conservando el estado observado. | Último Stop de respuesta terminal con todo Debug→`IDLE`. |
+| Estado                   | Función aprobada                                                                      | Condición y destino de avance                                                                                 |
+|--------------------------|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `EXEC_RUN`               | Solicitar iniciar o continuar `RUN`; si se acepta, solicitar `ACCEPTED`.              | Aceptación→`WAIT_RUN_ACCEPT`. Rechazo: solicitar el resultado previsto y pasar a `WAIT_BRIEF`.                |
+| `WAIT_RUN_ACCEPT`        | Esperar envío físico de `ACCEPTED`, sin pausar ejecución CPU por esa espera.          | Último Stop de `ACCEPTED`→`IDLE` si `RUN` continúa; →`WAIT_DEBUG` si ya terminó.                              |
+| `IDLE`, compartido       | Durante ejecución `RUN`, atender solicitudes permitidas como `CHECK_READY` o `RESET`. | Terminal normal/fault del `RUN` debido→`WAIT_DEBUG`. Un comando permitido sigue su recorrido correspondiente. |
+| `WAIT_DEBUG`, compartido | Coordinar respuesta terminal y Debug, conservando el estado observado.                | Último Stop de respuesta terminal con todo Debug→`IDLE`.                                                      |
 
 Sin la condición de avance, se conserva el estado. `WAIT_BRIEF` se utiliza para esperar la transmisión física del rechazo; su coordinación con otras respuestas y un `RUN` previo se completa en la revisión común. La CPU conserva su propio control de ejecución y preparación, según los contratos ya aprobados.
 
@@ -190,11 +190,11 @@ Si `RUN` termina durante `WAIT_RUN_ACCEPT`, se recuerda el terminal y se retiene
 
 Desde `IDLE`, un comando `STEP` admitido lleva a `EXEC_STEP`.
 
-| Estado | Función aprobada | Condición y destino de avance |
-|---|---|---|
-| `EXEC_STEP` | Solicitar realizar `STEP`. | Aceptación y ciclo realizado→`WAIT_DEBUG`. Aceptación que requiere preparar nueva sesión→`WAIT_STEP_PREP`. Rechazo→`WAIT_BRIEF` para transmitir su resultado. |
-| `WAIT_STEP_PREP` | Esperar preparación de nueva sesión sobre el programa cargado. | Preparación terminada y primer/único ciclo realizado→`WAIT_DEBUG`. |
-| `WAIT_DEBUG`, compartido | Esperar `DONE` y todo Debug, manteniendo el estado postciclo observado. | Último Stop del mensaje completo→`IDLE`. |
+| Estado                   | Función aprobada                                                        | Condición y destino de avance                                                                                                                                 |
+|--------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `EXEC_STEP`              | Solicitar realizar `STEP`.                                              | Aceptación y ciclo realizado→`WAIT_DEBUG`. Aceptación que requiere preparar nueva sesión→`WAIT_STEP_PREP`. Rechazo→`WAIT_BRIEF` para transmitir su resultado. |
+| `WAIT_STEP_PREP`         | Esperar preparación de nueva sesión sobre el programa cargado.          | Preparación terminada y primer/único ciclo realizado→`WAIT_DEBUG`.                                                                                            |
+| `WAIT_DEBUG`, compartido | Esperar `DONE` y todo Debug, manteniendo el estado postciclo observado. | Último Stop del mensaje completo→`IDLE`.                                                                                                                      |
 
 La preparación previa corresponde a una sesión anterior ya terminada normalmente o por fault, según el contrato global aprobado. `STEP` realiza exactamente un ciclo CPU, incluidos stall/drain, no una instrucción completa. La observación corresponde al estado posterior a ese ciclo.
 
@@ -204,10 +204,10 @@ Se aprueba reutilizar `debug_hold`, la marca funcional «estado retenido para De
 
 **Estado:** Aprobado el 2026-10-05. Véase el [acuerdo parcial](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--recorrido-reset-y-cancelación-del-terminal-run).
 
-| Estado | Función aprobada | Condición y destino de avance |
-|---|---|---|
-| `IDLE`, compartido | Reconocer `RESET` recibido por UART y solicitar `ACCEPTED`. | `RESET` reconocido→`WAIT_RESET_ACCEPT`. |
-| `WAIT_RESET_ACCEPT` | Esperar que `ACCEPTED` termine de salir físicamente. | Último Stop de `ACCEPTED`: solicitar reset global. Ese reset devuelve el controlador a `IDLE` y la CPU a `NO_IMAGE`. |
+| Estado              | Función aprobada                                            | Condición y destino de avance                                                                                        |
+|---------------------|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `IDLE`, compartido  | Reconocer `RESET` recibido por UART y solicitar `ACCEPTED`. | `RESET` reconocido→`WAIT_RESET_ACCEPT`.                                                                              |
+| `WAIT_RESET_ACCEPT` | Esperar que `ACCEPTED` termine de salir físicamente.        | Último Stop de `ACCEPTED`: solicitar reset global. Ese reset devuelve el controlador a `IDLE` y la CPU a `NO_IMAGE`. |
 
 Se aprueba una marca funcional «solicitar reset», representada por `uart_reset_request` en el diseño, que se activa solo después del envío completo de `ACCEPTED`. El registro y conexión concretos de ese recurso están definidos en [señales y conexiones aprobadas](#señales-y-conexiones-aprobadas); se conserva el pulso registrado para evitar la realimentación combinacional desde `response_done_tick` a reset.
 
@@ -219,10 +219,10 @@ Este recorrido pertenece a `RESET` UART admitido en `IDLE`. El botón físico co
 
 **Estado:** Aprobado el 2026-10-05. Véase el [acuerdo parcial](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--recorrido-check_ready-con-estados-compartidos).
 
-| Estado | Función aprobada | Condición y destino de avance |
-|---|---|---|
-| `IDLE`, compartido | Recibir `CHECK_READY` y solicitar `READY` si `load_available=1` o `BUSY` si vale cero. | Respuesta preparada→`WAIT_BRIEF`. |
-| `WAIT_BRIEF`, compartido | Esperar transmisión física de `READY`/`BUSY`. | Último Stop→`IDLE`. Si `RUN` terminó durante la espera→`WAIT_DEBUG` para atender su terminal. |
+| Estado                   | Función aprobada                                                                       | Condición y destino de avance                                                                 |
+|--------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| `IDLE`, compartido       | Recibir `CHECK_READY` y solicitar `READY` si `load_available=1` o `BUSY` si vale cero. | Respuesta preparada→`WAIT_BRIEF`.                                                             |
+| `WAIT_BRIEF`, compartido | Esperar transmisión física de `READY`/`BUSY`.                                          | Último Stop→`IDLE`. Si `RUN` terminó durante la espera→`WAIT_DEBUG` para atender su terminal. |
 
 Se reutiliza el descriptor pendiente aprobado; el comando no necesita un recurso registrado específico nuevo. `CHECK_READY` no modifica ni pausa CPU. `READY` expresa disponibilidad para iniciar `LOAD`, independientemente de que exista imagen cargada; `BUSY` corresponde, entre otros casos, a `RUN` o drain automático. Se conserva validación independiente de `LOAD`, sin reserva por consulta ni obligación de registrar consulta previa.
 
@@ -232,11 +232,11 @@ Si `RUN` termina mientras se envía `CHECK_READY`, su estado se retiene y se com
 
 **Estado:** Aprobado el 2026-10-05. Véase el [acuerdo parcial](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estado-recover-y-contador-de-tiempo-compartido).
 
-| Situación | Función aprobada | Condición y destino de avance |
-|---|---|---|
-| Error UART al interpretar un comando o recibir tamaño/contenido `LOAD`, o vencimiento T de recepción `LOAD` | Abandonar la recepción afectada; en `LOAD` solicitar el error previsto por el protocolo. | Entrar en `RECOVER`. |
-| Actividad RX durante `RECOVER` | Descartar bytes y reiniciar cuenta de silencio. | Conservar `RECOVER`. |
-| Silencio continuo R cumplido | Comprobar RX vacía, ningún byte en curso y respuestas pendientes terminadas, incluido Debug si correspondía. | Volver a `IDLE`; si falta alguna condición, conservar `RECOVER`. |
+| Situación                                                                                                   | Función aprobada                                                                                             | Condición y destino de avance                                    |
+|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| Error UART al interpretar un comando o recibir tamaño/contenido `LOAD`, o vencimiento T de recepción `LOAD` | Abandonar la recepción afectada; en `LOAD` solicitar el error previsto por el protocolo.                     | Entrar en `RECOVER`.                                             |
+| Actividad RX durante `RECOVER`                                                                              | Descartar bytes y reiniciar cuenta de silencio.                                                              | Conservar `RECOVER`.                                             |
+| Silencio continuo R cumplido                                                                                | Comprobar RX vacía, ningún byte en curso y respuestas pendientes terminadas, incluido Debug si correspondía. | Volver a `IDLE`; si falta alguna condición, conservar `RECOVER`. |
 
 Se aprueba reutilizar el contador de tiempo de `LOAD` para recuperación: fases excluyentes de temporización, con R = 100 ms de silencio continuo ya aprobado en el protocolo. Toda actividad RX reinicia R, incluso sin byte válido; la línea en reposo y ausencia de trama se comprueban mediante indicadores UART ya definidos. No se agrega un segundo contador. Ancho y señales concretas se revisan en el cierre común.
 
@@ -271,14 +271,14 @@ No es un registro nuevo. `response_done_tick` ya identifica el último Stop fís
 
 En `STEP`, activar retención coincide con guardar `DONE` con Debug. El pendiente conserva disponibilidad hasta entrega; durante el envío se cumplen las mismas condiciones. Durante Debug no se reciben ni guardan nuevos comandos. Al terminar, `debug_done` limpia retención en ese mismo flanco, también si la fase es `RECOVER`.
 
-| Estado controlador al terminar respuesta | Información suficiente | Acción |
-|---|---|---|
-| `WAIT_LOAD_ACCEPT` | Estado y `response_done_tick`. | Iniciar recepción de contenido y su T. |
-| `WAIT_LOAD_DONE` | Estado y `response_done_tick`. | Volver a `IDLE`. |
-| `WAIT_RESET_ACCEPT` | Estado y `response_done_tick`. | Solicitar reset global. |
-| `WAIT_RUN_ACCEPT` / `WAIT_BRIEF` | Estado, `response_done_tick` y condición terminal/exclusión. | `IDLE` o `WAIT_DEBUG` según el recorrido aprobado. |
-| `WAIT_DEBUG` | Estado y `debug_done`. | Limpiar retención y volver a `IDLE`. |
-| `RECOVER` | `response_done_tick` y `debug_done` derivados de recursos existentes. | Si terminó Debug, limpiar retención; conservar `RECOVER` y su contador hasta todas las condiciones de salida. |
+| Estado controlador al terminar respuesta | Información suficiente                                                | Acción                                                                                                        |
+|------------------------------------------|-----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `WAIT_LOAD_ACCEPT`                       | Estado y `response_done_tick`.                                        | Iniciar recepción de contenido y su T.                                                                        |
+| `WAIT_LOAD_DONE`                         | Estado y `response_done_tick`.                                        | Volver a `IDLE`.                                                                                              |
+| `WAIT_RESET_ACCEPT`                      | Estado y `response_done_tick`.                                        | Solicitar reset global.                                                                                       |
+| `WAIT_RUN_ACCEPT` / `WAIT_BRIEF`         | Estado, `response_done_tick` y condición terminal/exclusión.          | `IDLE` o `WAIT_DEBUG` según el recorrido aprobado.                                                            |
+| `WAIT_DEBUG`                             | Estado y `debug_done`.                                                | Limpiar retención y volver a `IDLE`.                                                                          |
+| `RECOVER`                                | `response_done_tick` y `debug_done` derivados de recursos existentes. | Si terminó Debug, limpiar retención; conservar `RECOVER` y su contador hasta todas las condiciones de salida. |
 
 **Condiciones de validez:** la derivación conserva estos contratos ya aprobados:
 
@@ -329,22 +329,22 @@ Véanse el [protocolo actualizado](../../protocol.md#terminal-run-durante-cabece
 
 #### Señales de acción y separación de lógica
 
-| Orden combinacional | Recurso o servicio | Evento que la activa |
-|---|---|---|
-| `size_init` | Tamaño e índice | Opcode `LOAD` admitido. |
-| `size_byte_capture` | Tamaño | Byte válido en `READ_SIZE`; índice selecciona su byte. |
-| `size_index_inc` | Índice | Byte válido de tamaño con índice menor que cuatro. |
-| `remaining_load` | Restantes | `load_request && command_accepted` en `CHECK_SIZE`; captura tamaño validado. |
-| `remaining_dec` | Restantes | `load_byte_valid`; decremento por entrega efectiva. |
-| `timer_clear` | Contador T/R | Inicio de fase o evento de reinicio de la tabla. |
-| `timer_inc` | Contador T/R | Fase temporizada activa, sin reinicio ni cierre, valor menor que 4.999.999. |
-| `pending_store` | Descriptor y disponibilidad | Resultado de operación o terminal debido, con espacio previamente libre. |
-| `pending_consume` | Disponibilidad | `response_start` aceptado; excluyente con `pending_store`. |
-| `run_owed_set` | Obligación `RUN` | `run_request && command_accepted` en `EXEC_RUN`. |
-| `run_owed_clear` | Obligación `RUN` | Guardar terminal `RUN` o reconocer `RESET`. |
-| `debug_hold_set` | Exclusión | Ciclo `STEP` realizado o `terminal_due`. |
-| `debug_hold_clear` | Exclusión | `debug_done` derivado de marcas existentes. |
-| `reset_request_set` | Pulso de reset UART | `response_done_tick` en `WAIT_RESET_ACCEPT`. |
+| Orden combinacional | Recurso o servicio          | Evento que la activa                                                         |
+|---------------------|-----------------------------|------------------------------------------------------------------------------|
+| `size_init`         | Tamaño e índice             | Opcode `LOAD` admitido.                                                      |
+| `size_byte_capture` | Tamaño                      | Byte válido en `READ_SIZE`; índice selecciona su byte.                       |
+| `size_index_inc`    | Índice                      | Byte válido de tamaño con índice menor que cuatro.                           |
+| `remaining_load`    | Restantes                   | `load_request && command_accepted` en `CHECK_SIZE`; captura tamaño validado. |
+| `remaining_dec`     | Restantes                   | `load_byte_valid`; decremento por entrega efectiva.                          |
+| `timer_clear`       | Contador T/R                | Inicio de fase o evento de reinicio de la tabla.                             |
+| `timer_inc`         | Contador T/R                | Fase temporizada activa, sin reinicio ni cierre, valor menor que 4.999.999.  |
+| `pending_store`     | Descriptor y disponibilidad | Resultado de operación o terminal debido, con espacio previamente libre.     |
+| `pending_consume`   | Disponibilidad              | `response_start` aceptado; excluyente con `pending_store`.                   |
+| `run_owed_set`      | Obligación `RUN`            | `run_request && command_accepted` en `EXEC_RUN`.                             |
+| `run_owed_clear`    | Obligación `RUN`            | Guardar terminal `RUN` o reconocer `RESET`.                                  |
+| `debug_hold_set`    | Exclusión                   | Ciclo `STEP` realizado o `terminal_due`.                                     |
+| `debug_hold_clear`  | Exclusión                   | `debug_done` derivado de marcas existentes.                                  |
+| `reset_request_set` | Pulso de reset UART         | `response_done_tick` en `WAIT_RESET_ACCEPT`.                                 |
 
 La FSM calcula estado siguiente y controles mediante `casez` y comodines `?`, con salidas por defecto inactivas. Las acciones de incremento, decremento, captura y comparación pertenecen a la lógica diferenciada del recurso. El estado actual se registra; separar esa lógica no agrega ciclos por sí solo. La entrega, los callbacks y la obligación terminal se atienden también durante las esperas de la fase principal.
 
@@ -366,12 +366,12 @@ El tamaño recibido y el tamaño validado pendiente del `Loader` se relacionan p
 
 El [acuerdo de respuesta pendiente](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--registro-de-respuesta-pendiente-en-el-controlador) fija un espacio dentro de `protocol_controller` para conservar la descripción de una respuesta hasta que `response_serializer` pueda aceptarla.
 
-| Recurso / campo | Ancho en bits | Función |
-|---|---:|---|
-| `pending_response_opcode` | 8 | Código de operación que encabezará la respuesta. |
-| `pending_response_result` | 8 | Resultado que acompañará al código. |
-| `pending_response_with_debug` | 1 | Indicar si esa respuesta incluye el cuerpo Debug. |
-| `pending_response_valid` | 1 | Indicar que hay una descripción pendiente de entrega. |
+| Recurso / campo               | Ancho en bits | Función                                               |
+|-------------------------------|--------------:|-------------------------------------------------------|
+| `pending_response_opcode`     |             8 | Código de operación que encabezará la respuesta.      |
+| `pending_response_result`     |             8 | Resultado que acompañará al código.                   |
+| `pending_response_with_debug` |             1 | Indicar si esa respuesta incluye el cuerpo Debug.     |
+| `pending_response_valid`      |             1 | Indicar que hay una descripción pendiente de entrega. |
 
 Los tres primeros campos forman un descriptor registrado de 17 bits; el indicador de disponibilidad agrega un bit, para 18 bits en total. Pertenecen al controlador y se actualizan por sus señales de acción. El serializador conserva su propio descriptor ya aprobado, capturado al aceptar la solicitud.
 
@@ -421,13 +421,13 @@ Este punto pertenece al cierre de la coordinación de respuestas. La revisión p
 
 El resto de los anchos se deriva del formato y de los rangos existentes:
 
-| Recurso | Rango o formato | Ancho |
-|---|---|---|
-| Tamaño recibido | Cinco bytes | 40 bits |
-| Índice | Cero a cuatro | 3 bits |
-| Faltantes | Cero a capacidad IMEM | `IMAGE_SIZE_WIDTH` |
-| Temporizador | Cero a 4.999.999 | 23 bits |
-| Marcas booleanas | Booleano | Un bit cada una |
+| Recurso          | Rango o formato       | Ancho              |
+|------------------|-----------------------|--------------------|
+| Tamaño recibido  | Cinco bytes           | 40 bits            |
+| Índice           | Cero a cuatro         | 3 bits             |
+| Faltantes        | Cero a capacidad IMEM | `IMAGE_SIZE_WIDTH` |
+| Temporizador     | Cero a 4.999.999      | 23 bits            |
+| Marcas booleanas | Booleano              | Un bit cada una    |
 
 El descriptor pendiente mantiene sus 18 bits ya aprobados.
 
@@ -437,17 +437,17 @@ Comprobación aritmética documental: índice y temporizador usan el mínimo anc
 
 ### Recursos registrados
 
-| Recurso | Ancho | Inicialización y actualización |
-|---|---:|---|
-| `protocol_state` | 16 | FSM one-hot; `IDLE` activa bit cero. Orden de bits según la tabla de estados. |
-| `load_size_received` | 40 | Cero al recibir `LOAD`; captura cada uno de los cinco bytes en su posición little-endian. Se valida completo antes de reducir ancho. |
-| `size_byte_index` | 3 | Cero al recibir `LOAD`; posiciones cero a cuatro, incremento por byte válido salvo el último. |
-| `load_bytes_remaining` | `IMAGE_SIZE_WIDTH` | Tamaño validado al aceptar `LOAD`; disminuye por byte entregado al `Loader`. Cero al completar contenido. `REFERENCE`: 11 bits; `ALT_1000`: 10. |
-| `inactivity_count` | 23 | Un único contador compartido entre tamaño, contenido y recuperación; cuenta cero a 4.999.999 y satura. |
-| `run_terminal_owed` | 1 | Se activa por `run_request && command_accepted` en `EXEC_RUN`; se consume al guardar `RUN` terminal; se cancela al reconocer `RESET` UART o por reset global. |
-| `debug_hold` | 1 | Se activa al realizar `STEP` o detectar terminal `RUN` debido; se consume solo por fin físico de la respuesta Debug. |
-| `uart_reset_request` | 1 | Pulso registrado tras fin físico de `RESET`/`ACCEPTED`; reset global lo vuelve a cero. |
-| Descriptor pendiente y disponibilidad | 18 | Recursos ya aprobados; captura, conservación y entrega según el recorrido común. |
+| Recurso                               |              Ancho | Inicialización y actualización                                                                                                                                |
+|---------------------------------------|-------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `protocol_state`                      |                 16 | FSM one-hot; `IDLE` activa bit cero. Orden de bits según la tabla de estados.                                                                                 |
+| `load_size_received`                  |                 40 | Cero al recibir `LOAD`; captura cada uno de los cinco bytes en su posición little-endian. Se valida completo antes de reducir ancho.                          |
+| `size_byte_index`                     |                  3 | Cero al recibir `LOAD`; posiciones cero a cuatro, incremento por byte válido salvo el último.                                                                 |
+| `load_bytes_remaining`                | `IMAGE_SIZE_WIDTH` | Tamaño validado al aceptar `LOAD`; disminuye por byte entregado al `Loader`. Cero al completar contenido. `REFERENCE`: 11 bits; `ALT_1000`: 10.               |
+| `inactivity_count`                    |                 23 | Un único contador compartido entre tamaño, contenido y recuperación; cuenta cero a 4.999.999 y satura.                                                        |
+| `run_terminal_owed`                   |                  1 | Se activa por `run_request && command_accepted` en `EXEC_RUN`; se consume al guardar `RUN` terminal; se cancela al reconocer `RESET` UART o por reset global. |
+| `debug_hold`                          |                  1 | Se activa al realizar `STEP` o detectar terminal `RUN` debido; se consume solo por fin físico de la respuesta Debug.                                          |
+| `uart_reset_request`                  |                  1 | Pulso registrado tras fin físico de `RESET`/`ACCEPTED`; reset global lo vuelve a cero.                                                                        |
+| Descriptor pendiente y disponibilidad |                 18 | Recursos ya aprobados; captura, conservación y entrega según el recorrido común.                                                                              |
 
 `IMAGE_SIZE_WIDTH` = max(1, ceil(log2(`IMEM_CAPACITY_BYTES` + 1))), conforme al [tamaño de imagen](../memory/memory_architecture.md#estado-persistente-de-la-imagen). Los cuarenta bits recibidos se comparan contra cero y capacidad y sus dos bits inferiores deben ser cero. Solo después se usan los `IMAGE_SIZE_WIDTH` bits inferiores.
 
@@ -459,24 +459,24 @@ La propuesta inicial de `active_response_kind` y la posterior salida `response_d
 
 Los bits one-hot cero a quince siguen este orden. Cada fila define trabajo y salida; sin evento se conserva el estado. Reset global tiene prioridad y vuelve a `IDLE`, suprimiendo solicitudes y acciones normales.
 
-| Bit / estado | Trabajo | Salida y acciones |
-|---|---|---|
-| 0 — `IDLE` | Admitir un opcode válido si el transporte está disponible. | `LOAD`: inicializar tamaño/índice/T→`READ_SIZE`. `RUN`→`EXEC_RUN`. `STEP`→`EXEC_STEP`. `RESET`: guardar `ACCEPTED`, cancelar obligación `RUN`→`WAIT_RESET_ACCEPT`. `CHECK_READY`: guardar `READY` o `BUSY`→`WAIT_BRIEF`. Otro código: guardar eco/`UNKNOWN_COMMAND`→`WAIT_BRIEF`. Error UART: sin respuesta→`RECOVER`. |
-| 1 — `READ_SIZE` | Recibir cinco bytes de tamaño, con T activo. | Cada byte válido se captura y reinicia T mientras falten bytes. Quinto byte→`CHECK_SIZE`. Error: guardar `UART_ERROR`→`RECOVER`. T vencido: guardar `INCOMPLETE_REQUEST`→`RECOVER`. |
-| 2 — `CHECK_SIZE` | Validar todos los cuarenta bits y solicitar `LOAD` a `Global FSM`. | Tamaño inválido: guardar `INVALID_SIZE`→`WAIT_BRIEF`. `load_request && !command_accepted`: guardar `BUSY`→`WAIT_BRIEF`. `load_request && command_accepted`: cargar restantes, guardar `ACCEPTED`→`WAIT_LOAD_ACCEPT`. |
-| 3 — `EXEC_RUN` | Solicitar `RUN` a `Global FSM`; no esperar TX para ejecutar. | `run_request && command_accepted`: activar obligación y guardar `ACCEPTED`→`WAIT_RUN_ACCEPT`. `run_request && !command_accepted`: guardar `NO_IMAGE` o `BUSY`→`WAIT_BRIEF`. |
-| 4 — `EXEC_STEP` | Solicitar `STEP` a `Global FSM`. | `step_request && command_accepted && cpu_cycle_fire`: activar exclusión y guardar `DONE` con Debug→`WAIT_DEBUG`. `step_request && command_accepted && !cpu_cycle_fire`→`WAIT_STEP_PREP`. `step_request && !command_accepted`: guardar `NO_IMAGE` o `BUSY`→`WAIT_BRIEF`. |
-| 5 — `WAIT_RUN_ACCEPT` | Descartar RX mientras sale aceptación `RUN`; CPU sigue según su FSM. | Fin físico de esa aceptación→`IDLE`; si ya comenzó exclusión, →`WAIT_DEBUG`. |
-| 6 — `WAIT_STEP_PREP` | Esperar preparación de nueva sesión `STEP`; descartar RX. | `prepare_done` con `cpu_cycle_fire`: activar exclusión y guardar `DONE` con Debug→`WAIT_DEBUG`. |
-| 7 — `WAIT_LOAD_ACCEPT` | Descartar RX prematuro y esperar fin físico `LOAD`/`ACCEPTED`. | Fin físico en este estado: iniciar T de contenido en cero→`LOAD_DATA`. |
-| 8 — `LOAD_DATA` | Entregar bytes válidos al `Loader`, disminuir restantes y reiniciar T mientras falten bytes. | Último byte termina T→`WAIT_LOAD_RESULT`, o →`WAIT_LOAD_PREP` si `load_ok` certifica ya su escritura en ese flanco. Error UART: abortar `Loader` y guardar `UART_ERROR`→`RECOVER`. T vencido: abortar y guardar `INCOMPLETE_DATA`→`RECOVER`. |
-| 9 — `WAIT_LOAD_RESULT` | Esperar certificación de la última escritura IMEM; descartar RX. | `load_ok`→`WAIT_LOAD_PREP`. El contrato de integración debe garantizar la escritura final y `load_ok`, sin reabrir recepción ni iniciar preparación antes. |
-| 10 — `WAIT_LOAD_PREP` | Esperar preparación y publicación de imagen; descartar RX. | `prepare_done`: guardar `LOAD`/`DONE`→`WAIT_LOAD_DONE`. En ese mismo flanco, `Global FSM` emite `image_publish`. |
-| 11 — `WAIT_LOAD_DONE` | Descartar RX hasta fin físico `LOAD`/`DONE`. | Fin físico en este estado→`IDLE`, sin recuperación por silencio. |
-| 12 — `WAIT_BRIEF` | Esperar respuesta breve; descartar RX; no frenar `RUN`. | Fin físico en este estado→`IDLE`, o →`WAIT_DEBUG` si existe exclusión terminal. |
-| 13 — `WAIT_RESET_ACCEPT` | Esperar `RESET`/`ACCEPTED`; descartar RX; no frenar CPU. | Fin físico en este estado: registrar `uart_reset_request`. El reset global resultante reinicia el sistema. |
-| 14 — `WAIT_DEBUG` | Descartar RX durante espera y envío Debug; mantener exclusión. | `debug_done`: limpiar `debug_hold`→`IDLE`. |
-| 15 — `RECOVER` | Descartar RX y contar R de silencio continuo; conservar TX y ejecución global. | Solo salir cuando R cumplido, sin actividad/recepción, FIFO vacía, sin descriptor pendiente, serializador libre y sin exclusión Debug. →`IDLE`. |
+| Bit / estado             | Trabajo                                                                                      | Salida y acciones                                                                                                                                                                                                                                                                                                      |
+|--------------------------|----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0 — `IDLE`               | Admitir un opcode válido si el transporte está disponible.                                   | `LOAD`: inicializar tamaño/índice/T→`READ_SIZE`. `RUN`→`EXEC_RUN`. `STEP`→`EXEC_STEP`. `RESET`: guardar `ACCEPTED`, cancelar obligación `RUN`→`WAIT_RESET_ACCEPT`. `CHECK_READY`: guardar `READY` o `BUSY`→`WAIT_BRIEF`. Otro código: guardar eco/`UNKNOWN_COMMAND`→`WAIT_BRIEF`. Error UART: sin respuesta→`RECOVER`. |
+| 1 — `READ_SIZE`          | Recibir cinco bytes de tamaño, con T activo.                                                 | Cada byte válido se captura y reinicia T mientras falten bytes. Quinto byte→`CHECK_SIZE`. Error: guardar `UART_ERROR`→`RECOVER`. T vencido: guardar `INCOMPLETE_REQUEST`→`RECOVER`.                                                                                                                                    |
+| 2 — `CHECK_SIZE`         | Validar todos los cuarenta bits y solicitar `LOAD` a `Global FSM`.                           | Tamaño inválido: guardar `INVALID_SIZE`→`WAIT_BRIEF`. `load_request && !command_accepted`: guardar `BUSY`→`WAIT_BRIEF`. `load_request && command_accepted`: cargar restantes, guardar `ACCEPTED`→`WAIT_LOAD_ACCEPT`.                                                                                                   |
+| 3 — `EXEC_RUN`           | Solicitar `RUN` a `Global FSM`; no esperar TX para ejecutar.                                 | `run_request && command_accepted`: activar obligación y guardar `ACCEPTED`→`WAIT_RUN_ACCEPT`. `run_request && !command_accepted`: guardar `NO_IMAGE` o `BUSY`→`WAIT_BRIEF`.                                                                                                                                            |
+| 4 — `EXEC_STEP`          | Solicitar `STEP` a `Global FSM`.                                                             | `step_request && command_accepted && cpu_cycle_fire`: activar exclusión y guardar `DONE` con Debug→`WAIT_DEBUG`. `step_request && command_accepted && !cpu_cycle_fire`→`WAIT_STEP_PREP`. `step_request && !command_accepted`: guardar `NO_IMAGE` o `BUSY`→`WAIT_BRIEF`.                                                |
+| 5 — `WAIT_RUN_ACCEPT`    | Descartar RX mientras sale aceptación `RUN`; CPU sigue según su FSM.                         | Fin físico de esa aceptación→`IDLE`; si ya comenzó exclusión, →`WAIT_DEBUG`.                                                                                                                                                                                                                                           |
+| 6 — `WAIT_STEP_PREP`     | Esperar preparación de nueva sesión `STEP`; descartar RX.                                    | `prepare_done` con `cpu_cycle_fire`: activar exclusión y guardar `DONE` con Debug→`WAIT_DEBUG`.                                                                                                                                                                                                                        |
+| 7 — `WAIT_LOAD_ACCEPT`   | Descartar RX prematuro y esperar fin físico `LOAD`/`ACCEPTED`.                               | Fin físico en este estado: iniciar T de contenido en cero→`LOAD_DATA`.                                                                                                                                                                                                                                                 |
+| 8 — `LOAD_DATA`          | Entregar bytes válidos al `Loader`, disminuir restantes y reiniciar T mientras falten bytes. | Último byte termina T→`WAIT_LOAD_RESULT`, o →`WAIT_LOAD_PREP` si `load_ok` certifica ya su escritura en ese flanco. Error UART: abortar `Loader` y guardar `UART_ERROR`→`RECOVER`. T vencido: abortar y guardar `INCOMPLETE_DATA`→`RECOVER`.                                                                           |
+| 9 — `WAIT_LOAD_RESULT`   | Esperar certificación de la última escritura IMEM; descartar RX.                             | `load_ok`→`WAIT_LOAD_PREP`. El contrato de integración debe garantizar la escritura final y `load_ok`, sin reabrir recepción ni iniciar preparación antes.                                                                                                                                                             |
+| 10 — `WAIT_LOAD_PREP`    | Esperar preparación y publicación de imagen; descartar RX.                                   | `prepare_done`: guardar `LOAD`/`DONE`→`WAIT_LOAD_DONE`. En ese mismo flanco, `Global FSM` emite `image_publish`.                                                                                                                                                                                                       |
+| 11 — `WAIT_LOAD_DONE`    | Descartar RX hasta fin físico `LOAD`/`DONE`.                                                 | Fin físico en este estado→`IDLE`, sin recuperación por silencio.                                                                                                                                                                                                                                                       |
+| 12 — `WAIT_BRIEF`        | Esperar respuesta breve; descartar RX; no frenar `RUN`.                                      | Fin físico en este estado→`IDLE`, o →`WAIT_DEBUG` si existe exclusión terminal.                                                                                                                                                                                                                                        |
+| 13 — `WAIT_RESET_ACCEPT` | Esperar `RESET`/`ACCEPTED`; descartar RX; no frenar CPU.                                     | Fin físico en este estado: registrar `uart_reset_request`. El reset global resultante reinicia el sistema.                                                                                                                                                                                                             |
+| 14 — `WAIT_DEBUG`        | Descartar RX durante espera y envío Debug; mantener exclusión.                               | `debug_done`: limpiar `debug_hold`→`IDLE`.                                                                                                                                                                                                                                                                             |
+| 15 — `RECOVER`           | Descartar RX y contar R de silencio continuo; conservar TX y ejecución global.               | Solo salir cuando R cumplido, sin actividad/recepción, FIFO vacía, sin descriptor pendiente, serializador libre y sin exclusión Debug. →`IDLE`.                                                                                                                                                                        |
 
 `IDLE` solo admite comandos con descriptor libre, serializador libre, sin exclusión y con `prepare_active=0`. Mientras `prepare_active=1`, aunque haya terminado `ACCEPTED` de `RUN`, continúa el descarte; al terminar la preparación se admite nuevamente transporte si `RUN` no terminó. Ante rechazo de `RUN`/`STEP`, `image_valid` determina `NO_IMAGE` o `BUSY`. `Global FSM` decide aceptación y prioridad arquitectónica.
 
@@ -486,11 +486,11 @@ Los bits one-hot cero a quince siguen este orden. Cada fila define trabajo y sal
 
 T y R son 5.000.000 clocks funcionales. Se reutiliza un contador de 23 bits porque las fases de tamaño, contenido y recuperación son excluyentes. Al iniciar una fase queda en cero. Si pasan 5.000.000 intervalos sin el evento que lo reinicia, vence al flanco que ve 4.999.999 previamente; no se suma una espera fija al completar correctamente la fase.
 
-| Fase | Inicio | Reinicio | Fin |
-|---|---|---|---|
-| Tamaño `LOAD` | Flanco que consume opcode `LOAD`. | Byte válido recibido mientras faltan bytes. | Quinto byte válido, error, vencimiento o exclusión terminal que interrumpe cabecera. |
-| Contenido `LOAD` | Flanco del último Stop de `LOAD`/`ACCEPTED`. | Byte válido entregado mientras faltan bytes. | Último byte entregado, error o vencimiento. |
-| Recuperación | Flanco que declara error/vencimiento. | `rx_activity` o `rx_receiving`; el bajo continuo de línea cuenta como actividad según `uart_core`. | R cumplido y condiciones de salida de `RECOVER`. |
+| Fase             | Inicio                                       | Reinicio                                                                                           | Fin                                                                                  |
+|------------------|----------------------------------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Tamaño `LOAD`    | Flanco que consume opcode `LOAD`.            | Byte válido recibido mientras faltan bytes.                                                        | Quinto byte válido, error, vencimiento o exclusión terminal que interrumpe cabecera. |
+| Contenido `LOAD` | Flanco del último Stop de `LOAD`/`ACCEPTED`. | Byte válido entregado mientras faltan bytes.                                                       | Último byte entregado, error o vencimiento.                                          |
+| Recuperación     | Flanco que declara error/vencimiento.        | `rx_activity` o `rx_receiving`; el bajo continuo de línea cuenta como actividad según `uart_core`. | R cumplido y condiciones de salida de `RECOVER`.                                     |
 
 En tamaño y contenido, la prioridad es:
 
@@ -517,15 +517,15 @@ La conservación del descriptor está en [Registro de respuesta pendiente](#regi
 
 ### Ejemplos para revisar el bloque
 
-| Caso | Secuencia observable y conservación |
-|---|---|
-| `RUN` normal | Admitir→guardar `ACCEPTED` y ejecutar→entregar y completar aceptación→seguir CPU→terminal retenido→guardar/enviar terminal con Debug→liberar exclusión al último Stop. |
-| `CHECK_READY` coincide con último ciclo `RUN` | Guardar `CHECK_READY`/`BUSY`→retener terminal y obligación→entregar breve→guardar terminal en otro flanco→completar breve→enviar Debug. |
-| `STEP` desde `READY` | Aceptar y ejecutar un ciclo→retener estado postciclo y guardar `DONE` con Debug→enviar→liberar exclusión. |
-| `STEP` desde `FINISHED` | Aceptar→preparar sesión→primer y único ciclo al `prepare_done`→guardar `DONE` con Debug y retener→enviar. |
-| `LOAD` correcto | Opcode+tamaño→validar/aceptar e invalidar imagen vieja→`ACCEPTED` físico→contenido y palabras IMEM→preparación/commit→`DONE` físico→admitir siguiente comando. |
-| `LOAD` interrumpido en contenido | Error/timeout→abortar e imagen inválida→guardar error→descartar hasta silencio R, sin bloquear respuesta ni TX. |
-| `RESET` durante `RUN` | Reconocer y cancelar terminal debido→CPU continúa→`ACCEPTED` completo→pulso registrado→reset global `NO_IMAGE`. |
+| Caso                                          | Secuencia observable y conservación                                                                                                                                    |
+|-----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `RUN` normal                                  | Admitir→guardar `ACCEPTED` y ejecutar→entregar y completar aceptación→seguir CPU→terminal retenido→guardar/enviar terminal con Debug→liberar exclusión al último Stop. |
+| `CHECK_READY` coincide con último ciclo `RUN` | Guardar `CHECK_READY`/`BUSY`→retener terminal y obligación→entregar breve→guardar terminal en otro flanco→completar breve→enviar Debug.                                |
+| `STEP` desde `READY`                          | Aceptar y ejecutar un ciclo→retener estado postciclo y guardar `DONE` con Debug→enviar→liberar exclusión.                                                              |
+| `STEP` desde `FINISHED`                       | Aceptar→preparar sesión→primer y único ciclo al `prepare_done`→guardar `DONE` con Debug y retener→enviar.                                                              |
+| `LOAD` correcto                               | Opcode+tamaño→validar/aceptar e invalidar imagen vieja→`ACCEPTED` físico→contenido y palabras IMEM→preparación/commit→`DONE` físico→admitir siguiente comando.         |
+| `LOAD` interrumpido en contenido              | Error/timeout→abortar e imagen inválida→guardar error→descartar hasta silencio R, sin bloquear respuesta ni TX.                                                        |
+| `RESET` durante `RUN`                         | Reconocer y cancelar terminal debido→CPU continúa→`ACCEPTED` completo→pulso registrado→reset global `NO_IMAGE`.                                                        |
 
 ### Alcance de la revisión
 

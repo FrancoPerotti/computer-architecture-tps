@@ -100,9 +100,9 @@ u = imm mod 2^n
 
 | Formato         | Ancho `n` | Rango previamente comprobado   |
 |-----------------|----------:|--------------------------------|
-| I ordinario y S | 12        | -2048 a 2047.                  |
-| B               | 13        | -4096 a 4094, valor par.       |
-| J               | 21        | -1048576 a 1048574, valor par. |
+| I ordinario y S |        12 | -2048 a 2047.                  |
+| B               |        13 | -4096 a 4094, valor par.       |
+| J               |        21 | -1048576 a 1048574, valor par. |
 
 Para un valor válido, obtener los `n` bits bajos mediante una máscara equivale a esa representación. Esta operación se realiza después de validar, no como una forma de aceptar valores fuera de rango.
 
@@ -264,12 +264,12 @@ Las instrucciones del [ejemplo de interpretación](assembler_operands.md#ejemplo
 
 | `line` | `pc` | Instrucción interpretada | `word`       |
 |-------:|-----:|--------------------------|--------------|
-| 4      | 0    | `addi x1, x0, 3`         | `0x00300093` |
-| 5      | 4    | `addi x1, x1, -1`        | `0xfff08093` |
-| 6      | 8    | `bne x1, x0, -4`         | `0xfe009ee3` |
-| 7      | 12   | `jal x0, 8`              | `0x0080006f` |
-| 8      | 16   | `addi x2, x0, 99`        | `0x06300113` |
-| 9      | 20   | `halt`                   | `0x0000000b` |
+|      4 |    0 | `addi x1, x0, 3`         | `0x00300093` |
+|      5 |    4 | `addi x1, x1, -1`        | `0xfff08093` |
+|      6 |    8 | `bne x1, x0, -4`         | `0xfe009ee3` |
+|      7 |   12 | `jal x0, 8`              | `0x0080006f` |
+|      8 |   16 | `addi x2, x0, 99`        | `0x06300113` |
+|      9 |   20 | `halt`                   | `0x0000000b` |
 
 Cada registro conserva el PC y la línea de entrada. Las etiquetas ya están representadas por los desplazamientos; no se consultan nuevamente al formar estas palabras.
 

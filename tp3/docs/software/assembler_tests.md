@@ -28,14 +28,14 @@ La selección comprende 101 variantes en ocho grupos:
 
 | Grupo          | Variantes | Motivo                                                                                                  |
 |----------------|----------:|---------------------------------------------------------------------------------------------------------|
-| `TEST-ASM-001` | 33        | Una codificación por cada instrucción soportada, incluido `halt`.                                       |
-| `TEST-ASM-002` | 4         | Destinos adelantados y anteriores, etiquetas aisladas, final de imagen y PC–línea.                      |
-| `TEST-ASM-003` | 4         | Espacios, comentarios, finales de línea, bases numéricas y alias habituales.                            |
-| `TEST-ASM-004` | 28        | Once extremos válidos y diecisiete rechazos de rango o paridad.                                         |
-| `TEST-ASM-005` | 21        | Errores de escritura y construcciones fuera del lenguaje.                                               |
-| `TEST-ASM-006` | 7         | Entrada vacía, operandos ensamblables que requieren comprobación en CPU y capacidad ajena al assembler. |
-| `TEST-ASM-007` | 3         | Línea del diagnóstico, descarte de parciales y orden de detección.                                      |
-| `TEST-ASM-008` | 1         | Colecciones y símbolos independientes entre llamadas.                                                   |
+| `TEST-ASM-001` |        33 | Una codificación por cada instrucción soportada, incluido `halt`.                                       |
+| `TEST-ASM-002` |         4 | Destinos adelantados y anteriores, etiquetas aisladas, final de imagen y PC–línea.                      |
+| `TEST-ASM-003` |         4 | Espacios, comentarios, finales de línea, bases numéricas y alias habituales.                            |
+| `TEST-ASM-004` |        28 | Once extremos válidos y diecisiete rechazos de rango o paridad.                                         |
+| `TEST-ASM-005` |        21 | Errores de escritura y construcciones fuera del lenguaje.                                               |
+| `TEST-ASM-006` |         7 | Entrada vacía, operandos ensamblables que requieren comprobación en CPU y capacidad ajena al assembler. |
+| `TEST-ASM-007` |         3 | Línea del diagnóstico, descarte de parciales y orden de detección.                                      |
+| `TEST-ASM-008` |         1 | Colecciones y símbolos independientes entre llamadas.                                                   |
 
 Los IDs completos tienen la forma `TEST-ASM-NNN/Cnnn`. Las tablas y programas de este documento enumeran la selección completa de software. La cantidad no representa combinaciones de todos los registros, inmediatos, alias y formatos.
 
@@ -273,25 +273,25 @@ Cada fila es una instrucción en la línea 1. Las variantes válidas esperan `{0
 
 Las variantes siguientes esperan el resultado común de rechazo con `error.line=1`:
 
-| Variante | Código fuente inválido     | Motivo del diagnóstico                                          |
-|----------|----------------------------|-----------------------------------------------------------------|
-| C012     | `addi x1, x0, -2049`       | Inmediato por debajo de -2048.                                  |
-| C013     | `addi x1, x0, 2048`        | Inmediato por encima de 2047.                                   |
-| C014     | `sw x5, -2049(x2)`         | Offset por debajo de -2048.                                     |
-| C015     | `sw x5, 2048(x2)`          | Offset por encima de 2047.                                      |
-| C016     | `slli x1, x2, -1`          | Cantidad de shift negativa.                                     |
-| C017     | `slli x1, x2, 32`          | Cantidad de shift por encima de 31.                             |
-| C018     | `lui x1, -1`               | Campo U negativo.                                               |
-| C019     | `lui x1, 0x100000`         | Campo U por encima de `0xfffff`.                                |
-| C020     | `beq x1, x2, -4098`        | Desplazamiento B por debajo de -4096.                           |
-| C021     | `beq x1, x2, 4096`         | Desplazamiento B por encima de 4094.                            |
-| C022     | `beq x1, x2, 3`            | Desplazamiento B impar.                                         |
-| C023     | `jal x1, -1048578`         | Desplazamiento J por debajo de -1048576.                        |
-| C024     | `jal x1, 1048576`          | Desplazamiento J por encima de 1048574.                         |
-| C025     | `jal x1, 1`                | Desplazamiento J impar.                                         |
-| C026     | `lw x1, 2048(x2)`          | Offset de load por encima de 2047.                              |
-| C027     | `jalr x0, -2049(x1)`       | Offset de `jalr` por debajo de -2048.                           |
-| C028     | `andi x1, x0, 0xfff`       | El literal es +4095 y no cabe en I; no se reinterpreta como -1. |
+| Variante | Código fuente inválido | Motivo del diagnóstico                                          |
+|----------|------------------------|-----------------------------------------------------------------|
+| C012     | `addi x1, x0, -2049`   | Inmediato por debajo de -2048.                                  |
+| C013     | `addi x1, x0, 2048`    | Inmediato por encima de 2047.                                   |
+| C014     | `sw x5, -2049(x2)`     | Offset por debajo de -2048.                                     |
+| C015     | `sw x5, 2048(x2)`      | Offset por encima de 2047.                                      |
+| C016     | `slli x1, x2, -1`      | Cantidad de shift negativa.                                     |
+| C017     | `slli x1, x2, 32`      | Cantidad de shift por encima de 31.                             |
+| C018     | `lui x1, -1`           | Campo U negativo.                                               |
+| C019     | `lui x1, 0x100000`     | Campo U por encima de `0xfffff`.                                |
+| C020     | `beq x1, x2, -4098`    | Desplazamiento B por debajo de -4096.                           |
+| C021     | `beq x1, x2, 4096`     | Desplazamiento B por encima de 4094.                            |
+| C022     | `beq x1, x2, 3`        | Desplazamiento B impar.                                         |
+| C023     | `jal x1, -1048578`     | Desplazamiento J por debajo de -1048576.                        |
+| C024     | `jal x1, 1048576`      | Desplazamiento J por encima de 1048574.                         |
+| C025     | `jal x1, 1`            | Desplazamiento J impar.                                         |
+| C026     | `lw x1, 2048(x2)`      | Offset de load por encima de 2047.                              |
+| C027     | `jalr x0, -2049(x1)`   | Offset de `jalr` por debajo de -2048.                           |
+| C028     | `andi x1, x0, 0xfff`   | El literal es +4095 y no cabe en I; no se reinterpreta como -1. |
 
 <a id="test-asm-005"></a>
 
@@ -303,27 +303,27 @@ Cada fila espera `image=None`, `pc_to_line={}` y un diagnóstico pertinente:
 
 | Variante | Texto de entrada              | Línea | Motivo del diagnóstico                                                       |
 |----------|-------------------------------|------:|------------------------------------------------------------------------------|
-| C001     | `add x1 x2 x3`                | 1     | Faltan comas entre operandos.                                                |
-| C002     | `add x1, x2`                  | 1     | Falta un operando.                                                           |
-| C003     | `halt x1`                     | 1     | `halt` no admite operandos.                                                  |
-| C004     | `lw x1, (x2)`                 | 1     | Falta el offset explícito.                                                   |
-| C005     | `jalr x1, x2, 0`              | 1     | Forma de operandos no admitida.                                              |
-| C006     | `nop`                         | 1     | Pseudoinstrucción fuera del lenguaje.                                        |
-| C007     | `mul x1, x2, x3`              | 1     | Instrucción fuera del subconjunto.                                           |
-| C008     | `.word 0`                     | 1     | Directiva no admitida.                                                       |
-| C009     | `add x32, x1, x2`             | 1     | Registro inexistente.                                                        |
-| C010     | `add x01, x1, x2`             | 1     | Nombre de registro con cero inicial adicional.                               |
-| C011     | `addi x1, x0, 0xGG`           | 1     | Literal hexadecimal inválido.                                                |
-| C012     | `addi x1, x0, 4+8`            | 1     | Expresión no admitida como literal.                                          |
-| C013     | `jal x0, Fin\nfin: halt`      | 1     | `Fin` no está definida; `fin` no satisface esa referencia.                   |
-| C014     | `fin: halt\nfin: halt`        | 2     | Definición duplicada de `fin`; identificar la primera definición en línea 1. |
-| C015     | `x1: halt`                    | 1     | Nombre reservado de registro usado como etiqueta.                            |
-| C016     | `fin: halt\naddi x1, x0, fin` | 2     | El operando `fin` no es un inmediato literal admitido de `addi`.             |
-| C017     | `ADD x1, x2, x3`              | 1     | Mnemónico que no respeta la escritura admitida.                              |
-| C018     | `add X1, x2, x3`              | 1     | Nombre de registro que no respeta la escritura admitida.                     |
-| C019     | `uno: dos: halt`              | 1     | Segunda definición de etiqueta en la misma línea.                            |
-| C020     | `addi x1, x0, - 1`            | 1     | Token del inmediato dividido.                                                |
-| C021     | `1fin: halt`                  | 1     | Identificador de etiqueta inválido.                                          |
+| C001     | `add x1 x2 x3`                |     1 | Faltan comas entre operandos.                                                |
+| C002     | `add x1, x2`                  |     1 | Falta un operando.                                                           |
+| C003     | `halt x1`                     |     1 | `halt` no admite operandos.                                                  |
+| C004     | `lw x1, (x2)`                 |     1 | Falta el offset explícito.                                                   |
+| C005     | `jalr x1, x2, 0`              |     1 | Forma de operandos no admitida.                                              |
+| C006     | `nop`                         |     1 | Pseudoinstrucción fuera del lenguaje.                                        |
+| C007     | `mul x1, x2, x3`              |     1 | Instrucción fuera del subconjunto.                                           |
+| C008     | `.word 0`                     |     1 | Directiva no admitida.                                                       |
+| C009     | `add x32, x1, x2`             |     1 | Registro inexistente.                                                        |
+| C010     | `add x01, x1, x2`             |     1 | Nombre de registro con cero inicial adicional.                               |
+| C011     | `addi x1, x0, 0xGG`           |     1 | Literal hexadecimal inválido.                                                |
+| C012     | `addi x1, x0, 4+8`            |     1 | Expresión no admitida como literal.                                          |
+| C013     | `jal x0, Fin\nfin: halt`      |     1 | `Fin` no está definida; `fin` no satisface esa referencia.                   |
+| C014     | `fin: halt\nfin: halt`        |     2 | Definición duplicada de `fin`; identificar la primera definición en línea 1. |
+| C015     | `x1: halt`                    |     1 | Nombre reservado de registro usado como etiqueta.                            |
+| C016     | `fin: halt\naddi x1, x0, fin` |     2 | El operando `fin` no es un inmediato literal admitido de `addi`.             |
+| C017     | `ADD x1, x2, x3`              |     1 | Mnemónico que no respeta la escritura admitida.                              |
+| C018     | `add X1, x2, x3`              |     1 | Nombre de registro que no respeta la escritura admitida.                     |
+| C019     | `uno: dos: halt`              |     1 | Segunda definición de etiqueta en la misma línea.                            |
+| C020     | `addi x1, x0, - 1`            |     1 | Token del inmediato dividido.                                                |
+| C021     | `1fin: halt`                  |     1 | Identificador de etiqueta inválido.                                          |
 
 <a id="test-asm-006"></a>
 

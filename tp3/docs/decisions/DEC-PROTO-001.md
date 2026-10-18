@@ -379,15 +379,15 @@ La tabla propuesta de `LOAD`, `RUN`, `STEP`, `READ_STATE`, `RESET` y `QUERY_READ
 
 Las respuestas de `LOAD` no llevarán datos adicionales: tendrán exactamente dos bytes y finalizarán al recibir el segundo. Se aprueban los siguientes resultados simbólicos, con los efectos ya acordados:
 
-| Resultado | Significado |
-|---|---|
-| `ACEPTADA` | `LOAD` fue aceptada; la PC puede comenzar a enviar el programa. |
-| `COMPLETADA` | Se recibió y validó el programa y se completó preparación y commit de sesión; el sistema está listo para ejecutar. |
-| `TAMAÑO_INVALIDO` | Solicitud rechazada por tamaño cero, no múltiplo de cuatro o superior a IMEM. |
-| `NO_DISPONIBLE` | El estado actual no permite aceptar `LOAD`. |
-| `SOLICITUD_INCOMPLETA` | Venció la espera de los bytes del tamaño, antes de aceptar `LOAD`. |
-| `CONTENIDO_INCOMPLETO` | Venció la espera del programa después de aceptar `LOAD`. |
-| `ERROR_UART` | Se abandonó la recepción por un error informado por UART. |
+| Resultado              | Significado                                                                                                        |
+|------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `ACEPTADA`             | `LOAD` fue aceptada; la PC puede comenzar a enviar el programa.                                                    |
+| `COMPLETADA`           | Se recibió y validó el programa y se completó preparación y commit de sesión; el sistema está listo para ejecutar. |
+| `TAMAÑO_INVALIDO`      | Solicitud rechazada por tamaño cero, no múltiplo de cuatro o superior a IMEM.                                      |
+| `NO_DISPONIBLE`        | El estado actual no permite aceptar `LOAD`.                                                                        |
+| `SOLICITUD_INCOMPLETA` | Venció la espera de los bytes del tamaño, antes de aceptar `LOAD`.                                                 |
+| `CONTENIDO_INCOMPLETO` | Venció la espera del programa después de aceptar `LOAD`.                                                           |
+| `ERROR_UART`           | Se abandonó la recepción por un error informado por UART.                                                          |
 
 En un flujo exitoso, la FPGA responde `[LOAD][ACEPTADA]` a la solicitud y, después de recibir el contenido y completar la preparación, responde `[LOAD][COMPLETADA]`. Los nombres son símbolos de documentación, no cadenas de texto enviadas por UART. Ambos campos serán bytes binarios.
 
@@ -413,10 +413,10 @@ En un flujo exitoso, la FPGA responde `[LOAD][ACEPTADA]` a la solicitud y, despu
 
 Cuando el receptor pueda interpretar la consulta, responderá exactamente dos bytes: `[CONSULTAR_DISPONIBILIDAD][resultado]`. No habrá datos adicionales; el segundo byte completará la respuesta.
 
-| Resultado simbólico | Significado |
-|---|---|
-| `DISPONIBLE` | El receptor puede atender una nueva solicitud y el estado global es elegible para `LOAD`. |
-| `NO_DISPONIBLE` | En ese momento el sistema no puede aceptar `LOAD`, por ejemplo durante ejecución continua. |
+| Resultado simbólico | Significado                                                                                |
+|---------------------|--------------------------------------------------------------------------------------------|
+| `DISPONIBLE`        | El receptor puede atender una nueva solicitud y el estado global es elegible para `LOAD`.  |
+| `NO_DISPONIBLE`     | En ese momento el sistema no puede aceptar `LOAD`, por ejemplo durante ejecución continua. |
 
 La consulta no modificará la imagen ni la ejecución. Una respuesta disponible no reservará el sistema ni aceptará anticipadamente una carga: la FPGA volverá a comprobar las condiciones al recibir `LOAD`. Se mantienen el significado común antes de primera carga, tras `reset` y después de recuperación, y la ausencia de relación entre disponibilidad e imagen ejecutable válida.
 
@@ -442,15 +442,15 @@ Durante recuperación se descartarán los bytes de consulta sin respuesta, confo
 
 **Decisión:** La PC prepara los N bytes del programa antes de solicitar `LOAD`. El intercambio exitoso sigue esta secuencia; los nombres de códigos/resultados son simbólicos hasta C02/C03:
 
-| Paso | Mensaje o acción | Tiempo y efecto |
-|---|---|---|
-| 1 | PC → FPGA: `[CONSULTAR_DISPONIBILIDAD]` | Solicitud de un byte; PC espera hasta 200 ms. |
-| 2 | FPGA → PC: `[CONSULTAR_DISPONIBILIDAD][DISPONIBLE]` | Dos bytes; informa elegibilidad actual sin reservar la carga ni modificar CPU/imagen. |
-| 3 | PC → FPGA: `[LOAD][N: cinco bytes unsigned little-endian]` | Seis bytes; FPGA recibe el tamaño con T = 100 ms de inactividad desde el código y valida tamaño completo y elegibilidad. PC espera hasta 200 ms por la respuesta inicial. |
-| 4 | FPGA → PC: `[LOAD][ACEPTADA]` | Dos bytes; al aceptar invalida la imagen anterior. El T de contenido empieza al finalizar físicamente el segundo byte, incluido Stop. |
-| 5 | PC → FPGA: N bytes de contenido | Envío seguido, instrucciones little-endian y direcciones crecientes, sin confirmaciones intermedias. T se reinicia por cada byte correcto mientras falten bytes. |
-| 6 | FPGA: preparación y commit | Recepción completa lleva a `PREPARING_READY`; preparación y commit en `READY` dentro del presupuesto de 1 ms para `REFERENCE`/`ALT_1000`. Se confirma la imagen y la sesión inicial sin ejecutar CPU. |
-| 7 | FPGA → PC: `[LOAD][COMPLETADA]` | Dos bytes; PC espera hasta `1000 * N * 10 / 19200 + 201` ms desde el inicio del contenido en los perfiles actuales. |
+| Paso | Mensaje o acción                                           | Tiempo y efecto                                                                                                                                                                                       |
+|------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1    | PC → FPGA: `[CONSULTAR_DISPONIBILIDAD]`                    | Solicitud de un byte; PC espera hasta 200 ms.                                                                                                                                                         |
+| 2    | FPGA → PC: `[CONSULTAR_DISPONIBILIDAD][DISPONIBLE]`        | Dos bytes; informa elegibilidad actual sin reservar la carga ni modificar CPU/imagen.                                                                                                                 |
+| 3    | PC → FPGA: `[LOAD][N: cinco bytes unsigned little-endian]` | Seis bytes; FPGA recibe el tamaño con T = 100 ms de inactividad desde el código y valida tamaño completo y elegibilidad. PC espera hasta 200 ms por la respuesta inicial.                             |
+| 4    | FPGA → PC: `[LOAD][ACEPTADA]`                              | Dos bytes; al aceptar invalida la imagen anterior. El T de contenido empieza al finalizar físicamente el segundo byte, incluido Stop.                                                                 |
+| 5    | PC → FPGA: N bytes de contenido                            | Envío seguido, instrucciones little-endian y direcciones crecientes, sin confirmaciones intermedias. T se reinicia por cada byte correcto mientras falten bytes.                                      |
+| 6    | FPGA: preparación y commit                                 | Recepción completa lleva a `PREPARING_READY`; preparación y commit en `READY` dentro del presupuesto de 1 ms para `REFERENCE`/`ALT_1000`. Se confirma la imagen y la sesión inicial sin ejecutar CPU. |
+| 7    | FPGA → PC: `[LOAD][COMPLETADA]`                            | Dos bytes; PC espera hasta `1000 * N * 10 / 19200 + 201` ms desde el inicio del contenido en los perfiles actuales.                                                                                   |
 
 La PC espera los dos bytes completos de COMPLETADA antes de enviar la siguiente operación. La FPGA mantiene el descarte de RX durante preparación y envío de esa confirmación; termina el intercambio de `LOAD` y vuelve a interpretar solicitudes cuando finaliza físicamente su segundo byte, incluido Stop. El commit en `READY` puede preceder al fin de transmisión: `READY` por sí solo no abre el receptor a una solicitud nueva durante la confirmación. Un intercambio exitoso no agrega una espera de silencio R.
 
@@ -458,15 +458,15 @@ Para N = 32, la solicitud de carga es `[LOAD][20 00 00 00 00]`, seguida de 32 by
 
 #### Errores básicos del recorrido LOAD
 
-| Caso | Respuesta de FPGA | Imagen / sesión | Continuación |
-|---|---|---|---|
-| Consulta interpretada en estado no elegible | `[CONSULTAR_DISPONIBILIDAD][NO_DISPONIBLE]` | Conservadas. | PC no solicita `LOAD` mientras no obtenga DISPONIBLE. |
-| Solicitud completa con tamaño inválido | `[LOAD][TAMAÑO_INVALIDO]` | Conservadas; no se acepta `LOAD`. | PC no envía contenido; no requiere recuperación por silencio. |
-| Solicitud `LOAD` completa en estado no elegible | `[LOAD][NO_DISPONIBLE]` | Conservadas; la ejecución activa continúa. | PC no envía contenido; el rechazo completo no requiere recuperación por silencio. |
-| Tamaño incompleto al vencer T | `[LOAD][SOLICITUD_INCOMPLETA]` | Conservadas; `LOAD` no fue aceptada. | Descarte y recuperación por silencio. |
-| Contenido incompleto al vencer T | `[LOAD][CONTENIDO_INCOMPLETO]` | Sin imagen válida después de la aceptación. | Descarte y recuperación por silencio. |
-| Error UART al recibir tamaño o contenido | `[LOAD][ERROR_UART]` | Conservadas antes de aceptar; sin imagen válida después. | Abandonar recepción y recuperar por silencio; error tiene prioridad sobre byte y timeout. |
-| Vence la espera de PC o se pierde una respuesta | No se presupone una respuesta recibida. | No inferir rollback: perder COMPLETADA no revierte una imagen comprometida. | PC detiene/cancela el intento y aplica la espera de recuperación antes de consultar. |
+| Caso                                            | Respuesta de FPGA                           | Imagen / sesión                                                             | Continuación                                                                              |
+|-------------------------------------------------|---------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Consulta interpretada en estado no elegible     | `[CONSULTAR_DISPONIBILIDAD][NO_DISPONIBLE]` | Conservadas.                                                                | PC no solicita `LOAD` mientras no obtenga DISPONIBLE.                                     |
+| Solicitud completa con tamaño inválido          | `[LOAD][TAMAÑO_INVALIDO]`                   | Conservadas; no se acepta `LOAD`.                                           | PC no envía contenido; no requiere recuperación por silencio.                             |
+| Solicitud `LOAD` completa en estado no elegible | `[LOAD][NO_DISPONIBLE]`                     | Conservadas; la ejecución activa continúa.                                  | PC no envía contenido; el rechazo completo no requiere recuperación por silencio.         |
+| Tamaño incompleto al vencer T                   | `[LOAD][SOLICITUD_INCOMPLETA]`              | Conservadas; `LOAD` no fue aceptada.                                        | Descarte y recuperación por silencio.                                                     |
+| Contenido incompleto al vencer T                | `[LOAD][CONTENIDO_INCOMPLETO]`              | Sin imagen válida después de la aceptación.                                 | Descarte y recuperación por silencio.                                                     |
+| Error UART al recibir tamaño o contenido        | `[LOAD][ERROR_UART]`                        | Conservadas antes de aceptar; sin imagen válida después.                    | Abandonar recepción y recuperar por silencio; error tiene prioridad sobre byte y timeout. |
+| Vence la espera de PC o se pierde una respuesta | No se presupone una respuesta recibida.     | No inferir rollback: perder COMPLETADA no revierte una imagen comprometida. | PC detiene/cancela el intento y aplica la espera de recuperación antes de consultar.      |
 
 En recuperación, la FPGA descarta RX sin borrar TX, incluidas consultas/`reset` UART, hasta R = 100 ms de silencio continuo, línea en reposo, ningún byte en curso y RX vacía. PC detiene/cancela ante fallo o vencimiento, espera `W_ms = 100 * ceil(((N + 6) * 1000 * 10 / 19200 + 100 + 100) / 100)` y consulta disponibilidad; si no obtiene respuesta, espera W nuevamente antes de repetir la consulta. El usuario solicita una nueva `LOAD` completa si desea reintentar. Para N = 1024, W = 800 ms. Se conserva el alcance del cliente propio y transporte de laboratorio.
 
@@ -488,11 +488,11 @@ En recuperación, la FPGA descarta RX sin borrar TX, incluidas consultas/`reset`
 
 **Decisión:** Una solicitud `RUN` ocupa exactamente un byte `[RUN]`, sin parámetros. Cuando el receptor interpreta esa solicitud como comando, su respuesta inicial ocupa exactamente dos bytes:
 
-| Condición | Respuesta inicial | Efecto |
-|---|---|---|
-| Imagen válida y estado elegible | `[RUN][ACEPTADA]` | Toma la orden y realiza la ejecución continua correspondiente al contexto actual. |
-| Sin imagen válida | `[RUN][SIN_IMAGEN]` | Rechazo; no inicia una ejecución. |
-| Imagen válida y estado incompatible | `[RUN][NO_DISPONIBLE]` | Rechazo; conserva la sesión y no altera la ejecución vigente. |
+| Condición                           | Respuesta inicial      | Efecto                                                                            |
+|-------------------------------------|------------------------|-----------------------------------------------------------------------------------|
+| Imagen válida y estado elegible     | `[RUN][ACEPTADA]`      | Toma la orden y realiza la ejecución continua correspondiente al contexto actual. |
+| Sin imagen válida                   | `[RUN][SIN_IMAGEN]`    | Rechazo; no inicia una ejecución.                                                 |
+| Imagen válida y estado incompatible | `[RUN][NO_DISPONIBLE]` | Rechazo; conserva la sesión y no altera la ejecución vigente.                     |
 
 Los nombres son simbólicos: la asignación numérica de códigos y resultados permanece pendiente en C02/C03. Se mantienen las reglas del receptor durante contenido, preparación/confirmación `LOAD` y recuperación: esos bytes no se interpretan como solicitudes `RUN`.
 
@@ -525,10 +525,10 @@ ACEPTADA certifica que la orden fue tomada y se realizará su ejecución continu
 
 **Decisión:** Un `RUN` aceptado que alcanza su estado terminal genera una respuesta final automática, sin exigir una consulta posterior de PC:
 
-| Terminación | Condición arquitectónica | Respuesta final |
-|---|---|---|
-| Normal por halt | `FINISHED`, con pipeline vacío después del drenado necesario | `[RUN][FINALIZADA][estado de Debug]` |
-| Excepcional por fault | `FAULT`, con pipeline vacío después del drenado necesario | `[RUN][FAULT][estado de Debug]` |
+| Terminación           | Condición arquitectónica                                     | Respuesta final                      |
+|-----------------------|--------------------------------------------------------------|--------------------------------------|
+| Normal por halt       | `FINISHED`, con pipeline vacío después del drenado necesario | `[RUN][FINALIZADA][estado de Debug]` |
+| Excepcional por fault | `FAULT`, con pipeline vacío después del drenado necesario    | `[RUN][FAULT][estado de Debug]`      |
 
 La cabecera mantiene el código de la solicitud `RUN` y un byte de resultado. Los nombres FINALIZADA y `FAULT` son simbólicos hasta C03; la representación binaria del estado de Debug, su longitud y delimitación se completarán en D05. La respuesta final no se reduce a dos bytes: incluye el snapshot acordado.
 
@@ -558,13 +558,13 @@ Un `RUN` rechazado solo produce su respuesta inicial de rechazo. Un programa que
 
 **Decisión:** Mientras el sistema se encuentre en `RUNNING`, `HALT_DRAIN_AUTO` o `FAULT_DRAIN_AUTO` y el receptor interprete solicitudes, se aplica esta tabla:
 
-| Solicitud | Resultado | Efecto |
-|---|---|---|
-| `RESET` | Aceptar el `reset` global ya acordado; formato/confirmación pendientes en Z02 | Abandonar la ejecución y aplicar sus efectos arquitectónicos. |
-| `CONSULTAR_DISPONIBILIDAD` | `[CONSULTAR_DISPONIBILIDAD][NO_DISPONIBLE]` | Informar que `LOAD` no es elegible, sin modificar ejecución ni imagen. |
-| `LOAD` | `[LOAD][NO_DISPONIBLE]` después de recibir su solicitud completa | No aceptar la carga ni recibir contenido de programa; conservar ejecución e imagen. |
-| `RUN` | `[RUN][NO_DISPONIBLE]` | No iniciar otra ejecución; conservar la actual. |
-| `STEP` | `[STEP][NO_DISPONIBLE]` | No insertar un paso ni alterar el avance continuo actual. |
+| Solicitud                  | Resultado                                                                     | Efecto                                                                              |
+|----------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| `RESET`                    | Aceptar el `reset` global ya acordado; formato/confirmación pendientes en Z02 | Abandonar la ejecución y aplicar sus efectos arquitectónicos.                       |
+| `CONSULTAR_DISPONIBILIDAD` | `[CONSULTAR_DISPONIBILIDAD][NO_DISPONIBLE]`                                   | Informar que `LOAD` no es elegible, sin modificar ejecución ni imagen.              |
+| `LOAD`                     | `[LOAD][NO_DISPONIBLE]` después de recibir su solicitud completa              | No aceptar la carga ni recibir contenido de programa; conservar ejecución e imagen. |
+| `RUN`                      | `[RUN][NO_DISPONIBLE]`                                                        | No iniciar otra ejecución; conservar la actual.                                     |
+| `STEP`                     | `[STEP][NO_DISPONIBLE]`                                                       | No insertar un paso ni alterar el avance continuo actual.                           |
 
 Una solicitud `LOAD` conserva su formato de seis bytes y las reglas de solicitud incompleta/error UART ya aprobadas. La tabla no cambia el tratamiento de contenido `LOAD` o recuperación, donde los bytes no se interpretan como comandos, ni prescribe los campos futuros de `STEP`/`RESET`. Las solicitudes incompatibles no suprimen ciclos automáticos de CPU.
 
@@ -633,13 +633,13 @@ La PC obtiene el paso y su Debug en una misma respuesta, sin una consulta adicio
 
 COMPLETADO acredita que ocurrió el ciclo solicitado. La situación de la ejecución se interpreta a partir del `global_state` del snapshot posterior al ciclo:
 
-| Estado observado | Significado |
-|---|---|
-| `STEPPING` | La sesión espera el siguiente comando, sin frontera terminal confirmada. |
-| `HALT_DRAIN_STEP` | Halt confirmado; quedan instrucciones anteriores por completar. |
-| `FINISHED` | Terminación normal con pipeline vacío. |
-| `FAULT_DRAIN_STEP` | Fault confirmado; quedan instrucciones anteriores por completar. |
-| `FAULT` | Terminación por fault con pipeline vacío. |
+| Estado observado   | Significado                                                              |
+|--------------------|--------------------------------------------------------------------------|
+| `STEPPING`         | La sesión espera el siguiente comando, sin frontera terminal confirmada. |
+| `HALT_DRAIN_STEP`  | Halt confirmado; quedan instrucciones anteriores por completar.          |
+| `FINISHED`         | Terminación normal con pipeline vacío.                                   |
+| `FAULT_DRAIN_STEP` | Fault confirmado; quedan instrucciones anteriores por completar.         |
+| `FAULT`            | Terminación por fault con pipeline vacío.                                |
 
 `FAULT_DRAIN_STEP` y `FAULT` incluyen causa y PC de la instrucción causante como metadatos vigentes. La representación externa de estados y metadatos sigue pendiente en D05/C03, sin agregar otro resultado `STEP` para distinguir estas situaciones.
 
@@ -681,12 +681,12 @@ Ejemplo: 0x12345678 se transmite como `78 56 34 12`; un índice de registro 5, c
 
 Las longitudes resultantes para el contenido ya aprobado de los registros interetapa son:
 
-| Latch | Longitud externa de sus campos |
-|---|---|
-| `IF/ID` | 11 bytes |
-| `ID/EX` | 30 bytes |
-| `EX/MEM` | 20 bytes |
-| `MEM/WB` | 15 bytes |
+| Latch    | Longitud externa de sus campos |
+|----------|--------------------------------|
+| `IF/ID`  | 11 bytes                       |
+| `ID/EX`  | 30 bytes                       |
+| `EX/MEM` | 20 bytes                       |
+| `MEM/WB` | 15 bytes                       |
 
 Los cuatro registros interetapa ocupan 76 bytes; RF completo ocupa 128 bytes. Estas longitudes no fijan todavía el orden de bloques/campos, identificadores adicionales, presencia de metadatos inactivos ni longitud total del snapshot. Cada entrada lógica de memoria utilizada tendrá dirección de cuatro bytes y valor de uno; cantidad de entradas, posición de esa cantidad y representación de lista vacía se completarán en D05.
 
@@ -710,21 +710,21 @@ Los cuatro registros interetapa ocupan 76 bytes; RF completo ocupa 128 bytes. Es
 
 **Decisión:** Después de la cabecera común `[código de solicitud: 1][resultado: 1]`, el cuerpo del snapshot tiene este orden fijo. Los offsets siguientes comienzan en cero en el cuerpo, excluyendo los dos bytes de cabecera:
 
-| Bloque / campo | Offset en el cuerpo | Longitud en bytes |
-|---|---|---|
-| `global_state` | 0 | 1 |
-| `image_valid` | 1 | 1 |
-| PC global | 2 | 4 |
-| `cycle_count` | 6 | 8 |
-| `fault_cause` global | 14 | 1 |
-| `fault_pc` global | 15 | 4 |
-| RF: x0, x1, …, x31 | 19 | 128 |
-| `IF/ID` | 147 | 11 |
-| `ID/EX` | 158 | 30 |
-| `EX/MEM` | 188 | 20 |
-| `MEM/WB` | 208 | 15 |
-| `used_count` | 223 | 5 |
-| Lista de memoria utilizada | 228 | `5 * used_count` |
+| Bloque / campo             | Offset en el cuerpo | Longitud en bytes |
+|----------------------------|---------------------|-------------------|
+| `global_state`             | 0                   | 1                 |
+| `image_valid`              | 1                   | 1                 |
+| PC global                  | 2                   | 4                 |
+| `cycle_count`              | 6                   | 8                 |
+| `fault_cause` global       | 14                  | 1                 |
+| `fault_pc` global          | 15                  | 4                 |
+| RF: x0, x1, …, x31         | 19                  | 128               |
+| `IF/ID`                    | 147                 | 11                |
+| `ID/EX`                    | 158                 | 30                |
+| `EX/MEM`                   | 188                 | 20                |
+| `MEM/WB`                   | 208                 | 15                |
+| `used_count`               | 223                 | 5                 |
+| Lista de memoria utilizada | 228                 | `5 * used_count`  |
 
 RF identifica cada registro por posición: `x_i` comienza en `19 + 4*i`. Los registros interetapa se identifican por bloque y sus campos siguen exactamente el orden del esquema aprobado en `interfaces.md` y el acuerdo de exposición completa: `IF/ID` 5 campos, `ID/EX` 15, `EX/MEM` 8 y `MEM/WB` 6. No se agregan bytes de identificación ni campos nuevos. Cada campo conserva el ancho externo y little-endian del acuerdo de representación escalar.
 
@@ -808,13 +808,13 @@ El botón físico conserva el `reset` global directo e inmediato conforme al aco
 
 **Decisión:** Cada solicitud comienza con un byte binario de operación:
 
-| Operación | Código hexadecimal |
-|---|---|
-| `LOAD` | 0x01 |
-| `RUN` | 0x02 |
-| `STEP` | 0x03 |
-| `RESET` | 0x04 |
-| `CHECK_READY` | 0x05 |
+| Operación     | Código hexadecimal |
+|---------------|--------------------|
+| `LOAD`        | 0x01               |
+| `RUN`         | 0x02               |
+| `STEP`        | 0x03               |
+| `RESET`       | 0x04               |
+| `CHECK_READY` | 0x05               |
 
 La respuesta comienza con ese mismo código y después un byte de resultado, seguido por los datos definidos para la operación. Esto rige tanto aceptación/final de `LOAD` y `RUN` como respuesta `STEP`, `RESET` y `CHECK_READY`. Los códigos no expresan prioridad y sus valores no se reutilizan automáticamente para codificar resultados.
 
@@ -840,52 +840,52 @@ Ejemplos de solicitudes completas: `RUN` `02`, `STEP` `03`, `RESET` `04`, `CHECK
 
 **Decisión:** El segundo byte de respuesta utiliza estos códigos:
 
-| Código | Nombre definitivo | Significado aprobado |
-|---|---|---|
-| 0x01 | `ACCEPTED` | `LOAD`, `RUN` o `RESET` aceptado |
-| 0x02 | `DONE` | `LOAD` completado o ciclo `STEP` realizado |
-| 0x03 | `READY` | Disponible para recibir `LOAD`, respuesta `CHECK_READY` |
-| 0x04 | `BUSY` | No disponible para la operación |
-| 0x05 | `NO_IMAGE` | No hay imagen válida para ejecutar |
-| 0x06 | `INVALID_SIZE` | Tamaño de `LOAD` inválido |
-| 0x07 | `INCOMPLETE_REQUEST` | Solicitud `LOAD` recibida incompleta |
-| 0x08 | `INCOMPLETE_DATA` | Contenido del programa `LOAD` recibido incompleto |
-| 0x09 | `UART_ERROR` | Error UART durante recepción de `LOAD` |
-| 0x0A | `FINISHED` | `RUN` terminó normalmente por halt |
-| 0x0B | `FAULT` | `RUN` terminó por fault de CPU |
+| Código | Nombre definitivo    | Significado aprobado                                    |
+|--------|----------------------|---------------------------------------------------------|
+| 0x01   | `ACCEPTED`           | `LOAD`, `RUN` o `RESET` aceptado                        |
+| 0x02   | `DONE`               | `LOAD` completado o ciclo `STEP` realizado              |
+| 0x03   | `READY`              | Disponible para recibir `LOAD`, respuesta `CHECK_READY` |
+| 0x04   | `BUSY`               | No disponible para la operación                         |
+| 0x05   | `NO_IMAGE`           | No hay imagen válida para ejecutar                      |
+| 0x06   | `INVALID_SIZE`       | Tamaño de `LOAD` inválido                               |
+| 0x07   | `INCOMPLETE_REQUEST` | Solicitud `LOAD` recibida incompleta                    |
+| 0x08   | `INCOMPLETE_DATA`    | Contenido del programa `LOAD` recibido incompleto       |
+| 0x09   | `UART_ERROR`         | Error UART durante recepción de `LOAD`                  |
+| 0x0A   | `FINISHED`           | `RUN` terminó normalmente por halt                      |
+| 0x0B   | `FAULT`              | `RUN` terminó por fault de CPU                          |
 
 La cabecera continúa siendo `[código de operación][resultado]`. La presencia y longitud de datos dependen de la operación y resultado ya aprobados. `DONE` de `LOAD` termina tras dos bytes; `DONE` de `STEP` agrega Debug. Un `STEP` efectivamente realizado conserva `DONE` incluso si confirma halt/fault o avanza drenado: `global_state` y causa/PC del snapshot describen su estado arquitectónico. Solo `RUN` usa `FINISHED`/`FAULT` como resultado terminal automático. `FAULT` es una terminación de CPU, distinta de `UART_ERROR` del transporte.
 
 Correspondencia con las etiquetas descriptivas anteriores:
 
-| Etiqueta anterior | Etiqueta aprobada |
-|---|---|
-| ACEPTADA | `ACCEPTED` |
-| COMPLETADA y COMPLETADO | `DONE` |
-| DISPONIBLE | `READY` |
-| `NO_DISPONIBLE` | `BUSY` |
-| `SIN_IMAGEN` | `NO_IMAGE` |
-| `TAMAÑO_INVALIDO` | `INVALID_SIZE` |
-| `SOLICITUD_INCOMPLETA` | `INCOMPLETE_REQUEST` |
-| `CONTENIDO_INCOMPLETO` | `INCOMPLETE_DATA` |
-| `ERROR_UART` | `UART_ERROR` |
-| FINALIZADA | `FINISHED` |
+| Etiqueta anterior       | Etiqueta aprobada    |
+|-------------------------|----------------------|
+| ACEPTADA                | `ACCEPTED`           |
+| COMPLETADA y COMPLETADO | `DONE`               |
+| DISPONIBLE              | `READY`              |
+| `NO_DISPONIBLE`         | `BUSY`               |
+| `SIN_IMAGEN`            | `NO_IMAGE`           |
+| `TAMAÑO_INVALIDO`       | `INVALID_SIZE`       |
+| `SOLICITUD_INCOMPLETA`  | `INCOMPLETE_REQUEST` |
+| `CONTENIDO_INCOMPLETO`  | `INCOMPLETE_DATA`    |
+| `ERROR_UART`            | `UART_ERROR`         |
+| FINALIZADA              | `FINISHED`           |
 
 `FAULT` conserva nombre y significado. Los acuerdos históricos con esas etiquetas se interpretan mediante esta tabla.
 
 Ejemplos de respuestas completas sin snapshot:
 
-| Caso | Bytes |
-|---|---|
-| `CHECK_READY` disponible | `05 03` |
+| Caso                        | Bytes   |
+|-----------------------------|---------|
+| `CHECK_READY` disponible    | `05 03` |
 | `CHECK_READY` no disponible | `05 04` |
-| Aceptación `LOAD` | `01 01` |
-| Carga completada | `01 02` |
-| Tamaño inválido | `01 06` |
-| Aceptación `RUN` | `02 01` |
-| `RUN` sin imagen | `02 05` |
-| `STEP` sin imagen | `03 05` |
-| Aceptación `RESET` | `04 01` |
+| Aceptación `LOAD`           | `01 01` |
+| Carga completada            | `01 02` |
+| Tamaño inválido             | `01 06` |
+| Aceptación `RUN`            | `02 01` |
+| `RUN` sin imagen            | `02 05` |
+| `STEP` sin imagen           | `03 05` |
+| Aceptación `RESET`          | `04 01` |
 
 Respuestas con snapshot: `STEP` realizado `[03][02][snapshot]`, `RUN` normal `[02][0A][snapshot]` y `RUN` con fault `[02][0B][snapshot]`. Sus longitudes completas continúan siendo `230 + 5*used_count` bytes, incluidos los dos de cabecera.
 
@@ -911,22 +911,22 @@ No se asigna prioridad por el número de resultado ni se modifica la aceptación
 
 **Decisión:** `global_state` ocupa el primer byte del cuerpo del snapshot, offset cero después de los dos bytes de cabecera, con esta tabla:
 
-| Código | Estado |
-|---|---|
-| 0x00 | `NO_IMAGE` |
-| 0x01 | `LOADING` |
-| 0x02 | `PREPARING_READY` |
-| 0x03 | `READY` |
-| 0x04 | `RUNNING` |
-| 0x05 | `STEPPING` |
-| 0x06 | `HALT_DRAIN_AUTO` |
-| 0x07 | `HALT_DRAIN_STEP` |
-| 0x08 | `FAULT_DRAIN_AUTO` |
-| 0x09 | `FAULT_DRAIN_STEP` |
-| 0x0A | `FINISHED` |
-| 0x0B | `FAULT` |
-| 0x0C | `PREPARING_RUN` |
-| 0x0D | `PREPARING_STEP` |
+| Código | Estado             |
+|--------|--------------------|
+| 0x00   | `NO_IMAGE`         |
+| 0x01   | `LOADING`          |
+| 0x02   | `PREPARING_READY`  |
+| 0x03   | `READY`            |
+| 0x04   | `RUNNING`          |
+| 0x05   | `STEPPING`         |
+| 0x06   | `HALT_DRAIN_AUTO`  |
+| 0x07   | `HALT_DRAIN_STEP`  |
+| 0x08   | `FAULT_DRAIN_AUTO` |
+| 0x09   | `FAULT_DRAIN_STEP` |
+| 0x0A   | `FINISHED`         |
+| 0x0B   | `FAULT`            |
+| 0x0C   | `PREPARING_RUN`    |
+| 0x0D   | `PREPARING_STEP`   |
 
 Son códigos de transporte; no imponen una codificación física a la FSM ni agregan estados o registros funcionales. Solicitudes, resultados y `global_state` ocupan campos diferentes. El lector usa la posición de cada byte para aplicar su tabla correspondiente, aunque sus valores numéricos coincidan.
 
@@ -960,18 +960,18 @@ Cada respuesta se transmite completa antes de comenzar otra, incluido el Stop de
 
 La tabla siguiente consolida reglas aprobadas. Las fases del transporte prevalecen sobre la elegibilidad arquitectónica; `READY` en el estado CPU no habilita recepción de comandos mientras todavía se transmite una confirmación o Debug.
 
-| Situación / fase | `LOAD` | `RUN` / `STEP` | `CHECK_READY` | `RESET` UART |
-|---|---|---|---|---|
-| Transporte disponible, `NO_IMAGE` | Validar tamaño y aceptar si es correcto | `NO_IMAGE`, dos bytes y sin Debug | `READY`, sin imagen válida implícita | `ACCEPTED`; `reset` global después del último Stop |
-| Transporte disponible, `READY`/`STEPPING`/drains `STEP`/`FINISHED`/`FAULT` | Validar tamaño y aceptar si es correcto | Aceptar con la semántica arquitectónica ya definida | `READY`, sin reserva de carga | `ACCEPTED`; `reset` global después del último Stop |
-| `RUNNING` o drains AUTO, fuera de respuestas/Debug | `BUSY` tras recibir cabecera completa; no cancela CPU | `BUSY`, sin alterar CPU | `BUSY`, respuesta de dos bytes | `ACCEPTED` y abandono del intercambio `RUN` anterior |
-| Recepción de tamaño `LOAD` | Los cinco bytes son tamaño de la solicitud en curso | No se interpretan comandos dentro del tamaño | No se interpreta como comando | No se interpreta como comando |
-| Recepción de contenido `LOAD` aceptado | Los siguientes N bytes son programa | No se interpretan comandos dentro del programa | No se interpreta como comando | No se interpreta como comando |
-| Preparación `LOAD` y envío de su confirmación final | PC espera `DONE`; RX adicional se descarta | RX adicional se descarta | RX adicional se descarta | RX adicional se descarta |
-| Preparación `RUN`/`STEP` y respuesta inicial `RUN` o respuesta `STEP` pendiente | PC espera el intercambio correspondiente | Sin segunda operación de PC ni preparación superpuesta | PC espera antes de otra solicitud normal | PC espera; conserva `reset` físico directo |
-| Transmisión de una respuesta breve | PC espera completa | PC espera completa; no se intercalan respuestas | PC espera completa | PC espera completa |
-| Respuesta automática Debug pendiente o en transmisión | RX consumido/descartado, sin respuesta | RX consumido/descartado, sin respuesta | RX consumido/descartado, sin respuesta | RX consumido/descartado; PC lo envía después |
-| Recuperación RX por silencio | RX consumido/descartado | RX consumido/descartado | RX consumido/descartado, sin respuesta | RX consumido/descartado, sin respuesta |
+| Situación / fase                                                                | `LOAD`                                                | `RUN` / `STEP`                                         | `CHECK_READY`                            | `RESET` UART                                         |
+|---------------------------------------------------------------------------------|-------------------------------------------------------|--------------------------------------------------------|------------------------------------------|------------------------------------------------------|
+| Transporte disponible, `NO_IMAGE`                                               | Validar tamaño y aceptar si es correcto               | `NO_IMAGE`, dos bytes y sin Debug                      | `READY`, sin imagen válida implícita     | `ACCEPTED`; `reset` global después del último Stop   |
+| Transporte disponible, `READY`/`STEPPING`/drains `STEP`/`FINISHED`/`FAULT`      | Validar tamaño y aceptar si es correcto               | Aceptar con la semántica arquitectónica ya definida    | `READY`, sin reserva de carga            | `ACCEPTED`; `reset` global después del último Stop   |
+| `RUNNING` o drains AUTO, fuera de respuestas/Debug                              | `BUSY` tras recibir cabecera completa; no cancela CPU | `BUSY`, sin alterar CPU                                | `BUSY`, respuesta de dos bytes           | `ACCEPTED` y abandono del intercambio `RUN` anterior |
+| Recepción de tamaño `LOAD`                                                      | Los cinco bytes son tamaño de la solicitud en curso   | No se interpretan comandos dentro del tamaño           | No se interpreta como comando            | No se interpreta como comando                        |
+| Recepción de contenido `LOAD` aceptado                                          | Los siguientes N bytes son programa                   | No se interpretan comandos dentro del programa         | No se interpreta como comando            | No se interpreta como comando                        |
+| Preparación `LOAD` y envío de su confirmación final                             | PC espera `DONE`; RX adicional se descarta            | RX adicional se descarta                               | RX adicional se descarta                 | RX adicional se descarta                             |
+| Preparación `RUN`/`STEP` y respuesta inicial `RUN` o respuesta `STEP` pendiente | PC espera el intercambio correspondiente              | Sin segunda operación de PC ni preparación superpuesta | PC espera antes de otra solicitud normal | PC espera; conserva `reset` físico directo           |
+| Transmisión de una respuesta breve                                              | PC espera completa                                    | PC espera completa; no se intercalan respuestas        | PC espera completa                       | PC espera completa                                   |
+| Respuesta automática Debug pendiente o en transmisión                           | RX consumido/descartado, sin respuesta                | RX consumido/descartado, sin respuesta                 | RX consumido/descartado, sin respuesta   | RX consumido/descartado; PC lo envía después         |
+| Recuperación RX por silencio                                                    | RX consumido/descartado                               | RX consumido/descartado                                | RX consumido/descartado, sin respuesta   | RX consumido/descartado, sin respuesta               |
 
 La preparación `RUN`/`STEP` mantiene las políticas de sesión existentes. La tabla no define manejo de clientes que violen la secuencia durante respuestas breves o preparaciones ni agrega timeouts de ejecución. Las excepciones `RUN` se aplican durante ejecución efectiva, fuera de exclusión Debug. El botón físico conserva el `reset` directo en todas las fases y puede abortar una transmisión; la PC descarta cualquier respuesta Debug incompleta y abandona el intercambio previo al retomar el enlace.
 

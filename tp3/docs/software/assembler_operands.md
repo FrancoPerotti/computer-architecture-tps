@@ -75,13 +75,13 @@ Un operando de registro se interpreta según los nombres exactos de [Registros](
 
 | Texto            | Índice |
 |------------------|-------:|
-| `x0`, `zero`     | 0      |
-| `x1`, `ra`       | 1      |
-| `x2`, `sp`       | 2      |
-| `x5`, `t0`       | 5      |
-| `x8`, `s0`, `fp` | 8      |
-| `x10`, `a0`      | 10     |
-| `x31`, `t6`      | 31     |
+| `x0`, `zero`     |      0 |
+| `x1`, `ra`       |      1 |
+| `x2`, `sp`       |      2 |
+| `x5`, `t0`       |      5 |
+| `x8`, `s0`, `fp` |      8 |
+| `x10`, `a0`      |     10 |
+| `x31`, `t6`      |     31 |
 
 Se comprueban el nombre completo y su escritura en minúsculas. `x32`, `x01`, `X1`, `pc` y nombres de registros no admitidos producen un diagnóstico. Un entero como `5` no reemplaza al nombre `x5` en una posición de registro.
 
@@ -182,12 +182,12 @@ Con las direcciones y etiquetas del [ejemplo de asignación](assembler_addresses
 
 | `line` | `pc` | `mnemonic` | `rd`    | `rs1`   | `rs2`   | `imm`   |
 |-------:|-----:|------------|---------|---------|---------|---------|
-| 4      | 0    | `addi`     | 1       | 0       | Ausente | 3       |
-| 5      | 4    | `addi`     | 1       | 1       | Ausente | -1      |
-| 6      | 8    | `bne`      | Ausente | 1       | 0       | -4      |
-| 7      | 12   | `jal`      | 0       | Ausente | Ausente | 8       |
-| 8      | 16   | `addi`     | 2       | 0       | Ausente | 99      |
-| 9      | 20   | `halt`     | Ausente | Ausente | Ausente | Ausente |
+|      4 |    0 | `addi`     | 1       | 0       | Ausente | 3       |
+|      5 |    4 | `addi`     | 1       | 1       | Ausente | -1      |
+|      6 |    8 | `bne`      | Ausente | 1       | 0       | -4      |
+|      7 |   12 | `jal`      | 0       | Ausente | Ausente | 8       |
+|      8 |   16 | `addi`     | 2       | 0       | Ausente | 99      |
+|      9 |   20 | `halt`     | Ausente | Ausente | Ausente | Ausente |
 
 `ciclo` se define en dirección 4; la instrucción `bne` ubicada en PC 8 recibe `imm=4-8=-4`. `fin` se define en dirección 20; `jal` en PC 12 recibe `imm=20-12=8`.
 

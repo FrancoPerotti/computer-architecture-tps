@@ -84,10 +84,10 @@ La recepción continúa procesando bytes a medida que llegan. Si TX no puede ace
 
 PC y FPGA seleccionan previamente el mismo perfil. Las capacidades provienen de la [tabla de perfiles de memoria](architecture/memory/memory_architecture.md#perfiles-definidos).
 
-| Perfil | IMEM | DMEM | Alcance |
-|---|---:|---:|---|
+| Perfil      |       IMEM |       DMEM | Alcance                                               |
+|-------------|-----------:|-----------:|-------------------------------------------------------|
 | `REFERENCE` | 1024 bytes | 2048 bytes | Perfil por defecto; incluye validación física en FPGA |
-| `ALT_1000` | 1000 bytes | 1000 bytes | Elaboración y simulación de parametrización |
+| `ALT_1000`  | 1000 bytes | 1000 bytes | Elaboración y simulación de parametrización           |
 
 El formato de los mensajes no cambia entre perfiles. La capacidad seleccionada afecta:
 
@@ -144,13 +144,13 @@ El protocolo no incorpora checksum, CRC ni marcador explícito de fin de mensaje
 
 El primer byte de una solicitud identifica la operación.
 
-| Código | Operación | Solicitud |
-|---|---|---|
-| `0x01` | `LOAD` | Código + `N` unsigned de cinco bytes little-endian; seis bytes. El contenido se transmite después de aceptación |
-| `0x02` | `RUN` | Un byte, sin parámetros |
-| `0x03` | `STEP` | Un byte, sin parámetros |
-| `0x04` | `RESET` | Un byte, sin parámetros |
-| `0x05` | `CHECK_READY` | Un byte, sin parámetros |
+| Código | Operación     | Solicitud                                                                                                       |
+|--------|---------------|-----------------------------------------------------------------------------------------------------------------|
+| `0x01` | `LOAD`        | Código + `N` unsigned de cinco bytes little-endian; seis bytes. El contenido se transmite después de aceptación |
+| `0x02` | `RUN`         | Un byte, sin parámetros                                                                                         |
+| `0x03` | `STEP`        | Un byte, sin parámetros                                                                                         |
+| `0x04` | `RESET`       | Un byte, sin parámetros                                                                                         |
+| `0x05` | `CHECK_READY` | Un byte, sin parámetros                                                                                         |
 
 `RUN`, `STEP`, `RESET` y `CHECK_READY` quedan completos al recibir correctamente su único byte.
 
@@ -168,27 +168,27 @@ Esta separación permite que la FPGA valide el tamaño y la elegibilidad de la c
 
 Toda respuesta comienza con dos bytes:
 
-| Posición | Campo | Significado |
-|---:|---|---|
-| 0 | Código de operación | Reproduce el código de la solicitud |
-| 1 | Resultado | Indica aceptación, finalización, disponibilidad o error |
+| Posición | Campo               | Significado                                             |
+|---------:|---------------------|---------------------------------------------------------|
+|        0 | Código de operación | Reproduce el código de la solicitud                     |
+|        1 | Resultado           | Indica aceptación, finalización, disponibilidad o error |
 
 Los resultados definidos son:
 
-| Código | Resultado | Uso |
-|---|---|---|
-| `0x01` | `ACCEPTED` | `LOAD`, `RUN` o `RESET` aceptado |
-| `0x02` | `DONE` | `LOAD` completado o ciclo `STEP` realizado |
-| `0x03` | `READY` | `CHECK_READY`: disponible para `LOAD` |
-| `0x04` | `BUSY` | No disponible para la operación |
-| `0x05` | `NO_IMAGE` | `RUN` o `STEP` sin imagen válida |
-| `0x06` | `INVALID_SIZE` | Tamaño `LOAD` inválido |
-| `0x07` | `INCOMPLETE_REQUEST` | Tamaño `LOAD` incompleto |
-| `0x08` | `INCOMPLETE_DATA` | Programa `LOAD` incompleto |
-| `0x09` | `UART_ERROR` | Error UART durante recepción `LOAD` |
-| `0x0A` | `FINISHED` | `RUN` termina normalmente por `halt` |
-| `0x0B` | `FAULT` | `RUN` termina por fault de CPU |
-| `0x0C` | `UNKNOWN_COMMAND` | Código de operación desconocido |
+| Código | Resultado            | Uso                                        |
+|--------|----------------------|--------------------------------------------|
+| `0x01` | `ACCEPTED`           | `LOAD`, `RUN` o `RESET` aceptado           |
+| `0x02` | `DONE`               | `LOAD` completado o ciclo `STEP` realizado |
+| `0x03` | `READY`              | `CHECK_READY`: disponible para `LOAD`      |
+| `0x04` | `BUSY`               | No disponible para la operación            |
+| `0x05` | `NO_IMAGE`           | `RUN` o `STEP` sin imagen válida           |
+| `0x06` | `INVALID_SIZE`       | Tamaño `LOAD` inválido                     |
+| `0x07` | `INCOMPLETE_REQUEST` | Tamaño `LOAD` incompleto                   |
+| `0x08` | `INCOMPLETE_DATA`    | Programa `LOAD` incompleto                 |
+| `0x09` | `UART_ERROR`         | Error UART durante recepción `LOAD`        |
+| `0x0A` | `FINISHED`           | `RUN` termina normalmente por `halt`       |
+| `0x0B` | `FAULT`              | `RUN` termina por fault de CPU             |
+| `0x0C` | `UNKNOWN_COMMAND`    | Código de operación desconocido            |
 
 `LOAD`, `CHECK_READY` y `RESET` producen respuestas de exactamente dos bytes.
 
@@ -485,15 +485,15 @@ La recuperación elimina la recepción parcial y los bytes RX pendientes, pero c
 
 ### Resumen de LOAD
 
-| Fase / resultado | Respuesta | Efecto |
-|---|---|---|
-| Aceptación | `01 01` | Invalida imagen anterior e inicia recepción |
-| Éxito preparado y comprometido | `01 02` | Imagen válida y `READY`, sin CPU automático |
-| Tamaño inválido | `01 06` | Conserva imagen y sesión; rechazo completo sin silencio de recuperación |
-| Estado no disponible | `01 04` | Conserva ejecución e imagen; cabecera completa recibida |
-| Tamaño incompleto | `01 07` | Conserva imagen y sesión; recupera RX |
-| Contenido incompleto después de aceptar | `01 08` | Imagen inválida; recupera RX |
-| Error UART durante tamaño o contenido | `01 09` | Aborta y recupera RX; imagen según si `LOAD` ya fue aceptada |
+| Fase / resultado                        | Respuesta | Efecto                                                                  |
+|-----------------------------------------|-----------|-------------------------------------------------------------------------|
+| Aceptación                              | `01 01`   | Invalida imagen anterior e inicia recepción                             |
+| Éxito preparado y comprometido          | `01 02`   | Imagen válida y `READY`, sin CPU automático                             |
+| Tamaño inválido                         | `01 06`   | Conserva imagen y sesión; rechazo completo sin silencio de recuperación |
+| Estado no disponible                    | `01 04`   | Conserva ejecución e imagen; cabecera completa recibida                 |
+| Tamaño incompleto                       | `01 07`   | Conserva imagen y sesión; recupera RX                                   |
+| Contenido incompleto después de aceptar | `01 08`   | Imagen inválida; recupera RX                                            |
+| Error UART durante tamaño o contenido   | `01 09`   | Aborta y recupera RX; imagen según si `LOAD` ya fue aceptada            |
 
 ---
 
@@ -515,13 +515,13 @@ confirma que la orden fue tomada, no que preparación o ejecución hayan termina
 
 El estado inicial determina la acción de `RUN`:
 
-| Estado inicial | Acción |
-|---|---|
-| `READY` | Comienza la ejecución |
-| `STEPPING` | Continúa la sesión |
-| `HALT_DRAIN_STEP` | Ejecuta un ciclo de drain, consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo. |
-| `FAULT_DRAIN_STEP` | Ejecuta un ciclo de drain: alcanza `FAULT` si el pipeline queda vacío; si queda trabajo, continúa en `FAULT_DRAIN_AUTO`. |
-| `FINISHED` o `FAULT` | Primero prepara una sesión nueva de la misma imagen |
+| Estado inicial       | Acción                                                                                                                   |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `READY`              | Comienza la ejecución                                                                                                    |
+| `STEPPING`           | Continúa la sesión                                                                                                       |
+| `HALT_DRAIN_STEP`    | Ejecuta un ciclo de drain, consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo.                        |
+| `FAULT_DRAIN_STEP`   | Ejecuta un ciclo de drain: alcanza `FAULT` si el pipeline queda vacío; si queda trabajo, continúa en `FAULT_DRAIN_AUTO`. |
+| `FINISHED` o `FAULT` | Primero prepara una sesión nueva de la misma imagen                                                                      |
 
 ```mermaid
 sequenceDiagram
@@ -751,12 +751,12 @@ La PC mantiene una operación normal en curso por vez.
 
 Cada operación normal comprende el siguiente intercambio:
 
-| Operación | Intercambio |
-|---|---|
-| `LOAD` | Cabecera, aceptación, contenido y respuesta final |
-| `STEP` | Termina con `DONE` + Debug |
-| `CHECK_READY` | Termina con dos bytes |
-| `RESET` | Aceptación y flujo posterior de consulta |
+| Operación     | Intercambio                                       |
+|---------------|---------------------------------------------------|
+| `LOAD`        | Cabecera, aceptación, contenido y respuesta final |
+| `STEP`        | Termina con `DONE` + Debug                        |
+| `CHECK_READY` | Termina con dos bytes                             |
+| `RESET`       | Aceptación y flujo posterior de consulta          |
 
 `RUN` es la excepción: después de `ACCEPTED`, la CPU puede seguir ejecutando mientras el resultado terminal queda pendiente.
 
@@ -829,17 +829,17 @@ Esta prioridad concreta el cruce entre recepción completa de cabecera y descart
 
 Estar en un estado CPU elegible no basta si el transporte todavía está ocupado.
 
-| Fase | Política de solicitudes |
-|---|---|
-| Transporte disponible, `NO_IMAGE` | `CHECK_READY`→`READY`; `LOAD` validado; `RUN`/`STEP`→`NO_IMAGE`; `RESET` reconocido |
-| Transporte disponible, `READY` / `STEPPING` / drains `STEP` / `FINISHED` / `FAULT` | `LOAD`/`RUN`/`STEP` según arquitectura; `CHECK_READY`→`READY`; `RESET` reconocido |
-| `RUNNING` / drains AUTO, fuera de respuestas/exclusión | `CHECK_READY`→`BUSY`; `RESET` reconocido; `LOAD`/`RUN`/`STEP`→`BUSY` sin detener CPU |
-| Tamaño o contenido `LOAD` | Los bytes pertenecen a `LOAD` y no se interpretan como comandos; cabecera sin resolver puede ser interrumpida por terminal `RUN` según la prioridad indicada arriba |
-| Preparación `LOAD` y confirmación final | PC espera; RX adicional descartado hasta último Stop de `DONE` |
-| Preparación `RUN`/`STEP` y respuesta pendiente | PC espera el intercambio antes de otra operación normal |
-| Respuesta breve en TX | PC espera completa; otra respuesta no se intercala |
-| Debug pendiente o en transmisión | PC espera; FPGA consume y descarta RX sin responder ni guardar comandos |
-| Recuperación por silencio | FPGA consume y descarta RX, incluidas consultas y `RESET` UART |
+| Fase                                                                               | Política de solicitudes                                                                                                                                             |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Transporte disponible, `NO_IMAGE`                                                  | `CHECK_READY`→`READY`; `LOAD` validado; `RUN`/`STEP`→`NO_IMAGE`; `RESET` reconocido                                                                                 |
+| Transporte disponible, `READY` / `STEPPING` / drains `STEP` / `FINISHED` / `FAULT` | `LOAD`/`RUN`/`STEP` según arquitectura; `CHECK_READY`→`READY`; `RESET` reconocido                                                                                   |
+| `RUNNING` / drains AUTO, fuera de respuestas/exclusión                             | `CHECK_READY`→`BUSY`; `RESET` reconocido; `LOAD`/`RUN`/`STEP`→`BUSY` sin detener CPU                                                                                |
+| Tamaño o contenido `LOAD`                                                          | Los bytes pertenecen a `LOAD` y no se interpretan como comandos; cabecera sin resolver puede ser interrumpida por terminal `RUN` según la prioridad indicada arriba |
+| Preparación `LOAD` y confirmación final                                            | PC espera; RX adicional descartado hasta último Stop de `DONE`                                                                                                      |
+| Preparación `RUN`/`STEP` y respuesta pendiente                                     | PC espera el intercambio antes de otra operación normal                                                                                                             |
+| Respuesta breve en TX                                                              | PC espera completa; otra respuesta no se intercala                                                                                                                  |
+| Debug pendiente o en transmisión                                                   | PC espera; FPGA consume y descarta RX sin responder ni guardar comandos                                                                                             |
+| Recuperación por silencio                                                          | FPGA consume y descarta RX, incluidas consultas y `RESET` UART                                                                                                      |
 
 No existe una cola de comandos para bytes recibidos durante períodos de descarte. El botón físico conserva reset directo en todas las fases.
 
@@ -910,21 +910,21 @@ Los offsets se cuentan desde cero después de los dos bytes de cabecera común.
 
 ### Distribución general
 
-| Campo / bloque | Offset | Bytes |
-|---|---:|---:|
-| `global_state` | 0 | 1 |
-| `image_valid` | 1 | 1 |
-| PC global | 2 | 4 |
-| `cycle_count` | 6 | 8 |
-| `fault_cause` global | 14 | 1 |
-| `fault_pc` global | 15 | 4 |
-| RF `x0…x31` | 19 | 128 |
-| `IF/ID` | 147 | 11 |
-| `ID/EX` | 158 | 30 |
-| `EX/MEM` | 188 | 20 |
-| `MEM/WB` | 208 | 15 |
-| `used_count` | 223 | 5 |
-| Lista de memoria | 228 | `5*used_count` |
+| Campo / bloque       | Offset |          Bytes |
+|----------------------|-------:|---------------:|
+| `global_state`       |      0 |              1 |
+| `image_valid`        |      1 |              1 |
+| PC global            |      2 |              4 |
+| `cycle_count`        |      6 |              8 |
+| `fault_cause` global |     14 |              1 |
+| `fault_pc` global    |     15 |              4 |
+| RF `x0…x31`          |     19 |            128 |
+| `IF/ID`              |    147 |             11 |
+| `ID/EX`              |    158 |             30 |
+| `EX/MEM`             |    188 |             20 |
+| `MEM/WB`             |    208 |             15 |
+| `used_count`         |    223 |              5 |
+| Lista de memoria     |    228 | `5*used_count` |
 
 El contexto ocupa 19 bytes.
 
@@ -942,12 +942,12 @@ Después se transmite RF desde `x0` hasta `x31`. Cada registro ocupa cuatro byte
 
 Los registros interetapa se identifican por posición, sin ID adicional.
 
-| Latch | Campos, con bytes entre paréntesis |
-|---|---|
-| `IF/ID` | `valid(1)`, `pc(4)`, `instruction(4)`, `fetch_fault_valid(1)`, `fetch_fault_cause(1)` |
-| `ID/EX` | `valid(1)`, `pc(4)`, `instruction(4)`, `rs1(1)`, `rs2(1)`, `rd(1)`, `rs1_value(4)`, `rs2_value(4)`, `immediate(4)`, `alu_op(1)`, `alu_src(1)`, `result_sel(1)`, `flow_op(1)`, `mem_op(1)`, `reg_write(1)` |
-| `EX/MEM` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `mem_op(1)`, `ex_result(4)`, `store_data(4)` |
-| `MEM/WB` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `wb_value(4)` |
+| Latch    | Campos, con bytes entre paréntesis                                                                                                                                                                        |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `IF/ID`  | `valid(1)`, `pc(4)`, `instruction(4)`, `fetch_fault_valid(1)`, `fetch_fault_cause(1)`                                                                                                                     |
+| `ID/EX`  | `valid(1)`, `pc(4)`, `instruction(4)`, `rs1(1)`, `rs2(1)`, `rd(1)`, `rs1_value(4)`, `rs2_value(4)`, `immediate(4)`, `alu_op(1)`, `alu_src(1)`, `result_sel(1)`, `flow_op(1)`, `mem_op(1)`, `reg_write(1)` |
+| `EX/MEM` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `mem_op(1)`, `ex_result(4)`, `store_data(4)`                                                                                              |
+| `MEM/WB` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `wb_value(4)`                                                                                                                             |
 
 Internamente:
 
@@ -974,14 +974,14 @@ Los controles conservan los códigos de [Etapa ID](architecture/cpu/stage_id.md#
 
 Cada campo ocupa un byte con padding superior en cero.
 
-| Campo | Códigos |
-|---|---|
-| `alu_op` | SLL=`0x00`, SRL=`0x02`, SRA=`0x03`, ADD=`0x20`, SUB=`0x22`, AND=`0x24`, OR=`0x25`, XOR=`0x26`, SLT=`0x2A`, SLTU=`0x2B` |
-| `alu_src` | Registro=`0`, inmediato=`1` |
-| `result_sel` | ALU=`0`, IMMEDIATE=`1`, LINK=`2` |
-| `flow_op` | `NONE`=`0`, BEQ=`1`, BNE=`2`, JAL=`3`, JALR=`4`, HALT=`5` |
-| `mem_op` | `NONE`=`0`, LB=`1`, LH=`2`, LW=`3`, LBU=`4`, LHU=`5`, SB=`6`, SH=`7`, SW=`8` |
-| `reg_write` | `0` o `1` |
+| Campo        | Códigos                                                                                                                |
+|--------------|------------------------------------------------------------------------------------------------------------------------|
+| `alu_op`     | SLL=`0x00`, SRL=`0x02`, SRA=`0x03`, ADD=`0x20`, SUB=`0x22`, AND=`0x24`, OR=`0x25`, XOR=`0x26`, SLT=`0x2A`, SLTU=`0x2B` |
+| `alu_src`    | Registro=`0`, inmediato=`1`                                                                                            |
+| `result_sel` | ALU=`0`, IMMEDIATE=`1`, LINK=`2`                                                                                       |
+| `flow_op`    | `NONE`=`0`, BEQ=`1`, BNE=`2`, JAL=`3`, JALR=`4`, HALT=`5`                                                              |
+| `mem_op`     | `NONE`=`0`, LB=`1`, LH=`2`, LW=`3`, LBU=`4`, LHU=`5`, SB=`6`, SH=`7`, SW=`8`                                           |
+| `reg_write`  | `0` o `1`                                                                                                              |
 
 El snapshot no agrega un bus de control duplicado.
 
@@ -989,22 +989,22 @@ Los valores registrados se transmiten incluso en entradas inválidas y el lector
 
 ### `global_state`
 
-| Código | `global_state` |
-|---|---|
-| `0x00` | `NO_IMAGE` |
-| `0x01` | LOADING |
-| `0x02` | `PREPARING_READY` |
-| `0x03` | `READY` |
-| `0x04` | `RUNNING` |
-| `0x05` | `STEPPING` |
-| `0x06` | `HALT_DRAIN_AUTO` |
-| `0x07` | `HALT_DRAIN_STEP` |
+| Código | `global_state`     |
+|--------|--------------------|
+| `0x00` | `NO_IMAGE`         |
+| `0x01` | LOADING            |
+| `0x02` | `PREPARING_READY`  |
+| `0x03` | `READY`            |
+| `0x04` | `RUNNING`          |
+| `0x05` | `STEPPING`         |
+| `0x06` | `HALT_DRAIN_AUTO`  |
+| `0x07` | `HALT_DRAIN_STEP`  |
 | `0x08` | `FAULT_DRAIN_AUTO` |
 | `0x09` | `FAULT_DRAIN_STEP` |
-| `0x0A` | `FINISHED` |
-| `0x0B` | `FAULT` |
-| `0x0C` | `PREPARING_RUN` |
-| `0x0D` | `PREPARING_STEP` |
+| `0x0A` | `FINISHED`         |
+| `0x0B` | `FAULT`            |
+| `0x0C` | `PREPARING_RUN`    |
+| `0x0D` | `PREPARING_STEP`   |
 
 Esta es una codificación externa; no impone la codificación física de la FSM.
 
@@ -1026,16 +1026,16 @@ Ejemplos:
 
 `fault_cause` conserva tres bits arquitectónicos y completa el byte con ceros superiores.
 
-| Byte | Causa |
-|---|---|
+| Byte   | Causa                            |
+|--------|----------------------------------|
 | `0x00` | `INSTRUCTION_ADDRESS_MISALIGNED` |
-| `0x01` | `INSTRUCTION_ACCESS_FAULT` |
-| `0x02` | `ILLEGAL_INSTRUCTION` |
-| `0x03` | RESERVED, ninguna causa válida |
-| `0x04` | `LOAD_ADDRESS_MISALIGNED` |
-| `0x05` | `LOAD_ACCESS_FAULT` |
-| `0x06` | `STORE_ADDRESS_MISALIGNED` |
-| `0x07` | `STORE_ACCESS_FAULT` |
+| `0x01` | `INSTRUCTION_ACCESS_FAULT`       |
+| `0x02` | `ILLEGAL_INSTRUCTION`            |
+| `0x03` | RESERVED, ninguna causa válida   |
+| `0x04` | `LOAD_ADDRESS_MISALIGNED`        |
+| `0x05` | `LOAD_ACCESS_FAULT`              |
+| `0x06` | `STORE_ADDRESS_MISALIGNED`       |
+| `0x07` | `STORE_ACCESS_FAULT`             |
 
 `fault_cause` y `fault_pc` siempre ocupan su lugar.
 
@@ -1079,10 +1079,10 @@ Cada sesión comienza con lista vacía, también al reiniciar la misma imagen de
 
 Cada entrada:
 
-| Campo | Bytes | Representación |
-|---|---:|---|
-| Dirección de byte | 4 | little-endian |
-| Valor actual | 1 | byte almacenado |
+| Campo             | Bytes | Representación  |
+|-------------------|------:|-----------------|
+| Dirección de byte |     4 | little-endian   |
+| Valor actual      |     1 | byte almacenado |
 
 Las direcciones son únicas y aparecen en orden creciente.
 
@@ -1102,12 +1102,12 @@ cuerpo = 228 + 5*K bytes
 respuesta completa = 230 + 5*K bytes
 ```
 
-| `K` | Longitud completa |
-|---:|---:|
-| 0 | 230 bytes |
-| 2 | 240 bytes |
-| 1000 | 5230 bytes |
-| 2048 | 10470 bytes |
+|  `K` | Longitud completa |
+|-----:|------------------:|
+|    0 |         230 bytes |
+|    2 |         240 bytes |
+| 1000 |        5230 bytes |
+| 2048 |       10470 bytes |
 
 Con `K=0`, los cinco bytes de cantidad son cero y no siguen entradas.
 
@@ -1226,17 +1226,17 @@ Los cálculos incluyen diez bits físicos por byte.
 
 `ceil` redondea hacia arriba.
 
-| Espera | Inicio | Plazo |
-|---|---|---:|
-| `CHECK_READY` y aceptación `LOAD`/`RUN` | Inicio de solicitud | 200 ms |
-| Final `LOAD`, perfiles actuales | Inicio de envío del contenido | `N*10*1000/19200 + 201` ms |
-| Aceptación `RESET` | Inicio de solicitud | 200 ms |
-| Cabecera `STEP` completa | Inicio de solicitud | 200 ms |
-| Terminación `RUN` antes de cabecera final | Después de `ACCEPTED` | Sin límite de ejecución |
-| Completar cabecera final `RUN` iniciada | Primer byte de esa cabecera | 200 ms |
-| Parte fija Debug, 228 bytes | Cabecera completa | 319 ms |
-| Lista Debug, `K>0` | `used_count` completo | `ceil(5*K*10*1000/19200 +200)` ms |
-| `K=0` | Fin de parte fija | Respuesta terminada |
+| Espera                                    | Inicio                        |                             Plazo |
+|-------------------------------------------|-------------------------------|----------------------------------:|
+| `CHECK_READY` y aceptación `LOAD`/`RUN`   | Inicio de solicitud           |                            200 ms |
+| Final `LOAD`, perfiles actuales           | Inicio de envío del contenido |        `N*10*1000/19200 + 201` ms |
+| Aceptación `RESET`                        | Inicio de solicitud           |                            200 ms |
+| Cabecera `STEP` completa                  | Inicio de solicitud           |                            200 ms |
+| Terminación `RUN` antes de cabecera final | Después de `ACCEPTED`         |           Sin límite de ejecución |
+| Completar cabecera final `RUN` iniciada   | Primer byte de esa cabecera   |                            200 ms |
+| Parte fija Debug, 228 bytes               | Cabecera completa             |                            319 ms |
+| Lista Debug, `K>0`                        | `used_count` completo         | `ceil(5*K*10*1000/19200 +200)` ms |
+| `K=0`                                     | Fin de parte fija             |               Respuesta terminada |
 
 Los 228 bytes fijos requieren nominalmente 118,75 ms. Con margen de 200 ms y redondeo hacia arriba:
 
@@ -1376,9 +1376,9 @@ sequenceDiagram
 
 La recuperación utiliza estas dos fases:
 
-| Fase | Regla |
-|---|---|
-| Descarte | Consumir RX sin interpretar cabeceras. Cada recepción reinicia la cuenta. Solo después de `W_debug(C)` completo sin bytes se envía una única consulta `CHECK_READY`. |
+| Fase     | Regla                                                                                                                                                                                                                                               |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Descarte | Consumir RX sin interpretar cabeceras. Cada recepción reinicia la cuenta. Solo después de `W_debug(C)` completo sin bytes se envía una única consulta `CHECK_READY`.                                                                                |
 | Consulta | Conservar todos los bytes recibidos desde el envío. El primer byte debe ser `05` y el siguiente `03` o `04`, ambos dentro de los 200 ms desde el inicio del envío. Solo ese par consecutivo, comenzando en el primer byte, restablece comunicación. |
 
 Al salir del descarte **no se vacía ni limpia RX**: se mantiene el mismo flujo de lectura y su buffer. Si hay bytes recibidos pendientes al vencer el intervalo, se procesan primero y reinician la cuenta; no se envía la consulta en ese vencimiento. Las entregas parciales del driver no modifican las fronteras y una entrega puede contener varios mensajes. Los bytes posteriores a una respuesta `CHECK_READY` válida se conservan para el lector normal.

@@ -117,18 +117,18 @@ Los acuerdos siguientes clasifican las fuentes `rs1`/`rs2` usadas por cada instr
 
 La lógica de hazards y forwarding determinará a partir de la instrucción decodificada si esta utiliza `rs1`, `rs2`, ambos o ninguno. Solo una instrucción válida y un operando semánticamente utilizado podrán establecer una dependencia con un productor pendiente; los bits que ocupan posiciones de `rs1` o `rs2` en otra codificación no se interpretarán automáticamente como fuentes.
 
-| Instrucción / clase | Usa `rs1` | Usa `rs2` |
-|---|:---:|:---:|
-| `add`, `sub`, `sll`, `srl`, `sra`, `and`, `or`, `xor`, `slt`, `sltu` | Sí | Sí |
-| `addi`, `andi`, `ori`, `xori`, `slti`, `sltiu` | Sí | No |
-| `slli`, `srli`, `srai` | Sí | No |
-| `lb`, `lh`, `lw`, `lbu`, `lhu` | Sí | No |
-| `sb`, `sh`, `sw` | Sí | Sí |
-| `beq`, `bne` | Sí | Sí |
-| `jalr` | Sí | No |
-| `jal` | No | No |
-| `lui` | No | No |
-| `halt` | No | No |
+| Instrucción / clase                                                  | Usa `rs1` | Usa `rs2` |
+|----------------------------------------------------------------------|:---------:|:---------:|
+| `add`, `sub`, `sll`, `srl`, `sra`, `and`, `or`, `xor`, `slt`, `sltu` |     Sí    |     Sí    |
+| `addi`, `andi`, `ori`, `xori`, `slti`, `sltiu`                       |     Sí    |     No    |
+| `slli`, `srli`, `srai`                                               |     Sí    |     No    |
+| `lb`, `lh`, `lw`, `lbu`, `lhu`                                       |     Sí    |     No    |
+| `sb`, `sh`, `sw`                                                     |     Sí    |     Sí    |
+| `beq`, `bne`                                                         |     Sí    |     Sí    |
+| `jalr`                                                               |     Sí    |     No    |
+| `jal`                                                                |     No    |     No    |
+| `lui`                                                                |     No    |     No    |
+| `halt`                                                               |     No    |     No    |
 
 Para cada fuente, la dependencia conceptual requiere que la instrucción **use realmente ese operando** y que su índice coincida con el destino de un productor elegible, conforme al primer acuerdo. `uses_rs1` y `uses_rs2` son aquí descripciones conceptuales de las fuentes; el trigésimo séptimo acuerdo fija después sus nombres como salidas combinacionales del decoder, sin registrarlas. Esto impide hazards o forwarding espurios por bits de inmediatos u otros campos: `jal`, `lui` y `halt` no leen registros fuente, y las instrucciones I y los shifts inmediatos no leen `rs2`.
 
@@ -142,18 +142,18 @@ Esta clasificación fija solo la existencia semántica de fuentes; 3B establece 
 
 La etapa donde un operando se **consume funcionalmente** se distinguirá de aquella en que su valor efectivo debe quedar **resuelto para atravesar el pipeline**. Para la arquitectura inicial se aprueba la siguiente clasificación, en continuidad con las fuentes semánticas de 3A:
 
-| Instrucción / clase | Operando | Consumo funcional |
-|---|---|---|
-| R-type | `rs1` | EX |
-| R-type | `rs2` | EX |
-| I-type aritmética y shifts | `rs1` | EX |
-| Loads | `rs1` | EX |
-| Stores | `rs1` | EX |
-| Stores | `rs2` | MEM |
-| `beq`, `bne` | `rs1` | EX |
-| `beq`, `bne` | `rs2` | EX |
-| `jalr` | `rs1` | EX |
-| `jal`, `lui`, `halt` | — | No leen registros fuente |
+| Instrucción / clase        | Operando | Consumo funcional        |
+|----------------------------|----------|--------------------------|
+| R-type                     | `rs1`    | EX                       |
+| R-type                     | `rs2`    | EX                       |
+| I-type aritmética y shifts | `rs1`    | EX                       |
+| Loads                      | `rs1`    | EX                       |
+| Stores                     | `rs1`    | EX                       |
+| Stores                     | `rs2`    | MEM                      |
+| `beq`, `bne`               | `rs1`    | EX                       |
+| `beq`, `bne`               | `rs2`    | EX                       |
+| `jalr`                     | `rs1`    | EX                       |
+| `jal`, `lui`, `halt`       | —        | No leen registros fuente |
 
 En `sb`, `sh` y `sw`, `rs1` es la base empleada en EX para calcular la dirección efectiva. `rs2` aporta el dato consumido funcionalmente al escribir DMEM en MEM. Aunque se utilice en MEM, el valor efectivo correcto de `rs2` deberá quedar resuelto cuando el store atraviese EX mediante el esquema general de forwarding, preservarse en el campo `store_data[31:0]` de `EX/MEM` fijado por el duodécimo acuerdo y llegar a MEM para la escritura.
 
@@ -167,31 +167,31 @@ Esta política reutiliza el forwarding hacia EX y evita un camino especial en ME
 
 Una etapa posterior solo podrá reenviar el valor de una instrucción válida que escriba arquitectónicamente un registro `rd != x0`, si dicho valor ya es el resultado correcto que recibirá Write Back y coincide con una fuente realmente usada. La coincidencia de índices por sí sola no alcanza; el productor más reciente prevalece conforme al primer acuerdo.
 
-| Productor | Forwarding desde `EX/MEM` | Valor reenviado |
-|---|:---:|---|
-| R-type | Sí | Resultado de ejecución |
-| I-type aritmética / shifts | Sí | Resultado de ejecución |
-| `lui` | Sí | Valor arquitectónico producido por `lui` |
-| `jal` | Sí | `instruction_PC + 4` |
-| `jalr` | Sí | `instruction_PC + 4` |
-| Loads | No | El dato cargado aún no está disponible |
-| Stores | No | No escriben `rd` |
-| `beq`, `bne` | No | No escriben `rd` |
-| `halt` | No | No escribe `rd` |
+| Productor                  | Forwarding desde `EX/MEM` | Valor reenviado                          |
+|----------------------------|:-------------------------:|------------------------------------------|
+| R-type                     |             Sí            | Resultado de ejecución                   |
+| I-type aritmética / shifts |             Sí            | Resultado de ejecución                   |
+| `lui`                      |             Sí            | Valor arquitectónico producido por `lui` |
+| `jal`                      |             Sí            | `instruction_PC + 4`                     |
+| `jalr`                     |             Sí            | `instruction_PC + 4`                     |
+| Loads                      |             No            | El dato cargado aún no está disponible   |
+| Stores                     |             No            | No escriben `rd`                         |
+| `beq`, `bne`               |             No            | No escriben `rd`                         |
+| `halt`                     |             No            | No escribe `rd`                          |
 
 Para `jal` y `jalr`, el enlace debe poder obtenerse correctamente como fuente de forwarding desde `EX/MEM` cuando `rd != x0`, además de preservarse para escritura en WB conforme a `DEC-ARCH-002`. El duodécimo acuerdo fija `ex_result[31:0]` como campo que lo conserva en `EX/MEM`; el vigésimo quinto fija su cálculo en EX desde `ID/EX.pc` y su selección por el `Result MUX`. Un load en `EX/MEM` solo dispone de la dirección efectiva en ese campo, no del dato arquitectónico a escribir en `rd`, y no podrá reenviarlo desde allí hacia EX.
 
-| Productor | Forwarding desde `MEM/WB` |
-|---|:---:|
-| R-type | Sí |
-| I-type aritmética / shifts | Sí |
-| `lui` | Sí |
-| Loads | Sí |
-| `jal` | Sí |
-| `jalr` | Sí |
-| Stores | No |
-| `beq`, `bne` | No |
-| `halt` | No |
+| Productor                  | Forwarding desde `MEM/WB` |
+|----------------------------|:-------------------------:|
+| R-type                     |             Sí            |
+| I-type aritmética / shifts |             Sí            |
+| `lui`                      |             Sí            |
+| Loads                      |             Sí            |
+| `jal`                      |             Sí            |
+| `jalr`                     |             Sí            |
+| Stores                     |             No            |
+| `beq`, `bne`               |             No            |
+| `halt`                     |             No            |
 
 El valor reenviado desde `MEM/WB` será **el mismo `wb_value` arquitectónico seleccionado para Write Back en MEM antes de capturar `MEM/WB`**, según los acuerdos posteriores, provenga originalmente de ALU, DMEM, `instruction_PC + 4` o `lui`. No se requiere reconstruir su origen en la lógica de forwarding; también aquí se exigirán instrucción válida, escritura de registro y `rd != x0`.
 
@@ -219,11 +219,11 @@ No se establece una prioridad universal de redirect sobre otros eventos: `DEC-AR
 
 En los casos nominales sin fault confirmado ni coincidencias adicionales aún diferidas, las transiciones conceptuales durante un ciclo lógico efectivo serán:
 
-| Situación | PC | `IF/ID` | `ID/EX` | `EX/MEM` | `MEM/WB` |
-|---|---|---|---|---|---|
-| Avance normal | Avanza al próximo PC secuencial | Captura IF | Captura ID | Captura EX | Captura MEM |
-| `load-use stall` | Retiene | Retiene al consumidor | Bubble (`valid=0`) | Avanza con el load | Avanza con la instrucción anterior |
-| Redirect válido en EX | Adopta `target` | Flush (`valid=0`) | Flush (`valid=0`) | Avanza con la instrucción de control válida | Avanza con la instrucción anterior |
+| Situación             | PC                              | `IF/ID`               | `ID/EX`            | `EX/MEM`                                    | `MEM/WB`                           |
+|-----------------------|---------------------------------|-----------------------|--------------------|---------------------------------------------|------------------------------------|
+| Avance normal         | Avanza al próximo PC secuencial | Captura IF            | Captura ID         | Captura EX                                  | Captura MEM                        |
+| `load-use stall`      | Retiene                         | Retiene al consumidor | Bubble (`valid=0`) | Avanza con el load                          | Avanza con la instrucción anterior |
+| Redirect válido en EX | Adopta `target`                 | Flush (`valid=0`)     | Flush (`valid=0`)  | Avanza con la instrucción de control válida | Avanza con la instrucción anterior |
 
 El avance normal preserva la validez de las entradas capturadas: no convierte automáticamente una entrada inválida en instrucción activa. El `load-use stall` mantiene al consumidor en `IF/ID` y retiene el PC, mientras el load pasa de EX hacia MEM y las instrucciones más antiguas avanzan; la bubble en `ID/EX` separa productor y consumidor sin congelar todo el pipeline. La instrucción siguiente en IF no desplaza al consumidor durante esa transición.
 
@@ -447,11 +447,11 @@ rs2_effective[31:0]
 
 Cada mux se seleccionará independientemente: las dos fuentes pueden tomar datos de etapas distintas, ambas de una misma etapa o una del valor original. La identificación del productor pendiente **más reciente** de cada registro usado precede a la selección del dato. Se conserva la prioridad conceptual **`EX/MEM` disponible > `MEM/WB` > `ID/EX`**:
 
-| Condición | Selección |
-|---|---|
-| En `EX/MEM` hay un productor válido que escribe `rd != x0`, coincide con la fuente y ya tiene disponible el valor arquitectónico correcto | `EX/MEM.ex_result` |
-| `EX/MEM` no produce esa fuente y `MEM/WB` contiene un productor válido coincidente y escritor | Se permite `MEM/WB.wb_value` |
-| No hay productor pendiente aplicable | Valor original de `ID/EX` |
+| Condición                                                                                                                                 | Selección                    |
+|-------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
+| En `EX/MEM` hay un productor válido que escribe `rd != x0`, coincide con la fuente y ya tiene disponible el valor arquitectónico correcto | `EX/MEM.ex_result`           |
+| `EX/MEM` no produce esa fuente y `MEM/WB` contiene un productor válido coincidente y escritor                                             | Se permite `MEM/WB.wb_value` |
+| No hay productor pendiente aplicable                                                                                                      | Valor original de `ID/EX`    |
 
 Una instrucción inválida, una fuente no utilizada, un productor sin escritura o una escritura a `x0` no habilitan forwarding por mera coincidencia de campos.
 
@@ -592,11 +592,11 @@ PC
 
 `pc_plus_4` representa el próximo PC secuencial calculado desde el **PC global actual**; no es el enlace `instruction_PC + 4` de una instrucción en EX. El mux selecciona el valor de flujo secuencial o el destino de una redirección válida resuelta en EX. PC solo captura la salida seleccionada cuando se habilita su escritura durante un ciclo lógico efectivo. En los casos nominales ya aprobados:
 
-| Situación | `Next-PC MUX` | Escritura de PC | Resultado |
-|---|---|---|---|
-| Avance normal | Selecciona `pc_plus_4` | Habilitada | PC captura el valor secuencial |
-| `load-use stall` | Irrelevante | Deshabilitada | PC conserva íntegramente su valor |
-| Redirect válido en EX | Selecciona `redirect_target` | Habilitada | PC captura el destino |
+| Situación             | `Next-PC MUX`                | Escritura de PC | Resultado                         |
+|-----------------------|------------------------------|-----------------|-----------------------------------|
+| Avance normal         | Selecciona `pc_plus_4`       | Habilitada      | PC captura el valor secuencial    |
+| `load-use stall`      | Irrelevante                  | Deshabilitada   | PC conserva íntegramente su valor |
+| Redirect válido en EX | Selecciona `redirect_target` | Habilitada      | PC captura el destino             |
 
 Durante el stall nominal, el valor en la entrada del registro PC no importa mientras se inhiba su escritura; `IF/ID` conserva sus cinco campos conforme a la revisión del acuerdo vigésimo noveno e `ID/EX` recibe una bubble, mientras los registros interetapa más antiguos avanzan. Durante el redirect, la carga del destino se coordina con `IF/ID.valid=0`, `IF/ID.fetch_fault_valid=0` e `ID/EX.valid=0`, sin capturar el fetch del target como válido en `IF/ID` en ese mismo flanco. Un stall provocado **exclusivamente** por trabajo joven `wrong-path` que se invalidará no inhibirá la carga de `redirect_target`, conforme a la prioridad local ya aprobada. Un branch no tomado sigue el flujo secuencial salvo que se aplique un stall independiente válido; una entrada inválida en EX no puede solicitar redirect por sus bits residuales.
 
@@ -690,11 +690,11 @@ Una lógica **combinacional** central, denominada conceptualmente `Pipeline Haza
 
 Para un **ciclo lógico efectivo** en los casos nominales cubiertos:
 
-| Selección de control | PC y `Next-PC MUX` | `IF/ID` | `ID/EX` | `EX/MEM` | `MEM/WB` |
-|---|---|---|---|---|---|
-| `redirect_valid` | Habilitar PC y capturar `redirect_target` | Invalidar, `valid_next=0` | Invalidar, `valid_next=0` | Capturar la instrucción de control válida de EX | Capturar la entrada previa de `EX/MEM` |
-| Sin redirect, `load_use_stall` aplicable | Inhibir escritura de PC; entrada del mux irrelevante | Retener íntegramente `valid`, `pc` e `instruction` | Bubble, `valid_next=0` | Capturar el load previo de `ID/EX` | Capturar la entrada previa de `EX/MEM` |
-| Sin redirect ni stall aplicable | Habilitar PC y seleccionar `pc_plus_4` | Capturar IF | Capturar ID | Capturar EX | Capturar MEM |
+| Selección de control                     | PC y `Next-PC MUX`                                   | `IF/ID`                                            | `ID/EX`                   | `EX/MEM`                                        | `MEM/WB`                               |
+|------------------------------------------|------------------------------------------------------|----------------------------------------------------|---------------------------|-------------------------------------------------|----------------------------------------|
+| `redirect_valid`                         | Habilitar PC y capturar `redirect_target`            | Invalidar, `valid_next=0`                          | Invalidar, `valid_next=0` | Capturar la instrucción de control válida de EX | Capturar la entrada previa de `EX/MEM` |
+| Sin redirect, `load_use_stall` aplicable | Inhibir escritura de PC; entrada del mux irrelevante | Retener íntegramente `valid`, `pc` e `instruction` | Bubble, `valid_next=0`    | Capturar el load previo de `ID/EX`              | Capturar la entrada previa de `EX/MEM` |
+| Sin redirect ni stall aplicable          | Habilitar PC y seleccionar `pc_plus_4`               | Capturar IF                                        | Capturar ID               | Capturar EX                                     | Capturar MEM                           |
 
 La validez de cada entrada capturada en avance normal proviene de su etapa anterior: una entrada inválida no se reactiva por avanzar. En el redirect, `EX/MEM` y `MEM/WB` no se invalidan específicamente y el fetch del target no entra válido en `IF/ID` en el mismo flanco; en el stall nominal, PC e `IF/ID` se retienen mientras las instrucciones anteriores progresan. La bubble por espera y el flush por descarte comparten `valid_next=0` en `ID/EX` sin requerir una NOP física o limpieza de otros campos.
 
@@ -760,12 +760,12 @@ immediate[31:0] ──────┼──► Result MUX ──► ex_result[31
 link_value[31:0] ─────┘
 ```
 
-| Instrucción válida en EX | Entrada seleccionada | Significado de `ex_result` |
-|---|---|---|
-| R-type; I-type aritmética / shifts | `alu_result` | Resultado arquitectónico de la operación |
-| Loads; stores | `alu_result` | Dirección efectiva calculada en EX |
-| `lui` | `immediate` | Valor inmediato ya generado en su representación arquitectónica |
-| `jal`; `jalr` | `link_value` | `instruction_PC + 4`, calculado en EX desde `ID/EX.pc` conforme al acuerdo anterior |
+| Instrucción válida en EX           | Entrada seleccionada | Significado de `ex_result`                                                          |
+|------------------------------------|----------------------|-------------------------------------------------------------------------------------|
+| R-type; I-type aritmética / shifts | `alu_result`         | Resultado arquitectónico de la operación                                            |
+| Loads; stores                      | `alu_result`         | Dirección efectiva calculada en EX                                                  |
+| `lui`                              | `immediate`          | Valor inmediato ya generado en su representación arquitectónica                     |
+| `jal`; `jalr`                      | `link_value`         | `instruction_PC + 4`, calculado en EX desde `ID/EX.pc` conforme al acuerdo anterior |
 
 `EX/MEM.ex_result` captura el único valor seleccionado para la instrucción que ocupaba `ID/EX` antes del flanco de un ciclo efectivo. Para R-type, I-type aritmética/shifts, `lui` y `jal`/`jalr` válidos que escriben `rd != x0`, este campo contiene el resultado arquitectónico disponible para forwarding desde `EX/MEM`, sujeto a coincidencia con una fuente realmente usada y a la política del productor más reciente. Para un load, contiene **su dirección efectiva, no el dato cargado**: aunque escriba `rd`, no es fuente de forwarding desde `EX/MEM`; el dato arquitectónico estará disponible desde `MEM/WB.wb_value` tras su captura. Para un store, la dirección se utiliza en MEM pero no es un valor de registro reenviable. No se agrega bypass `DMEM → EX`.
 
@@ -941,16 +941,16 @@ Este trigésimo acuerdo fija la **prioridad semántica unificada** sin modificar
 
 Se fijan las **transiciones semánticas en cada ciclo CPU efectivo** de PC, `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` para las fronteras y hazards aprobados. Cada captura y efecto arquitectónico se decide con las entradas **previas al flanco**; «capturar EX» alimenta la entrada nueva de `EX/MEM` desde `ID/EX` previo, y «capturar MEM» alimenta `MEM/WB` desde `EX/MEM` previo. La invalidación de una entrada nueva nunca borra retrospectivamente una instrucción anterior que ya ocupaba otra etapa. El trigésimo acuerdo selecciona la frontera por antigüedad EX→ID→IF excepcional antes de aplicar un stall necesario entre supervivientes; esta tabla materializa las acciones resultantes, sin prioridad universal por tipo de evento.
 
-| Acción seleccionada | PC | `IF/ID.next` | `ID/EX.next` | `EX/MEM.next` | `MEM/WB.next` |
-|---|---|---|---|---|---|
-| Avance normal | Capturar `PC + 4` | Capturar IF | Capturar ID | Capturar EX | Capturar MEM |
-| `load-use` entre supervivientes | Retener | Retener íntegramente al consumidor | Inválido / bubble | Capturar load anterior de EX | Capturar MEM |
-| Redirect válido en EX | Capturar `redirect_target` | Inválido | Inválido | Capturar instrucción de control válida de EX | Capturar MEM |
-| `halt` confirmado en EX | Retener | Inválido | Inválido | Inválido | Capturar MEM |
-| Fault propio confirmado en EX | Retener | Inválido | Inválido | Inválido | Capturar MEM |
-| Fault confirmado en ID | Retener | Inválido | Inválido | Capturar instrucción anterior de EX | Capturar MEM |
-| **Fault excepcional confirmado en IF** con `load-use` entre anteriores | Retener | **Retener los cinco campos del consumidor válido** | Inválido / bubble | Capturar load anterior de EX | Capturar MEM |
-| Drenado activo de `halt` o fault | Retener | Retener al anterior si hay stall; invalidar al dejarlo avanzar o si ya no lo contiene | Capturar anterior de ID si puede avanzar; bubble/inválido si hay stall o no existe | Capturar anterior de EX, o inválido si no existe | Capturar MEM |
+| Acción seleccionada                                                    | PC                         | `IF/ID.next`                                                                          | `ID/EX.next`                                                                       | `EX/MEM.next`                                    | `MEM/WB.next` |
+|------------------------------------------------------------------------|----------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|--------------------------------------------------|---------------|
+| Avance normal                                                          | Capturar `PC + 4`          | Capturar IF                                                                           | Capturar ID                                                                        | Capturar EX                                      | Capturar MEM  |
+| `load-use` entre supervivientes                                        | Retener                    | Retener íntegramente al consumidor                                                    | Inválido / bubble                                                                  | Capturar load anterior de EX                     | Capturar MEM  |
+| Redirect válido en EX                                                  | Capturar `redirect_target` | Inválido                                                                              | Inválido                                                                           | Capturar instrucción de control válida de EX     | Capturar MEM  |
+| `halt` confirmado en EX                                                | Retener                    | Inválido                                                                              | Inválido                                                                           | Inválido                                         | Capturar MEM  |
+| Fault propio confirmado en EX                                          | Retener                    | Inválido                                                                              | Inválido                                                                           | Inválido                                         | Capturar MEM  |
+| Fault confirmado en ID                                                 | Retener                    | Inválido                                                                              | Inválido                                                                           | Capturar instrucción anterior de EX              | Capturar MEM  |
+| **Fault excepcional confirmado en IF** con `load-use` entre anteriores | Retener                    | **Retener los cinco campos del consumidor válido**                                    | Inválido / bubble                                                                  | Capturar load anterior de EX                     | Capturar MEM  |
+| Drenado activo de `halt` o fault                                       | Retener                    | Retener al anterior si hay stall; invalidar al dejarlo avanzar o si ya no lo contiene | Capturar anterior de ID si puede avanzar; bubble/inválido si hay stall o no existe | Capturar anterior de EX, o inválido si no existe | Capturar MEM  |
 
 En avance normal, «capturar IF» incluye un fetch válido (`valid=1, fetch_fault_valid=0`) o, si IF detectó un candidato de fault **no confirmado**, su captura en `IF/ID` con `valid=0, fetch_fault_valid=1`, PC y causa del fetch para resolverlo posteriormente en ID. Un candidato no confirmado **no** selecciona una fila de fault. El `load-use` nominal retiene PC e `IF/ID` y crea solo la bubble de `ID/EX`: el load y las anteriores siguen avanzando. Un redirect EX válido invalida trabajo secuencial joven pero **preserva** la instrucción de control en `EX/MEM`; por el contrario, el propio `halt` o fault de EX **no** entra válido a `EX/MEM`. Si se confirma fault en ID, su causante no entra válida a `ID/EX`, pero la instrucción anterior en EX sí entra a `EX/MEM`.
 
@@ -1039,23 +1039,23 @@ Este trigésimo segundo acuerdo cierra **las ecuaciones funcionales del detector
 
 Se revisa explícitamente el significado del elemento **`ID/EX.control`** del decimotercer acuerdo: es un **placeholder para la información de control asociada a la instrucción**, no la obligación de registrar un único número, vector o bus empaquetado. La implementación puede representarla mediante señales separadas, una estructura, un bundle o una forma equivalente que conserve las siguientes **seis categorías semánticas generadas en ID** para la instrucción decodificada:
 
-| Categoría conceptual | Significado y alternativas semánticas |
-|---|---|
-| `alu_op` | Operación de ALU: `ADD`, `SUB`, `SLL`, `SRL`, `SRA`, `AND`, `OR`, `XOR`, `SLT`, `SLTU`. Loads/stores emplean `ADD` para dirección efectiva; `beq`/`bne` emplean `SUB` y leen `ALU.zero` para igualdad. |
-| `alu_src` | Segundo operando de ALU: `rs2_effective` o `immediate`. Selecciona registro o inmediato para operaciones ALU y cálculo de dirección cuando corresponda. |
-| `result_sel` | Valor de `EX/MEM.ex_result` a través del **`Result MUX` 3:1** aprobado: `ALU` → `alu_result`, `IMMEDIATE` → `immediate`, `LINK` → `link_value`. Loads/stores llevan la dirección ALU; `lui`, el inmediato; `jal`/`jalr`, `ID/EX.pc + 4`. |
-| `flow_op` | Clase de flujo: `NONE`, `BEQ`, `BNE`, `JAL`, `JALR`, `HALT`. |
-| `mem_op` | Acceso: `NONE`, `LB`, `LH`, `LW`, `LBU`, `LHU`, `SB`, `SH`, `SW`. Distingue load/store, ancho y extensión con/sin signo del load; permite derivar `is_load` sin otro campo. |
-| `reg_write` | Intención de escribir `rd`: verdadera para R-type, I-type aritmética/shifts, loads, `lui`, `jal` y `jalr`; falsa para stores, `beq`/`bne` y `halt`. Una intención no permite escribir si `valid=0`, hay fault propio o no se autoriza un ciclo efectivo. |
+| Categoría conceptual | Significado y alternativas semánticas                                                                                                                                                                                                                    |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `alu_op`             | Operación de ALU: `ADD`, `SUB`, `SLL`, `SRL`, `SRA`, `AND`, `OR`, `XOR`, `SLT`, `SLTU`. Loads/stores emplean `ADD` para dirección efectiva; `beq`/`bne` emplean `SUB` y leen `ALU.zero` para igualdad.                                                   |
+| `alu_src`            | Segundo operando de ALU: `rs2_effective` o `immediate`. Selecciona registro o inmediato para operaciones ALU y cálculo de dirección cuando corresponda.                                                                                                  |
+| `result_sel`         | Valor de `EX/MEM.ex_result` a través del **`Result MUX` 3:1** aprobado: `ALU` → `alu_result`, `IMMEDIATE` → `immediate`, `LINK` → `link_value`. Loads/stores llevan la dirección ALU; `lui`, el inmediato; `jal`/`jalr`, `ID/EX.pc + 4`.                 |
+| `flow_op`            | Clase de flujo: `NONE`, `BEQ`, `BNE`, `JAL`, `JALR`, `HALT`.                                                                                                                                                                                             |
+| `mem_op`             | Acceso: `NONE`, `LB`, `LH`, `LW`, `LBU`, `LHU`, `SB`, `SH`, `SW`. Distingue load/store, ancho y extensión con/sin signo del load; permite derivar `is_load` sin otro campo.                                                                              |
+| `reg_write`          | Intención de escribir `rd`: verdadera para R-type, I-type aritmética/shifts, loads, `lui`, `jal` y `jalr`; falsa para stores, `beq`/`bne` y `halt`. Una intención no permite escribir si `valid=0`, hay fault propio o no se autoriza un ciclo efectivo. |
 
 Los comportamientos de `flow_op` son:
 
-| Operación | Condición o función |
-|---|---|
-| `BEQ` | Redirige si `ALU.zero=1` |
-| `BNE` | Redirige si `ALU.zero=0` |
+| Operación      | Condición o función                                                |
+|----------------|--------------------------------------------------------------------|
+| `BEQ`          | Redirige si `ALU.zero=1`                                           |
+| `BNE`          | Redirige si `ALU.zero=0`                                           |
 | `JAL` y `JALR` | Redirigen incondicionalmente con los destinos físicos ya aprobados |
-| `HALT` | Permite identificar en EX al `halt` válido que allí se confirma |
+| `HALT`         | Permite identificar en EX al `halt` válido que allí se confirma    |
 
 En EX, `flow_op=BEQ/BNE` utiliza la resta de `rs1_effective` y `rs2_effective` y `ALU.zero`, mientras `flow_op=JAL` utiliza el destino relativo a **`ID/EX.pc`** y `flow_op=JALR` el destino `(rs1_effective + immediate) & 0xFFFFFFFE` formado por los sumadores y el `Target MUX` ya aprobados. `flow_op=HALT` conserva la distinción entre candidato en ID y **confirmación de la instrucción válida en EX** durante un ciclo efectivo del camino correcto; no implica confirmación anticipada ni señal física `is_halt` separada. Un fault de destino de la propia instrucción de control suprime sus efectos normales conforme a `DEC-ARCH-004` y al trigésimo acuerdo.
 
@@ -1096,34 +1096,34 @@ Se fijan los **nombres, anchos y códigos funcionales** de los controles princip
 **Operaciones de ALU.** La interfaz existente utiliza `opcode` de **6 bits**: `alu_op[5:0]`; en el CPU se aplicará a datos de **32 bits**. Se conservan los códigos existentes de `ADD`, `SUB`, `AND`, `OR`, `XOR`, `SRL` y `SRA`, y se incorporan los faltantes `SLL`, `SLT` y SLTU:
 
 | `alu_op[5:0]` | Operación | `alu_op[5:0]` | Operación |
-|---|---|---|---|
-| `000000` | `SLL` | `100000` | `ADD` |
-| `000010` | `SRL` | `100010` | `SUB` |
-| `000011` | `SRA` | `100100` | `AND` |
-| `101010` | `SLT` | `100101` | `OR` |
-| `101011` | SLTU | `100110` | `XOR` |
+|---------------|-----------|---------------|-----------|
+| `000000`      | `SLL`     | `100000`      | `ADD`     |
+| `000010`      | `SRL`     | `100010`      | `SUB`     |
+| `000011`      | `SRA`     | `100100`      | `AND`     |
+| `101010`      | `SLT`     | `100101`      | `OR`      |
+| `101011`      | SLTU      | `100110`      | `XOR`     |
 
 La ALU de TP1/TP2 ya implementa los códigos conservados y `100111` para NOR, pero **todavía no implementa `SLL`, `SLT` ni SLTU**. NOR puede seguir existiendo internamente; el decoder del CPU no generará `100111` para ninguna instrucción válida del subconjunto. El presente acuerdo fija el contrato del CPU, no afirma que la ALU extendida ya esté implementada.
 
-| Señal de control desde ID a `ID/EX` | Ancho | Codificación funcional |
-|---|---|---|
-| `alu_src` | 1 bit | `0` = RS2 (`rs2_effective`); `1` = IMMEDIATE (`immediate`) |
-| `result_sel[1:0]` | 2 bits | `00` = ALU (`alu_result`); `01` = IMMEDIATE (`immediate`); `10` = LINK (`link_value`); `11` = `RESERVED` |
-| `flow_op[2:0]` | 3 bits | `000` = `NONE`; `001` = `BEQ`; `010` = `BNE`; `011` = `JAL`; `100` = `JALR`; `101` = `HALT`; `110`/`111` = `RESERVED` |
-| `mem_op[3:0]` | 4 bits | `0000` = `NONE`; `0001` = `LB`; `0010` = `LH`; `0011` = `LW`; `0100` = `LBU`; `0101` = `LHU`; `0110` = `SB`; `0111` = `SH`; `1000` = `SW`; `1001`–`1111` = `RESERVED` |
-| `reg_write` | 1 bit | `0` = NO WRITE; `1` = WRITE, siempre subordinado a validez, ciclo efectivo y ausencia de fault propio |
+| Señal de control desde ID a `ID/EX` | Ancho  | Codificación funcional                                                                                                                                                |
+|-------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `alu_src`                           | 1 bit  | `0` = RS2 (`rs2_effective`); `1` = IMMEDIATE (`immediate`)                                                                                                            |
+| `result_sel[1:0]`                   | 2 bits | `00` = ALU (`alu_result`); `01` = IMMEDIATE (`immediate`); `10` = LINK (`link_value`); `11` = `RESERVED`                                                              |
+| `flow_op[2:0]`                      | 3 bits | `000` = `NONE`; `001` = `BEQ`; `010` = `BNE`; `011` = `JAL`; `100` = `JALR`; `101` = `HALT`; `110`/`111` = `RESERVED`                                                 |
+| `mem_op[3:0]`                       | 4 bits | `0000` = `NONE`; `0001` = `LB`; `0010` = `LH`; `0011` = `LW`; `0100` = `LBU`; `0101` = `LHU`; `0110` = `SB`; `0111` = `SH`; `1000` = `SW`; `1001`–`1111` = `RESERVED` |
+| `reg_write`                         | 1 bit  | `0` = NO WRITE; `1` = WRITE, siempre subordinado a validez, ciclo efectivo y ausencia de fault propio                                                                 |
 
 `flow_op` permite derivar localmente `is_beq`, `is_bne`, `is_jal`, `is_jalr` e `is_halt`; `mem_op` permite derivar `is_load`, `is_store`, `access_size` y `load_unsigned`. Se conserva la **misma codificación `mem_op[3:0]`** desde `ID/EX` a `EX/MEM.mem_op` para MEM, y `reg_write` continúa desde `ID/EX` por `EX/MEM.reg_write` y `MEM/WB.reg_write` hasta WB. EX consume `alu_op`, `alu_src`, `result_sel` y `flow_op`; solo `mem_op` y `reg_write` siguen como controles a `EX/MEM`, y solo `reg_write` a `MEM/WB`. El trigésimo octavo acuerdo fija después las ecuaciones de derivación de `is_load`, `is_store`, `mem_access`, `access_size`, `load_unsigned` y los predicados de flujo, sin registrarlos como campos físicos adicionales.
 
 Los **selectores locales** quedan fijados así, sin transportarlos a través de todos los registros interetapa:
 
-| Señal local | Ancho | Codificación funcional / derivación |
-|---|---|---|
+| Señal local                                | Ancho           | Codificación funcional / derivación                                                                                                                                         |
+|--------------------------------------------|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `forward_a_sel[1:0]`, `forward_b_sel[1:0]` | 2 bits cada una | `00` = `ID_EX` (`ID/EX.rsN_value`); `01` = `EX_MEM` (`EX/MEM.ex_result`); `10` = `MEM_WB` (`MEM/WB.wb_value`); `11` = `RESERVED`. Se deciden por fuente independientemente. |
-| `target_sel` | 1 bit | `0` = `PC_RELATIVE`; `1` = `JALR`; derivable en EX como `flow_op == JALR`, sin campo transportado desde ID. |
-| `wb_value_sel` | 1 bit | `0` = `EX_RESULT`; `1` = `LOAD_VALUE`; derivable en MEM como `is_load(EX/MEM.mem_op)`, sin campo transportado. |
-| `next_pc_sel` | 1 bit | `0` = `PC_PLUS_4`; `1` = `REDIRECT_TARGET`. Selecciona solo las dos entradas ya aprobadas del `Next-PC MUX`. |
-| `pc_write_enable` | 1 bit | `0` = retener PC; `1` = capturar la salida del `Next-PC MUX`. |
+| `target_sel`                               | 1 bit           | `0` = `PC_RELATIVE`; `1` = `JALR`; derivable en EX como `flow_op == JALR`, sin campo transportado desde ID.                                                                 |
+| `wb_value_sel`                             | 1 bit           | `0` = `EX_RESULT`; `1` = `LOAD_VALUE`; derivable en MEM como `is_load(EX/MEM.mem_op)`, sin campo transportado.                                                              |
+| `next_pc_sel`                              | 1 bit           | `0` = `PC_PLUS_4`; `1` = `REDIRECT_TARGET`. Selecciona solo las dos entradas ya aprobadas del `Next-PC MUX`.                                                                |
+| `pc_write_enable`                          | 1 bit           | `0` = retener PC; `1` = capturar la salida del `Next-PC MUX`.                                                                                                               |
 
 Las ecuaciones de forwarding del trigésimo segundo acuerdo siguen gobernando la elegibilidad de las entradas: con `EX/MEM` coincidente pero load aún no disponible, cualquier código o salida combinacional residual del mux **no se consume** como operando válido, aun si físicamente se observa `00`. `target_sel=0` o `wb_value_sel=0` en operaciones que no consumen esos caminos tampoco crea efectos sin validez. Las categorías `RESERVED` pertenecen a estos selectores de tres entradas y a los controles enumerados; no se impone codificación NOP específica al invalidar un registro interetapa.
 
@@ -1148,16 +1148,16 @@ Este trigésimo cuarto acuerdo cierra los **nombres, anchos y códigos funcional
 
 Se fija una codificación **común de tres bits** para el candidato de fetch registrado en `IF/ID.fetch_fault_cause[2:0]` y para la causa de fault confirmado `fault_cause[2:0]`, mantenida como **estado global fuera de los cuatro registros interetapa**. Los siete códigos de causa corresponden exactamente a las categorías de `DEC-ARCH-004`:
 
-| Código | Causa arquitectónica | Detección posible |
-|---|---|---|
-| `000` | `INSTRUCTION_ADDRESS_MISALIGNED` (`instruction-address-misaligned`) | Fetch IF o target de control en EX |
-| `001` | `INSTRUCTION_ACCESS_FAULT` (`instruction-access-fault`) | Fetch IF |
-| `010` | `ILLEGAL_INSTRUCTION` (`illegal-instruction`) | Decode ID sobre instrucción obtenida válida |
-| `011` | **`RESERVED`** | Ninguna causa válida |
-| `100` | `LOAD_ADDRESS_MISALIGNED` (`load-address-misaligned`) | Load EX |
-| `101` | `LOAD_ACCESS_FAULT` (`load-access-fault`) | Load EX |
-| `110` | `STORE_ADDRESS_MISALIGNED` (`store-address-misaligned`) | Store EX |
-| `111` | `STORE_ACCESS_FAULT` (`store-access-fault`) | Store EX |
+| Código | Causa arquitectónica                                                | Detección posible                           |
+|--------|---------------------------------------------------------------------|---------------------------------------------|
+| `000`  | `INSTRUCTION_ADDRESS_MISALIGNED` (`instruction-address-misaligned`) | Fetch IF o target de control en EX          |
+| `001`  | `INSTRUCTION_ACCESS_FAULT` (`instruction-access-fault`)             | Fetch IF                                    |
+| `010`  | `ILLEGAL_INSTRUCTION` (`illegal-instruction`)                       | Decode ID sobre instrucción obtenida válida |
+| `011`  | **`RESERVED`**                                                      | Ninguna causa válida                        |
+| `100`  | `LOAD_ADDRESS_MISALIGNED` (`load-address-misaligned`)               | Load EX                                     |
+| `101`  | `LOAD_ACCESS_FAULT` (`load-access-fault`)                           | Load EX                                     |
+| `110`  | `STORE_ADDRESS_MISALIGNED` (`store-address-misaligned`)             | Store EX                                    |
+| `111`  | `STORE_ACCESS_FAULT` (`store-access-fault`)                         | Store EX                                    |
 
 **No existe un código `NONE`.** Ausencia de candidato de fetch se expresa mediante `IF/ID.fetch_fault_valid=0`; ausencia de fault global confirmado mediante el estado/flag global correspondiente. Cuando ese indicador está inactivo, los bits de causa pueden ser residuales sin significado arquitectónico, incluso si físicamente coinciden con un código de causa o con `011`. Para un **candidato válido** generado en IF, `fetch_fault_cause` solo puede tomar `000` o `001`; IF nunca genera `010`–`111` como candidato válido. El ancho común permite que la ruta ordinaria IF→`IF/ID`→ID transfiera directamente `IF/ID.fetch_fault_cause[2:0]` a `fault_cause[2:0]` **solo al confirmar** y sin traducción. En la excepción de `load-use` entre anteriores, IF confirma directamente el fetch elegible y registra su código `000` o `001` sin sobrescribir `IF/ID` ni exigir otro registro interetapa.
 
@@ -1175,12 +1175,12 @@ En ID la instrucción ilegal válida confirma `010`; en EX un target desalineado
 
 La frontera terminal confirmada se representa mediante **estado global registrado fuera de los cuatro registros interetapa**, sin almacenar `HALT_DRAIN`, `FINISHED`, `FAULT_DRAIN` y `FAULT` como cuatro estados independientes:
 
-| `terminal_kind[1:0]` | Significado |
-|---|---|
-| `00` | `NONE`: aún no hay frontera terminal arquitectónicamente confirmada |
-| `01` | `HALT`: se confirmó un `halt` válido |
-| `10` | `FAULT`: se confirmó un fault arquitectónico |
-| `11` | `RESERVED`: no se genera por confirmaciones válidas |
+| `terminal_kind[1:0]` | Significado                                                         |
+|----------------------|---------------------------------------------------------------------|
+| `00`                 | `NONE`: aún no hay frontera terminal arquitectónicamente confirmada |
+| `01`                 | `HALT`: se confirmó un `halt` válido                                |
+| `10`                 | `FAULT`: se confirmó un fault arquitectónico                        |
+| `11`                 | `RESERVED`: no se genera por confirmaciones válidas                 |
 
 La clase registrada es única: no pueden estar confirmados simultáneamente `halt` y fault. La selección de la frontera sigue sometida a **validez, camino correcto y antigüedad EX→ID→IF excepcional** y al tratamiento de fault propio y de stalls entre anteriores supervivientes ya aprobados; la codificación no reabre su arbitraje semántico. Durante un ciclo CPU efectivo, `halt` válido confirmado en EX establece `terminal_kind.next=HALT`; un fault confirmado en EX, ID o excepcionalmente IF establece `terminal_kind.next=FAULT` **junto con** la captura de `fault_cause[2:0]` y `fault_pc`. Un candidato de `halt` en ID, un candidato de fault no confirmado o trabajo joven descartado no altera la clase terminal ni esos metadatos.
 
@@ -1204,10 +1204,10 @@ fault       = (terminal_kind == FAULT) &&  pipeline_empty
 
 Se registra además un único bit global **`drain_auto`** que recuerda cómo se autorizó el ciclo **confirmante**:
 
-| Valor | Modalidad y autorización posterior |
-|---|---|
-| `0` | Modo paso a paso: cada ciclo posterior de drenado requiere un **`STEP` nuevo aceptado** |
-| `1` | Autorización continua: se podrán solicitar automáticamente ciclos posteriores de drenado |
+| Valor | Modalidad y autorización posterior                                                       |
+|-------|------------------------------------------------------------------------------------------|
+| `0`   | Modo paso a paso: cada ciclo posterior de drenado requiere un **`STEP` nuevo aceptado**  |
+| `1`   | Autorización continua: se podrán solicitar automáticamente ciclos posteriores de drenado |
 
 En la confirmación `drain_auto.next=1` si el ciclo fue autorizado bajo ejecución continua, o `drain_auto.next=0` si fue autorizado por `STEP` aceptado.
 
@@ -1239,43 +1239,43 @@ halt_candidate = IF/ID.valid && decode_legal
 
 **R-type (`opcode=0110011`).** Se admiten únicamente estos diez pares exactos:
 
-| Instrucción | `funct7` | `funct3` | `alu_op[5:0]` |
-|---|---|---|---|
-| `add` | `0000000` | `000` | `100000` (`ADD`) |
-| `sub` | `0100000` | `000` | `100010` (`SUB`) |
-| `sll` | `0000000` | `001` | `000000` (`SLL`) |
-| `slt` | `0000000` | `010` | `101010` (`SLT`) |
-| `sltu` | `0000000` | `011` | `101011` (SLTU) |
-| `xor` | `0000000` | `100` | `100110` (`XOR`) |
-| `srl` | `0000000` | `101` | `000010` (`SRL`) |
-| `sra` | `0100000` | `101` | `000011` (`SRA`) |
-| `or` | `0000000` | `110` | `100101` (`OR`) |
-| `and` | `0000000` | `111` | `100100` (`AND`) |
+| Instrucción | `funct7`  | `funct3` | `alu_op[5:0]`    |
+|-------------|-----------|----------|------------------|
+| `add`       | `0000000` | `000`    | `100000` (`ADD`) |
+| `sub`       | `0100000` | `000`    | `100010` (`SUB`) |
+| `sll`       | `0000000` | `001`    | `000000` (`SLL`) |
+| `slt`       | `0000000` | `010`    | `101010` (`SLT`) |
+| `sltu`      | `0000000` | `011`    | `101011` (SLTU)  |
+| `xor`       | `0000000` | `100`    | `100110` (`XOR`) |
+| `srl`       | `0000000` | `101`    | `000010` (`SRL`) |
+| `sra`       | `0100000` | `101`    | `000011` (`SRA`) |
+| `or`        | `0000000` | `110`    | `100101` (`OR`)  |
+| `and`       | `0000000` | `111`    | `100100` (`AND`) |
 
 En los diez casos: `alu_src=0`, `result_sel=00`, `flow_op=000`, `mem_op=0000`, `reg_write=1`, `uses_rs1=1`, `uses_rs2=1`. Todo otro par `funct7/funct3` para este `opcode` es ilegal, incluso si comparte parcialmente un código de ALU.
 
 **I-type aritméticas y shifts inmediatos (`opcode=0010011`).** Para `addi` (`funct3=000`), `slti` (`010`), `sltiu` (`011`), `xori` (`100`), `ori` (`110`) y `andi` (`111`), `alu_op` es respectivamente `ADD` (`100000`), `SLT` (`101010`), SLTU (`101011`), `XOR` (`100110`), `OR` (`100101`) y `AND` (`100100`). Sus doce bits de inmediato siguen siendo variables. Las otras tres codificaciones legales bajo este `opcode` exigen **además** los bits fijos `instruction[31:25]`:
 
-| Instrucción | `funct3` | `instruction[31:25]` | `alu_op[5:0]` |
-|---|---|---|---|
-| `slli` | `001` | `0000000` | `000000` (`SLL`) |
-| `srli` | `101` | `0000000` | `000010` (`SRL`) |
-| `srai` | `101` | `0100000` | `000011` (`SRA`) |
+| Instrucción | `funct3` | `instruction[31:25]` | `alu_op[5:0]`    |
+|-------------|----------|----------------------|------------------|
+| `slli`      | `001`    | `0000000`            | `000000` (`SLL`) |
+| `srli`      | `101`    | `0000000`            | `000010` (`SRL`) |
+| `srai`      | `101`    | `0100000`            | `000011` (`SRA`) |
 
 En las nueve I aritméticas/shifts: `alu_src=1`, `result_sel=00`, `flow_op=000`, `mem_op=0000`, `reg_write=1`, `uses_rs1=1`, `uses_rs2=0`. Un shift inmediato con `instruction[31:25]` distinto del patrón correspondiente es ilegal; sus bits `instruction[24:20]` son el `shamt` legal de cinco bits, no otro `rs2` consumido.
 
 **Memoria.** Todos los loads (`opcode=0000011`) usan `ADD` (`alu_op=100000`), `alu_src=1`, `result_sel=00`, `flow_op=000`, `reg_write=1`, `uses_rs1=1`, `uses_rs2=0`. Los stores (`opcode=0100011`) usan `ADD`, `alu_src=1`, `result_sel=00`, `flow_op=000`, `reg_write=0`, `uses_rs1=1`, `uses_rs2=1`:
 
 | Clase | `funct3` | Instrucción | `mem_op[3:0]` |
-|---|---|---|---|
-| Load | `000` | `lb` | `0001` |
-| Load | `001` | `lh` | `0010` |
-| Load | `010` | `lw` | `0011` |
-| Load | `100` | `lbu` | `0100` |
-| Load | `101` | `lhu` | `0101` |
-| Store | `000` | `sb` | `0110` |
-| Store | `001` | `sh` | `0111` |
-| Store | `010` | `sw` | `1000` |
+|-------|----------|-------------|---------------|
+| Load  | `000`    | `lb`        | `0001`        |
+| Load  | `001`    | `lh`        | `0010`        |
+| Load  | `010`    | `lw`        | `0011`        |
+| Load  | `100`    | `lbu`       | `0100`        |
+| Load  | `101`    | `lhu`       | `0101`        |
+| Store | `000`    | `sb`        | `0110`        |
+| Store | `001`    | `sh`        | `0111`        |
+| Store | `010`    | `sw`        | `1000`        |
 
 Los `funct3` restantes de esos opcodes son ilegales. El dato de store de `rs2` continúa resolviéndose mediante forwarding en EX y transportándose en `EX/MEM.store_data` hasta MEM, aunque la ALU use el inmediato como segundo operando para la dirección.
 
@@ -1283,12 +1283,12 @@ Los `funct3` restantes de esos opcodes son ilegales. El dato de store de `rs2` c
 
 **Saltos, `lui` y `halt`.** Los controles restantes son:
 
-| Instrucción | Patrón legal | `alu_op` | `alu_src` | `result_sel` | `flow_op` | `mem_op` | `reg_write` | `uses_rs1` / `uses_rs2` |
-|---|---|---|---|---|---|---|---|---|
-| `jal` | `opcode=1101111` | `ADD` | `1` | `10` (LINK) | `011` (`JAL`) | `0000` | `1` | `0` / `0` |
-| `jalr` | `opcode=1100111`, `funct3=000` | `ADD` | `1` | `10` (LINK) | `100` (`JALR`) | `0000` | `1` | `1` / `0` |
-| `lui` | `opcode=0110111` | `ADD` | `1` | `01` (IMMEDIATE) | `000` (`NONE`) | `0000` | `1` | `0` / `0` |
-| `halt` | word completa `32'h0000000B` | `ADD` | `0` | `00` (ALU) | `101` (`HALT`) | `0000` | `0` | `0` / `0` |
+| Instrucción | Patrón legal                   | `alu_op` | `alu_src` | `result_sel`     | `flow_op`      | `mem_op` | `reg_write` | `uses_rs1` / `uses_rs2` |
+|-------------|--------------------------------|----------|-----------|------------------|----------------|----------|-------------|-------------------------|
+| `jal`       | `opcode=1101111`               | `ADD`    | `1`       | `10` (LINK)      | `011` (`JAL`)  | `0000`   | `1`         | `0` / `0`               |
+| `jalr`      | `opcode=1100111`, `funct3=000` | `ADD`    | `1`       | `10` (LINK)      | `100` (`JALR`) | `0000`   | `1`         | `1` / `0`               |
+| `lui`       | `opcode=0110111`               | `ADD`    | `1`       | `01` (IMMEDIATE) | `000` (`NONE`) | `0000`   | `1`         | `0` / `0`               |
+| `halt`      | word completa `32'h0000000B`   | `ADD`    | `0`       | `00` (ALU)       | `101` (`HALT`) | `0000`   | `0`         | `0` / `0`               |
 
 Para `jal`, `lui` y `halt`, `alu_op=ADD` (`100000`) y `alu_src` tienen valores **deterministas sin consumo funcional** de la ALU. `jalr` sigue calculando el target `(rs1_effective + immediate) & 32'hFFFFFFFE` con el camino dedicado aprobado, no con un cambio del decoder. Cualquier `funct3` distinto de `000` bajo `1100111` es ilegal; cualquier otra palabra `custom-0` que no sea la **palabra completa** de `halt` también es ilegal.
 
@@ -1335,11 +1335,11 @@ mem_access = is_load || is_store
 Estas funciones se aplican **localmente al `mem_op` de la etapa correspondiente**: en `ID/EX` sirven, entre otras cosas, para detectar `load-use`; en `EX/MEM` determinan disponibilidad de forwarding y acceso/selección de valor en MEM. No se arrastra un bit `is_load`, `is_store` o `mem_access` por los registros interetapa. Solo una instrucción válida y elegible podrá ocasionar acceso a memoria o efectos arquitectónicos: la decodificación combinacional de residuos no habilita operaciones por sí sola.
 
 | `access_size[1:0]` | Significado | `mem_op` que lo seleccionan |
-|---|---|---|
-| `00` | BYTE | `LB`, `LBU`, `SB` |
-| `01` | HALFWORD | `LH`, `LHU`, `SH` |
-| `10` | WORD | `LW`, `SW` |
-| `11` | `RESERVED` | Ninguna operación válida |
+|--------------------|-------------|-----------------------------|
+| `00`               | BYTE        | `LB`, `LBU`, `SB`           |
+| `01`               | HALFWORD    | `LH`, `LHU`, `SH`           |
+| `10`               | WORD        | `LW`, `SW`                  |
+| `11`               | `RESERVED`  | Ninguna operación válida    |
 
 Con `mem_access=0`, `access_size` **carece de significado funcional**; no se impone valor para `NONE`, códigos reservados ni entradas inválidas. La extensión de loads se selecciona localmente por:
 
@@ -1894,17 +1894,17 @@ wb_value = is_load(EX/MEM.mem_op) ? load_value : EX/MEM.ex_result
 
 Una frontera confirmada en EX, ID o IF no invalida retrospectivamente el store anterior que ya estaba en `EX/MEM` ni el writeback anterior en `MEM/WB`; ambos conservan su elegibilidad por validez y ciclo efectivo. El `wb_value` recién capturado en `MEM/WB` no se utiliza como si hubiera estado allí antes del flanco.
 
-| Acción | PC | `IF/ID` | `ID/EX` | `EX/MEM` | `MEM/WB` |
-|---|---|---|---|---|---|
-| `act_normal` | `PC + 4` | Capture IF | Capture ID | Capture EX | Capture MEM |
-| `act_load_use` | `HOLD` | `HOLD` | Bubble | Capture EX | Capture MEM |
-| `act_redirect` | `redirect_target` | Invalidate | Bubble | Capture EX | Capture MEM |
-| `act_halt` | `HOLD` | Invalidate | Bubble | Invalidate | Capture MEM |
-| `act_ex_fault` | `HOLD` | Invalidate | Bubble | Invalidate | Capture MEM |
-| `act_id_fault` | `HOLD` | Invalidate | Bubble | Capture EX | Capture MEM |
-| `act_if_fault_exception` | `HOLD` | `HOLD` | Bubble | Capture EX | Capture MEM |
-| `act_drain_load_use` | `HOLD` | `HOLD` | Bubble | Capture EX | Capture MEM |
-| `act_drain_advance` | `HOLD` | Invalidate | Capture ID | Capture EX | Capture MEM |
+| Acción                   | PC                | `IF/ID`    | `ID/EX`    | `EX/MEM`   | `MEM/WB`    |
+|--------------------------|-------------------|------------|------------|------------|-------------|
+| `act_normal`             | `PC + 4`          | Capture IF | Capture ID | Capture EX | Capture MEM |
+| `act_load_use`           | `HOLD`            | `HOLD`     | Bubble     | Capture EX | Capture MEM |
+| `act_redirect`           | `redirect_target` | Invalidate | Bubble     | Capture EX | Capture MEM |
+| `act_halt`               | `HOLD`            | Invalidate | Bubble     | Invalidate | Capture MEM |
+| `act_ex_fault`           | `HOLD`            | Invalidate | Bubble     | Invalidate | Capture MEM |
+| `act_id_fault`           | `HOLD`            | Invalidate | Bubble     | Capture EX | Capture MEM |
+| `act_if_fault_exception` | `HOLD`            | `HOLD`     | Bubble     | Capture EX | Capture MEM |
+| `act_drain_load_use`     | `HOLD`            | `HOLD`     | Bubble     | Capture EX | Capture MEM |
+| `act_drain_advance`      | `HOLD`            | Invalidate | Capture ID | Capture EX | Capture MEM |
 
 Esta tabla es la realización RTL exacta de la tabla semántica del trigésimo primer acuerdo. Ante `act_drain_advance` **no se admite IF nuevo**: la superviviente de `IF/ID` pasa a `ID/EX` mientras `IF/ID` invalida tanto `valid` como `fetch_fault_valid`; ante `act_drain_load_use`, el load de EX avanza, el consumidor anterior permanece en `IF/ID` y posteriormente puede pasar a `ID/EX` sin pérdida.
 
@@ -2048,30 +2048,30 @@ Si `reset` o `LOAD`/preparación dominan el flanco, no se comprometen writeback,
 
 Se fija una **FSM Moore explícita de 14 estados** para el ciclo de vida global de la sesión. La FSM registra únicamente `global_state`, calcula `next_state` desde eventos aceptados y emite modos derivados del estado actual; **no** escribe PC, RF, IMEM, DMEM, pipeline o contador ni genera directamente `cpu_cycle_fire`. El `Command Arbiter` acepta comandos bajo `RESET` > `LOAD` > `STEP` > `RUN`; `Cycle Authorization`, Loader, `Session Preparation` y el datapath efectúan las acciones. La fase terminal y la modalidad de drenado se derivan de `global_state`, sin registros `terminal_kind` ni `drain_auto`. Las confirmaciones, las ocho acciones del pipeline, el gating de RF/DMEM/metadatos/fault y la regla `cycle_counter_increment=cpu_cycle_fire` conservan sus contratos.
 
-| Estado | Semántica |
-|---|---|
-| `NO_IMAGE` | No existe imagen ejecutable. |
-| `LOADING` | Recepción y validación de nueva imagen. |
-| `PREPARING_READY` | Preparación de nueva imagen para quedar detenida; todavía no hay commit de sesión. |
-| `PREPARING_RUN` | Preparación de una sesión nueva con imagen ya confirmada, solicitada por `RUN` terminal. |
-| `PREPARING_STEP` | Preparación de una sesión nueva con imagen ya confirmada, conservando **un `STEP` aceptado pendiente**. |
-| `READY` | Imagen y sesión inicial confirmadas, ejecución aún no iniciada. |
-| `RUNNING` | Ejecución continua normal. |
-| `STEPPING` | Ejecución paso a paso entre autorizaciones. |
-| `HALT_DRAIN_AUTO` / `HALT_DRAIN_STEP` | `halt` confirmado con una entrada anterior pendiente en `MEM/WB`; el siguiente ciclo efectivo termina la sesión. |
+| Estado                                  | Semántica                                                                                                                               |
+|-----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `NO_IMAGE`                              | No existe imagen ejecutable.                                                                                                            |
+| `LOADING`                               | Recepción y validación de nueva imagen.                                                                                                 |
+| `PREPARING_READY`                       | Preparación de nueva imagen para quedar detenida; todavía no hay commit de sesión.                                                      |
+| `PREPARING_RUN`                         | Preparación de una sesión nueva con imagen ya confirmada, solicitada por `RUN` terminal.                                                |
+| `PREPARING_STEP`                        | Preparación de una sesión nueva con imagen ya confirmada, conservando **un `STEP` aceptado pendiente**.                                 |
+| `READY`                                 | Imagen y sesión inicial confirmadas, ejecución aún no iniciada.                                                                         |
+| `RUNNING`                               | Ejecución continua normal.                                                                                                              |
+| `STEPPING`                              | Ejecución paso a paso entre autorizaciones.                                                                                             |
+| `HALT_DRAIN_AUTO` / `HALT_DRAIN_STEP`   | `halt` confirmado con una entrada anterior pendiente en `MEM/WB`; el siguiente ciclo efectivo termina la sesión.                        |
 | `FAULT_DRAIN_AUTO` / `FAULT_DRAIN_STEP` | Fault confirmado con instrucciones anteriores pendientes en `EX/MEM` o `MEM/WB`; requieren como máximo dos ciclos efectivos de drenado. |
-| `FINISHED` | Terminación normal con pipeline vacío. |
-| `FAULT` | Terminación excepcional con pipeline vacío. |
+| `FINISHED`                              | Terminación normal con pipeline vacío.                                                                                                  |
+| `FAULT`                                 | Terminación excepcional con pipeline vacío.                                                                                             |
 
 La FSM recibe conceptualmente estas entradas:
 
-| Productor | Entradas |
-|---|---|
-| Arbitraje de comandos | `reset`, `load_accept`, `run_accept`, `step_accept` |
-| Loader | `load_ok`, `load_fail` |
-| `Session Preparation` | `prepare_done` |
-| Pipeline | `halt_confirm`, `fault_confirm` |
-| `valid_next` combinacionales de los cuatro registros interetapa | `pipeline_empty_next` |
+| Productor                                                       | Entradas                                            |
+|-----------------------------------------------------------------|-----------------------------------------------------|
+| Arbitraje de comandos                                           | `reset`, `load_accept`, `run_accept`, `step_accept` |
+| Loader                                                          | `load_ok`, `load_fail`                              |
+| `Session Preparation`                                           | `prepare_done`                                      |
+| Pipeline                                                        | `halt_confirm`, `fault_confirm`                     |
+| `valid_next` combinacionales de los cuatro registros interetapa | `pipeline_empty_next`                               |
 
 `load_ok` y `load_fail` se excluyen. `RESET` domina desde **cualquier** estado y lleva a `NO_IMAGE`; un `LOAD` aceptado domina cualquier ciclo CPU en estados que lo admiten. `LOAD` es elegible desde `NO_IMAGE`, `READY`, `STEPPING`, ambos drenados `STEP`, `FINISHED` y `FAULT`; **no** se acepta durante `RUNNING` o drenado automático. `LOAD` aceptado desde paso a paso/drenado interrumpe la sesión previa bajo la prioridad de `DEC-ARCH-008` sin comprometer efectos CPU de ese flanco. Solicitudes rechazadas no cambian estado ni suprimen el ciclo continuo.
 
@@ -2087,40 +2087,40 @@ Así se conserva `RESET` > `LOAD` aceptado/preparación **efectiva** > ciclo CPU
 
 Las transiciones alcanzables durante una sesión quedan en la tabla siguiente. `reset` universal y `LOAD` aceptado desde los estados elegibles conservan prioridad sobre las condiciones locales.
 
-| Estado previo | Condición preflanco / evento | Estado siguiente |
-|---|---|---|
-| `NO_IMAGE` | `load_accept` | `LOADING` |
-| `NO_IMAGE` | sin aceptación | `NO_IMAGE` |
-| `LOADING` | `load_ok` | `PREPARING_READY` |
-| `LOADING` | `load_fail` | `NO_IMAGE` |
-| `LOADING` | en curso | `LOADING` |
-| `PREPARING_READY` | `prepare_done` | `READY` (commit completo, sin CPU) |
-| `PREPARING_READY` | en curso | `PREPARING_READY` |
-| `READY` | `load_accept` | `LOADING` |
-| `READY` | `step_accept` | `STEPPING` (primer fetch) |
-| `READY` | `run_accept` | `RUNNING` (primer fetch) |
-| `READY` | sin aceptación | `READY` |
-| `STEPPING` | `load_accept` | `LOADING` |
-| `STEPPING` | `step_accept` / `run_accept` | Resultado de **un** ciclo `STEP` / continuo en ese flanco |
-| `STEPPING` | sin aceptación | `STEPPING` |
-| `RUNNING` | ciclo continuo | Resultado de **un** ciclo continuo en ese flanco |
-| `HALT_DRAIN_AUTO` | ciclo automático | `FINISHED` |
-| `HALT_DRAIN_STEP` | `load_accept` | `LOADING` |
-| `HALT_DRAIN_STEP` | `step_accept` / `run_accept` | `FINISHED` |
-| `HALT_DRAIN_STEP` | sin aceptación | `HALT_DRAIN_STEP` (HOLD, sin ciclo CPU) |
-| `FAULT_DRAIN_AUTO` | ciclo automático | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
-| `FAULT_DRAIN_STEP` | `load_accept` | `LOADING` |
-| `FAULT_DRAIN_STEP` | `step_accept` | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_STEP` |
-| `FAULT_DRAIN_STEP` | `run_accept` | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
-| `FAULT_DRAIN_STEP` | sin aceptación | `FAULT_DRAIN_STEP` (HOLD, sin ciclo CPU) |
-| `FINISHED` / `FAULT` | `load_accept` | `LOADING` |
-| `FINISHED` / `FAULT` | `step_accept` | `PREPARING_STEP` |
-| `FINISHED` / `FAULT` | `run_accept` | `PREPARING_RUN` |
-| `FINISHED` / `FAULT` | sin aceptación | Retener estado |
-| `PREPARING_RUN` | `prepare_done` | `RUNNING` (primer fetch) |
-| `PREPARING_RUN` | sin `prepare_done` | `PREPARING_RUN` |
-| `PREPARING_STEP` | `prepare_done` | `STEPPING` (primer fetch) |
-| `PREPARING_STEP` | sin `prepare_done` | `PREPARING_STEP` |
+| Estado previo        | Condición preflanco / evento | Estado siguiente                                            |
+|----------------------|------------------------------|-------------------------------------------------------------|
+| `NO_IMAGE`           | `load_accept`                | `LOADING`                                                   |
+| `NO_IMAGE`           | sin aceptación               | `NO_IMAGE`                                                  |
+| `LOADING`            | `load_ok`                    | `PREPARING_READY`                                           |
+| `LOADING`            | `load_fail`                  | `NO_IMAGE`                                                  |
+| `LOADING`            | en curso                     | `LOADING`                                                   |
+| `PREPARING_READY`    | `prepare_done`               | `READY` (commit completo, sin CPU)                          |
+| `PREPARING_READY`    | en curso                     | `PREPARING_READY`                                           |
+| `READY`              | `load_accept`                | `LOADING`                                                   |
+| `READY`              | `step_accept`                | `STEPPING` (primer fetch)                                   |
+| `READY`              | `run_accept`                 | `RUNNING` (primer fetch)                                    |
+| `READY`              | sin aceptación               | `READY`                                                     |
+| `STEPPING`           | `load_accept`                | `LOADING`                                                   |
+| `STEPPING`           | `step_accept` / `run_accept` | Resultado de **un** ciclo `STEP` / continuo en ese flanco   |
+| `STEPPING`           | sin aceptación               | `STEPPING`                                                  |
+| `RUNNING`            | ciclo continuo               | Resultado de **un** ciclo continuo en ese flanco            |
+| `HALT_DRAIN_AUTO`    | ciclo automático             | `FINISHED`                                                  |
+| `HALT_DRAIN_STEP`    | `load_accept`                | `LOADING`                                                   |
+| `HALT_DRAIN_STEP`    | `step_accept` / `run_accept` | `FINISHED`                                                  |
+| `HALT_DRAIN_STEP`    | sin aceptación               | `HALT_DRAIN_STEP` (HOLD, sin ciclo CPU)                     |
+| `FAULT_DRAIN_AUTO`   | ciclo automático             | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
+| `FAULT_DRAIN_STEP`   | `load_accept`                | `LOADING`                                                   |
+| `FAULT_DRAIN_STEP`   | `step_accept`                | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_STEP` |
+| `FAULT_DRAIN_STEP`   | `run_accept`                 | `FAULT` si `pipeline_empty_next`; si no, `FAULT_DRAIN_AUTO` |
+| `FAULT_DRAIN_STEP`   | sin aceptación               | `FAULT_DRAIN_STEP` (HOLD, sin ciclo CPU)                    |
+| `FINISHED` / `FAULT` | `load_accept`                | `LOADING`                                                   |
+| `FINISHED` / `FAULT` | `step_accept`                | `PREPARING_STEP`                                            |
+| `FINISHED` / `FAULT` | `run_accept`                 | `PREPARING_RUN`                                             |
+| `FINISHED` / `FAULT` | sin aceptación               | Retener estado                                              |
+| `PREPARING_RUN`      | `prepare_done`               | `RUNNING` (primer fetch)                                    |
+| `PREPARING_RUN`      | sin `prepare_done`           | `PREPARING_RUN`                                             |
+| `PREPARING_STEP`     | `prepare_done`               | `STEPPING` (primer fetch)                                   |
+| `PREPARING_STEP`     | sin `prepare_done`           | `PREPARING_STEP`                                            |
 
 Las filas «resultado de un ciclo» corresponden únicamente a `STEPPING` y `RUNNING`. Para esos ciclos se aplica este orden:
 
@@ -2212,19 +2212,19 @@ El Loader y `Session Preparation` mantienen progreso privado (índices, palabras
 
 Se auditan las **coincidencias funcionales globales e interacciones entre hazards** que permanecían abiertas tras los acuerdos 40–44. La composición de `RESET`/`LOAD`/preparación, FSM de 14 estados, `Cycle Authorization`, fronteras por antigüedad, nueve acciones mutuamente excluyentes, actualización de PC/registros interetapa y gating de efectos determina unívocamente estos casos. La auditoría **no añade** una prioridad general, estado, acción, selector, stall, bypass o campo de pipeline, ni altera las ecuaciones aprobadas.
 
-| Coincidencia | Política ya fijada que la resuelve |
-|---|---|
-| `RESET`, `LOAD` aceptado, preparación efectiva y ciclo CPU | `RESET` domina todo; `LOAD` aceptado y escrituras efectivas de preparación dominan efectos CPU. Un `LOAD` **rechazado** no interrumpe el ciclo continuo. Entre comandos aceptables rige `RESET` > `LOAD` > `STEP` > `RUN`. |
-| Loader y nueva imagen | `load_ok` valida pero no publica imagen. `PREPARING_READY && prepare_done` publica sesión e imagen coherentes **sin** ciclo CPU; fallo deja tamaño confirmado cero. |
-| Reutilización de imagen y primer ciclo | `RUN`/`STEP` desde `FINISHED` o `FAULT` inician **nueva** sesión por `PREPARING_RUN`/`STEP`. Con `prepare_done=1`, estado inicial completo antes del flanco y sin mantenimiento concurrente, se ejecuta el primer fetch y se pasa a `RUNNING`/`STEPPING`, respectivamente, sin confirmar `halt` ni fault. |
-| Ejecución paso a paso y `LOAD` | `LOAD` aceptado en `STEPPING` o drenado `STEP` domina el flanco, inhibe CPU y abandona la sesión previa. `LOAD` rechazado en `RUNNING` o drenado AUTO no inhibe ciclos. |
-| `RUN` o `STEP` durante drenado por pasos | Ambas órdenes ejecutan un ciclo. Desde `HALT_DRAIN_STEP` se llega a `FINISHED`. Desde `FAULT_DRAIN_STEP` se llega a `FAULT` si queda vacío; si queda WB, `RUN` selecciona `FAULT_DRAIN_AUTO` y `STEP` conserva `FAULT_DRAIN_STEP`. |
-| Confirmación terminal y vaciado | `halt_confirm`/`fault_confirm` y `pipeline_empty_next` eligen directamente `FINISHED`/`FAULT` cuando el último `valid_next` baja a cero, sin ciclo vacío adicional; con anteriores eligen DRAIN AUTO/`STEP` según `cycle_from_continuous`. |
-| Fronteras EX, ID e IF excepcional | Dentro de la instrucción EX, fault propio precede a `halt` y redirect; entre instrucciones distintas prevalece la más antigua EX→ID→IF excepcional. Redirect/`halt` EX descartan candidatos jóvenes; fault ID permite avanzar la EX anterior. |
-| `load-use` y frontera | La frontera anterior prevalece sobre stalls solo de trabajo joven descartado; el stall necesario entre anteriores supervivientes se preserva. Fault IF excepcional con `load-use` retiene íntegro al consumidor `IF/ID`, inserta bubble y deja avanzar el load anterior sin capturar el fetch causante. |
-| Drenado terminal | No se confirman fronteras nuevas ni se admiten fetches; se selecciona `act_drain_load_use` o `act_drain_advance` para anteriores supervivientes, cada una solo en ciclo CPU efectivo. |
-| Efectos `MEM/WB` y cómputo de ciclos | Store MEM y writeback WB anteriores pueden comprometerse en el mismo flanco que confirma una frontera joven; `RESET`, `LOAD` aceptado o preparación efectiva los suprimen. `cycle_count` incrementa exactamente una vez por `cpu_cycle_fire`, incluidos stalls, redirects, confirmaciones y drenado. |
-| IF y MEM simultáneos | IMEM y DMEM son recursos lógicos independientes; fetch y load/store del mismo ciclo no originan un stall estructural artificial. |
+| Coincidencia                                               | Política ya fijada que la resuelve                                                                                                                                                                                                                                                                        |
+|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `RESET`, `LOAD` aceptado, preparación efectiva y ciclo CPU | `RESET` domina todo; `LOAD` aceptado y escrituras efectivas de preparación dominan efectos CPU. Un `LOAD` **rechazado** no interrumpe el ciclo continuo. Entre comandos aceptables rige `RESET` > `LOAD` > `STEP` > `RUN`.                                                                                |
+| Loader y nueva imagen                                      | `load_ok` valida pero no publica imagen. `PREPARING_READY && prepare_done` publica sesión e imagen coherentes **sin** ciclo CPU; fallo deja tamaño confirmado cero.                                                                                                                                       |
+| Reutilización de imagen y primer ciclo                     | `RUN`/`STEP` desde `FINISHED` o `FAULT` inician **nueva** sesión por `PREPARING_RUN`/`STEP`. Con `prepare_done=1`, estado inicial completo antes del flanco y sin mantenimiento concurrente, se ejecuta el primer fetch y se pasa a `RUNNING`/`STEPPING`, respectivamente, sin confirmar `halt` ni fault. |
+| Ejecución paso a paso y `LOAD`                             | `LOAD` aceptado en `STEPPING` o drenado `STEP` domina el flanco, inhibe CPU y abandona la sesión previa. `LOAD` rechazado en `RUNNING` o drenado AUTO no inhibe ciclos.                                                                                                                                   |
+| `RUN` o `STEP` durante drenado por pasos                   | Ambas órdenes ejecutan un ciclo. Desde `HALT_DRAIN_STEP` se llega a `FINISHED`. Desde `FAULT_DRAIN_STEP` se llega a `FAULT` si queda vacío; si queda WB, `RUN` selecciona `FAULT_DRAIN_AUTO` y `STEP` conserva `FAULT_DRAIN_STEP`.                                                                        |
+| Confirmación terminal y vaciado                            | `halt_confirm`/`fault_confirm` y `pipeline_empty_next` eligen directamente `FINISHED`/`FAULT` cuando el último `valid_next` baja a cero, sin ciclo vacío adicional; con anteriores eligen DRAIN AUTO/`STEP` según `cycle_from_continuous`.                                                                |
+| Fronteras EX, ID e IF excepcional                          | Dentro de la instrucción EX, fault propio precede a `halt` y redirect; entre instrucciones distintas prevalece la más antigua EX→ID→IF excepcional. Redirect/`halt` EX descartan candidatos jóvenes; fault ID permite avanzar la EX anterior.                                                             |
+| `load-use` y frontera                                      | La frontera anterior prevalece sobre stalls solo de trabajo joven descartado; el stall necesario entre anteriores supervivientes se preserva. Fault IF excepcional con `load-use` retiene íntegro al consumidor `IF/ID`, inserta bubble y deja avanzar el load anterior sin capturar el fetch causante.   |
+| Drenado terminal                                           | No se confirman fronteras nuevas ni se admiten fetches; se selecciona `act_drain_load_use` o `act_drain_advance` para anteriores supervivientes, cada una solo en ciclo CPU efectivo.                                                                                                                     |
+| Efectos `MEM/WB` y cómputo de ciclos                       | Store MEM y writeback WB anteriores pueden comprometerse en el mismo flanco que confirma una frontera joven; `RESET`, `LOAD` aceptado o preparación efectiva los suprimen. `cycle_count` incrementa exactamente una vez por `cpu_cycle_fire`, incluidos stalls, redirects, confirmaciones y drenado.      |
+| IF y MEM simultáneos                                       | IMEM y DMEM son recursos lógicos independientes; fetch y load/store del mismo ciclo no originan un stall estructural artificial.                                                                                                                                                                          |
 
 Para cada ciclo **procesable** sin frontera terminal previa, el `Pipeline Hazard Control` selecciona exactamente **una** de las siete acciones `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_if_fault_exception`, `act_load_use` o `act_normal`. En drenado activo selecciona exactamente una de `act_drain_load_use` o `act_drain_advance`. En todo momento vale `$onehot0` de las nueve; con `cpu_cycle_fire=0` no se aplica ninguna. El acuerdo 42 sigue siendo la **única realización normal** de próximo estado de PC y cuatro registros interetapa para esas acciones, siempre desde las entradas previas al flanco. Una frontera confirmada en EX/ID/IF no invalida retrospectivamente una instrucción anterior ya en MEM o WB.
 
@@ -2255,20 +2255,20 @@ La auditoría no identifica coincidencias funcionales sin política definida. **
 
 La matriz consolida los acuerdos 1–45 y la revisión explícita del acuerdo 47. **No introduce comportamiento nuevo**: cada fila es un contrato arquitectónico ya fijado y un criterio para verificar después su implementación RTL.
 
-| Área de `DEC-ARCH-003` | Cierre y criterio de verificación |
-|---|---|
-| Forwarding `EX/MEM` y `MEM/WB` → EX; prioridad, disponibilidad y fuentes usadas | Acuerdos 1–3, 9–10, 32 y 38–39: comprobar `rs1`/`rs2` independientemente, productor reciente disponible, `rd!=x0`, fuentes efectivamente usadas y bloqueo de un `MEM/WB` obsoleto ante load reciente coincidente sin dato. |
-| `load-use` y stall entre supervivientes | Acuerdos 2, 4, 18–21, 29–32 y 41–42, revisados por el 47: retener PC/`IF/ID`, insertar bubble `ID/EX`, dejar progresar anteriores y aplicar stall solo si productor y consumidor sobreviven a la frontera. |
-| Stores, WB→ID y forwarding posterior | Acuerdos 5, 7, 9–10, 23, 25, 32, 39 y 43, con `DEC-ARCH-007`: comprobar dirección en EX, `store_data` transportado por `EX/MEM`, bypass de WB solo para escritura elegible y prioridad posterior del productor más reciente en EX. |
-| Cuatro registros interetapa, controles, `Result MUX`, `Target MUX` y `WB Value MUX` | Acuerdos 7, 11–14, 19–25, 29, 33–34, 37–38 y 42: campos/controles necesarios llegan a la etapa consumidora; `valid=0` deja inertes los residuos. Se comprueban selectores, enlace y selección de datos sin imponer empaquetado físico único de `ID/EX.control`. |
-| Branches, `jal` y `jalr`; redirect | Acuerdos 6–8, 16–17, 22–27, 30–31 y 40–42: resolución en EX, target y enlace correctos, fault propio antes de redirect y descarte del camino joven al aplicar una redirección válida. |
-| `halt`, detección de fetch IF y faults confirmados `ID/EX` y metadatos | Acuerdos 28–31, 35–36 y 40–44, revisados por el 47: confirmar solo candidatos elegibles del camino correcto, descartar causante de fault y jóvenes, retener PC y conservar `fault_cause`/`fault_pc` mientras drenan anteriores; `halt` no llega válido a `EX/MEM`. |
-| Antigüedad, ocho acciones, enables e invalidaciones | Acuerdos 30–31 y 40–45, revisados por el 47: frontera EX → ID; IF solo detecta y transporta candidatos conforme al acuerdo 47; `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_load_use`, `act_normal`, `act_drain_load_use` y `act_drain_advance` excluyentes, aplicadas a PC y registros interetapa con valores preflanco y sin ciclo adicional de `HOLD`. |
-| Fetch candidato durante load-use | Acuerdo 47: solo `act_load_use`, sin confirmación ni captura del candidato; PC retenido permite redetectarlo, capturarlo después y resolverlo en ID. Probar consumidor branch/jalr y load/store con fault propio antes del fetch joven. |
-| Gating RF/DMEM/fault/contador; `cpu_cycle_fire` | Acuerdos 36, 40 y 42–45, revisados por el 47: ningún efecto CPU sin ciclo, validez y control local; el writeback/store anterior a frontera joven completa una sola vez; el contador incrementa también en stall, redirect, frontera y drenado. |
-| FSM de 14 estados, autorización y comandos | Acuerdos 36 y 40–45: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión. El primer ciclo desde `READY` o al consumir `prepare_done` en `PREPARING_RUN/STEP` realiza fetch sin confirmar `halt` ni fault y lleva a `RUNNING`/`STEPPING` según su origen. |
-| Drenado y terminación | Acuerdos 28–31 y 36, 40–45: halt-drain contiene solo WB y termina en `FINISHED` en su único ciclo efectivo; fault-drain requiere como máximo dos ciclos efectivos y el último llega a `FAULT`. Los drains `STEP` conservan estado sin orden; `RUN` desde `HALT_DRAIN_STEP` termina y desde `FAULT_DRAIN_STEP` selecciona AUTO solo si queda trabajo. No hay ciclo vacío adicional. |
-| Coincidencias globales e integración | Acuerdo 45: auditar `RESET`/`LOAD`/preparación, comandos concurrentes, fronteras/`load-use`, forwarding/selectores durante `HOLD` y drenado, commits anteriores y fetch IF + acceso MEM simultáneos sobre IMEM/DMEM independientes, sin hazard estructural artificial. |
+| Área de `DEC-ARCH-003`                                                              | Cierre y criterio de verificación                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Forwarding `EX/MEM` y `MEM/WB` → EX; prioridad, disponibilidad y fuentes usadas     | Acuerdos 1–3, 9–10, 32 y 38–39: comprobar `rs1`/`rs2` independientemente, productor reciente disponible, `rd!=x0`, fuentes efectivamente usadas y bloqueo de un `MEM/WB` obsoleto ante load reciente coincidente sin dato.                                                                                                                                                                                                                                                                                  |
+| `load-use` y stall entre supervivientes                                             | Acuerdos 2, 4, 18–21, 29–32 y 41–42, revisados por el 47: retener PC/`IF/ID`, insertar bubble `ID/EX`, dejar progresar anteriores y aplicar stall solo si productor y consumidor sobreviven a la frontera.                                                                                                                                                                                                                                                                                                  |
+| Stores, WB→ID y forwarding posterior                                                | Acuerdos 5, 7, 9–10, 23, 25, 32, 39 y 43, con `DEC-ARCH-007`: comprobar dirección en EX, `store_data` transportado por `EX/MEM`, bypass de WB solo para escritura elegible y prioridad posterior del productor más reciente en EX.                                                                                                                                                                                                                                                                          |
+| Cuatro registros interetapa, controles, `Result MUX`, `Target MUX` y `WB Value MUX` | Acuerdos 7, 11–14, 19–25, 29, 33–34, 37–38 y 42: campos/controles necesarios llegan a la etapa consumidora; `valid=0` deja inertes los residuos. Se comprueban selectores, enlace y selección de datos sin imponer empaquetado físico único de `ID/EX.control`.                                                                                                                                                                                                                                             |
+| Branches, `jal` y `jalr`; redirect                                                  | Acuerdos 6–8, 16–17, 22–27, 30–31 y 40–42: resolución en EX, target y enlace correctos, fault propio antes de redirect y descarte del camino joven al aplicar una redirección válida.                                                                                                                                                                                                                                                                                                                       |
+| `halt`, detección de fetch IF y faults confirmados `ID/EX` y metadatos              | Acuerdos 28–31, 35–36 y 40–44, revisados por el 47: confirmar solo candidatos elegibles del camino correcto, descartar causante de fault y jóvenes, retener PC y conservar `fault_cause`/`fault_pc` mientras drenan anteriores; `halt` no llega válido a `EX/MEM`.                                                                                                                                                                                                                                          |
+| Antigüedad, ocho acciones, enables e invalidaciones                                 | Acuerdos 30–31 y 40–45, revisados por el 47: frontera EX → ID; IF solo detecta y transporta candidatos conforme al acuerdo 47; `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_load_use`, `act_normal`, `act_drain_load_use` y `act_drain_advance` excluyentes, aplicadas a PC y registros interetapa con valores preflanco y sin ciclo adicional de `HOLD`.                                                                                                                               |
+| Fetch candidato durante load-use                                                    | Acuerdo 47: solo `act_load_use`, sin confirmación ni captura del candidato; PC retenido permite redetectarlo, capturarlo después y resolverlo en ID. Probar consumidor branch/jalr y load/store con fault propio antes del fetch joven.                                                                                                                                                                                                                                                                     |
+| Gating RF/DMEM/fault/contador; `cpu_cycle_fire`                                     | Acuerdos 36, 40 y 42–45, revisados por el 47: ningún efecto CPU sin ciclo, validez y control local; el writeback/store anterior a frontera joven completa una sola vez; el contador incrementa también en stall, redirect, frontera y drenado.                                                                                                                                                                                                                                                              |
+| FSM de 14 estados, autorización y comandos                                          | Acuerdos 36 y 40–45: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión. El primer ciclo desde `READY` o al consumir `prepare_done` en `PREPARING_RUN/STEP` realiza fetch sin confirmar `halt` ni fault y lleva a `RUNNING`/`STEPPING` según su origen. |
+| Drenado y terminación                                                               | Acuerdos 28–31 y 36, 40–45: halt-drain contiene solo WB y termina en `FINISHED` en su único ciclo efectivo; fault-drain requiere como máximo dos ciclos efectivos y el último llega a `FAULT`. Los drains `STEP` conservan estado sin orden; `RUN` desde `HALT_DRAIN_STEP` termina y desde `FAULT_DRAIN_STEP` selecciona AUTO solo si queda trabajo. No hay ciclo vacío adicional.                                                                                                                          |
+| Coincidencias globales e integración                                                | Acuerdo 45: auditar `RESET`/`LOAD`/preparación, comandos concurrentes, fronteras/`load-use`, forwarding/selectores durante `HOLD` y drenado, commits anteriores y fetch IF + acceso MEM simultáneos sobre IMEM/DMEM independientes, sin hazard estructural artificial.                                                                                                                                                                                                                                      |
 
 Los invariantes conjuntos de aceptación son:
 
@@ -2291,19 +2291,19 @@ Una instrucción válida completa normalmente, causa una frontera (sin efectos p
 
 La matriz consolida los acuerdos 1–45 y la auditoría de coincidencias del acuerdo 45. **No introduce comportamiento nuevo**: cada fila es un contrato arquitectónico ya fijado y un criterio para verificar después su implementación RTL.
 
-| Área de `DEC-ARCH-003` | Cierre y criterio de verificación |
-|---|---|
-| Forwarding `EX/MEM` y `MEM/WB` → EX; prioridad, disponibilidad y fuentes usadas | Acuerdos 1–3, 9–10, 32 y 38–39: comprobar `rs1`/`rs2` independientemente, productor reciente disponible, `rd!=x0`, fuentes efectivamente usadas y bloqueo de un `MEM/WB` obsoleto ante load reciente coincidente sin dato. |
-| `load-use` y stall entre supervivientes | Acuerdos 2, 4, 18–21, 29–32 y 41–42: retener PC/`IF/ID`, insertar bubble `ID/EX`, dejar progresar anteriores y aplicar stall solo si productor y consumidor sobreviven a la frontera. |
-| Stores, WB→ID y forwarding posterior | Acuerdos 5, 7, 9–10, 23, 25, 32, 39 y 43, con `DEC-ARCH-007`: comprobar dirección en EX, `store_data` transportado por `EX/MEM`, bypass de WB solo para escritura elegible y prioridad posterior del productor más reciente en EX. |
-| Cuatro registros interetapa, controles, `Result MUX`, `Target MUX` y `WB Value MUX` | Acuerdos 7, 11–14, 19–25, 29, 33–34, 37–38 y 42: campos/controles necesarios llegan a la etapa consumidora; `valid=0` deja inertes los residuos. Se comprueban selectores, enlace y selección de datos sin imponer empaquetado físico único de `ID/EX.control`. |
-| Branches, `jal` y `jalr`; redirect | Acuerdos 6–8, 16–17, 22–27, 30–31 y 40–42: resolución en EX, target y enlace correctos, fault propio antes de redirect y descarte del camino joven al aplicar una redirección válida. |
-| `halt`, faults `IF/ID`/EX y metadatos | Acuerdos 28–31, 35–36 y 40–44: confirmar solo candidatos elegibles del camino correcto, descartar causante de fault y jóvenes, retener PC y conservar `fault_cause`/`fault_pc` mientras drenan anteriores; `halt` no llega válido a `EX/MEM`. |
-| Antigüedad, nueve acciones, enables e invalidaciones | Acuerdos 30–31 y 40–45: frontera EX → ID → IF excepcional; `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_if_fault_exception`, `act_load_use`, `act_normal`, `act_drain_load_use` y `act_drain_advance` excluyentes, aplicadas a PC y registros interetapa con valores preflanco y sin ciclo adicional de `HOLD`. |
-| Gating RF/DMEM/fault/contador; `cpu_cycle_fire` | Acuerdos 36, 40 y 42–45: ningún efecto CPU sin ciclo, validez y control local; el writeback/store anterior a frontera joven completa una sola vez; el contador incrementa también en stall, redirect, frontera y drenado. |
-| FSM de 14 estados, autorización y comandos | Acuerdos 36 y 40–45, con revisión expresa del 44: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión; `PREPARING_RUN/STEP && prepare_done` ejecuta primer ciclo solo con preparación preflanco completa. |
-| Drenado y terminación | Acuerdos 28–31 y 36, 40–45: anteriores progresan en AUTO o por un `STEP` aceptado por ciclo; `pipeline_empty_next=1` con confirmación/vaciado final lleva a `FINISHED` o `FAULT` en ese flanco sin ciclo vacío. |
-| Coincidencias globales e integración | Acuerdo 45: auditar `RESET`/`LOAD`/preparación, comandos concurrentes, fronteras/`load-use`, forwarding/selectores durante `HOLD` y drenado, commits anteriores y fetch IF + acceso MEM simultáneos sobre IMEM/DMEM independientes, sin hazard estructural artificial. |
+| Área de `DEC-ARCH-003`                                                              | Cierre y criterio de verificación                                                                                                                                                                                                                                                                                                                                                                                                                            |
+|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Forwarding `EX/MEM` y `MEM/WB` → EX; prioridad, disponibilidad y fuentes usadas     | Acuerdos 1–3, 9–10, 32 y 38–39: comprobar `rs1`/`rs2` independientemente, productor reciente disponible, `rd!=x0`, fuentes efectivamente usadas y bloqueo de un `MEM/WB` obsoleto ante load reciente coincidente sin dato.                                                                                                                                                                                                                                   |
+| `load-use` y stall entre supervivientes                                             | Acuerdos 2, 4, 18–21, 29–32 y 41–42: retener PC/`IF/ID`, insertar bubble `ID/EX`, dejar progresar anteriores y aplicar stall solo si productor y consumidor sobreviven a la frontera.                                                                                                                                                                                                                                                                        |
+| Stores, WB→ID y forwarding posterior                                                | Acuerdos 5, 7, 9–10, 23, 25, 32, 39 y 43, con `DEC-ARCH-007`: comprobar dirección en EX, `store_data` transportado por `EX/MEM`, bypass de WB solo para escritura elegible y prioridad posterior del productor más reciente en EX.                                                                                                                                                                                                                           |
+| Cuatro registros interetapa, controles, `Result MUX`, `Target MUX` y `WB Value MUX` | Acuerdos 7, 11–14, 19–25, 29, 33–34, 37–38 y 42: campos/controles necesarios llegan a la etapa consumidora; `valid=0` deja inertes los residuos. Se comprueban selectores, enlace y selección de datos sin imponer empaquetado físico único de `ID/EX.control`.                                                                                                                                                                                              |
+| Branches, `jal` y `jalr`; redirect                                                  | Acuerdos 6–8, 16–17, 22–27, 30–31 y 40–42: resolución en EX, target y enlace correctos, fault propio antes de redirect y descarte del camino joven al aplicar una redirección válida.                                                                                                                                                                                                                                                                        |
+| `halt`, faults `IF/ID`/EX y metadatos                                               | Acuerdos 28–31, 35–36 y 40–44: confirmar solo candidatos elegibles del camino correcto, descartar causante de fault y jóvenes, retener PC y conservar `fault_cause`/`fault_pc` mientras drenan anteriores; `halt` no llega válido a `EX/MEM`.                                                                                                                                                                                                                |
+| Antigüedad, nueve acciones, enables e invalidaciones                                | Acuerdos 30–31 y 40–45: frontera EX → ID → IF excepcional; `act_ex_fault`, `act_halt`, `act_redirect`, `act_id_fault`, `act_if_fault_exception`, `act_load_use`, `act_normal`, `act_drain_load_use` y `act_drain_advance` excluyentes, aplicadas a PC y registros interetapa con valores preflanco y sin ciclo adicional de `HOLD`.                                                                                                                          |
+| Gating RF/DMEM/fault/contador; `cpu_cycle_fire`                                     | Acuerdos 36, 40 y 42–45: ningún efecto CPU sin ciclo, validez y control local; el writeback/store anterior a frontera joven completa una sola vez; el contador incrementa también en stall, redirect, frontera y drenado.                                                                                                                                                                                                                                    |
+| FSM de 14 estados, autorización y comandos                                          | Acuerdos 36 y 40–45, con revisión expresa del 44: `global_state` es la fuente registrada de fases terminales AUTO/`STEP`; `RESET` > `LOAD` aceptado > preparación efectiva > ciclo CPU > `HOLD`, `STEP` > `RUN` entre comandos aceptados, solicitud de `LOAD` rechazada sin inhibir `RUN`. `PREPARING_READY && prepare_done` solo confirma imagen/sesión; `PREPARING_RUN/STEP && prepare_done` ejecuta primer ciclo solo con preparación preflanco completa. |
+| Drenado y terminación                                                               | Acuerdos 28–31 y 36, 40–45: anteriores progresan en AUTO o por un `STEP` aceptado por ciclo; `pipeline_empty_next=1` con confirmación/vaciado final lleva a `FINISHED` o `FAULT` en ese flanco sin ciclo vacío.                                                                                                                                                                                                                                              |
+| Coincidencias globales e integración                                                | Acuerdo 45: auditar `RESET`/`LOAD`/preparación, comandos concurrentes, fronteras/`load-use`, forwarding/selectores durante `HOLD` y drenado, commits anteriores y fetch IF + acceso MEM simultáneos sobre IMEM/DMEM independientes, sin hazard estructural artificial.                                                                                                                                                                                       |
 
 Los invariantes conjuntos de aceptación son:
 
@@ -2412,16 +2412,16 @@ exmem_invalidate = act_halt || act_ex_fault
 memwb_capture_mem = pipeline_action
 ```
 
-| Acción vigente | PC | `IF/ID.next` | `ID/EX.next` | `EX/MEM.next` | `MEM/WB.next` |
-|---|---|---|---|---|---|
-| `act_normal` | PC+4 | Capturar IF: instrucción o candidato | Capturar ID | Capturar EX | Capturar MEM |
-| `act_load_use` | Retener | Retener los cinco campos | Bubble | Capturar EX | Capturar MEM |
-| `act_redirect` | Target | Invalidar ambos flags | Bubble | Capturar EX válida | Capturar MEM |
-| `act_halt` | Retener | Invalidar ambos flags | Bubble | Invalidar | Capturar MEM |
-| `act_ex_fault` | Retener | Invalidar ambos flags | Bubble | Invalidar | Capturar MEM |
-| `act_id_fault` | Retener | Invalidar ambos flags | Bubble | Capturar EX anterior | Capturar MEM |
-| `act_drain_load_use` | Retener | Retener los cinco campos | Bubble | Capturar EX | Capturar MEM |
-| `act_drain_advance` | Retener | Invalidar ambos flags | Capturar ID | Capturar EX | Capturar MEM |
+| Acción vigente       | PC      | `IF/ID.next`                         | `ID/EX.next` | `EX/MEM.next`        | `MEM/WB.next` |
+|----------------------|---------|--------------------------------------|--------------|----------------------|---------------|
+| `act_normal`         | PC+4    | Capturar IF: instrucción o candidato | Capturar ID  | Capturar EX          | Capturar MEM  |
+| `act_load_use`       | Retener | Retener los cinco campos             | Bubble       | Capturar EX          | Capturar MEM  |
+| `act_redirect`       | Target  | Invalidar ambos flags                | Bubble       | Capturar EX válida   | Capturar MEM  |
+| `act_halt`           | Retener | Invalidar ambos flags                | Bubble       | Invalidar            | Capturar MEM  |
+| `act_ex_fault`       | Retener | Invalidar ambos flags                | Bubble       | Invalidar            | Capturar MEM  |
+| `act_id_fault`       | Retener | Invalidar ambos flags                | Bubble       | Capturar EX anterior | Capturar MEM  |
+| `act_drain_load_use` | Retener | Retener los cinco campos             | Bubble       | Capturar EX          | Capturar MEM  |
+| `act_drain_advance`  | Retener | Invalidar ambos flags                | Capturar ID  | Capturar EX          | Capturar MEM  |
 
 Con `act_normal`, `IF/ID` captura `valid=1, fetch_fault_valid=0, instruction=if_instruction` si el fetch es válido, o `valid=0, fetch_fault_valid=1, instruction=32'b0` si hay candidato; siempre captura `pc=PC`. La causa es `if_fetch_fault_cause` para candidato y `3'b000` determinista sin significado de fault cuando el flag es cero. Retener conserva **los cinco campos**; invalidar limpia `valid` y `fetch_fault_valid`, permitiendo residuos de PC/instrucción/causa. Con `pipeline_action=0` y sin acción global superior, PC y los cuatro registros interetapa completos se retienen.
 
@@ -2453,18 +2453,18 @@ Para fetch confirmado en ID, `id_fault_cause` copia `IF/ID.fetch_fault_cause` si
 
 **Matriz adicional obligatoria que revisa el acuerdo 46:**
 
-| Caso | Evidencia exigida |
-|---|---|
-| Load-use con candidato IF y sin frontera EX/ID | Únicamente `act_load_use`; PC/`IF/ID` estables, bubble `ID/EX`, progreso `EX/MEM`/WB; `fault_confirm`=0 y metadatos estables |
-| Stall terminado, candidato todavía en el mismo PC | `act_normal` captura candidato en `IF/ID` mientras el consumidor anterior pasa a EX; aún no hay fault por ese candidato |
-| Consumidor branch tomado o jalr válido | En EX aplica redirect y descarta el candidato joven de `IF/ID`, incluido su flag, sin `FAULT` por él |
-| Consumidor branch no tomado o ALU ordinaria | Sin frontera EX, candidato en ID confirma con causa registrada y `fault_pc`=`IF/ID.pc`; la EX anterior progresa |
-| Consumidor load/store con fault propio, o jalr con target desalineado | `ex_fault_confirm` prevalece sobre candidato de fetch ID; la causante no entra válida a `EX/MEM` y sus efectos quedan inhibidos |
-| Load productor con fault en EX | `act_ex_fault` descarta consumidor y candidato joven; no aplicar el stall de la dependencia descartada |
-| Candidato frente a halt EX anterior | `act_halt` descarta candidato y termina por `FINISHED` tras drenado, no `FAULT` |
-| `RUN`, `STEP` y `HOLD` intercalados | Un ciclo por `STEP`, incluido el stall; `HOLD` preserva cinco campos/PC/metadatos; redetección combinacional no confirma ni cuenta ciclos |
-| Reset o `LOAD` aceptado frente a candidato retenido/registrado | La prioridad global invalida el candidato y suprime efectos de la sesión previa |
-| Cobertura de acciones | Exactamente una de seis acciones no terminales o una de dos de drenado por ciclo procesable; $onehot0 de ocho siempre; cero acciones en `HOLD` o terminal vacío |
+| Caso                                                                  | Evidencia exigida                                                                                                                                               |
+|-----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Load-use con candidato IF y sin frontera EX/ID                        | Únicamente `act_load_use`; PC/`IF/ID` estables, bubble `ID/EX`, progreso `EX/MEM`/WB; `fault_confirm`=0 y metadatos estables                                    |
+| Stall terminado, candidato todavía en el mismo PC                     | `act_normal` captura candidato en `IF/ID` mientras el consumidor anterior pasa a EX; aún no hay fault por ese candidato                                         |
+| Consumidor branch tomado o jalr válido                                | En EX aplica redirect y descarta el candidato joven de `IF/ID`, incluido su flag, sin `FAULT` por él                                                            |
+| Consumidor branch no tomado o ALU ordinaria                           | Sin frontera EX, candidato en ID confirma con causa registrada y `fault_pc`=`IF/ID.pc`; la EX anterior progresa                                                 |
+| Consumidor load/store con fault propio, o jalr con target desalineado | `ex_fault_confirm` prevalece sobre candidato de fetch ID; la causante no entra válida a `EX/MEM` y sus efectos quedan inhibidos                                 |
+| Load productor con fault en EX                                        | `act_ex_fault` descarta consumidor y candidato joven; no aplicar el stall de la dependencia descartada                                                          |
+| Candidato frente a halt EX anterior                                   | `act_halt` descarta candidato y termina por `FINISHED` tras drenado, no `FAULT`                                                                                 |
+| `RUN`, `STEP` y `HOLD` intercalados                                   | Un ciclo por `STEP`, incluido el stall; `HOLD` preserva cinco campos/PC/metadatos; redetección combinacional no confirma ni cuenta ciclos                       |
+| Reset o `LOAD` aceptado frente a candidato retenido/registrado        | La prioridad global invalida el candidato y suprime efectos de la sesión previa                                                                                 |
+| Cobertura de acciones                                                 | Exactamente una de seis acciones no terminales o una de dos de drenado por ciclo procesable; $onehot0 de ocho siempre; cero acciones en `HOLD` o terminal vacío |
 
 Contraejemplos de AUD-001 convertidos en regresión: con imagen de 8 bytes y DMEM inicial cero, `lw x1,0(x0); beq x1,x0,-4` debe repetir el loop sin confirmar el fetch especulativo en PC=8. Con `lw x1,0(x0); sw x1,2(x0)`, debe confirmarse el store desalineado con `fault_cause=110`, `fault_pc=4`, sin writes de datos ni metadatos; el fetch PC=8 queda descartado. Repetir cambiando consumidor por un load inválido, jalr alineado/desalineado, branch no tomado y ALU dependiente para contrastar descarte y confirmación ID legítima.
 
@@ -2480,22 +2480,22 @@ Contraejemplos de AUD-001 convertidos en regresión: con imagen de 8 bytes y DME
 
 **Organización acordada:**
 
-| Parte | Realización y responsabilidad |
-|---|---|
-| `Global FSM` | Submódulo `global_fsm.sv` dentro de `execution_control.sv`. Conserva la fase de sesión, selecciona las solicitudes y emite controles Moore/Mealy. |
+| Parte                                        | Realización y responsabilidad                                                                                                                                        |
+|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Global FSM`                                 | Submódulo `global_fsm.sv` dentro de `execution_control.sv`. Conserva la fase de sesión, selecciona las solicitudes y emite controles Moore/Mealy.                    |
 | Lógica y estado local de `Execution Control` | Selección y registros de causa/PC de fault, registro de tamaño confirmado, contador de ciclos y reducción de los cuatro próximos `valid` para `pipeline_empty_next`. |
-| `Pipeline Hazard Control` | Selecciona las ocho acciones del pipeline a partir de `cpu_cycle_fire`, `drain_mode` y los candidatos y condiciones locales. |
-| Recursos y servicios | Loader, `Session Preparation`, PC, RF, memorias y registros interetapa realizan sus acciones al consumir las habilitaciones correspondientes. |
+| `Pipeline Hazard Control`                    | Selecciona las ocho acciones del pipeline a partir de `cpu_cycle_fire`, `drain_mode` y los candidatos y condiciones locales.                                         |
+| Recursos y servicios                         | Loader, `Session Preparation`, PC, RF, memorias y registros interetapa realizan sus acciones al consumir las habilitaciones correspondientes.                        |
 
 `global_state` permanece como registro interno one-hot de catorce bits. En cada flanco positivo de `clk` captura `next_state`; `cpu_cycle_fire` habilita el avance de los recursos CPU. La lógica combinacional de la FSM calcula el estado siguiente y las salidas desde el estado actual y las entradas.
 
 **Solicitudes y salidas:** La FSM recibe directamente `load_request`, `run_request` y `step_request`. Resuelve elegibilidad y prioridad con `casez`, bajo `reset` > `LOAD` > `STEP` > `RUN`. El controlador UART presenta una sola solicitud por ciclo y consume `command_accepted` según su fase en el mismo flanco en que la FSM selecciona el comando.
 
-| Tipo | Salidas |
-|---|---|
-| Mealy, cero por defecto | `command_accepted`, `load_start`, `cpu_cycle_fire`, `image_publish` |
-| Moore de control | `loader_active`, `prepare_active`, `drain_mode`, `load_available`, `program_finished`, `fault_terminal` |
-| Moore de observación | `global_state_code[7:0]`, conectado a `Response Serializer.debug_state_code` |
+| Tipo                    | Salidas                                                                                                 |
+|-------------------------|---------------------------------------------------------------------------------------------------------|
+| Mealy, cero por defecto | `command_accepted`, `load_start`, `cpu_cycle_fire`, `image_publish`                                     |
+| Moore de control        | `loader_active`, `prepare_active`, `drain_mode`, `load_available`, `program_finished`, `fault_terminal` |
+| Moore de observación    | `global_state_code[7:0]`, conectado a `Response Serializer.debug_state_code`                            |
 
 `Protocol Controller` utiliza la aceptación común y los indicadores de sesión. El código externo de ocho bits representa el estado observado en Debug. Las [tablas vigentes de la FSM](../architecture/session/execution_control.md#tabla-de-transiciones) fijan las condiciones y salidas de cada transición.
 
@@ -2503,10 +2503,10 @@ Contraejemplos de AUD-001 convertidos en regresión: con imagen de 8 bytes y DME
 
 **Contexto de hazards:** Las condiciones que sustituyen los predicados de entrada `terminal_none`/`drain_active` son:
 
-| Contexto | Condición |
-|---|---|
-| Ciclo ordinario | `cpu_cycle_fire && !drain_mode` |
-| Ciclo de drenado | `cpu_cycle_fire && drain_mode` |
+| Contexto         | Condición                       |
+|------------------|---------------------------------|
+| Ciclo ordinario  | `cpu_cycle_fire && !drain_mode` |
+| Ciclo de drenado | `cpu_cycle_fire && drain_mode`  |
 
 Se conservan las seis acciones ordinarias y las dos de drenado del acuerdo 47, sus prioridades y sus efectos sobre PC y registros interetapa. Las confirmaciones proceden únicamente de EX o ID. La verificación mantiene el contrato combinacional de `act_drain_load_use` para entradas artificiales y distingue esos casos de los recorridos alcanzables de sesión.
 

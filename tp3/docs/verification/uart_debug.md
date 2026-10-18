@@ -809,7 +809,7 @@ También se ejecutan las comprobaciones reutilizadas de [TEST-UART-010](#test-ua
 ### Qué significa cada cruce
 
 | Cruce          | Situación que se prepara                                                  | Resultado que distingue la prueba                                                                      |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+|----------------|---------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | A              | RUN termina mientras se transmite CHECK_READY/BUSY (`05 04`).             | Completar esa respuesta breve y luego enviar el terminal con Debug.                                    |
 | B, reutilizado | Halt único termina antes del último Stop de RUN/ACCEPTED.                 | Conservar la obligación terminal hasta completar ACCEPTED; se observa en UART-010/C005.                |
 | C              | RUN termina mientras se recibe una cabecera LOAD todavía incompleta.      | Abandonar esa cabecera, descartar su resto y dar prioridad al terminal.                                |

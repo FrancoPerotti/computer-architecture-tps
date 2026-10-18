@@ -32,27 +32,27 @@ Los recursos y el control permanecen dentro de `baud_tick_gen`. El bloque utiliz
 
 Se conserva el cálculo del TP2: dividir la frecuencia funcional por la frecuencia nominal de ticks y redondear al entero más cercano.
 
-| Magnitud | Valor |
-|---|---|
-| Frecuencia funcional | 50.000.000 Hz |
-| Baud nominal | 19.200 |
-| Factor de ticks por bit | 16 |
-| Frecuencia nominal de ticks | 19.200 × 16 = 307.200 Hz |
-| Divisor ideal | 50.000.000 / 307.200 = 162,760416… |
-| Divisor entero seleccionado | 163 |
-| Frecuencia efectiva de ticks | 50.000.000 / 163 ≈ 306.748,47 Hz |
-| Baud efectivo | 50.000.000 / (163 × 16) ≈ 19.171,78 |
-| Error relativo al baud nominal | Aproximadamente −0,147 % |
+| Magnitud                       | Valor                               |
+|--------------------------------|-------------------------------------|
+| Frecuencia funcional           | 50.000.000 Hz                       |
+| Baud nominal                   | 19.200                              |
+| Factor de ticks por bit        | 16                                  |
+| Frecuencia nominal de ticks    | 19.200 × 16 = 307.200 Hz            |
+| Divisor ideal                  | 50.000.000 / 307.200 = 162,760416…  |
+| Divisor entero seleccionado    | 163                                 |
+| Frecuencia efectiva de ticks   | 50.000.000 / 163 ≈ 306.748,47 Hz    |
+| Baud efectivo                  | 50.000.000 / (163 × 16) ≈ 19.171,78 |
+| Error relativo al baud nominal | Aproximadamente −0,147 %            |
 
 Cada clock funcional dura 20 ns. Los pulsos consecutivos se separan por 163 clocks, equivalentes a 3,26 µs, y dieciséis intervalos de tick duran 52,16 µs.
 
 Los parámetros conservan los nombres del TP2 y toman estos valores para el TP3:
 
-| Parámetro | Valor |
-|---|---:|
+| Parámetro     |      Valor |
+|---------------|-----------:|
 | `CLK_FREQ_HZ` | 50.000.000 |
-| `BAUD_RATE` | 19.200 |
-| `OVERSAMPLE` | 16 |
+| `BAUD_RATE`   |     19.200 |
+| `OVERSAMPLE`  |         16 |
 
 El divisor y el ancho del contador se derivan de esos parámetros. La integración debe utilizar la misma frecuencia funcional declarada por la plataforma. La frecuencia de referencia de 100 MHz del TP2 se adapta a la configuración común de 50 MHz.
 
@@ -64,11 +64,11 @@ El protocolo y la configuración de PC mantienen 19200 baud nominales. Los presu
 
 Se conservan los puertos del TP2:
 
-| Dirección | Señal | Ancho | Origen o destino |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Salida | `s_tick` | 1 | Pulso registrado hacia `uart_rx` y `uart_tx`. |
+| Dirección | Señal    | Ancho | Origen o destino                              |
+|-----------|----------|-------|-----------------------------------------------|
+| Entrada   | `clk`    | 1     | Clock funcional común.                        |
+| Entrada   | `reset`  | 1     | Reset funcional común, activo alto.           |
+| Salida    | `s_tick` | 1     | Pulso registrado hacia `uart_rx` y `uart_tx`. |
 
 El contador y su comparación son internos al módulo. El generador tampoco recibe comandos del protocolo: su salida aporta la referencia periódica a los bloques físicos de UART.
 
@@ -78,10 +78,10 @@ El contador y su comparación son internos al módulo. El generador tampoco reci
 
 El contador utiliza los valores de cero a 162. En cada flanco ascendente del clock funcional, fuera de reset, el contador y el registro de salida se actualizan según esta tabla:
 
-| Condición previa al flanco | Acción del contador | Valor registrado en `s_tick` |
-|---|---|---|
-| `counter` distinto de 162 | Incrementar una vez. | Cero. |
-| `counter` igual a 162 | Volver a cero. | Uno. |
+| Condición previa al flanco | Acción del contador  | Valor registrado en `s_tick` |
+|----------------------------|----------------------|------------------------------|
+| `counter` distinto de 162  | Incrementar una vez. | Cero.                        |
+| `counter` igual a 162      | Volver a cero.       | Uno.                         |
 
 Después del flanco de fin de cuenta, `s_tick` permanece en uno hasta el siguiente flanco. En ese siguiente flanco vuelve a cero y el contador avanza a uno, conservando el comportamiento del TP2. La comparación utiliza el valor previo al flanco y las actualizaciones se hacen visibles después de él.
 

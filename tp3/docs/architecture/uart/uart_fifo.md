@@ -39,16 +39,16 @@ La lógica combinacional determina qué solicitudes pueden aceptarse. La lógica
 
 Se conservan los puertos del TP2, con ancho de datos de ocho bits:
 
-| Dirección | Señal | Ancho | Función |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Entrada | `rd` | 1 | Solicitud de retiro del primer byte. |
-| Entrada | `wr` | 1 | Solicitud de escritura de un byte. |
-| Entrada | `write_data` | 8 | Byte para una escritura aceptada. |
-| Salida | `read_data` | 8 | Primer byte pendiente, válido cuando `empty` vale cero. |
-| Salida | `empty` | 1 | Cola vacía. |
-| Salida | `full` | 1 | Cola llena. |
+| Dirección | Señal        | Ancho | Función                                                 |
+|-----------|--------------|-------|---------------------------------------------------------|
+| Entrada   | `clk`        | 1     | Clock funcional común.                                  |
+| Entrada   | `reset`      | 1     | Reset funcional común, activo alto.                     |
+| Entrada   | `rd`         | 1     | Solicitud de retiro del primer byte.                    |
+| Entrada   | `wr`         | 1     | Solicitud de escritura de un byte.                      |
+| Entrada   | `write_data` | 8     | Byte para una escritura aceptada.                       |
+| Salida    | `read_data`  | 8     | Primer byte pendiente, válido cuando `empty` vale cero. |
+| Salida    | `empty`      | 1     | Cola vacía.                                             |
+| Salida    | `full`       | 1     | Cola llena.                                             |
 
 Las reglas de la FIFO son comunes a ambos caminos. La [integración UART](uart_core.md) fija los productores y consumidores de cada instancia y las solicitudes `rd` y `wr` correspondientes.
 
@@ -60,17 +60,17 @@ La FIFO no informa por sí sola un error de protocolo ante una escritura no acep
 
 Fuera de reset, las condiciones son:
 
-| Operación | Condición de aceptación |
-|---|---|
+| Operación        | Condición de aceptación        |
+|------------------|--------------------------------|
 | Lectura o retiro | `rd` activo y `empty` en cero. |
-| Escritura | `wr` activo y `full` en cero. |
+| Escritura        | `wr` activo y `full` en cero.  |
 
 Las condiciones utilizan el estado previo al flanco. Cuando se solicitan ambas operaciones, los casos límite son:
 
-| Estado previo | Operación aceptada |
-|---|---|
-| FIFO llena | Solo lectura, como en el TP2. |
-| FIFO vacía | Solo escritura. |
+| Estado previo | Operación aceptada            |
+|---------------|-------------------------------|
+| FIFO llena    | Solo lectura, como en el TP2. |
+| FIFO vacía    | Solo escritura.               |
 
 Las solicitudes que no se aceptan no actualizan el recurso correspondiente.
 
@@ -79,11 +79,11 @@ En cada escritura aceptada, la FIFO guarda `write_data` en la posición del punt
 La ocupación se actualiza según las operaciones aceptadas:
 
 | Escritura aceptada | Lectura aceptada | Cambio de ocupación |
-|---|---|---|
-| No | No | Se conserva. |
-| Sí | No | Aumenta en uno. |
-| No | Sí | Disminuye en uno. |
-| Sí | Sí | Se conserva. |
+|--------------------|------------------|---------------------|
+| No                 | No               | Se conserva.        |
+| Sí                 | No               | Aumenta en uno.     |
+| No                 | Sí               | Disminuye en uno.   |
+| Sí                 | Sí               | Se conserva.        |
 
 Cuando ambas operaciones se aceptan, el consumidor toma el dato de lectura previo al flanco y la escritura incorpora el nuevo byte en su posición correspondiente. El nuevo primer dato y los flags se hacen visibles después del flanco.
 

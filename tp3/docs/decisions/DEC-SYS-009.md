@@ -12,16 +12,16 @@
 
 **Decisión:** Se aprueba el diseño completo de un assembler propio en Python con biblioteca estándar, conforme a los siguientes contratos:
 
-| Aspecto | Contrato aprobado |
-|---|---|
-| Lenguaje | [Lenguaje assembler](../software/assembler_language.md): 32 instrucciones RV32I más `halt`, sintaxis explícita, registros y alias, literales, etiquetas y rechazos. |
-| Interfaz pública | [Interfaz del assembler](../software/assembler_interface.md): `assemble(source_text: str) -> AssemblyResult`, con bytes y mapa PC–línea completos o un único diagnóstico. |
-| Etapas | [Lectura](../software/assembler_source_reader.md), [direcciones](../software/assembler_addresses.md), [operandos](../software/assembler_operands.md), [codificación](../software/assembler_encoding.md) y [empaquetado](../software/assembler_packing.md), ejecutadas en ese orden. |
-| Datos | [Estructuras de datos](../software/assembler_data_model.md): siete dataclasses, registros nuevos entre etapas y datos independientes por llamada. |
-| Organización | [Organización y operación](../software/assembler_organization.md): un módulo, cinco funciones de etapa y `_AssemblyError` capturada por `assemble`; las excepciones inesperadas se propagan. El diagnóstico corresponde al primer rechazo detectado en el orden de etapas y registros. |
-| Responsabilidades | El assembler traduce sin recibir perfil ni capacidad de IMEM. La FPGA valida el tamaño antes de aceptar `LOAD`; la aplicación gestiona archivos, transporte y presentación. |
-| Verificación | [Pruebas del assembler](../software/assembler_tests.md): 101 variantes dirigidas en ocho grupos, con expectativas independientes y alcance proporcional al TP. |
-| Entorno | [Entorno e importación](../software/assembler_environment.md): CPython 3.11 como mínimo, importación desde `software.assembler` y catálogo con `unittest`. |
+| Aspecto           | Contrato aprobado                                                                                                                                                                                                                                                                      |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Lenguaje          | [Lenguaje assembler](../software/assembler_language.md): 32 instrucciones RV32I más `halt`, sintaxis explícita, registros y alias, literales, etiquetas y rechazos.                                                                                                                    |
+| Interfaz pública  | [Interfaz del assembler](../software/assembler_interface.md): `assemble(source_text: str) -> AssemblyResult`, con bytes y mapa PC–línea completos o un único diagnóstico.                                                                                                              |
+| Etapas            | [Lectura](../software/assembler_source_reader.md), [direcciones](../software/assembler_addresses.md), [operandos](../software/assembler_operands.md), [codificación](../software/assembler_encoding.md) y [empaquetado](../software/assembler_packing.md), ejecutadas en ese orden.    |
+| Datos             | [Estructuras de datos](../software/assembler_data_model.md): siete dataclasses, registros nuevos entre etapas y datos independientes por llamada.                                                                                                                                      |
+| Organización      | [Organización y operación](../software/assembler_organization.md): un módulo, cinco funciones de etapa y `_AssemblyError` capturada por `assemble`; las excepciones inesperadas se propagan. El diagnóstico corresponde al primer rechazo detectado en el orden de etapas y registros. |
+| Responsabilidades | El assembler traduce sin recibir perfil ni capacidad de IMEM. La FPGA valida el tamaño antes de aceptar `LOAD`; la aplicación gestiona archivos, transporte y presentación.                                                                                                            |
+| Verificación      | [Pruebas del assembler](../software/assembler_tests.md): 101 variantes dirigidas en ocho grupos, con expectativas independientes y alcance proporcional al TP.                                                                                                                         |
+| Entorno           | [Entorno e importación](../software/assembler_environment.md): CPython 3.11 como mínimo, importación desde `software.assembler` y catálogo con `unittest`.                                                                                                                             |
 
 **Justificación:** El lenguaje pequeño y fijo permite resolver etiquetas mediante direcciones contiguas y reutilizar seis formatos de codificación. Las etapas y representaciones simples acotan el desarrollo y su comprensión. La elección conserva su fundamento cualitativo; no acredita una medición comparativa del costo real.
 

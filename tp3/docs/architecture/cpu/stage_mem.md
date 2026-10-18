@@ -37,15 +37,15 @@ Al igual que EX, MEM es combinacional entre `EX/MEM` y `MEM/WB`: sus caminos se 
 
 La etapa está compuesta por los siguientes bloques y registros:
 
-| Módulo                    | Tipo       | Pertenece a     |
-|---------------------------|------------|-----------------|
-| `MEM Decode`              | Submódulo  | `mem_stage`     |
-| `Data Memory`             | Submódulo  | `mem_stage`     |
-| `Load Select / Extend`    | Submódulo  | `mem_stage`     |
-| `DMEM Write Control`      | Submódulo  | `mem_stage`     |
-| `WB Value Mux`            | Lógica     | `mem_stage`     |
-| `MEM/WB Update Control`   | Lógica     | `processor_top` |
-| Registro `MEM/WB`         | Estado     | `processor_top` |
+| Módulo                  | Tipo      | Pertenece a     |
+|-------------------------|-----------|-----------------|
+| `MEM Decode`            | Submódulo | `mem_stage`     |
+| `Data Memory`           | Submódulo | `mem_stage`     |
+| `Load Select / Extend`  | Submódulo | `mem_stage`     |
+| `DMEM Write Control`    | Submódulo | `mem_stage`     |
+| `WB Value Mux`          | Lógica    | `mem_stage`     |
+| `MEM/WB Update Control` | Lógica    | `processor_top` |
+| Registro `MEM/WB`       | Estado    | `processor_top` |
 
 Véase el [inventario aprobado](../module_inventory.md).
 
@@ -134,12 +134,12 @@ DMEM es una memoria byte-addressed organizada lógicamente para soportar accesos
 
 ##### Entradas desde la CPU
 
-| Señal                | Origen                                          | Tipo    |
-|----------------------|-------------------------------------------------|---------|
-| `Address[31:0]`      | `EX/MEM.ex_result`                              | Data    |
-| `Write Data[31:0]`   | `EX/MEM.store_data`                             | Data    |
-| `write_enable`       | `DMEM Write Control.dmem_store_fire`            | Control |
-| `byte_enable[3:0]`   | `DMEM Write Control`, máscara relativa aprobada | Control |
+| Señal              | Origen                                          | Tipo    |
+|--------------------|-------------------------------------------------|---------|
+| `Address[31:0]`    | `EX/MEM.ex_result`                              | Data    |
+| `Write Data[31:0]` | `EX/MEM.store_data`                             | Data    |
+| `write_enable`     | `DMEM Write Control.dmem_store_fire`            | Control |
+| `byte_enable[3:0]` | `DMEM Write Control`, máscara relativa aprobada | Control |
 
 ##### Entrada de mantenimiento
 
@@ -150,9 +150,9 @@ DMEM es una memoria byte-addressed organizada lógicamente para soportar accesos
 
 ##### Salida
 
-| Señal                  | Destino                | Tipo    |
-|------------------------|------------------------|---------|
-| `mem_read_data[31:0]`  | `Load Select / Extend` | Data    |
+| Señal                 | Destino                | Tipo |
+|-----------------------|------------------------|------|
+| `mem_read_data[31:0]` | `Load Select / Extend` | Data |
 
 La lectura es combinacional. La escritura de un store ocurre síncronamente cuando `dmem_store_fire=1`.
 
@@ -252,12 +252,12 @@ dmem_store_fire =
 
 La [máscara aprobada](../../decisions/DEC-ARCH-006.md#acuerdo-de-concreción-de-dec-arch-006--máscara-y-alineación-de-escritura-dmem) indica cuántos bytes del dato debe escribir el store. `DMEM Write Control` genera esta máscara en una posición relativa al dato:
 
-| Operación       | Bytes escritos | Máscara relativa |
-|-----------------|----------------|------------------|
-| `SB`            | 1              | `0001`           |
-| `SH`            | 2              | `0011`           |
-| `SW`            | 4              | `1111`           |
-| Otro `mem_op`   | 0              | `0000`           |
+| Operación     | Bytes escritos | Máscara relativa |
+|---------------|----------------|------------------|
+| `SB`          | 1              | `0001`           |
+| `SH`          | 2              | `0011`           |
+| `SW`          | 4              | `1111`           |
+| Otro `mem_op` | 0              | `0000`           |
 
 La máscara todavía no representa necesariamente los lanes físicos finales de DMEM. `Data Memory`, que recibe `Address`, desplaza combinacionalmente la máscara y `Write Data` según `Address[1:0]` antes de habilitar los lanes.
 
@@ -305,9 +305,9 @@ Todas las instrucciones que eventualmente escriben el `Register File` convergen 
 
 ##### Salida
 
-| Señal              | Destino           | Tipo |
-|--------------------|-------------------|------|
-| `wb_value[31:0]`   | `MEM/WB.wb_value` | Data |
+| Señal            | Destino           | Tipo |
+|------------------|-------------------|------|
+| `wb_value[31:0]` | `MEM/WB.wb_value` | Data |
 
 La selección es:
 
@@ -661,16 +661,16 @@ load  → dato consolidado en MEM, efecto sobre RF en WB
 
 Las ocho acciones provienen de `Pipeline Hazard Control`:
 
-| Señal                 | Origen                    | Tipo    |
-|-----------------------|---------------------------|---------|
-| `act_ex_fault`        | `Pipeline Hazard Control` | Control |
-| `act_halt`            | `Pipeline Hazard Control` | Control |
-| `act_redirect`        | `Pipeline Hazard Control` | Control |
-| `act_id_fault`        | `Pipeline Hazard Control` | Control |
-| `act_load_use`        | `Pipeline Hazard Control` | Control |
-| `act_normal`          | `Pipeline Hazard Control` | Control |
-| `act_drain_load_use`  | `Pipeline Hazard Control` | Control |
-| `act_drain_advance`   | `Pipeline Hazard Control` | Control |
+| Señal                | Origen                    | Tipo    |
+|----------------------|---------------------------|---------|
+| `act_ex_fault`       | `Pipeline Hazard Control` | Control |
+| `act_halt`           | `Pipeline Hazard Control` | Control |
+| `act_redirect`       | `Pipeline Hazard Control` | Control |
+| `act_id_fault`       | `Pipeline Hazard Control` | Control |
+| `act_load_use`       | `Pipeline Hazard Control` | Control |
+| `act_normal`         | `Pipeline Hazard Control` | Control |
+| `act_drain_load_use` | `Pipeline Hazard Control` | Control |
+| `act_drain_advance`  | `Pipeline Hazard Control` | Control |
 
 #### Salidas
 

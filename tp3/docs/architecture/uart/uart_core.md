@@ -56,22 +56,22 @@ El diagrama presenta los caminos de datos y solicitudes ya acordados. La exposic
 
 Se conservan los puertos del TP2 y se agregan tres salidas: `rx_activity`, `rx_receiving` y `tx_done_tick`. Los nombres internos `rx_done_tick`, `rx_full`, `tx_empty` y `tx_busy` siguen participando en la coordinación de módulos dentro de `uart_core`.
 
-| Dirección | Señal | Ancho | Origen o destino |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Entrada | `serial_rx` | 1 | Pin serie hacia el sincronizador. |
-| Salida | `serial_tx` | 1 | Salida registrada de `uart_tx` hacia el pin serie. |
-| Salida | `r_data` | 8 | Primer byte de FIFO RX hacia el control del protocolo. |
-| Entrada | `rd_uart` | 1 | Solicitud de retiro RX desde el control del protocolo. |
-| Salida | `rx_empty` | 1 | FIFO RX vacía, hacia el control del protocolo. |
-| Entrada | `w_data` | 8 | Byte de respuesta desde el control del protocolo. |
-| Entrada | `wr_uart` | 1 | Solicitud de escritura TX desde el control del protocolo. |
-| Salida | `tx_full` | 1 | FIFO TX llena, hacia el control del protocolo. |
-| Salida | `rx_error_tick` | 1 | Evento de error RX hacia el control del protocolo. |
-| Salida | `rx_activity` | 1 | Actividad desde `uart_rx` hacia el control del protocolo. |
-| Salida | `rx_receiving` | 1 | Trama en curso desde `uart_rx` hacia el control del protocolo. |
-| Salida | `tx_done_tick` | 1 | Fin físico de cada byte desde `uart_tx` hacia el control del protocolo. |
+| Dirección | Señal           | Ancho | Origen o destino                                                        |
+|-----------|-----------------|-------|-------------------------------------------------------------------------|
+| Entrada   | `clk`           | 1     | Clock funcional común.                                                  |
+| Entrada   | `reset`         | 1     | Reset funcional común, activo alto.                                     |
+| Entrada   | `serial_rx`     | 1     | Pin serie hacia el sincronizador.                                       |
+| Salida    | `serial_tx`     | 1     | Salida registrada de `uart_tx` hacia el pin serie.                      |
+| Salida    | `r_data`        | 8     | Primer byte de FIFO RX hacia el control del protocolo.                  |
+| Entrada   | `rd_uart`       | 1     | Solicitud de retiro RX desde el control del protocolo.                  |
+| Salida    | `rx_empty`      | 1     | FIFO RX vacía, hacia el control del protocolo.                          |
+| Entrada   | `w_data`        | 8     | Byte de respuesta desde el control del protocolo.                       |
+| Entrada   | `wr_uart`       | 1     | Solicitud de escritura TX desde el control del protocolo.               |
+| Salida    | `tx_full`       | 1     | FIFO TX llena, hacia el control del protocolo.                          |
+| Salida    | `rx_error_tick` | 1     | Evento de error RX hacia el control del protocolo.                      |
+| Salida    | `rx_activity`   | 1     | Actividad desde `uart_rx` hacia el control del protocolo.               |
+| Salida    | `rx_receiving`  | 1     | Trama en curso desde `uart_rx` hacia el control del protocolo.          |
+| Salida    | `tx_done_tick`  | 1     | Fin físico de cada byte desde `uart_tx` hacia el control del protocolo. |
 
 Los dos indicadores RX y el evento TX se llevan directamente desde sus productores, sin una etapa de registro adicional en `uart_core`. Sus condiciones y flancos de consumo mantienen los contratos de [recepción](uart_rx.md#indicadores-para-el-control-del-protocolo) y [transmisión](uart_tx.md#stop-completo-y-evento-de-finalización).
 
@@ -85,14 +85,14 @@ Los dos indicadores RX y el evento TX se llevan directamente desde sus productor
 
 Las conexiones de la FIFO RX son:
 
-| Puerto de FIFO RX | Conexión |
-|---|---|
-| `wr` | `rx_done_tick` desde `uart_rx`. |
-| `write_data` | `received_data` desde `uart_rx.data_out`. |
-| `rd` | `rd_uart` desde el control del protocolo. |
-| `read_data` | `r_data` hacia el control del protocolo. |
-| `empty` | `rx_empty` hacia el control del protocolo. |
-| `full` | `rx_full` interno, utilizado para el reporte de desbordamiento. |
+| Puerto de FIFO RX | Conexión                                                        |
+|-------------------|-----------------------------------------------------------------|
+| `wr`              | `rx_done_tick` desde `uart_rx`.                                 |
+| `write_data`      | `received_data` desde `uart_rx.data_out`.                       |
+| `rd`              | `rd_uart` desde el control del protocolo.                       |
+| `read_data`       | `r_data` hacia el control del protocolo.                        |
+| `empty`           | `rx_empty` hacia el control del protocolo.                      |
+| `full`            | `rx_full` interno, utilizado para el reporte de desbordamiento. |
 
 El receptor y la FIFO consumen las señales en el flanco que valida el Stop. Si hay espacio, la FIFO guarda el byte y actualiza su ocupación. Después de ese flanco, el control del protocolo puede observar el primer dato válido mediante `r_data` y `rx_empty`.
 
@@ -106,14 +106,14 @@ El control del protocolo entrega `w_data` y solicita su incorporación mediante 
 
 Las conexiones de la FIFO TX son:
 
-| Puerto de FIFO TX | Conexión |
-|---|---|
-| `wr` | `wr_uart` desde el control del protocolo. |
-| `write_data` | `w_data` desde el control del protocolo. |
-| `rd` | `tx_done_tick` desde `uart_tx`. |
-| `read_data` | `transmit_data` hacia `uart_tx.data_in`. |
-| `empty` | `tx_empty` interno, utilizado para solicitar el comienzo. |
-| `full` | `tx_full` hacia el control del protocolo. |
+| Puerto de FIFO TX | Conexión                                                  |
+|-------------------|-----------------------------------------------------------|
+| `wr`              | `wr_uart` desde el control del protocolo.                 |
+| `write_data`      | `w_data` desde el control del protocolo.                  |
+| `rd`              | `tx_done_tick` desde `uart_tx`.                           |
+| `read_data`       | `transmit_data` hacia `uart_tx.data_in`.                  |
+| `empty`           | `tx_empty` interno, utilizado para solicitar el comienzo. |
+| `full`            | `tx_full` hacia el control del protocolo.                 |
 
 Fuera de reset, `tx_start` está activo si `tx_empty` y `tx_busy` valen cero. Durante reset se mantiene en cero. En el flanco de aceptación, `uart_tx` captura `transmit_data` en su registro interno y comienza el Start. La FIFO conserva ese byte como su primer elemento durante toda la transmisión.
 
@@ -125,9 +125,9 @@ El control del protocolo puede producir mensajes de cualquier longitud compatibl
 
 Se conserva el reporte combinado del TP2. `rx_error_tick` se activa en estos casos:
 
-| Condición | Significado |
-|---|---|
-| `frame_error_tick` | Error de trama; no se entrega un byte válido. |
+| Condición                             | Significado                                                |
+|---------------------------------------|------------------------------------------------------------|
+| `frame_error_tick`                    | Error de trama; no se entrega un byte válido.              |
 | `rx_done_tick` coincide con `rx_full` | Desbordamiento; el byte válido recibido no pudo guardarse. |
 
 La FIFO utiliza el flag full previo al flanco, incluso si se solicita un retiro en ese mismo flanco, según su contrato.
@@ -150,12 +150,12 @@ Todos los módulos reciben el clock funcional común, con objetivo de 50 MHz, y 
 
 Los parámetros comunes de `uart_core` toman estos valores:
 
-| Parámetro | Valor |
-|---|---:|
-| `CLK_FREQ_HZ` | 50.000.000 |
-| `BAUD_RATE` | 19.200 |
-| `OVERSAMPLE` | 16 |
-| `FIFO_ADDR_WIDTH` | 2 |
+| Parámetro         |      Valor |
+|-------------------|-----------:|
+| `CLK_FREQ_HZ`     | 50.000.000 |
+| `BAUD_RATE`       |     19.200 |
+| `OVERSAMPLE`      |         16 |
+| `FIFO_ADDR_WIDTH` |          2 |
 
 RX y TX utilizan ocho bits de datos y un Stop con factor de ticks 16. Ambas FIFO utilizan `DATA_WIDTH`=8 y `ADDR_WIDTH`=2.
 
@@ -185,20 +185,20 @@ Este fundamento consolida la revisión documental aprobada del 2026-10-05: domin
 
 #### Conexiones y dependencias de control
 
-| Frontera | Productor → consumidor y comprobación |
-|---|---|
-| Clock/reset | Clock funcional y `reset_sync` común → todos los recursos; tick es enable, no otro clock. Botón/UART/estabilidad se unen antes del acondicionador. |
-| RX físico/FIFO | `uart_rx` entrega dato y `rx_done_tick` al mismo flanco FIFO; trama inválida no produce byte válido. Error de trama/desbordamiento llega al controlador. |
-| FIFO RX/controlador | Primer dato combinacional y `rx_empty` → controlador; `rd_uart`=!reset&&!`rx_empty` en todas las fases. Esperar TX nunca inhibe retiro. |
-| Solicitudes CPU | `Protocol Controller` → `Global FSM`, por `Execution Control`: `load_request`, `run_request`, `step_request`. Las solicitudes se generan independientemente de `command_accepted`; ambas FSM consumen solicitud y aceptación común en el mismo flanco. |
-| `LOAD`/IMEM | Controlador entrega byte/posición/último/aborto; Loader guarda tres bytes o escribe palabra con cuarto. `load_ok` certifica escritura final para controlador/FSM global en el mismo flanco. |
-| Tamaño pendiente | Tamaño original retenido en controlador → Loader/registro de tamaño confirmado. `load_start` de la FSM inicia Loader e invalida el tamaño anterior; `image_publish` captura el tamaño pendiente al consumir `prepare_done` en PREPARING_READY, sin ciclo CPU. |
-| Preparación | `prepare_active` de `Global FSM` → `Session Preparation` y controlador; índice limpia metadatos y primer flanco inicializa RF/PC/ciclos/pipeline. `prepare_done` aparece después de últimas limpiezas, con enables inactivos. En PREPARING_RUN/STEP, la FSM autoriza entonces el primer ciclo con `cpu_cycle_fire`. |
-| RF/DMEM Debug | Controlador genera misma exclusión para selectores; serializador da dirección y recibe datos combinacionales del estado retenido. CPU/mantenimiento quedan excluidos durante observación. El flanco observado conserva accesos CPU y la selección Debug cambia después. |
-| Estado CPU/UART | `Global FSM` entrega `load_available`, `prepare_active`, `program_finished` y `fault_terminal` al controlador. Su código combinacional `global_state_code[7:0]` llega a `Response Serializer.debug_state_code` para observación. |
-| Descriptor pendiente | Captura con espacio previamente libre; entrega cuando serializador libre; sin sobreescritura ni entrega/carga simultáneas. `RUN` conserva obligación terminal hasta formar descriptor. |
-| Serializador/TX | `PREPARE` captura byte y `ENQUEUE` conserva hasta escritura aceptada. Índices avanzan por aceptación, no por intento ni fin físico. FIFO conserva byte en curso hasta `tx_done_tick`. |
-| Finalización | Serializador comunica fin en el mismo último Stop; controlador inicia T `LOAD`, libera Debug o registra reset según estado/marcas. Reset UART registrado evita lazo combinacional con ese evento. |
+| Frontera             | Productor → consumidor y comprobación                                                                                                                                                                                                                                                                               |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Clock/reset          | Clock funcional y `reset_sync` común → todos los recursos; tick es enable, no otro clock. Botón/UART/estabilidad se unen antes del acondicionador.                                                                                                                                                                  |
+| RX físico/FIFO       | `uart_rx` entrega dato y `rx_done_tick` al mismo flanco FIFO; trama inválida no produce byte válido. Error de trama/desbordamiento llega al controlador.                                                                                                                                                            |
+| FIFO RX/controlador  | Primer dato combinacional y `rx_empty` → controlador; `rd_uart`=!reset&&!`rx_empty` en todas las fases. Esperar TX nunca inhibe retiro.                                                                                                                                                                             |
+| Solicitudes CPU      | `Protocol Controller` → `Global FSM`, por `Execution Control`: `load_request`, `run_request`, `step_request`. Las solicitudes se generan independientemente de `command_accepted`; ambas FSM consumen solicitud y aceptación común en el mismo flanco.                                                              |
+| `LOAD`/IMEM          | Controlador entrega byte/posición/último/aborto; Loader guarda tres bytes o escribe palabra con cuarto. `load_ok` certifica escritura final para controlador/FSM global en el mismo flanco.                                                                                                                         |
+| Tamaño pendiente     | Tamaño original retenido en controlador → Loader/registro de tamaño confirmado. `load_start` de la FSM inicia Loader e invalida el tamaño anterior; `image_publish` captura el tamaño pendiente al consumir `prepare_done` en PREPARING_READY, sin ciclo CPU.                                                       |
+| Preparación          | `prepare_active` de `Global FSM` → `Session Preparation` y controlador; índice limpia metadatos y primer flanco inicializa RF/PC/ciclos/pipeline. `prepare_done` aparece después de últimas limpiezas, con enables inactivos. En PREPARING_RUN/STEP, la FSM autoriza entonces el primer ciclo con `cpu_cycle_fire`. |
+| RF/DMEM Debug        | Controlador genera misma exclusión para selectores; serializador da dirección y recibe datos combinacionales del estado retenido. CPU/mantenimiento quedan excluidos durante observación. El flanco observado conserva accesos CPU y la selección Debug cambia después.                                             |
+| Estado CPU/UART      | `Global FSM` entrega `load_available`, `prepare_active`, `program_finished` y `fault_terminal` al controlador. Su código combinacional `global_state_code[7:0]` llega a `Response Serializer.debug_state_code` para observación.                                                                                    |
+| Descriptor pendiente | Captura con espacio previamente libre; entrega cuando serializador libre; sin sobreescritura ni entrega/carga simultáneas. `RUN` conserva obligación terminal hasta formar descriptor.                                                                                                                              |
+| Serializador/TX      | `PREPARE` captura byte y `ENQUEUE` conserva hasta escritura aceptada. Índices avanzan por aceptación, no por intento ni fin físico. FIFO conserva byte en curso hasta `tx_done_tick`.                                                                                                                               |
+| Finalización         | Serializador comunica fin en el mismo último Stop; controlador inicia T `LOAD`, libera Debug o registra reset según estado/marcas. Reset UART registrado evita lazo combinacional con ese evento.                                                                                                                   |
 
 La dependencia `next_state`→estado registrado rompe el recorrido comandos/ciclo/pipeline siguiente; solo el estado actual realimenta aceptación y autorización. El estado global registrado y los recursos registrados de pendiente/serializador/solicitud de reset rompen las otras dependencias de coordinación.
 

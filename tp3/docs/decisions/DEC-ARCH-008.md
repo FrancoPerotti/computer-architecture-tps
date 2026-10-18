@@ -635,11 +635,11 @@ La decisión fija semántica, prioridades, ownership y condiciones de enable. La
 
 La implementación materializará la FSM global aprobada y sus enables; la organización de submódulos es libre dentro del contrato. Deberá preservar el contrato observable, exclusión de ownership, atomicidad del commit y ausencia de escrituras duplicadas. Los contratos se distribuyen entre estos ámbitos:
 
-| Ámbito | Responsabilidad |
-|---|---|
-| `DEC-ARCH-003` | Patrones locales de hazards |
-| Acuerdos 40–47 ya aprobados | Secuencia CPU de faults |
-| Protocolo | Reporte externo de faults |
+| Ámbito                       | Responsabilidad                                                                |
+|------------------------------|--------------------------------------------------------------------------------|
+| `DEC-ARCH-003`               | Patrones locales de hazards                                                    |
+| Acuerdos 40–47 ya aprobados  | Secuencia CPU de faults                                                        |
+| Protocolo                    | Reporte externo de faults                                                      |
 | Integración y `DEC-ARCH-005` | Pin, duración mínima concreta y realización física de la relación con `locked` |
 
 **Aspectos diferidos:**
@@ -691,15 +691,15 @@ Rechazar `LOAD` durante contexto continuo preserva ownership y evita un aborto i
 
 La prioridad funcional sigue siendo `RESET` > `LOAD` aceptado / preparación efectiva > ciclo CPU > `HOLD`. Su aplicación en la organización integrada es:
 
-| Situación | Control y efecto |
-|---|---|
-| Reset funcional activo | Suprime los controles Mealy y las escrituras CPU, Loader y mantenimiento; lleva la FSM a `NO_IMAGE`. |
-| `LOAD` seleccionado | `load_start` inicia Loader e invalida el tamaño confirmado en el flanco de aceptación; `cpu_cycle_fire=0`. |
-| Preparación efectiva | `prepare_active` activa `Session Preparation`; sus controles realizan inicialización y limpieza. Mientras el estado inicial se prepara, `cpu_cycle_fire=0`. |
-| `PREPARING_READY` con `prepare_done=1` | `image_publish` habilita la captura del tamaño pendiente y la FSM entra en `READY`, con contador cero y sin ciclo CPU. |
+| Situación                                             | Control y efecto                                                                                                                                                                        |
+|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Reset funcional activo                                | Suprime los controles Mealy y las escrituras CPU, Loader y mantenimiento; lleva la FSM a `NO_IMAGE`.                                                                                    |
+| `LOAD` seleccionado                                   | `load_start` inicia Loader e invalida el tamaño confirmado en el flanco de aceptación; `cpu_cycle_fire=0`.                                                                              |
+| Preparación efectiva                                  | `prepare_active` activa `Session Preparation`; sus controles realizan inicialización y limpieza. Mientras el estado inicial se prepara, `cpu_cycle_fire=0`.                             |
+| `PREPARING_READY` con `prepare_done=1`                | `image_publish` habilita la captura del tamaño pendiente y la FSM entra en `READY`, con contador cero y sin ciclo CPU.                                                                  |
 | `PREPARING_RUN`/`PREPARING_STEP` con `prepare_done=1` | El estado inicial ya está completo antes del flanco y los controles de inicialización/limpieza están inactivos. La FSM emite `cpu_cycle_fire=1` y el primer ciclo deja `cycle_count=1`. |
-| Ciclo efectivo de CPU | Los recursos consumen `cpu_cycle_fire` y sus habilitaciones locales; el contador incrementa una vez, incluidos stalls y drenado. |
-| `HOLD` | PC, RF, registros interetapa y contador retienen sus valores; UART y control de transporte continúan funcionando. |
+| Ciclo efectivo de CPU                                 | Los recursos consumen `cpu_cycle_fire` y sus habilitaciones locales; el contador incrementa una vez, incluidos stalls y drenado.                                                        |
+| `HOLD`                                                | PC, RF, registros interetapa y contador retienen sus valores; UART y control de transporte continúan funcionando.                                                                       |
 
 `prepare_active` refleja la fase registrada y puede seguir activo en el flanco de `prepare_done`. La finalización certifica que las escrituras de preparación ya terminaron; la FSM decide publicar la imagen o autorizar el primer ciclo según el estado actual.
 

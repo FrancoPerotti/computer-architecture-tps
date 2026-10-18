@@ -16,17 +16,17 @@
 
 PC prepara el programa completo, envía exacto/seguido después de aceptación, escucha respuestas y detiene/cancela al fallar. Ventana `LOAD` W: tiempo nominal de N+6 bytes más T+R, redondeado arriba a múltiplos de 100 ms; W=800 ms para N=1024. Consulta tras W y repite W si falta respuesta; reintento manual con una nueva `LOAD` completa.
 
-| Espera PC | Plazo aprobado |
-|---|---|
-| `CHECK_READY`, aceptación `LOAD` o `RUN` | 200 ms desde inicio de solicitud |
-| Final `LOAD` | N*10*1000/19200 +201 ms desde inicio del contenido, `REFERENCE`/`ALT_1000` |
-| Aceptación `RESET` | 200 ms desde solicitud |
-| Cabecera `STEP` completa | 200 ms desde solicitud |
-| Terminación `RUN` antes de primer byte terminal | Sin timeout de duración |
-| Completar cabecera final `RUN` ya comenzada | 200 ms desde su primer byte |
-| Parte fija Debug de 228 bytes | 319 ms desde cabecera completa |
-| Lista Debug, K>0 | ceil(5*K*10*1000/19200 +200) ms desde `used_count` |
-| K=0 | Respuesta completa al terminar parte fija; sin otra espera |
+| Espera PC                                       | Plazo aprobado                                                             |
+|-------------------------------------------------|----------------------------------------------------------------------------|
+| `CHECK_READY`, aceptación `LOAD` o `RUN`        | 200 ms desde inicio de solicitud                                           |
+| Final `LOAD`                                    | N*10*1000/19200 +201 ms desde inicio del contenido, `REFERENCE`/`ALT_1000` |
+| Aceptación `RESET`                              | 200 ms desde solicitud                                                     |
+| Cabecera `STEP` completa                        | 200 ms desde solicitud                                                     |
+| Terminación `RUN` antes de primer byte terminal | Sin timeout de duración                                                    |
+| Completar cabecera final `RUN` ya comenzada     | 200 ms desde su primer byte                                                |
+| Parte fija Debug de 228 bytes                   | 319 ms desde cabecera completa                                             |
+| Lista Debug, K>0                                | ceil(5*K*10*1000/19200 +200) ms desde `used_count`                         |
+| K=0                                             | Respuesta completa al terminar parte fija; sin otra espera                 |
 
 `LOAD` dispone de presupuesto de preparación máximo 1 ms, incluido commit en `READY`, para `REFERENCE`/`ALT_1000`; no es una espera fija y futuros perfiles revisan esa cota. Los demás plazos se explican en el [acuerdo de recepción Debug](#acuerdo-parcial-de-dec-proto-003--plazos-de-reset-step-y-recepción-de-debug).
 
@@ -359,12 +359,12 @@ Para N = 32, 256 y 1024 bytes resulta aproximadamente 217,667 ms, 334,333 ms y 7
 
 **Decisión:** Los plazos son máximos de espera, no demoras obligatorias. Se avanza al recibir los bytes completos:
 
-| Espera de PC | Inicio del plazo | Plazo máximo |
-|---|---|---|
-| Aceptación `RESET` completa, dos bytes | Inicio del envío de su byte de solicitud | 200 ms |
-| Cabecera `STEP` completa, operación y resultado | Inicio del envío de su byte de solicitud | 200 ms |
-| Parte fija del cuerpo Debug, 228 bytes | Recepción completa de la cabecera que anuncia Debug | 319 ms |
-| Lista de memoria, 5*K bytes, con K > 0 | Recepción completa de `used_count`, al final de la parte fija | ceil(5*K*10*1000/19200 + 200) ms |
+| Espera de PC                                    | Inicio del plazo                                              | Plazo máximo                     |
+|-------------------------------------------------|---------------------------------------------------------------|----------------------------------|
+| Aceptación `RESET` completa, dos bytes          | Inicio del envío de su byte de solicitud                      | 200 ms                           |
+| Cabecera `STEP` completa, operación y resultado | Inicio del envío de su byte de solicitud                      | 200 ms                           |
+| Parte fija del cuerpo Debug, 228 bytes          | Recepción completa de la cabecera que anuncia Debug           | 319 ms                           |
+| Lista de memoria, 5*K bytes, con K > 0          | Recepción completa de `used_count`, al final de la parte fija | ceil(5*K*10*1000/19200 + 200) ms |
 
 La cabecera `STEP` rechazada con `NO_IMAGE`/`BUSY` completa su respuesta en dos bytes; `DONE` anuncia el cuerpo Debug. Los 228 bytes fijos excluyen la cabecera común e incluyen contexto, RF, registros interetapa y `used_count` de cinco bytes, conforme a D05. K es `used_count`, cantidad de bytes DMEM utilizados; cada entrada ocupa cinco bytes. Con K=0, la respuesta termina al completar la parte fija, sin esperar una lista inexistente.
 

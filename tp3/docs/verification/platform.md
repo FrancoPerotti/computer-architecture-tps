@@ -63,13 +63,13 @@ Las comprobaciones aritméticas no exigen implementar físicamente todos esos ta
 
 ### Datos de referencia
 
-| C    | BYTE_ADDRESS_WIDTH | WORD/ROW_INDEX_WIDTH | CAPACITY_INCLUSIVE_WIDTH |
-| ---: | -----------------: | -------------------: | -----------------------: |
-| 4    | 2                  | 1                    | 3                        |
-| 1000 | 10                 | 8                    | 10                       |
-| 1024 | 10                 | 8                    | 11                       |
-| 2048 | 11                 | 9                    | 12                       |
-| 2^32 | 32                 | 30                   | 33                       |
+|    C | BYTE_ADDRESS_WIDTH | WORD/ROW_INDEX_WIDTH | CAPACITY_INCLUSIVE_WIDTH |
+|-----:|-------------------:|---------------------:|-------------------------:|
+|    4 |                  2 |                    1 |                        3 |
+| 1000 |                 10 |                    8 |                       10 |
+| 1024 |                 10 |                    8 |                       11 |
+| 2048 |                 11 |                    9 |                       12 |
+| 2^32 |                 32 |                   30 |                       33 |
 
 ### Procedimiento
 

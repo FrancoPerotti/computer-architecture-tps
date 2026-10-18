@@ -24,12 +24,12 @@ El [lenguaje assembler](assembler_language.md) fija instrucciones de cuatro byte
 
 ## Interfaces y contratos
 
-| Dirección        | Dato                        | Representación conceptual                                           | Productor                 | Consumidor                                 | Función                                              |
-|------------------|-----------------------------|---------------------------------------------------------------------|---------------------------|--------------------------------------------|------------------------------------------------------|
-| Entrada          | Líneas reconocidas          | Secuencia de registros con `line`, `label`, `mnemonic` y `operands` | Lectura                   | Asignación de direcciones                  | Definiciones e instrucciones del programa, en orden. |
-| Salida correcta  | Instrucciones con dirección | Secuencia de registros                                              | Asignación de direcciones | Interpretación de operandos                | Instrucciones con su PC y línea original.            |
-| Salida correcta  | Tabla de etiquetas          | Nombre → definición                                                 | Asignación de direcciones | Resolución de destinos                     | Dirección y línea de definición de cada etiqueta.    |
-| Salida con error | Diagnóstico                 | Línea y motivo                                                      | Asignación de direcciones | Operación pública de ensamblado            | Informar una definición duplicada.                   |
+| Dirección        | Dato                        | Representación conceptual                                           | Productor                 | Consumidor                      | Función                                              |
+|------------------|-----------------------------|---------------------------------------------------------------------|---------------------------|---------------------------------|------------------------------------------------------|
+| Entrada          | Líneas reconocidas          | Secuencia de registros con `line`, `label`, `mnemonic` y `operands` | Lectura                   | Asignación de direcciones       | Definiciones e instrucciones del programa, en orden. |
+| Salida correcta  | Instrucciones con dirección | Secuencia de registros                                              | Asignación de direcciones | Interpretación de operandos     | Instrucciones con su PC y línea original.            |
+| Salida correcta  | Tabla de etiquetas          | Nombre → definición                                                 | Asignación de direcciones | Resolución de destinos          | Dirección y línea de definición de cada etiqueta.    |
+| Salida con error | Diagnóstico                 | Línea y motivo                                                      | Asignación de direcciones | Operación pública de ensamblado | Informar una definición duplicada.                   |
 
 Una operación correcta entrega la secuencia completa de instrucciones y la tabla completa de etiquetas. Si encuentra una definición duplicada, entrega un diagnóstico y descarta ambos resultados parciales. La operación pública conserva las condiciones de error de [AssemblyResult](assembler_interface.md#resultado-de-la-traducción).
 
@@ -126,21 +126,21 @@ La secuencia de instrucciones es:
 
 | `line` | `pc` | `mnemonic` | `operands`           |
 |-------:|-----:|------------|----------------------|
-| 4      | 0    | `addi`     | `x1`, `x0`, `3`.     |
-| 5      | 4    | `addi`     | `x1`, `x1`, `-1`.    |
-| 6      | 8    | `bne`      | `x1`, `x0`, `ciclo`. |
-| 7      | 12   | `jal`      | `x0`, `fin`.         |
-| 8      | 16   | `addi`     | `x2`, `x0`, `99`.    |
-| 9      | 20   | `halt`     | Vacío.               |
+|      4 |    0 | `addi`     | `x1`, `x0`, `3`.     |
+|      5 |    4 | `addi`     | `x1`, `x1`, `-1`.    |
+|      6 |    8 | `bne`      | `x1`, `x0`, `ciclo`. |
+|      7 |   12 | `jal`      | `x0`, `fin`.         |
+|      8 |   16 | `addi`     | `x2`, `x0`, `99`.    |
+|      9 |   20 | `halt`     | Vacío.               |
 
 La tabla de etiquetas contiene:
 
 | Nombre   | `address` | `line` |
 |----------|----------:|-------:|
-| `inicio` | 0         | 3      |
-| `ciclo`  | 4         | 5      |
-| `fin`    | 20        | 9      |
-| `salida` | 24        | 10     |
+| `inicio` |         0 |      3 |
+| `ciclo`  |         4 |      5 |
+| `fin`    |        20 |      9 |
+| `salida` |        24 |     10 |
 
 Las seis instrucciones ocupan posiciones consecutivas de cuatro bytes. La definición `inicio` identifica la instrucción de la línea siguiente. `ciclo` y `fin` identifican las instrucciones de sus propias líneas. `salida` identifica el límite posterior al programa y no agrega una instrucción de dirección 24.
 

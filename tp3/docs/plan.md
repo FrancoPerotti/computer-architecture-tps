@@ -965,22 +965,22 @@ Nunca aceptar código generado únicamente porque compila.
 
 ## 28. Hitos formales del proyecto
 
-| Hito | Condición |
-|---|---|
-| **M0 — Requirements Freeze** | requisitos identificados y numerados |
-| **M1 — Decision Freeze** | decisiones globales críticas cerradas |
-| **M2 — Architecture Freeze** | arquitectura global aprobada |
-| **M3 — ISA Freeze** | todas las instrucciones especificadas |
-| **M4 — Pipeline Freeze** | datapath, control, registros interetapa y flujo definidos |
-| **M5 — Hazard Freeze** | forwarding, stalls y flush definidos |
+| Hito                                        | Condición                                                                                                                              |
+|---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| **M0 — Requirements Freeze**                | requisitos identificados y numerados                                                                                                   |
+| **M1 — Decision Freeze**                    | decisiones globales críticas cerradas                                                                                                  |
+| **M2 — Architecture Freeze**                | arquitectura global aprobada                                                                                                           |
+| **M3 — ISA Freeze**                         | todas las instrucciones especificadas                                                                                                  |
+| **M4 — Pipeline Freeze**                    | datapath, control, registros interetapa y flujo definidos                                                                              |
+| **M5 — Hazard Freeze**                      | forwarding, stalls y flush definidos                                                                                                   |
 | **D0 — Design Freeze del sistema completo** | CPU, Debug, UART/protocolo, Loader/preparación, software y plataforma diseñados; pendientes resueltos e interfaces físicas concretadas |
-| **M6 — Verification Ready** | casos de prueba, resultados esperados y matriz de trazabilidad documentados; programación de tests todavía posterior |
-| **M7 — CPU Functional** | CPU pasa regresión sin UART |
-| **M8 — Debug Functional** | UART + Debug pasan pruebas aisladas |
-| **M9 — Full Integration** | sistema end-to-end funcional |
-| **M10 — Timing Closure** | implementación cumple timing |
-| **M11 — Hardware Acceptance** | FPGA supera pruebas de aceptación |
-| **M12 — Release** | documentación y código finalizados |
+| **M6 — Verification Ready**                 | casos de prueba, resultados esperados y matriz de trazabilidad documentados; programación de tests todavía posterior                   |
+| **M7 — CPU Functional**                     | CPU pasa regresión sin UART                                                                                                            |
+| **M8 — Debug Functional**                   | UART + Debug pasan pruebas aisladas                                                                                                    |
+| **M9 — Full Integration**                   | sistema end-to-end funcional                                                                                                           |
+| **M10 — Timing Closure**                    | implementación cumple timing                                                                                                           |
+| **M11 — Hardware Acceptance**               | FPGA supera pruebas de aceptación                                                                                                      |
+| **M12 — Release**                           | documentación y código finalizados                                                                                                     |
 
 ---
 

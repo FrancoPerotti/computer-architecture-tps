@@ -18,11 +18,11 @@ Cada snapshot contiene la lista completa de direcciones utilizadas, únicas y cr
 
 La lista se coloca al final del cuerpo con este formato:
 
-| Elemento | Representación |
-|---|---|
+| Elemento                            | Representación                                                                     |
+|-------------------------------------|------------------------------------------------------------------------------------|
 | `used_count`, antes de las entradas | Unsigned de cinco bytes little-endian, entre cero y la capacidad de DMEM inclusive |
-| Dirección de cada entrada | Cuatro bytes little-endian |
-| Valor de cada entrada | Un byte |
+| Dirección de cada entrada           | Cuatro bytes little-endian                                                         |
+| Valor de cada entrada               | Un byte                                                                            |
 
 Cantidad cero se representa con cinco bytes cero y ninguna entrada. La cantidad determina exactamente la longitud y el final.
 

@@ -13,14 +13,14 @@ La [agrupación en módulos](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-d
 
 Los contratos aprobados se distribuyen por función:
 
-| Función | Contrato aprobado y desarrollo |
-|---|---|
-| Puertos e intercambio con el controlador | [Acuerdo de solicitud y finalización](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--solicitud-y-finalización-de-respuestas) |
-| Organización de control y recursos | El [acuerdo de organización interna](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--organización-interna-del-serializador) fija cinco grupos |
-| Conteo y envío de DMEM | El [acuerdo de dos recorridos de DMEM](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--dos-recorridos-de-dmem-para-debug) fija su secuencia |
-| Observación y producción | Las conexiones de observación, índices, anchos y selección de bytes de contexto, RF y los cuatro registros interetapa se concretan más abajo |
-| Control privado | Los diez estados privados, sus acciones de transición y la generación de señales de acción se concretan en sus tablas aprobadas más abajo |
-| Representación global | La [adaptación física global](../session/global_state_encoding.md) utiliza one-hot interno de catorce bits y código combinacional de ocho para Debug |
+| Función                                  | Contrato aprobado y desarrollo                                                                                                                               |
+|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Puertos e intercambio con el controlador | [Acuerdo de solicitud y finalización](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--solicitud-y-finalización-de-respuestas)                 |
+| Organización de control y recursos       | El [acuerdo de organización interna](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--organización-interna-del-serializador) fija cinco grupos |
+| Conteo y envío de DMEM                   | El [acuerdo de dos recorridos de DMEM](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--dos-recorridos-de-dmem-para-debug) fija su secuencia   |
+| Observación y producción                 | Las conexiones de observación, índices, anchos y selección de bytes de contexto, RF y los cuatro registros interetapa se concretan más abajo                 |
+| Control privado                          | Los diez estados privados, sus acciones de transición y la generación de señales de acción se concretan en sus tablas aprobadas más abajo                    |
+| Representación global                    | La [adaptación física global](../session/global_state_encoding.md) utiliza one-hot interno de catorce bits y código combinacional de ocho para Debug         |
 
 ## Organización
 
@@ -28,13 +28,13 @@ Los contratos aprobados se distribuyen por función:
 
 Los cinco grupos permanecen dentro de `response_serializer`:
 
-| Grupo | Recurso o función |
-|---|---|
-| FSM de control | Emite las órdenes de captura, avance y envío; conserva el estado registrado. Sus diez estados y transiciones y codificación one-hot están aprobados; la tabla de señales de acción está aprobada más abajo. |
-| Registro de descripción | Conserva `response_opcode` de ocho bits, `response_result` de ocho bits y `response_with_debug` de uno: 17 bits capturados al aceptar la solicitud. |
-| Registro del próximo byte | Conserva un byte de ocho bits y un indicador de disponibilidad de un bit mientras espera su incorporación a TX. |
-| Recursos de recorrido | Incluyen dirección DMEM, `used_count`, índice de byte compartido, contador de entradas completas encoladas e índice de ocho bits para cabecera, contexto, RF y registros interetapa, con sus anchos aprobados. Las conexiones y selección de bytes de contexto, RF y los cuatro registros interetapa están aprobadas; sus controles de captura y consumo están definidos en la tabla de señales de acción. |
-| Seguimiento de transmisión | Cuenta bytes encolados cuyo Stop aún no terminó y conserva un indicador de producción completa. El contador recorre cero a cuatro y tiene tres bits; el indicador tiene uno. |
+| Grupo                      | Recurso o función                                                                                                                                                                                                                                                                                                                                                                                          |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| FSM de control             | Emite las órdenes de captura, avance y envío; conserva el estado registrado. Sus diez estados y transiciones y codificación one-hot están aprobados; la tabla de señales de acción está aprobada más abajo.                                                                                                                                                                                                |
+| Registro de descripción    | Conserva `response_opcode` de ocho bits, `response_result` de ocho bits y `response_with_debug` de uno: 17 bits capturados al aceptar la solicitud.                                                                                                                                                                                                                                                        |
+| Registro del próximo byte  | Conserva un byte de ocho bits y un indicador de disponibilidad de un bit mientras espera su incorporación a TX.                                                                                                                                                                                                                                                                                            |
+| Recursos de recorrido      | Incluyen dirección DMEM, `used_count`, índice de byte compartido, contador de entradas completas encoladas e índice de ocho bits para cabecera, contexto, RF y registros interetapa, con sus anchos aprobados. Las conexiones y selección de bytes de contexto, RF y los cuatro registros interetapa están aprobadas; sus controles de captura y consumo están definidos en la tabla de señales de acción. |
+| Seguimiento de transmisión | Cuenta bytes encolados cuyo Stop aún no terminó y conserva un indicador de producción completa. El contador recorre cero a cuatro y tiene tres bits; el indicador tiene uno.                                                                                                                                                                                                                               |
 
 ```mermaid
 flowchart LR
@@ -70,14 +70,14 @@ La ocupación del serializador no autoriza ni detiene ciclos CPU por sí misma. 
 
 Se utiliza una solicitud de una respuesta completa, con código, resultado y selección de cuerpo Debug, y dos indicadores de retorno:
 
-| Dirección respecto del serializador | Señal | Ancho | Significado |
-|---|---|---|---|
-| Entrada | `response_start` | 1 | Pulso de un clock para solicitar una respuesta cuando el serializador está libre. |
-| Entrada | `response_opcode` | 8 | Primer byte de la respuesta; reproduce el código recibido, incluido un código desconocido. |
-| Entrada | `response_result` | 8 | Segundo byte, según la tabla de resultados del protocolo. |
-| Entrada | `response_with_debug` | 1 | Agrega el cuerpo Debug después de la cabecera. |
-| Salida | `response_busy` | 1 | Respuesta en curso desde su aceptación hasta el fin físico del último byte. |
-| Salida | `response_done_tick` | 1 | Evento de un clock que comunica el fin físico de la respuesta completa. |
+| Dirección respecto del serializador | Señal                 | Ancho | Significado                                                                                |
+|-------------------------------------|-----------------------|-------|--------------------------------------------------------------------------------------------|
+| Entrada                             | `response_start`      | 1     | Pulso de un clock para solicitar una respuesta cuando el serializador está libre.          |
+| Entrada                             | `response_opcode`     | 8     | Primer byte de la respuesta; reproduce el código recibido, incluido un código desconocido. |
+| Entrada                             | `response_result`     | 8     | Segundo byte, según la tabla de resultados del protocolo.                                  |
+| Entrada                             | `response_with_debug` | 1     | Agrega el cuerpo Debug después de la cabecera.                                             |
+| Salida                              | `response_busy`       | 1     | Respuesta en curso desde su aceptación hasta el fin físico del último byte.                |
+| Salida                              | `response_done_tick`  | 1     | Evento de un clock que comunica el fin físico de la respuesta completa.                    |
 
 Fuera de reset, `response_start` se acepta al flanco con `response_busy` en cero. Los tres campos deben estar estables para ese flanco y se capturan en registros internos; posteriormente pueden cambiar en el controlador sin alterar el mensaje en curso. Durante reset no se acepta una solicitud.
 
@@ -122,10 +122,10 @@ El [acuerdo de coordinación](protocol_controller.md#coordinación-derivada-del-
 
 El [acuerdo de preparación y encolado](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--preparación-y-encolado-comunes-de-cada-byte) fija dos pasos sucesivos de control para todos los bytes de una respuesta: cabecera, contexto, RF, registros interetapa, `used_count` y entradas DMEM. Utilizan el recurso de próximo byte de ocho bits y su indicador de disponibilidad ya aprobados.
 
-| Paso | Acción al flanco | Recorrido y seguimiento |
-|---|---|---|
-| Preparar | Capturar el byte seleccionado para la posición actual y activar disponibilidad. No escribir TX. | No avanzar índices ni dirección, no incrementar pendientes TX ni cerrar producción. |
-| Encolar con `tx_full` activo | Conservar byte y disponibilidad, sin escritura TX ni nueva captura. | Conservar posición y dirección de la entrada. El seguimiento físico sigue atendiendo `tx_done_tick`. |
+| Paso                                            | Acción al flanco                                                                                       | Recorrido y seguimiento                                                                                              |
+|-------------------------------------------------|--------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| Preparar                                        | Capturar el byte seleccionado para la posición actual y activar disponibilidad. No escribir TX.        | No avanzar índices ni dirección, no incrementar pendientes TX ni cerrar producción.                                  |
+| Encolar con `tx_full` activo                    | Conservar byte y disponibilidad, sin escritura TX ni nueva captura.                                    | Conservar posición y dirección de la entrada. El seguimiento físico sigue atendiendo `tx_done_tick`.                 |
 | Encolar con byte disponible y `tx_full` en cero | Presentar el byte registrado como `w_data` y solicitar `wr_uart`; al aceptar, consumir disponibilidad. | Aplicar el avance o cierre correspondiente al byte aceptado y actualizar pendientes TX conforme a la regla aprobada. |
 
 Las condiciones se evalúan con valores previos al flanco. El paso de preparación consume la selección combinacional de la posición actual; el registro entrega ese dato durante el paso de encolado posterior. Se mantienen separados en flancos distintos. La preparación puede realizarse aun con FIFO llena, ya que el recurso conserva el byte mientras espera. No se prepara el siguiente byte hasta consumir el actual.
@@ -144,11 +144,11 @@ Los dos pasos quedan aprobados como mecanismo común. Su distribución entre los
 
 El contador de pendientes sigue los bytes encolados cuyo Stop aún no terminó:
 
-| Eventos en el mismo flanco | Efecto sobre pendientes |
-|---|---|
-| Escritura aceptada en FIFO TX, con `wr_uart` activo y `tx_full` en cero | Aumenta en uno |
-| `tx_done_tick` | Disminuye en uno |
-| Ambos eventos | Conserva su valor |
+| Eventos en el mismo flanco                                              | Efecto sobre pendientes |
+|-------------------------------------------------------------------------|-------------------------|
+| Escritura aceptada en FIFO TX, con `wr_uart` activo y `tx_full` en cero | Aumenta en uno          |
+| `tx_done_tick`                                                          | Disminuye en uno        |
+| Ambos eventos                                                           | Conserva su valor       |
 
 Las condiciones utilizan las señales previas al flanco, como la [FIFO](../uart/uart_fifo.md#solicitudes-y-operaciones-aceptadas). La cuenta se inicializa en cero al reset y al aceptar una nueva respuesta.
 
@@ -196,11 +196,11 @@ Las señales de consulta de metadatos y datos y su lectura combinacional entre f
 
 El [acuerdo de consulta](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--señales-de-consulta-debug-de-dmem) fija tres señales entre `response_serializer` y DMEM:
 
-| Señal | Dirección respecto del serializador | Ancho | Función |
-|---|---|---|---|
-| `debug_dmem_addr` | Salida hacia DMEM | max(1, ceil(log2(C))) | Dirección de byte seleccionada por el registro de recorrido, para capacidad C de DMEM. |
-| `debug_dmem_data` | Entrada desde DMEM | 8 | Valor del byte en la dirección seleccionada. |
-| `debug_dmem_used` | Entrada desde DMEM | 1 | Uno si el byte fue escrito por un store comprometido en la sesión actual; cero si no fue utilizado. |
+| Señal             | Dirección respecto del serializador | Ancho                 | Función                                                                                             |
+|-------------------|-------------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------|
+| `debug_dmem_addr` | Salida hacia DMEM                   | max(1, ceil(log2(C))) | Dirección de byte seleccionada por el registro de recorrido, para capacidad C de DMEM.              |
+| `debug_dmem_data` | Entrada desde DMEM                  | 8                     | Valor del byte en la dirección seleccionada.                                                        |
+| `debug_dmem_used` | Entrada desde DMEM                  | 1                     | Uno si el byte fue escrito por un store comprometido en la sesión actual; cero si no fue utilizado. |
 
 La dirección tiene 11 bits en `REFERENCE` y diez en `ALT_1000`. Datos y metadatos corresponden a la misma posición. El indicador proviene de los metadatos de DMEM ya existentes y conserva el criterio de utilización aprobado, incluidos los valores cero escritos por el programa.
 
@@ -260,10 +260,10 @@ Las señales y su lectura entre flancos están definidas más arriba. Durante co
 
 El [acuerdo de recursos](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--registros-de-dirección-y-cantidad-del-recorrido-dmem) fija dos recursos internos del serializador:
 
-| Recurso | Función y uso |
-|---|---|
-| Registro de dirección de DMEM | Conserva la dirección del byte que se examina. Se utiliza en ambos recorridos, comenzando en cero y volviendo a cero antes del segundo. |
-| Contador `used_count` | Comienza en cero y aumenta por cada byte utilizado durante el primer recorrido. Conserva el resultado después del conteo, durante la producción de la cantidad y de la lista. |
+| Recurso                       | Función y uso                                                                                                                                                                 |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Registro de dirección de DMEM | Conserva la dirección del byte que se examina. Se utiliza en ambos recorridos, comenzando en cero y volviendo a cero antes del segundo.                                       |
+| Contador `used_count`         | Comienza en cero y aumenta por cada byte utilizado durante el primer recorrido. Conserva el resultado después del conteo, durante la producción de la cantidad y de la lista. |
 
 La reutilización del registro de dirección permite realizar ambos recorridos sucesivos con un mismo recurso. El contador conserva la cantidad mientras el registro de dirección vuelve a recorrer DMEM; ambos valores cumplen funciones distintas y se almacenan por separado.
 
@@ -273,17 +273,17 @@ Los recursos pertenecen al grupo de recorrido ya aprobado y se actualizan por ac
 
 El [acuerdo de anchos](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--anchos-de-dirección-y-cantidad-del-recorrido-dmem) dimensiona ambos recursos según la capacidad en bytes de DMEM, denominada C en esta sección:
 
-| Recurso | Rango requerido | Ancho en bits |
-|---|---|---|
-| Dirección de recorrido | 0 a C − 1 | max(1, ceil(log2(C))) |
-| Contador `used_count` | 0 a C inclusive | max(1, ceil(log2(C + 1))) |
+| Recurso                | Rango requerido | Ancho en bits             |
+|------------------------|-----------------|---------------------------|
+| Dirección de recorrido | 0 a C − 1       | max(1, ceil(log2(C)))     |
+| Contador `used_count`  | 0 a C inclusive | max(1, ceil(log2(C + 1))) |
 
 En los [perfiles definidos](../memory/memory_architecture.md#perfiles-definidos), esos anchos son:
 
-| Perfil | Capacidad DMEM | Dirección | `used_count` |
-|---|---:|---:|---:|
-| `REFERENCE` | 2048 bytes | 11 bits | 12 bits |
-| `ALT_1000` | 1000 bytes | 10 bits | 10 bits |
+| Perfil      | Capacidad DMEM | Dirección | `used_count` |
+|-------------|---------------:|----------:|-------------:|
+| `REFERENCE` |     2048 bytes |   11 bits |      12 bits |
+| `ALT_1000`  |     1000 bytes |   10 bits |      10 bits |
 
 Los valores de `ALT_1000` se derivan de la misma regla de dimensionamiento. El contador debe representar todos los bytes utilizados, mientras que la dirección solo representa la última posición, C − 1. El dominio de capacidad y el mínimo de un bit conservan la parametrización de memoria aprobada.
 
@@ -294,12 +294,12 @@ Estos anchos internos no cambian el protocolo: las direcciones se representan en
 El [acuerdo de índice compartido](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--índice-de-byte-compartido-para-cantidad-y-entradas-dmem) fija un recurso de tres bits que identifica posiciones de cero a cuatro. Se reutiliza para producir los cinco bytes de `used_count` y los cinco bytes de cada entrada dirección/valor. Al comenzar la cantidad o una nueva entrada, el índice vuelve a cero.
 
 | Índice | Durante `used_count`, extendido a 40 bits | Durante una entrada, con dirección extendida a 32 bits |
-|---:|---|---|
-| 0 | Cantidad [7:0] | Dirección [7:0] |
-| 1 | Cantidad [15:8] | Dirección [15:8] |
-| 2 | Cantidad [23:16] | Dirección [23:16] |
-| 3 | Cantidad [31:24] | Dirección [31:24] |
-| 4 | Cantidad [39:32] | Valor actual del byte de DMEM |
+|-------:|-------------------------------------------|--------------------------------------------------------|
+|      0 | Cantidad [7:0]                            | Dirección [7:0]                                        |
+|      1 | Cantidad [15:8]                           | Dirección [15:8]                                       |
+|      2 | Cantidad [23:16]                          | Dirección [23:16]                                      |
+|      3 | Cantidad [31:24]                          | Dirección [31:24]                                      |
+|      4 | Cantidad [39:32]                          | Valor actual del byte de DMEM                          |
 
 La fase de producción determina cómo interpretar el índice. La dirección de recorrido identifica la posición de DMEM; el índice de byte identifica la parte del campo o entrada que toca producir. Ambos se conservan en recursos distintos, dentro del grupo de recorrido.
 
@@ -309,13 +309,13 @@ Tres bits permiten representar las cinco posiciones necesarias; dos solo represe
 
 El [acuerdo de avance](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--avance-del-recorrido-dmem-por-escritura-tx-aceptada) fija la incorporación del byte a la FIFO TX como evento de avance. La escritura se acepta al flanco con `wr_uart` activo y `tx_full` en cero, según los flags previos al flanco.
 
-| Situación | Acción sobre byte e índice | Acción sobre dirección de DMEM |
-|---|---|---|
-| Byte preparado sin escritura TX aceptada, incluida FIFO llena | Conservar byte, disponibilidad e índice | Conservar la dirección de la entrada en producción |
-| Escritura aceptada de posición cero a tres | Consumir el byte preparado y avanzar al siguiente índice | Conservar la dirección durante la entrada |
-| Escritura aceptada de posición cuatro de `used_count` | Consumir el byte y completar la cantidad | Continuar según lista vacía o segundo recorrido ya aprobados |
-| Escritura aceptada de posición cuatro de una entrada | Consumir el valor y completar el encolado de la entrada | Habilitar el avance a la siguiente dirección si el recorrido continúa; la próxima entrada comienza con índice cero |
-| Posición de DMEM no utilizada durante búsqueda | No producir bytes ni solicitar escritura TX por esa posición | Saltarla y continuar el recorrido según su condición de cierre |
+| Situación                                                     | Acción sobre byte e índice                                   | Acción sobre dirección de DMEM                                                                                     |
+|---------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| Byte preparado sin escritura TX aceptada, incluida FIFO llena | Conservar byte, disponibilidad e índice                      | Conservar la dirección de la entrada en producción                                                                 |
+| Escritura aceptada de posición cero a tres                    | Consumir el byte preparado y avanzar al siguiente índice     | Conservar la dirección durante la entrada                                                                          |
+| Escritura aceptada de posición cuatro de `used_count`         | Consumir el byte y completar la cantidad                     | Continuar según lista vacía o segundo recorrido ya aprobados                                                       |
+| Escritura aceptada de posición cuatro de una entrada          | Consumir el valor y completar el encolado de la entrada      | Habilitar el avance a la siguiente dirección si el recorrido continúa; la próxima entrada comienza con índice cero |
+| Posición de DMEM no utilizada durante búsqueda                | No producir bytes ni solicitar escritura TX por esa posición | Saltarla y continuar el recorrido según su condición de cierre                                                     |
 
 Obtener o capturar el próximo byte todavía no adelanta el índice. Una entrada mantiene la misma dirección durante sus cuatro bytes de dirección y el byte de valor. El contador `used_count` conserva el total calculado durante este proceso.
 
@@ -343,25 +343,25 @@ Los controles concretos están definidos en [señales de acción](#señales-de-a
 
 El [acuerdo de índice de recorrido](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--índice-de-recorrido-de-cabecera-contexto-rf-y-latches) fija `fixed_byte_index` de ocho bits, con posiciones cero a 224, dentro del grupo de recursos de recorrido. Identifica los 225 bytes anteriores a `used_count` en una respuesta con Debug, conforme al layout del protocolo.
 
-| Parte | Posiciones de `fixed_byte_index` | Bytes |
-|---|---|---:|
-| Código de operación | 0 | 1 |
-| Resultado | 1 | 1 |
-| Contexto | 2 a 20 | 19 |
-| RF `x0`–x31 | 21 a 148 | 128 |
-| `IF/ID` | 149 a 159 | 11 |
-| `ID/EX` | 160 a 189 | 30 |
-| `EX/MEM` | 190 a 209 | 20 |
-| `MEM/WB` | 210 a 224 | 15 |
+| Parte               | Posiciones de `fixed_byte_index` | Bytes |
+|---------------------|----------------------------------|------:|
+| Código de operación | 0                                |     1 |
+| Resultado           | 1                                |     1 |
+| Contexto            | 2 a 20                           |    19 |
+| RF `x0`–x31         | 21 a 148                         |   128 |
+| `IF/ID`             | 149 a 159                        |    11 |
+| `ID/EX`             | 160 a 189                        |    30 |
+| `EX/MEM`            | 190 a 209                        |    20 |
+| `MEM/WB`            | 210 a 224                        |    15 |
 
 El índice comienza en cero para cada respuesta. Si esta tiene Debug, se mantiene en cero durante el conteo previo de DMEM y después recorre la tabla. El código y resultado provienen del descriptor capturado; contexto, RF y registros interetapa conservan el orden y la representación aprobados. Las entradas de contexto, la lectura RF y las entradas y selección de bytes de los cuatro registros interetapa están definidas a continuación. Los controles de captura y consumo se definen en la tabla de señales de acción.
 
 El índice avanza cuando el byte de la posición actual se incorpora a FIFO TX, con `wr_uart` activo y `tx_full` en cero previos al flanco. Mientras no se acepta, se conservan índice y byte preparado. Preparar o capturar el byte no adelanta la posición.
 
-| Tipo de respuesta | Última posición de este recorrido | Acción al aceptar ese byte |
-|---|---:|---|
-| Sin Debug | 1 | Marcar producción completa; esperar el fin físico aprobado del último Stop. |
-| Con Debug | 224 | Completar este recorrido y pasar a `used_count` con el índice compartido de tres bits en cero. La producción todavía continúa. |
+| Tipo de respuesta | Última posición de este recorrido | Acción al aceptar ese byte                                                                                                     |
+|-------------------|----------------------------------:|--------------------------------------------------------------------------------------------------------------------------------|
+| Sin Debug         |                                 1 | Marcar producción completa; esperar el fin físico aprobado del último Stop.                                                    |
+| Con Debug         |                               224 | Completar este recorrido y pasar a `used_count` con el índice compartido de tres bits en cero. La producción todavía continúa. |
 
 La última posición se conserva al cerrar su recorrido, sin incrementar `fixed_byte_index` fuera de su rango. Durante `used_count` y la lista DMEM, este índice permanece retenido; esas fases utilizan sus recursos ya aprobados. Ocho bits representan todas las posiciones hasta 224 y sirven también para las cabeceras breves de dos bytes.
 
@@ -371,14 +371,14 @@ Las acciones de inicialización, avance y cierre y los estados de FSM se definen
 
 El [acuerdo de entradas de contexto](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--entradas-de-observación-del-contexto) fija seis entradas hacia `response_serializer`. Cada una conecta el valor conservado o derivado por su bloque propietario, bajo la exclusión Debug ya aprobada.
 
-| Entrada del serializador | Ancho en bits | Fuente lógica | Posiciones de `fixed_byte_index` | Bytes UART |
-|---|---:|---|---|---:|
-| `debug_state_code` | 8 | `global_state_code[7:0]` de `Execution Control` | 2 | 1 |
-| `debug_image_valid` | 1 | `loaded_image_size_bytes` != 0 | 3 | 1 |
-| `debug_pc` | 32 | Registro PC global | 4 a 7 | 4 |
-| `debug_cycle_count` | 64 | `Cycle Counter` | 8 a 15 | 8 |
-| `debug_fault_cause` | 3 | Registro global `fault_cause` | 16 | 1 |
-| `debug_fault_pc` | 32 | Registro global `fault_pc` | 17 a 20 | 4 |
+| Entrada del serializador | Ancho en bits | Fuente lógica                                   | Posiciones de `fixed_byte_index` | Bytes UART |
+|--------------------------|--------------:|-------------------------------------------------|----------------------------------|-----------:|
+| `debug_state_code`       |             8 | `global_state_code[7:0]` de `Execution Control` | 2                                |          1 |
+| `debug_image_valid`      |             1 | `loaded_image_size_bytes` != 0                  | 3                                |          1 |
+| `debug_pc`               |            32 | Registro PC global                              | 4 a 7                            |          4 |
+| `debug_cycle_count`      |            64 | `Cycle Counter`                                 | 8 a 15                           |          8 |
+| `debug_fault_cause`      |             3 | Registro global `fault_cause`                   | 16                               |          1 |
+| `debug_fault_pc`         |            32 | Registro global `fault_pc`                      | 17 a 20                          |          4 |
 
 El contexto ocupa 19 bytes: 1 + 1 + 4 + 8 + 1 + 4. Las posiciones dos a 20 son inclusivas; las dos posiciones anteriores corresponden a la cabecera y RF comienza en 21. `image_valid` y `fault_cause` completan sus respectivos bytes UART con ceros superiores; los campos de varios bytes conservan little-endian, según el protocolo aprobado.
 
@@ -392,14 +392,14 @@ Los registros globales de fault se conectan con sus bits actuales incluso cuando
 
 El [acuerdo de selección del contexto](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selección-de-bytes-del-contexto-desde-el-índice-de-recorrido) utiliza `fixed_byte_index` para seleccionar combinacionalmente el campo y el byte, sin agregar un contador de contexto ni un índice interno de byte registrado.
 
-| `fixed_byte_index` | Byte seleccionado, de ocho bits |
-|---|---|
-| 2 | `debug_state_code[7:0]` |
-| 3 | Siete ceros superiores y `debug_image_valid` |
-| 4 a 7 | Byte j de `debug_pc`, con j = `fixed_byte_index` − 4 |
-| 8 a 15 | Byte j de `debug_cycle_count`, con j = `fixed_byte_index` − 8 |
-| 16 | Cinco ceros superiores y `debug_fault_cause[2:0]` |
-| 17 a 20 | Byte j de `debug_fault_pc`, con j = `fixed_byte_index` − 17 |
+| `fixed_byte_index` | Byte seleccionado, de ocho bits                               |
+|--------------------|---------------------------------------------------------------|
+| 2                  | `debug_state_code[7:0]`                                       |
+| 3                  | Siete ceros superiores y `debug_image_valid`                  |
+| 4 a 7              | Byte j de `debug_pc`, con j = `fixed_byte_index` − 4          |
+| 8 a 15             | Byte j de `debug_cycle_count`, con j = `fixed_byte_index` − 8 |
+| 16                 | Cinco ceros superiores y `debug_fault_cause[2:0]`             |
+| 17 a 20            | Byte j de `debug_fault_pc`, con j = `fixed_byte_index` − 17   |
 
 Para cada campo de varios bytes, el byte j corresponde a los bits [8*j + 7 : 8*j]. Así, PC y PC de fault recorren [7:0], [15:8], [23:16] y [31:24]; `cycle_count` recorre ocho slices de ocho bits hasta [63:56]. Las posiciones de byte se derivan combinacionalmente del índice existente y mantienen little-endian. Por ejemplo, PC = 0x12345678 produce 78, 56, 34 y 12 en posiciones cuatro a siete.
 
@@ -411,10 +411,10 @@ Aceptar posición 20 completa el contexto y lleva el recorrido a 21, primer byte
 
 El [acuerdo de mux de primera lectura RF](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--mux-cpudebug-de-la-primera-lectura-rf) reutiliza un puerto combinacional del banco, mediante un multiplexor de números de registro de cinco bits dentro de `Registers`.
 
-| Señal | Dirección respecto del serializador | Ancho | Función |
-|---|---|---:|---|
-| `debug_rf_addr` | Salida hacia RF | 5 | Selecciona `x0`–x31 para producir su contenido. |
-| `debug_rf_data` | Entrada desde RF | 32 | Valor base del registro seleccionado, antes del bypass CPU. |
+| Señal           | Dirección respecto del serializador | Ancho | Función                                                     |
+|-----------------|-------------------------------------|------:|-------------------------------------------------------------|
+| `debug_rf_addr` | Salida hacia RF                     |     5 | Selecciona `x0`–x31 para producir su contenido.             |
+| `debug_rf_data` | Entrada desde RF                    |    32 | Valor base del registro seleccionado, antes del bypass CPU. |
 
 El mux recibe `Read Register 1` CPU y `debug_rf_addr`. `rf_debug_select` de un bit, generado por `protocol_controller`, selecciona CPU con cero y Debug con uno. La segunda dirección y lectura RF conservan su conexión CPU.
 
@@ -441,23 +441,23 @@ El [acuerdo de derivación RF](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de
 Se resta 21 para obtener la posición dentro del bloque de 128 bytes. Su división entera por cuatro identifica el registro de cero a 31; el resto de esa división identifica el byte de cero a tres. Para una posición relativa de siete bits, los bits [6:2] forman `debug_rf_addr[4:0]` y los bits [1:0] forman `rf_byte_select[1:0]`. Estas selecciones son conexiones combinacionales, sin contadores RF adicionales.
 
 | `fixed_byte_index` | Posición dentro de RF | `debug_rf_addr` | `rf_byte_select` |
-|---:|---:|---:|---:|
-| 21 | 0 | 0 (`x0`) | 0 |
-| 22 | 1 | 0 (`x0`) | 1 |
-| 23 | 2 | 0 (`x0`) | 2 |
-| 24 | 3 | 0 (`x0`) | 3 |
-| 25 | 4 | 1 (x1) | 0 |
-| 26 | 5 | 1 (x1) | 1 |
-| 148 | 127 | 31 (x31) | 3 |
+|-------------------:|----------------------:|----------------:|-----------------:|
+|                 21 |                     0 |        0 (`x0`) |                0 |
+|                 22 |                     1 |        0 (`x0`) |                1 |
+|                 23 |                     2 |        0 (`x0`) |                2 |
+|                 24 |                     3 |        0 (`x0`) |                3 |
+|                 25 |                     4 |          1 (x1) |                0 |
+|                 26 |                     5 |          1 (x1) |                1 |
+|                148 |                   127 |        31 (x31) |                3 |
 
 El número alimenta la primera dirección RF compartida. `rf_byte_select` controla una selección combinacional de cuatro bytes, cada uno de ocho bits, a partir de `debug_rf_data`:
 
-| `rf_byte_select` | Byte seleccionado |
-|---:|---|
-| 0 | `debug_rf_data[7:0]` |
-| 1 | `debug_rf_data[15:8]` |
-| 2 | `debug_rf_data[23:16]` |
-| 3 | `debug_rf_data[31:24]` |
+| `rf_byte_select` | Byte seleccionado      |
+|-----------------:|------------------------|
+|                0 | `debug_rf_data[7:0]`   |
+|                1 | `debug_rf_data[15:8]`  |
+|                2 | `debug_rf_data[23:16]` |
+|                3 | `debug_rf_data[31:24]` |
 
 Cada grupo de cuatro posiciones mantiene el mismo registro RF y recorre sus bytes little-endian. El índice avanza por escritura TX aceptada, como en el recorrido aprobado; durante espera se mantienen el registro seleccionado, la selección de byte y el próximo byte preparado.
 
@@ -467,13 +467,13 @@ La derivación se utiliza durante producción de la sección RF. Fuera de esa se
 
 El [acuerdo de entradas IF/ID](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--entradas-de-observación-de-ifid) fija cinco entradas de `response_serializer`, conectadas a las salidas actuales del registro `IF/ID`.
 
-| Entrada del serializador | Ancho en bits | Fuente |
-|---|---:|---|
-| `debug_ifid_valid` | 1 | `IF/ID.valid` |
-| `debug_ifid_pc` | 32 | `IF/ID.pc` |
-| `debug_ifid_instruction` | 32 | `IF/ID.instruction` |
-| `debug_ifid_fetch_fault_valid` | 1 | `IF/ID.fetch_fault_valid` |
-| `debug_ifid_fetch_fault_cause` | 3 | `IF/ID.fetch_fault_cause` |
+| Entrada del serializador       | Ancho en bits | Fuente                    |
+|--------------------------------|--------------:|---------------------------|
+| `debug_ifid_valid`             |             1 | `IF/ID.valid`             |
+| `debug_ifid_pc`                |            32 | `IF/ID.pc`                |
+| `debug_ifid_instruction`       |            32 | `IF/ID.instruction`       |
+| `debug_ifid_fetch_fault_valid` |             1 | `IF/ID.fetch_fault_valid` |
+| `debug_ifid_fetch_fault_cause` |             3 | `IF/ID.fetch_fault_cause` |
 
 Las conexiones llevan los 69 bits funcionales existentes, sin agregar una copia del registro interetapa. Se observa el estado registrado actual, no las entradas de captura ni `next.valid`. La exclusión Debug mantiene esos campos estables desde el instante observado hasta el último Stop, incluida espera por una respuesta previa.
 
@@ -489,63 +489,63 @@ Todas las señales de las tablas son entradas del serializador. Cada `debug_<lat
 
 ##### IF/ID
 
-| Entrada del serializador | Ancho en bits | Posiciones de `fixed_byte_index` |
-|---|---:|---|
-| `debug_ifid_valid` | 1 | 149 |
-| `debug_ifid_pc` | 32 | 150 a 153 |
-| `debug_ifid_instruction` | 32 | 154 a 157 |
-| `debug_ifid_fetch_fault_valid` | 1 | 158 |
-| `debug_ifid_fetch_fault_cause` | 3 | 159 |
+| Entrada del serializador       | Ancho en bits | Posiciones de `fixed_byte_index` |
+|--------------------------------|--------------:|----------------------------------|
+| `debug_ifid_valid`             |             1 | 149                              |
+| `debug_ifid_pc`                |            32 | 150 a 153                        |
+| `debug_ifid_instruction`       |            32 | 154 a 157                        |
+| `debug_ifid_fetch_fault_valid` |             1 | 158                              |
+| `debug_ifid_fetch_fault_cause` |             3 | 159                              |
 
 5 campos, 69 bits funcionales y 11 bytes UART.
 
 ##### ID/EX
 
 | Entrada del serializador | Ancho en bits | Posiciones de `fixed_byte_index` |
-|---|---:|---|
-| `debug_idex_valid` | 1 | 160 |
-| `debug_idex_pc` | 32 | 161 a 164 |
-| `debug_idex_instruction` | 32 | 165 a 168 |
-| `debug_idex_rs1` | 5 | 169 |
-| `debug_idex_rs2` | 5 | 170 |
-| `debug_idex_rd` | 5 | 171 |
-| `debug_idex_rs1_value` | 32 | 172 a 175 |
-| `debug_idex_rs2_value` | 32 | 176 a 179 |
-| `debug_idex_immediate` | 32 | 180 a 183 |
-| `debug_idex_alu_op` | 6 | 184 |
-| `debug_idex_alu_src` | 1 | 185 |
-| `debug_idex_result_sel` | 2 | 186 |
-| `debug_idex_flow_op` | 3 | 187 |
-| `debug_idex_mem_op` | 4 | 188 |
-| `debug_idex_reg_write` | 1 | 189 |
+|--------------------------|--------------:|----------------------------------|
+| `debug_idex_valid`       |             1 | 160                              |
+| `debug_idex_pc`          |            32 | 161 a 164                        |
+| `debug_idex_instruction` |            32 | 165 a 168                        |
+| `debug_idex_rs1`         |             5 | 169                              |
+| `debug_idex_rs2`         |             5 | 170                              |
+| `debug_idex_rd`          |             5 | 171                              |
+| `debug_idex_rs1_value`   |            32 | 172 a 175                        |
+| `debug_idex_rs2_value`   |            32 | 176 a 179                        |
+| `debug_idex_immediate`   |            32 | 180 a 183                        |
+| `debug_idex_alu_op`      |             6 | 184                              |
+| `debug_idex_alu_src`     |             1 | 185                              |
+| `debug_idex_result_sel`  |             2 | 186                              |
+| `debug_idex_flow_op`     |             3 | 187                              |
+| `debug_idex_mem_op`      |             4 | 188                              |
+| `debug_idex_reg_write`   |             1 | 189                              |
 
 15 campos, 193 bits funcionales y 30 bytes UART.
 
 ##### EX/MEM
 
-| Entrada del serializador | Ancho en bits | Posiciones de `fixed_byte_index` |
-|---|---:|---|
-| `debug_exmem_valid` | 1 | 190 |
-| `debug_exmem_pc` | 32 | 191 a 194 |
-| `debug_exmem_instruction` | 32 | 195 a 198 |
-| `debug_exmem_rd` | 5 | 199 |
-| `debug_exmem_reg_write` | 1 | 200 |
-| `debug_exmem_mem_op` | 4 | 201 |
-| `debug_exmem_ex_result` | 32 | 202 a 205 |
-| `debug_exmem_store_data` | 32 | 206 a 209 |
+| Entrada del serializador  | Ancho en bits | Posiciones de `fixed_byte_index` |
+|---------------------------|--------------:|----------------------------------|
+| `debug_exmem_valid`       |             1 | 190                              |
+| `debug_exmem_pc`          |            32 | 191 a 194                        |
+| `debug_exmem_instruction` |            32 | 195 a 198                        |
+| `debug_exmem_rd`          |             5 | 199                              |
+| `debug_exmem_reg_write`   |             1 | 200                              |
+| `debug_exmem_mem_op`      |             4 | 201                              |
+| `debug_exmem_ex_result`   |            32 | 202 a 205                        |
+| `debug_exmem_store_data`  |            32 | 206 a 209                        |
 
 8 campos, 139 bits funcionales y 20 bytes UART.
 
 ##### MEM/WB
 
-| Entrada del serializador | Ancho en bits | Posiciones de `fixed_byte_index` |
-|---|---:|---|
-| `debug_memwb_valid` | 1 | 210 |
-| `debug_memwb_pc` | 32 | 211 a 214 |
-| `debug_memwb_instruction` | 32 | 215 a 218 |
-| `debug_memwb_rd` | 5 | 219 |
-| `debug_memwb_reg_write` | 1 | 220 |
-| `debug_memwb_wb_value` | 32 | 221 a 224 |
+| Entrada del serializador  | Ancho en bits | Posiciones de `fixed_byte_index` |
+|---------------------------|--------------:|----------------------------------|
+| `debug_memwb_valid`       |             1 | 210                              |
+| `debug_memwb_pc`          |            32 | 211 a 214                        |
+| `debug_memwb_instruction` |            32 | 215 a 218                        |
+| `debug_memwb_rd`          |             5 | 219                              |
+| `debug_memwb_reg_write`   |             1 | 220                              |
+| `debug_memwb_wb_value`    |            32 | 221 a 224                        |
 
 6 campos, 103 bits funcionales y 15 bytes UART.
 
@@ -557,12 +557,12 @@ La selección se consume únicamente durante producción de la sección correspo
 
 El resultado se captura en el recurso de próximo byte bajo control de la FSM, utilizando índice y datos previos al flanco. Capturar o preparar no adelanta el recorrido. El índice avanza únicamente por escritura TX aceptada y conserva la posición junto con el byte preparado durante espera. Los controles de captura y consumo se definen en la tabla de señales de acción.
 
-| Última posición de sección | Acción al aceptar ese byte |
-|---:|---|
-| 159, `IF/ID` | Pasar a 160, inicio de `ID/EX`. |
-| 189, `ID/EX` | Pasar a 190, inicio de `EX/MEM`. |
-| 209, `EX/MEM` | Pasar a 210, inicio de `MEM/WB`. |
-| 224, `MEM/WB` | Retener `fixed_byte_index` y pasar a `used_count` con su índice compartido en cero, conforme al cierre aprobado. |
+| Última posición de sección | Acción al aceptar ese byte                                                                                       |
+|---------------------------:|------------------------------------------------------------------------------------------------------------------|
+|               159, `IF/ID` | Pasar a 160, inicio de `ID/EX`.                                                                                  |
+|               189, `ID/EX` | Pasar a 190, inicio de `EX/MEM`.                                                                                 |
+|              209, `EX/MEM` | Pasar a 210, inicio de `MEM/WB`.                                                                                 |
+|              224, `MEM/WB` | Retener `fixed_byte_index` y pasar a `used_count` con su índice compartido en cero, conforme al cierre aprobado. |
 
 Estas transiciones no marcan producción completa: aún falta `used_count` y, si la cantidad es mayor que cero, la lista DMEM. Los estados y acciones de transición se definen a continuación; su codificación y tabla de señales de acción están aprobadas en las secciones siguientes.
 
@@ -574,21 +574,21 @@ Todas las órdenes de la primera tabla son señales combinacionales de un bit. S
 
 #### Órdenes sobre los recursos
 
-| Señal | Recurso y acción al flanco | Condición de activación |
-|---|---|---|
-| `response_init` | Capturar el descriptor de 17 bits; inicializar índices, dirección y contadores de recorrido y pendientes TX en cero, disponibilidad inactiva y producción incompleta. | Solicitud `response_start` aceptada en `IDLE`. |
-| `byte_load` | Capturar el byte seleccionado en el registro de próximo byte y activar disponibilidad. | `PREPARE_FIXED`, `PREPARE_COUNT` o `PREPARE_ENTRY`. |
-| `byte_consume` | Desactivar disponibilidad del próximo byte. Sus bits pueden conservarse. | Escritura TX aceptada en cualquier `ENQUEUE`. |
-| `fixed_index_inc` | Incrementar `fixed_byte_index`. | Byte fijo aceptado que no sea ninguno de los dos cierres: resultado sin Debug en posición uno o posición 224 con Debug. |
-| `shared_index_clear` | Poner en cero el índice compartido de byte. | Posición 224 aceptada con Debug, o valor de entrada aceptado cuando quedan más entradas. |
-| `shared_index_inc` | Incrementar el índice compartido de byte. | Byte aceptado en `ENQUEUE_COUNT` o `ENQUEUE_ENTRY` con índice menor que cuatro. |
-| `dmem_addr_inc` | Incrementar la dirección registrada de consulta DMEM. | `COUNT_DMEM` antes de C − 1; `SCAN_DMEM` en posición no utilizada; o valor de entrada aceptado cuando quedan más entradas. |
-| `used_count_inc` | Incrementar `used_count`. | `COUNT_DMEM` con `debug_dmem_used` activo, incluida la última dirección. |
-| `list_init` | Poner dirección DMEM, índice compartido y contador de entradas en cero. Conservar `used_count`. | Quinto byte de `used_count` aceptado con cantidad mayor que cero. |
-| `entry_count_inc` | Incrementar el contador acumulativo de entradas completas encoladas. | Valor de entrada aceptado en `ENQUEUE_ENTRY`, índice cuatro, incluida la última entrada. |
-| `production_complete_set` | Activar el indicador de producción completa. | Resultado sin Debug aceptado; quinto byte de cantidad cero aceptado; o valor de última entrada aceptado. |
-| `tx_pending_inc` | Sumar un byte al seguimiento de pendientes físicos. | Escritura TX aceptada. |
-| `tx_pending_dec` | Restar un byte del seguimiento de pendientes físicos. | `response_busy` activo y `tx_done_tick`. |
+| Señal                     | Recurso y acción al flanco                                                                                                                                            | Condición de activación                                                                                                    |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `response_init`           | Capturar el descriptor de 17 bits; inicializar índices, dirección y contadores de recorrido y pendientes TX en cero, disponibilidad inactiva y producción incompleta. | Solicitud `response_start` aceptada en `IDLE`.                                                                             |
+| `byte_load`               | Capturar el byte seleccionado en el registro de próximo byte y activar disponibilidad.                                                                                | `PREPARE_FIXED`, `PREPARE_COUNT` o `PREPARE_ENTRY`.                                                                        |
+| `byte_consume`            | Desactivar disponibilidad del próximo byte. Sus bits pueden conservarse.                                                                                              | Escritura TX aceptada en cualquier `ENQUEUE`.                                                                              |
+| `fixed_index_inc`         | Incrementar `fixed_byte_index`.                                                                                                                                       | Byte fijo aceptado que no sea ninguno de los dos cierres: resultado sin Debug en posición uno o posición 224 con Debug.    |
+| `shared_index_clear`      | Poner en cero el índice compartido de byte.                                                                                                                           | Posición 224 aceptada con Debug, o valor de entrada aceptado cuando quedan más entradas.                                   |
+| `shared_index_inc`        | Incrementar el índice compartido de byte.                                                                                                                             | Byte aceptado en `ENQUEUE_COUNT` o `ENQUEUE_ENTRY` con índice menor que cuatro.                                            |
+| `dmem_addr_inc`           | Incrementar la dirección registrada de consulta DMEM.                                                                                                                 | `COUNT_DMEM` antes de C − 1; `SCAN_DMEM` en posición no utilizada; o valor de entrada aceptado cuando quedan más entradas. |
+| `used_count_inc`          | Incrementar `used_count`.                                                                                                                                             | `COUNT_DMEM` con `debug_dmem_used` activo, incluida la última dirección.                                                   |
+| `list_init`               | Poner dirección DMEM, índice compartido y contador de entradas en cero. Conservar `used_count`.                                                                       | Quinto byte de `used_count` aceptado con cantidad mayor que cero.                                                          |
+| `entry_count_inc`         | Incrementar el contador acumulativo de entradas completas encoladas.                                                                                                  | Valor de entrada aceptado en `ENQUEUE_ENTRY`, índice cuatro, incluida la última entrada.                                   |
+| `production_complete_set` | Activar el indicador de producción completa.                                                                                                                          | Resultado sin Debug aceptado; quinto byte de cantidad cero aceptado; o valor de última entrada aceptado.                   |
+| `tx_pending_inc`          | Sumar un byte al seguimiento de pendientes físicos.                                                                                                                   | Escritura TX aceptada.                                                                                                     |
+| `tx_pending_dec`          | Restar un byte del seguimiento de pendientes físicos.                                                                                                                 | `response_busy` activo y `tx_done_tick`.                                                                                   |
 
 `response_init` comparte una habilitación entre los recursos que comienzan juntos. `list_init` comparte la habilitación de los tres recursos que comienzan la lista. No son nuevos registros ni nuevas solicitudes externas. La inicialización no necesita poner en cero los bits del próximo byte: basta dejar disponibilidad inactiva; la siguiente preparación los sobrescribe.
 
@@ -596,51 +596,51 @@ Si `tx_pending_inc` y `tx_pending_dec` coinciden, la cuenta de pendientes conser
 
 #### Escritura UART, selección y condiciones auxiliares
 
-| Señal / condición | Generación |
-|---|---|
-| `w_data` | Los ocho bits del registro de próximo byte. |
-| `wr_uart` | Fuera de reset, un estado `ENQUEUE` activo, byte disponible y `tx_full` en cero. |
-| Escritura aceptada | `wr_uart` && !`tx_full` con valores preflanco. Es una condición combinacional, no otro registro. |
-| Cierre fijo | Sin Debug en posición uno, o con Debug en posición 224. |
-| Última entrada | `ENQUEUE_ENTRY` en índice cuatro y cuenta previa de entradas + 1 = `used_count`; se utiliza junto con escritura aceptada. |
-| `response_busy` | Fuera de reset, estado distinto de `IDLE`, conforme al acuerdo aprobado. |
+| Señal / condición    | Generación                                                                                                                                              |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `w_data`             | Los ocho bits del registro de próximo byte.                                                                                                             |
+| `wr_uart`            | Fuera de reset, un estado `ENQUEUE` activo, byte disponible y `tx_full` en cero.                                                                        |
+| Escritura aceptada   | `wr_uart` && !`tx_full` con valores preflanco. Es una condición combinacional, no otro registro.                                                        |
+| Cierre fijo          | Sin Debug en posición uno, o con Debug en posición 224.                                                                                                 |
+| Última entrada       | `ENQUEUE_ENTRY` en índice cuatro y cuenta previa de entradas + 1 = `used_count`; se utiliza junto con escritura aceptada.                               |
+| `response_busy`      | Fuera de reset, estado distinto de `IDLE`, conforme al acuerdo aprobado.                                                                                |
 | `response_done_tick` | En `WAIT_TX_DONE`, fuera de reset, producción completa, un pendiente y `tx_done_tick`. Se consume en ese mismo flanco y no se registra para retrasarlo. |
 
 La selección de la fuente es combinacional a partir del estado y los índices existentes, sin un registro de clase de byte:
 
-| Estado | Fuente del byte |
-|---|---|
+| Estado          | Fuente del byte                                                         |
+|-----------------|-------------------------------------------------------------------------|
 | `PREPARE_FIXED` | Descriptor, contexto, RF o registro interetapa según `fixed_byte_index` |
-| `PREPARE_COUNT` | Byte de `used_count` |
-| `PREPARE_ENTRY` | Dirección en posiciones cero a tres; valor DMEM en cuatro |
+| `PREPARE_COUNT` | Byte de `used_count`                                                    |
+| `PREPARE_ENTRY` | Dirección en posiciones cero a tres; valor DMEM en cuatro               |
 
 #### Generación por estado y condición
 
 En esta tabla se enumeran únicamente las órdenes de recurso activadas por la operación del estado. `tx_pending_inc` se agrega a toda escritura aceptada y `tx_pending_dec` puede ocurrir en cualquier estado ocupado, incluso preparación o espera. Las transiciones conservan la tabla aprobada de FSM; una transición sin orden de recurso puede modificar únicamente el estado.
 
-| Estado y condición | Órdenes de recurso activas |
-|---|---|
-| `IDLE`, solicitud aceptada | `response_init` |
-| `IDLE`, sin solicitud | Ninguna. |
-| `COUNT_DMEM`, utilizada y dirección menor que C − 1 | `used_count_inc`, `dmem_addr_inc` |
-| `COUNT_DMEM`, no utilizada y dirección menor que C − 1 | `dmem_addr_inc` |
-| `COUNT_DMEM`, última dirección utilizada | `used_count_inc` |
-| `COUNT_DMEM`, última dirección no utilizada | Ninguna. |
-| Cualquier `PREPARE` | `byte_load` |
-| Cualquier `ENQUEUE`, sin escritura aceptada | Ninguna. |
-| `ENQUEUE_FIXED`, aceptado y continúa parte fija | `byte_consume`, `fixed_index_inc` |
-| `ENQUEUE_FIXED`, resultado sin Debug aceptado | `byte_consume`, `production_complete_set` |
-| `ENQUEUE_FIXED`, posición 224 con Debug aceptada | `byte_consume`, `shared_index_clear` |
-| `ENQUEUE_COUNT`, aceptado con índice menor que cuatro | `byte_consume`, `shared_index_inc` |
-| `ENQUEUE_COUNT`, quinto aceptado y cantidad cero | `byte_consume`, `production_complete_set` |
-| `ENQUEUE_COUNT`, quinto aceptado y cantidad mayor que cero | `byte_consume`, `list_init` |
-| `SCAN_DMEM`, posición no utilizada | `dmem_addr_inc` |
-| `SCAN_DMEM`, posición utilizada | Ninguna. |
-| `ENQUEUE_ENTRY`, dirección aceptada con índice menor que cuatro | `byte_consume`, `shared_index_inc` |
-| `ENQUEUE_ENTRY`, valor aceptado y quedan entradas | `byte_consume`, `entry_count_inc`, `dmem_addr_inc`, `shared_index_clear` |
-| `ENQUEUE_ENTRY`, valor de última entrada aceptado | `byte_consume`, `entry_count_inc`, `production_complete_set` |
-| `WAIT_TX_DONE`, sin fin físico | Ninguna. |
-| `WAIT_TX_DONE`, fin físico | `tx_pending_dec` por seguimiento; `response_done_tick` comunica finalización. |
+| Estado y condición                                              | Órdenes de recurso activas                                                    |
+|-----------------------------------------------------------------|-------------------------------------------------------------------------------|
+| `IDLE`, solicitud aceptada                                      | `response_init`                                                               |
+| `IDLE`, sin solicitud                                           | Ninguna.                                                                      |
+| `COUNT_DMEM`, utilizada y dirección menor que C − 1             | `used_count_inc`, `dmem_addr_inc`                                             |
+| `COUNT_DMEM`, no utilizada y dirección menor que C − 1          | `dmem_addr_inc`                                                               |
+| `COUNT_DMEM`, última dirección utilizada                        | `used_count_inc`                                                              |
+| `COUNT_DMEM`, última dirección no utilizada                     | Ninguna.                                                                      |
+| Cualquier `PREPARE`                                             | `byte_load`                                                                   |
+| Cualquier `ENQUEUE`, sin escritura aceptada                     | Ninguna.                                                                      |
+| `ENQUEUE_FIXED`, aceptado y continúa parte fija                 | `byte_consume`, `fixed_index_inc`                                             |
+| `ENQUEUE_FIXED`, resultado sin Debug aceptado                   | `byte_consume`, `production_complete_set`                                     |
+| `ENQUEUE_FIXED`, posición 224 con Debug aceptada                | `byte_consume`, `shared_index_clear`                                          |
+| `ENQUEUE_COUNT`, aceptado con índice menor que cuatro           | `byte_consume`, `shared_index_inc`                                            |
+| `ENQUEUE_COUNT`, quinto aceptado y cantidad cero                | `byte_consume`, `production_complete_set`                                     |
+| `ENQUEUE_COUNT`, quinto aceptado y cantidad mayor que cero      | `byte_consume`, `list_init`                                                   |
+| `SCAN_DMEM`, posición no utilizada                              | `dmem_addr_inc`                                                               |
+| `SCAN_DMEM`, posición utilizada                                 | Ninguna.                                                                      |
+| `ENQUEUE_ENTRY`, dirección aceptada con índice menor que cuatro | `byte_consume`, `shared_index_inc`                                            |
+| `ENQUEUE_ENTRY`, valor aceptado y quedan entradas               | `byte_consume`, `entry_count_inc`, `dmem_addr_inc`, `shared_index_clear`      |
+| `ENQUEUE_ENTRY`, valor de última entrada aceptado               | `byte_consume`, `entry_count_inc`, `production_complete_set`                  |
+| `WAIT_TX_DONE`, sin fin físico                                  | Ninguna.                                                                      |
+| `WAIT_TX_DONE`, fin físico                                      | `tx_pending_dec` por seguimiento; `response_done_tick` comunica finalización. |
 
 #### Prioridades y conservación
 
@@ -662,35 +662,35 @@ Nombres, condiciones y generación funcional quedan aprobados. La futura realiza
 
 El [acuerdo de diez estados](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--diez-estados-de-la-fsm-del-serializador) concreta la secuencia privada de `response_serializer`. La FSM conserva el estado registrado y emite acciones sobre los recursos existentes. Los nombres y codificación one-hot siguientes están aprobados como base de diseño; los nombres y generación de señales de acción se definen más abajo.
 
-| Estado | Operación |
-|---|---|
-| `IDLE` | Esperar una solicitud y capturar su descriptor al aceptarla. |
-| `COUNT_DMEM` | Consultar una dirección por ciclo y contar su marca de utilización. |
+| Estado          | Operación                                                                                             |
+|-----------------|-------------------------------------------------------------------------------------------------------|
+| `IDLE`          | Esperar una solicitud y capturar su descriptor al aceptarla.                                          |
+| `COUNT_DMEM`    | Consultar una dirección por ciclo y contar su marca de utilización.                                   |
 | `PREPARE_FIXED` | Capturar el byte de cabecera, contexto, RF o registro interetapa seleccionado por `fixed_byte_index`. |
-| `ENQUEUE_FIXED` | Esperar espacio y escribir el byte preparado de la parte fija. |
-| `PREPARE_COUNT` | Capturar el byte de `used_count` seleccionado por el índice compartido. |
-| `ENQUEUE_COUNT` | Esperar espacio y escribir el byte preparado de `used_count`. |
-| `SCAN_DMEM` | Consultar direcciones crecientes del segundo recorrido hasta encontrar la próxima utilizada. |
-| `PREPARE_ENTRY` | Capturar el byte seleccionado de dirección o valor de la entrada DMEM actual. |
-| `ENQUEUE_ENTRY` | Esperar espacio y escribir el byte preparado de la entrada DMEM. |
-| `WAIT_TX_DONE` | Esperar el último Stop después de completar la producción. |
+| `ENQUEUE_FIXED` | Esperar espacio y escribir el byte preparado de la parte fija.                                        |
+| `PREPARE_COUNT` | Capturar el byte de `used_count` seleccionado por el índice compartido.                               |
+| `ENQUEUE_COUNT` | Esperar espacio y escribir el byte preparado de `used_count`.                                         |
+| `SCAN_DMEM`     | Consultar direcciones crecientes del segundo recorrido hasta encontrar la próxima utilizada.          |
+| `PREPARE_ENTRY` | Capturar el byte seleccionado de dirección o valor de la entrada DMEM actual.                         |
+| `ENQUEUE_ENTRY` | Esperar espacio y escribir el byte preparado de la entrada DMEM.                                      |
+| `WAIT_TX_DONE`  | Esperar el último Stop después de completar la producción.                                            |
 
 #### Codificación one-hot de los estados
 
 El [acuerdo de codificación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-de-la-fsm-del-serializador) fija un registro de estado de diez bits, uno por estado, con exactamente un bit activo durante operación legal. Se utiliza el mismo criterio one-hot aprobado para RX y TX.
 
-| Estado | Bit activo | Código de diez bits |
-|---|---:|---|
-| `IDLE` | 0 | 0000000001 |
-| `COUNT_DMEM` | 1 | 0000000010 |
-| `PREPARE_FIXED` | 2 | 0000000100 |
-| `ENQUEUE_FIXED` | 3 | 0000001000 |
-| `PREPARE_COUNT` | 4 | 0000010000 |
-| `ENQUEUE_COUNT` | 5 | 0000100000 |
-| `SCAN_DMEM` | 6 | 0001000000 |
-| `PREPARE_ENTRY` | 7 | 0010000000 |
-| `ENQUEUE_ENTRY` | 8 | 0100000000 |
-| `WAIT_TX_DONE` | 9 | 1000000000 |
+| Estado          | Bit activo | Código de diez bits |
+|-----------------|-----------:|---------------------|
+| `IDLE`          |          0 | 0000000001          |
+| `COUNT_DMEM`    |          1 | 0000000010          |
+| `PREPARE_FIXED` |          2 | 0000000100          |
+| `ENQUEUE_FIXED` |          3 | 0000001000          |
+| `PREPARE_COUNT` |          4 | 0000010000          |
+| `ENQUEUE_COUNT` |          5 | 0000100000          |
+| `SCAN_DMEM`     |          6 | 0001000000          |
+| `PREPARE_ENTRY` |          7 | 0010000000          |
+| `ENQUEUE_ENTRY` |          8 | 0100000000          |
+| `WAIT_TX_DONE`  |          9 | 1000000000          |
 
 Reset establece `IDLE`, código 0000000001, no un vector de diez ceros. Las transiciones cargan el código del estado siguiente definido por la tabla, manteniendo un único bit activo. La codificación representa la fase privada del serializador y no agrega un registro de fase separado.
 
@@ -702,32 +702,32 @@ Estos diez bits son internos al serializador. No corresponden a `debug_state_cod
 
 Todas las condiciones usan los valores previos al flanco. Una escritura aceptada es `wr_uart` && !`tx_full`, fuera de reset, durante un estado `ENQUEUE` con próximo byte disponible. Cada `PREPARE` captura una única vez y activa disponibilidad, sin escribir TX ni adelantar índices; después pasa a su `ENQUEUE` correspondiente. Una escritura aceptada consume disponibilidad.
 
-| Estado actual | Condición | Acción al flanco y estado siguiente |
-|---|---|---|
-| `IDLE` | Sin `response_start` | Conservar `IDLE`; no escribir TX ni producir finalización. |
-| `IDLE` | `response_start` aceptado con `response_with_debug` en uno | Capturar descriptor; inicializar `fixed_byte_index`, dirección DMEM, `used_count`, índices/cuentas de recorrido y seguimiento en cero, con próximo byte no disponible y producción incompleta; pasar a `COUNT_DMEM`. |
-| `IDLE` | `response_start` aceptado con `response_with_debug` en cero | Capturar descriptor e inicializar recursos como en la fila anterior; pasar a `PREPARE_FIXED`. No recorrer DMEM. |
-| `COUNT_DMEM` | Dirección menor que C − 1 | Incrementar `used_count` si `debug_dmem_used` está activo; avanzar dirección y conservar `COUNT_DMEM`. |
-| `COUNT_DMEM` | Dirección igual a C − 1 | Incluir también esa marca en `used_count` si corresponde, retener dirección y pasar a `PREPARE_FIXED`. `fixed_byte_index` continúa en cero. |
-| `PREPARE_FIXED` | Paso de preparación | Capturar selección fija actual y activar disponibilidad; pasar a `ENQUEUE_FIXED`. |
-| `ENQUEUE_FIXED` | Sin escritura aceptada | Conservar estado, byte, disponibilidad e índice. |
-| `ENQUEUE_FIXED` | Escritura aceptada, respuesta sin Debug y `fixed_byte_index` = 1 | Consumir disponibilidad, activar producción completa y retener índice; pasar a `WAIT_TX_DONE`. |
-| `ENQUEUE_FIXED` | Escritura aceptada, respuesta con Debug y `fixed_byte_index` = 224 | Consumir disponibilidad, retener `fixed_byte_index` e inicializar índice compartido en cero; pasar a `PREPARE_COUNT`. |
-| `ENQUEUE_FIXED` | Cualquier otra escritura aceptada | Consumir disponibilidad e incrementar `fixed_byte_index`; volver a `PREPARE_FIXED`. |
-| `PREPARE_COUNT` | Paso de preparación | Capturar byte actual de `used_count` y activar disponibilidad; pasar a `ENQUEUE_COUNT`. |
-| `ENQUEUE_COUNT` | Sin escritura aceptada | Conservar estado, byte, disponibilidad e índice. |
-| `ENQUEUE_COUNT` | Escritura aceptada e índice compartido menor que cuatro | Consumir disponibilidad e incrementar índice; volver a `PREPARE_COUNT`. |
-| `ENQUEUE_COUNT` | Escritura aceptada, índice compartido = 4 y `used_count` = 0 | Consumir disponibilidad, activar producción completa y pasar a `WAIT_TX_DONE`. No iniciar segundo recorrido. |
-| `ENQUEUE_COUNT` | Escritura aceptada, índice compartido = 4 y `used_count` > 0 | Consumir disponibilidad; iniciar segundo recorrido con dirección, índice compartido y contador de entradas en cero; pasar a `SCAN_DMEM`. |
-| `SCAN_DMEM` | `debug_dmem_used` en cero | Avanzar dirección, sin producir bytes ni aumentar contador de entradas; conservar `SCAN_DMEM`. |
-| `SCAN_DMEM` | `debug_dmem_used` en uno | Retener dirección e índice compartido en cero; pasar a `PREPARE_ENTRY`. |
-| `PREPARE_ENTRY` | Paso de preparación | Capturar byte de dirección para índice cero a tres o valor DMEM para cuatro, y activar disponibilidad; pasar a `ENQUEUE_ENTRY`. |
-| `ENQUEUE_ENTRY` | Sin escritura aceptada | Conservar estado, byte, disponibilidad, índice y dirección. |
-| `ENQUEUE_ENTRY` | Escritura aceptada e índice compartido menor que cuatro | Consumir disponibilidad e incrementar índice; volver a `PREPARE_ENTRY`. Mantener dirección. |
-| `ENQUEUE_ENTRY` | Valor aceptado en índice cuatro y cuenta previa de entradas + 1 = `used_count` | Consumir disponibilidad e incrementar cuenta de entradas; activar producción completa y retener dirección; pasar a `WAIT_TX_DONE`. |
-| `ENQUEUE_ENTRY` | Valor aceptado en índice cuatro y cuenta previa de entradas + 1 < `used_count` | Consumir disponibilidad e incrementar cuenta de entradas; avanzar dirección e inicializar índice compartido en cero; volver a `SCAN_DMEM`. |
-| `WAIT_TX_DONE` | Todavía no ocurre el fin físico aprobado | Conservar `WAIT_TX_DONE` sin preparar ni escribir otros bytes. |
-| `WAIT_TX_DONE` | Producción completa, un pendiente TX y `tx_done_tick` | Comunicar `response_done_tick` para ese mismo flanco, consumir el último pendiente y pasar a `IDLE`. |
+| Estado actual   | Condición                                                                      | Acción al flanco y estado siguiente                                                                                                                                                                                  |
+|-----------------|--------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `IDLE`          | Sin `response_start`                                                           | Conservar `IDLE`; no escribir TX ni producir finalización.                                                                                                                                                           |
+| `IDLE`          | `response_start` aceptado con `response_with_debug` en uno                     | Capturar descriptor; inicializar `fixed_byte_index`, dirección DMEM, `used_count`, índices/cuentas de recorrido y seguimiento en cero, con próximo byte no disponible y producción incompleta; pasar a `COUNT_DMEM`. |
+| `IDLE`          | `response_start` aceptado con `response_with_debug` en cero                    | Capturar descriptor e inicializar recursos como en la fila anterior; pasar a `PREPARE_FIXED`. No recorrer DMEM.                                                                                                      |
+| `COUNT_DMEM`    | Dirección menor que C − 1                                                      | Incrementar `used_count` si `debug_dmem_used` está activo; avanzar dirección y conservar `COUNT_DMEM`.                                                                                                               |
+| `COUNT_DMEM`    | Dirección igual a C − 1                                                        | Incluir también esa marca en `used_count` si corresponde, retener dirección y pasar a `PREPARE_FIXED`. `fixed_byte_index` continúa en cero.                                                                          |
+| `PREPARE_FIXED` | Paso de preparación                                                            | Capturar selección fija actual y activar disponibilidad; pasar a `ENQUEUE_FIXED`.                                                                                                                                    |
+| `ENQUEUE_FIXED` | Sin escritura aceptada                                                         | Conservar estado, byte, disponibilidad e índice.                                                                                                                                                                     |
+| `ENQUEUE_FIXED` | Escritura aceptada, respuesta sin Debug y `fixed_byte_index` = 1               | Consumir disponibilidad, activar producción completa y retener índice; pasar a `WAIT_TX_DONE`.                                                                                                                       |
+| `ENQUEUE_FIXED` | Escritura aceptada, respuesta con Debug y `fixed_byte_index` = 224             | Consumir disponibilidad, retener `fixed_byte_index` e inicializar índice compartido en cero; pasar a `PREPARE_COUNT`.                                                                                                |
+| `ENQUEUE_FIXED` | Cualquier otra escritura aceptada                                              | Consumir disponibilidad e incrementar `fixed_byte_index`; volver a `PREPARE_FIXED`.                                                                                                                                  |
+| `PREPARE_COUNT` | Paso de preparación                                                            | Capturar byte actual de `used_count` y activar disponibilidad; pasar a `ENQUEUE_COUNT`.                                                                                                                              |
+| `ENQUEUE_COUNT` | Sin escritura aceptada                                                         | Conservar estado, byte, disponibilidad e índice.                                                                                                                                                                     |
+| `ENQUEUE_COUNT` | Escritura aceptada e índice compartido menor que cuatro                        | Consumir disponibilidad e incrementar índice; volver a `PREPARE_COUNT`.                                                                                                                                              |
+| `ENQUEUE_COUNT` | Escritura aceptada, índice compartido = 4 y `used_count` = 0                   | Consumir disponibilidad, activar producción completa y pasar a `WAIT_TX_DONE`. No iniciar segundo recorrido.                                                                                                         |
+| `ENQUEUE_COUNT` | Escritura aceptada, índice compartido = 4 y `used_count` > 0                   | Consumir disponibilidad; iniciar segundo recorrido con dirección, índice compartido y contador de entradas en cero; pasar a `SCAN_DMEM`.                                                                             |
+| `SCAN_DMEM`     | `debug_dmem_used` en cero                                                      | Avanzar dirección, sin producir bytes ni aumentar contador de entradas; conservar `SCAN_DMEM`.                                                                                                                       |
+| `SCAN_DMEM`     | `debug_dmem_used` en uno                                                       | Retener dirección e índice compartido en cero; pasar a `PREPARE_ENTRY`.                                                                                                                                              |
+| `PREPARE_ENTRY` | Paso de preparación                                                            | Capturar byte de dirección para índice cero a tres o valor DMEM para cuatro, y activar disponibilidad; pasar a `ENQUEUE_ENTRY`.                                                                                      |
+| `ENQUEUE_ENTRY` | Sin escritura aceptada                                                         | Conservar estado, byte, disponibilidad, índice y dirección.                                                                                                                                                          |
+| `ENQUEUE_ENTRY` | Escritura aceptada e índice compartido menor que cuatro                        | Consumir disponibilidad e incrementar índice; volver a `PREPARE_ENTRY`. Mantener dirección.                                                                                                                          |
+| `ENQUEUE_ENTRY` | Valor aceptado en índice cuatro y cuenta previa de entradas + 1 = `used_count` | Consumir disponibilidad e incrementar cuenta de entradas; activar producción completa y retener dirección; pasar a `WAIT_TX_DONE`.                                                                                   |
+| `ENQUEUE_ENTRY` | Valor aceptado en índice cuatro y cuenta previa de entradas + 1 < `used_count` | Consumir disponibilidad e incrementar cuenta de entradas; avanzar dirección e inicializar índice compartido en cero; volver a `SCAN_DMEM`.                                                                           |
+| `WAIT_TX_DONE`  | Todavía no ocurre el fin físico aprobado                                       | Conservar `WAIT_TX_DONE` sin preparar ni escribir otros bytes.                                                                                                                                                       |
+| `WAIT_TX_DONE`  | Producción completa, un pendiente TX y `tx_done_tick`                          | Comunicar `response_done_tick` para ese mismo flanco, consumir el último pendiente y pasar a `IDLE`.                                                                                                                 |
 
 Los tres pares `PREPARE`/`ENQUEUE` identifican en el propio estado la fuente y la política de avance de parte fija, cantidad o entrada DMEM. No se necesita otro registro para recordar cuál de esas tres clases de byte se está produciendo. `COUNT_DMEM` y `SCAN_DMEM` consultan metadatos y no forman bytes.
 
@@ -794,12 +794,12 @@ Respuesta Debug total: (230+5K)×26.083 + 2C + 16 clocks
 
 26.083 agrega un clock de separación y dos de producción a los 26.080 de trama. Lista agrega un byte completo de reserva por inicio de su ventana; esto cubre que PC reconozca `used_count` antes del fin físico Stop del último byte. Recorridos vacíos o terminados antes de C solo reducen las cotas; K=0 omite lista.
 
-| Comprobación | `REFERENCE` | `ALT_1000` | Plazo existente |
-|---|---:|---:|---|
-| Respuesta breve, sin espera por operación | ≤1,04364 ms | ≤1,04364 ms | Cabeceras/aceptación: 200 ms |
-| Parte fija, incluyendo cabecera conservadoramente | ≤120,02308 ms | ≤120,00212 ms | Parte fija desde cabecera: 319 ms |
-| Lista con K=C | ≤5342,36134 ms | ≤2608,84198 ms | 5534 / 2805 ms |
-| Debug completo con K=C | ≤5461,86244 ms | ≤2728,32212 ms | Ventana de recuperación `W_debug`: 6100 / 3400 ms |
+| Comprobación                                      |    `REFERENCE` |     `ALT_1000` | Plazo existente                                   |
+|---------------------------------------------------|---------------:|---------------:|---------------------------------------------------|
+| Respuesta breve, sin espera por operación         |    ≤1,04364 ms |    ≤1,04364 ms | Cabeceras/aceptación: 200 ms                      |
+| Parte fija, incluyendo cabecera conservadoramente |  ≤120,02308 ms |  ≤120,00212 ms | Parte fija desde cabecera: 319 ms                 |
+| Lista con K=C                                     | ≤5342,36134 ms | ≤2608,84198 ms | 5534 / 2805 ms                                    |
+| Debug completo con K=C                            | ≤5461,86244 ms | ≤2728,32212 ms | Ventana de recuperación `W_debug`: 6100 / 3400 ms |
 
 Los cálculos incluyen baud efectivo, no solo nominal. Se comprobaron todos los K de uno a C contra ceil(5K×10×1000/19200+200) ms: margen mínimo de lista >191 ms `REFERENCE` y >195 ms `ALT_1000`. Las aceptaciones/cabeceras agregan solo solicitud corta, coordinación y, en `STEP` desde terminal, preparación/conteo; también quedan ampliamente dentro de 200 ms bajo el flujo válido del host. `RUN` no tiene límite de ejecución antes del primer byte terminal.
 

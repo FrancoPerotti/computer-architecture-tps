@@ -42,12 +42,12 @@ Los acuerdos de [contenido completo](#acuerdo-parcial-de-dec-arch-009--exposici�
 
 **Decisión:** Cada snapshot de Debug incluye los campos funcionales completos de los cuatro registros interetapa, con la semántica y anchos internos existentes:
 
-| Latch | Campos expuestos | Cantidad y ancho interno total |
-|---|---|---|
-| `IF/ID` | `valid`, `pc[31:0]`, `instruction[31:0]`, `fetch_fault_valid`, `fetch_fault_cause[2:0]` | 5 campos, 69 bits |
-| `ID/EX` | `valid`, `pc[31:0]`, `instruction[31:0]`, `rs1[4:0]`, `rs2[4:0]`, `rd[4:0]`, `rs1_value[31:0]`, `rs2_value[31:0]`, `immediate[31:0]`, `alu_op[5:0]`, `alu_src`, `result_sel[1:0]`, `flow_op[2:0]`, `mem_op[3:0]`, `reg_write` | 15 campos, 193 bits |
-| `EX/MEM` | `valid`, `pc[31:0]`, `instruction[31:0]`, `rd[4:0]`, `reg_write`, `mem_op[3:0]`, `ex_result[31:0]`, `store_data[31:0]` | 8 campos, 139 bits |
-| `MEM/WB` | `valid`, `pc[31:0]`, `instruction[31:0]`, `rd[4:0]`, `reg_write`, `wb_value[31:0]` | 6 campos, 103 bits |
+| Latch    | Campos expuestos                                                                                                                                                                                                              | Cantidad y ancho interno total |
+|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
+| `IF/ID`  | `valid`, `pc[31:0]`, `instruction[31:0]`, `fetch_fault_valid`, `fetch_fault_cause[2:0]`                                                                                                                                       | 5 campos, 69 bits              |
+| `ID/EX`  | `valid`, `pc[31:0]`, `instruction[31:0]`, `rs1[4:0]`, `rs2[4:0]`, `rd[4:0]`, `rs1_value[31:0]`, `rs2_value[31:0]`, `immediate[31:0]`, `alu_op[5:0]`, `alu_src`, `result_sel[1:0]`, `flow_op[2:0]`, `mem_op[3:0]`, `reg_write` | 15 campos, 193 bits            |
+| `EX/MEM` | `valid`, `pc[31:0]`, `instruction[31:0]`, `rd[4:0]`, `reg_write`, `mem_op[3:0]`, `ex_result[31:0]`, `store_data[31:0]`                                                                                                        | 8 campos, 139 bits             |
+| `MEM/WB` | `valid`, `pc[31:0]`, `instruction[31:0]`, `rd[4:0]`, `reg_write`, `wb_value[31:0]`                                                                                                                                            | 6 campos, 103 bits             |
 
 Los 34 campos corresponden a 504 bits de estado interno. Este total no fija longitud UART, padding, orden ni packing externo. No se modifican los registros interetapa ni se agregan registros de diagnóstico, causas de invalidez o señales combinacionales al snapshot.
 

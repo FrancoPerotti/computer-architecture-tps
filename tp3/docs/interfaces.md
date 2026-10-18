@@ -68,20 +68,20 @@ El reset interno es activo en alto. La plataforma normaliza la fuente física y 
 
 Las interfaces secuenciales reciben implícitamente `clk` y, donde el contrato de estado lo exige, `reset`. La tabla siguiente explicita su alcance para evitar que la omisión gráfica se interprete como ausencia de reset:
 
-| Estado / recurso | Efecto de reset funcional | Preparación de sesión | Enable ordinario |
-|---|---|---|---|
-| PC | `0` | `0` | `pc_write_enable` |
-| Register File | `x0`–`x31` en cero lógico | cero lógico completo | `rf_write_fire` |
-| `IF/ID` | `valid=0`, `fetch_fault_valid=0`; demás bits pueden retener residuos | ambos flags en cero | `capture` / `hold` / `invalidate` |
-| `ID/EX`, `EX/MEM`, `MEM/WB` | `valid=0`; demás bits pueden retener residuos | `valid=0` | controles locales de actualización |
-| `Global FSM` | `NO_IMAGE` | coordina fase, sin escribir el datapath | captura `next_state` en cada flanco de `clk`, independientemente de `cpu_cycle_fire` |
-| `loaded_image_size_bytes` | `0` | captura tamaño pendiente con `image_publish` | clear por `load_start` / publicación por `image_publish` |
-| `cycle_count` | `0` | `0` antes del primer ciclo | `cpu_cycle_fire` |
-| `fault_cause`, `fault_pc` | condición invalidada por `Global FSM`; no exige borrar bits | condición anterior deja de ser vigente | solo `fault_capture_fire` |
-| IMEM | conserva array; imagen inválida por tamaño cero | no se borra para reutilizar imagen | escritura del `Loader` autorizado |
-| DMEM y metadatos | no exige borrar datos ni todos los metadatos | establece cero lógico antes de `prepare_done` | store / mantenimiento con ownership |
-| `Loader` / `Session Preparation` | aborta trabajo privado anterior; condición segura | progreso privado de su operación | actividad habilitada de su fase |
-| Debug / transporte | abortar fase/respuesta y no presentar transacción anterior como actual | bitmap `valid`/used DMEM vacío | controlador/serializador y preparación aprobados, §15.12–15.19 |
+| Estado / recurso                 | Efecto de reset funcional                                              | Preparación de sesión                         | Enable ordinario                                                                     |
+|----------------------------------|------------------------------------------------------------------------|-----------------------------------------------|--------------------------------------------------------------------------------------|
+| PC                               | `0`                                                                    | `0`                                           | `pc_write_enable`                                                                    |
+| Register File                    | `x0`–`x31` en cero lógico                                              | cero lógico completo                          | `rf_write_fire`                                                                      |
+| `IF/ID`                          | `valid=0`, `fetch_fault_valid=0`; demás bits pueden retener residuos   | ambos flags en cero                           | `capture` / `hold` / `invalidate`                                                    |
+| `ID/EX`, `EX/MEM`, `MEM/WB`      | `valid=0`; demás bits pueden retener residuos                          | `valid=0`                                     | controles locales de actualización                                                   |
+| `Global FSM`                     | `NO_IMAGE`                                                             | coordina fase, sin escribir el datapath       | captura `next_state` en cada flanco de `clk`, independientemente de `cpu_cycle_fire` |
+| `loaded_image_size_bytes`        | `0`                                                                    | captura tamaño pendiente con `image_publish`  | clear por `load_start` / publicación por `image_publish`                             |
+| `cycle_count`                    | `0`                                                                    | `0` antes del primer ciclo                    | `cpu_cycle_fire`                                                                     |
+| `fault_cause`, `fault_pc`        | condición invalidada por `Global FSM`; no exige borrar bits            | condición anterior deja de ser vigente        | solo `fault_capture_fire`                                                            |
+| IMEM                             | conserva array; imagen inválida por tamaño cero                        | no se borra para reutilizar imagen            | escritura del `Loader` autorizado                                                    |
+| DMEM y metadatos                 | no exige borrar datos ni todos los metadatos                           | establece cero lógico antes de `prepare_done` | store / mantenimiento con ownership                                                  |
+| `Loader` / `Session Preparation` | aborta trabajo privado anterior; condición segura                      | progreso privado de su operación              | actividad habilitada de su fase                                                      |
+| Debug / transporte               | abortar fase/respuesta y no presentar transacción anterior como actual | bitmap `valid`/used DMEM vacío                | controlador/serializador y preparación aprobados, §15.12–15.19                       |
 
 Para la orden UART `RESET`, el [intercambio aprobado](decisions/DEC-PROTO-002.md#acuerdo-parcial-de-dec-proto-002--intercambio-reset-con-aceptación-antes-del-reset-global) difiere la generación de la solicitud global hasta terminar físicamente `[RESET][ACCEPTED]`, incluido Stop del segundo byte. El botón físico aplica reset directamente. La prioridad siguiente rige cuando el reset funcional está activo.
 
@@ -105,10 +105,10 @@ Una entrada con `valid=0` no es una instrucción. `IF/ID` conserva además `fetc
 
 Las capacidades en bytes satisfacen `4 <= CAPACITY_BYTES <= 2^32` y son múltiplos de cuatro, sin exigir potencias de dos. Las constantes de capacidad deben representar `2^32` sin truncamiento; las comparaciones de extremos utilizan **33 bits unsigned**.
 
-| Perfil | IMEM bytes | DMEM bytes | IMEM palabras / ancho de índice | DMEM palabras / ancho de índice | `IMAGE_SIZE_WIDTH` |
-|---|---:|---:|---|---|---:|
-| `REFERENCE` | 1024 | 2048 | 256 / 8 | 512 / 9 | 11 |
-| `ALT_1000` | 1000 | 1000 | 250 / 8 | 250 / 8 | 10 |
+| Perfil      | IMEM bytes | DMEM bytes | IMEM palabras / ancho de índice | DMEM palabras / ancho de índice | `IMAGE_SIZE_WIDTH` |
+|-------------|-----------:|-----------:|---------------------------------|---------------------------------|-------------------:|
+| `REFERENCE` |       1024 |       2048 | 256 / 8                         | 512 / 9                         |                 11 |
+| `ALT_1000`  |       1000 |       1000 | 250 / 8                         | 250 / 8                         |                 10 |
 
 `WORD_COUNT=CAPACITY_BYTES/4`; cada ancho de índice es `max(1, ceil(log2(WORD_COUNT)))`. Configuración, software y loader deben utilizar el mismo perfil autoritativo. Un valor fuera del dominio se rechaza al elaborar; un perfil legal no soportado por un backend se distingue como error de configuración, no fault del programa. La [configuración común aprobada](architecture/common_configuration.md) concreta fuente, propagación, tipos y validadores; FPGA-03 cerrado en diseño documental.
 
@@ -132,17 +132,17 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `act_normal` | `Pipeline Hazard Control` |
+| Señal          | Origen                    |
+|----------------|---------------------------|
+| `act_normal`   | `Pipeline Hazard Control` |
 | `act_redirect` | `Pipeline Hazard Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino           |
+|-------------------|-------------------|
 | `pc_write_enable` | `PC.write_enable` |
-| `next_pc_sel` | `Next PC MUX.sel` |
+| `next_pc_sel`     | `Next PC MUX.sel` |
 
 ---
 
@@ -158,17 +158,17 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `pc_plus_4[31:0]` | `PC Adder` |
-| `redirect_target[31:0]` | `Target MUX` |
-| `next_pc_sel` | `PC Update Control` |
+| Señal                   | Origen              |
+|-------------------------|---------------------|
+| `pc_plus_4[31:0]`       | `PC Adder`          |
+| `redirect_target[31:0]` | `Target MUX`        |
+| `next_pc_sel`           | `PC Update Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `next_pc[31:0]` | `PC` |
+| Señal           | Destino |
+|-----------------|---------|
+| `next_pc[31:0]` | `PC`    |
 
 ---
 
@@ -184,21 +184,21 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `next_pc[31:0]` | `Next PC MUX` |
-| `write_enable` | `PC Update Control.pc_write_enable` |
-| inicialización / clear de sesión | `Session Preparation` |
-| `reset` | [GLOBAL] reset del sistema |
+| Señal                            | Origen                              |
+|----------------------------------|-------------------------------------|
+| `next_pc[31:0]`                  | `Next PC MUX`                       |
+| `write_enable`                   | `PC Update Control.pc_write_enable` |
+| inicialización / clear de sesión | `Session Preparation`               |
+| `reset`                          | [GLOBAL] reset del sistema          |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `PC[31:0]` | `PC Adder` |
-| `PC[31:0]` | `Instruction Memory.Read Address` |
-| `PC[31:0]` | `Fetch Fault Check` |
-| `PC[31:0]` | `IF/ID Input Logic` |
+| Señal      | Destino                                     |
+|------------|---------------------------------------------|
+| `PC[31:0]` | `PC Adder`                                  |
+| `PC[31:0]` | `Instruction Memory.Read Address`           |
+| `PC[31:0]` | `Fetch Fault Check`                         |
+| `PC[31:0]` | `IF/ID Input Logic`                         |
 | `PC[31:0]` | [EXT] Debug/Snapshot, contenido obligatorio |
 
 ---
@@ -215,14 +215,14 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `PC[31:0]` | `PC` |
+| Señal      | Origen |
+|------------|--------|
+| `PC[31:0]` | `PC`   |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino       |
+|-------------------|---------------|
 | `pc_plus_4[31:0]` | `Next PC MUX` |
 
 ---
@@ -239,16 +239,16 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `Read Address[31:0]` | `PC` |
-| interfaz de escritura de imagen | `Loader` |
-| `IMEM_CAPACITY_BYTES` | [CFG] perfil autoritativo |
+| Señal                           | Origen                    |
+|---------------------------------|---------------------------|
+| `Read Address[31:0]`            | `PC`                      |
+| interfaz de escritura de imagen | `Loader`                  |
+| `IMEM_CAPACITY_BYTES`           | [CFG] perfil autoritativo |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal               | Destino             |
+|---------------------|---------------------|
 | `instruction[31:0]` | `IF/ID Input Logic` |
 
 > La entrada «interfaz de escritura de imagen» resume la conexión aprobada `imem_write_index`, `imem_write_data` e `imem_write_enable`, definida en [Loader](architecture/session/loader.md#interfaces-y-contratos). La tabla conserva su etiqueta funcional; los nombres y el recorrido de carga ya están concretados.
@@ -267,18 +267,18 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `PC[31:0]` | `PC` |
-| `image_valid` | derivado de `loaded_image_size_bytes != 0` |
-| `loaded_image_size_bytes` | registro global `loaded_image_size_bytes` |
-| `IMEM_CAPACITY_BYTES` | [CFG] configuración de memoria |
+| Señal                     | Origen                                     |
+|---------------------------|--------------------------------------------|
+| `PC[31:0]`                | `PC`                                       |
+| `image_valid`             | derivado de `loaded_image_size_bytes != 0` |
+| `loaded_image_size_bytes` | registro global `loaded_image_size_bytes`  |
+| `IMEM_CAPACITY_BYTES`     | [CFG] configuración de memoria             |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `if_fetch_fault_candidate` | `IF/ID Input Logic` |
+| Señal                       | Destino             |
+|-----------------------------|---------------------|
+| `if_fetch_fault_candidate`  | `IF/ID Input Logic` |
 | `if_fetch_fault_cause[2:0]` | `IF/ID Input Logic` |
 
 > **No hay** camino directo `Fetch Fault Check → Pipeline Hazard Control`.
@@ -297,21 +297,21 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `PC[31:0]` | `PC` |
-| `instruction[31:0]` | `Instruction Memory` |
-| `if_fetch_fault_candidate` | `Fetch Fault Check` |
-| `if_fetch_fault_cause[2:0]` | `Fetch Fault Check` |
+| Señal                       | Origen               |
+|-----------------------------|----------------------|
+| `PC[31:0]`                  | `PC`                 |
+| `instruction[31:0]`         | `Instruction Memory` |
+| `if_fetch_fault_candidate`  | `Fetch Fault Check`  |
+| `if_fetch_fault_cause[2:0]` | `Fetch Fault Check`  |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `ifid_in_valid` | `IF/ID.valid` |
-| `ifid_in_pc[31:0]` | `IF/ID.pc` |
-| `ifid_in_instruction[31:0]` | `IF/ID.instruction` |
-| `ifid_in_fetch_fault_valid` | `IF/ID.fetch_fault_valid` |
+| Señal                            | Destino                   |
+|----------------------------------|---------------------------|
+| `ifid_in_valid`                  | `IF/ID.valid`             |
+| `ifid_in_pc[31:0]`               | `IF/ID.pc`                |
+| `ifid_in_instruction[31:0]`      | `IF/ID.instruction`       |
+| `ifid_in_fetch_fault_valid`      | `IF/ID.fetch_fault_valid` |
 | `ifid_in_fetch_fault_cause[2:0]` | `IF/ID.fetch_fault_cause` |
 
 ---
@@ -330,23 +330,23 @@ IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo p
 
 Todas provienen de `Pipeline Hazard Control`.
 
-| Señal | Origen |
-|---|---|
-| `act_ex_fault` | `Pipeline Hazard Control` |
-| `act_halt` | `Pipeline Hazard Control` |
-| `act_redirect` | `Pipeline Hazard Control` |
-| `act_id_fault` | `Pipeline Hazard Control` |
-| `act_load_use` | `Pipeline Hazard Control` |
-| `act_normal` | `Pipeline Hazard Control` |
+| Señal                | Origen                    |
+|----------------------|---------------------------|
+| `act_ex_fault`       | `Pipeline Hazard Control` |
+| `act_halt`           | `Pipeline Hazard Control` |
+| `act_redirect`       | `Pipeline Hazard Control` |
+| `act_id_fault`       | `Pipeline Hazard Control` |
+| `act_load_use`       | `Pipeline Hazard Control` |
+| `act_normal`         | `Pipeline Hazard Control` |
 | `act_drain_load_use` | `Pipeline Hazard Control` |
-| `act_drain_advance` | `Pipeline Hazard Control` |
+| `act_drain_advance`  | `Pipeline Hazard Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `capture` | `IF/ID.capture` |
-| `hold` | `IF/ID.hold` |
+| Señal        | Destino            |
+|--------------|--------------------|
+| `capture`    | `IF/ID.capture`    |
+| `hold`       | `IF/ID.hold`       |
 | `invalidate` | `IF/ID.invalidate` |
 
 ---
@@ -363,58 +363,58 @@ Todas provienen de `Pipeline Hazard Control`.
 
 #### Entradas de datos
 
-| Campo | Origen |
-|---|---|
-| `valid` | `IF/ID Input Logic.ifid_in_valid` |
-| `pc[31:0]` | `IF/ID Input Logic.ifid_in_pc` |
-| `instruction[31:0]` | `IF/ID Input Logic.ifid_in_instruction` |
-| `fetch_fault_valid` | `IF/ID Input Logic.ifid_in_fetch_fault_valid` |
+| Campo                    | Origen                                        |
+|--------------------------|-----------------------------------------------|
+| `valid`                  | `IF/ID Input Logic.ifid_in_valid`             |
+| `pc[31:0]`               | `IF/ID Input Logic.ifid_in_pc`                |
+| `instruction[31:0]`      | `IF/ID Input Logic.ifid_in_instruction`       |
+| `fetch_fault_valid`      | `IF/ID Input Logic.ifid_in_fetch_fault_valid` |
 | `fetch_fault_cause[2:0]` | `IF/ID Input Logic.ifid_in_fetch_fault_cause` |
 
 #### Entradas de control
 
-| Señal | Origen |
-|---|---|
-| `capture` | `IF/ID Update Control` |
-| `hold` | `IF/ID Update Control` |
-| `invalidate` | `IF/ID Update Control` |
-| clear de sesión | `Session Preparation` |
-| `reset` | [GLOBAL] reset funcional |
+| Señal           | Origen                   |
+|-----------------|--------------------------|
+| `capture`       | `IF/ID Update Control`   |
+| `hold`          | `IF/ID Update Control`   |
+| `invalidate`    | `IF/ID Update Control`   |
+| clear de sesión | `Session Preparation`    |
+| `reset`         | [GLOBAL] reset funcional |
 
 #### Salidas
 
-| Campo | Destino |
-|---|---|
-| `valid` | `ID Fault Check` |
-| `valid` | `Load-Use Detector` |
-| `valid` | entrada `ID/EX.valid` |
-| `pc[31:0]` | `ID Fault Check` |
-| `pc[31:0]` | entrada `ID/EX.pc` |
-| `instruction[31:0]` | `Decoder` |
-| `instruction[31:0]` | `Immediate Generator` |
-| `instruction[19:15]` | `Registers.Read Register 1` |
-| `instruction[24:20]` | `Registers.Read Register 2` |
-| `instruction[19:15]` | `Load-Use Detector` |
-| `instruction[24:20]` | `Load-Use Detector` |
-| `instruction[19:15]` | `WB Bypass Control` |
-| `instruction[24:20]` | `WB Bypass Control` |
-| `instruction[31:0]` | entrada `ID/EX.instruction` |
-| `instruction[19:15]` | entrada `ID/EX.rs1` |
-| `instruction[24:20]` | entrada `ID/EX.rs2` |
-| `instruction[11:7]` | entrada `ID/EX.rd` |
-| `fetch_fault_valid` | `ID Fault Check` |
-| `fetch_fault_cause[2:0]` | `ID Fault Check` |
+| Campo                    | Destino                     |
+|--------------------------|-----------------------------|
+| `valid`                  | `ID Fault Check`            |
+| `valid`                  | `Load-Use Detector`         |
+| `valid`                  | entrada `ID/EX.valid`       |
+| `pc[31:0]`               | `ID Fault Check`            |
+| `pc[31:0]`               | entrada `ID/EX.pc`          |
+| `instruction[31:0]`      | `Decoder`                   |
+| `instruction[31:0]`      | `Immediate Generator`       |
+| `instruction[19:15]`     | `Registers.Read Register 1` |
+| `instruction[24:20]`     | `Registers.Read Register 2` |
+| `instruction[19:15]`     | `Load-Use Detector`         |
+| `instruction[24:20]`     | `Load-Use Detector`         |
+| `instruction[19:15]`     | `WB Bypass Control`         |
+| `instruction[24:20]`     | `WB Bypass Control`         |
+| `instruction[31:0]`      | entrada `ID/EX.instruction` |
+| `instruction[19:15]`     | entrada `ID/EX.rs1`         |
+| `instruction[24:20]`     | entrada `ID/EX.rs2`         |
+| `instruction[11:7]`      | entrada `ID/EX.rd`          |
+| `fetch_fault_valid`      | `ID Fault Check`            |
+| `fetch_fault_cause[2:0]` | `ID Fault Check`            |
 
 #### Conexiones de próximo estado y observación
 
-| Señal / contenido | Destino |
-|---|---|
-| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next` |
-| `valid` actual | `response_serializer.debug_ifid_valid` |
-| `pc[31:0]` actual | `response_serializer.debug_ifid_pc[31:0]` |
-| `instruction[31:0]` actual | `response_serializer.debug_ifid_instruction[31:0]` |
-| `fetch_fault_valid` actual | `response_serializer.debug_ifid_fetch_fault_valid` |
-| `fetch_fault_cause[2:0]` actual | `response_serializer.debug_ifid_fetch_fault_cause[2:0]` |
+| Señal / contenido                   | Destino                                                 |
+|-------------------------------------|---------------------------------------------------------|
+| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next`              |
+| `valid` actual                      | `response_serializer.debug_ifid_valid`                  |
+| `pc[31:0]` actual                   | `response_serializer.debug_ifid_pc[31:0]`               |
+| `instruction[31:0]` actual          | `response_serializer.debug_ifid_instruction[31:0]`      |
+| `fetch_fault_valid` actual          | `response_serializer.debug_ifid_fetch_fault_valid`      |
+| `fetch_fault_cause[2:0]` actual     | `response_serializer.debug_ifid_fetch_fault_cause[2:0]` |
 
 La observación de `IF/ID` usa sus campos registrados actuales, incluidos los inactivos, bajo exclusión Debug y sin copia adicional, según la [regla común de selección y avance](architecture/debug/response_serializer.md#regla-común-de-selección-y-avance) basada en `fixed_byte_index`. `next.valid` es combinacional y no se transmite. La tabla anterior conserva las conexiones propias de este registro interetapa.
 
@@ -434,23 +434,23 @@ La observación de `IF/ID` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal               | Origen  |
+|---------------------|---------|
 | `instruction[31:0]` | `IF/ID` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `decode_legal` | `ID Fault Check` |
-| `alu_op[5:0]` | `ID/EX.alu_op` |
-| `alu_src` | `ID/EX.alu_src` |
-| `result_sel[1:0]` | `ID/EX.result_sel` |
-| `flow_op[2:0]` | `ID/EX.flow_op` |
-| `mem_op[3:0]` | `ID/EX.mem_op` |
-| `reg_write` | `ID/EX.reg_write` |
-| `uses_rs1` | `Load-Use Detector` |
-| `uses_rs2` | `Load-Use Detector` |
+| Señal             | Destino             |
+|-------------------|---------------------|
+| `decode_legal`    | `ID Fault Check`    |
+| `alu_op[5:0]`     | `ID/EX.alu_op`      |
+| `alu_src`         | `ID/EX.alu_src`     |
+| `result_sel[1:0]` | `ID/EX.result_sel`  |
+| `flow_op[2:0]`    | `ID/EX.flow_op`     |
+| `mem_op[3:0]`     | `ID/EX.mem_op`      |
+| `reg_write`       | `ID/EX.reg_write`   |
+| `uses_rs1`        | `Load-Use Detector` |
+| `uses_rs2`        | `Load-Use Detector` |
 
 ---
 
@@ -466,24 +466,24 @@ La observación de `IF/ID` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `Read Register 1[4:0]` | `IF/ID.instruction[19:15]` |
-| `Read Register 2[4:0]` | `IF/ID.instruction[24:20]` |
-| `debug_rf_addr[4:0]` | `response_serializer`, registro `x0`–x31 seleccionado para Debug |
-| `rf_debug_select` (1 bit) | `Protocol Controller`, ventana exclusiva Debug |
-| `Write Register[4:0]` | `MEM/WB.rd` |
-| `Write Data[31:0]` | `MEM/WB.wb_value` |
-| `write_enable` | `WB Bypass Control.rf_write_fire` |
-| `prepare_init` | `Session Preparation`, inicialización RF simultánea |
-| `reset` | [GLOBAL] reset funcional |
+| Señal                     | Origen                                                           |
+|---------------------------|------------------------------------------------------------------|
+| `Read Register 1[4:0]`    | `IF/ID.instruction[19:15]`                                       |
+| `Read Register 2[4:0]`    | `IF/ID.instruction[24:20]`                                       |
+| `debug_rf_addr[4:0]`      | `response_serializer`, registro `x0`–x31 seleccionado para Debug |
+| `rf_debug_select` (1 bit) | `Protocol Controller`, ventana exclusiva Debug                   |
+| `Write Register[4:0]`     | `MEM/WB.rd`                                                      |
+| `Write Data[31:0]`        | `MEM/WB.wb_value`                                                |
+| `write_enable`            | `WB Bypass Control.rf_write_fire`                                |
+| `prepare_init`            | `Session Preparation`, inicialización RF simultánea              |
+| `reset`                   | [GLOBAL] reset funcional                                         |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `rf_rs1_value[31:0]` | `RS1 Bypass MUX` |
-| `rf_rs2_value[31:0]` | `RS2 Bypass MUX` |
+| Señal                 | Destino                                                                              |
+|-----------------------|--------------------------------------------------------------------------------------|
+| `rf_rs1_value[31:0]`  | `RS1 Bypass MUX`                                                                     |
+| `rf_rs2_value[31:0]`  | `RS2 Bypass MUX`                                                                     |
 | `debug_rf_data[31:0]` | [EXT] `response_serializer`, valor base de la primera lectura con Debug seleccionado |
 
 El [mux de primera lectura RF](architecture/debug/response_serializer.md#lectura-rf-compartida-con-debug), aprobado en el [acuerdo correspondiente](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--mux-cpudebug-de-la-primera-lectura-rf), reside dentro de `Registers` y selecciona números de registro de cinco bits. Con `rf_debug_select` en cero, toma `Read Register 1` CPU; con uno, `debug_rf_addr`. La dirección interna seleccionada determina también la lectura de `x0` como cero. La segunda lectura conserva su conexión CPU.
@@ -508,14 +508,14 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal               | Origen  |
+|---------------------|---------|
 | `instruction[31:0]` | `IF/ID` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino           |
+|-------------------|-------------------|
 | `immediate[31:0]` | `ID/EX.immediate` |
 
 ---
@@ -532,16 +532,16 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `rf_rs1_value[31:0]` | `Registers` |
-| `MEM/WB.wb_value[31:0]` | `MEM/WB` |
-| `bypass_rs1` | `WB Bypass Control` |
+| Señal                   | Origen              |
+|-------------------------|---------------------|
+| `rf_rs1_value[31:0]`    | `Registers`         |
+| `MEM/WB.wb_value[31:0]` | `MEM/WB`            |
+| `bypass_rs1`            | `WB Bypass Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino           |
+|-------------------|-------------------|
 | `rs1_value[31:0]` | `ID/EX.rs1_value` |
 
 ---
@@ -558,16 +558,16 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `rf_rs2_value[31:0]` | `Registers` |
-| `MEM/WB.wb_value[31:0]` | `MEM/WB` |
-| `bypass_rs2` | `WB Bypass Control` |
+| Señal                   | Origen              |
+|-------------------------|---------------------|
+| `rf_rs2_value[31:0]`    | `Registers`         |
+| `MEM/WB.wb_value[31:0]` | `MEM/WB`            |
+| `bypass_rs2`            | `WB Bypass Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino           |
+|-------------------|-------------------|
 | `rs2_value[31:0]` | `ID/EX.rs2_value` |
 
 ---
@@ -584,22 +584,22 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `cpu_cycle_fire` | `Execution Control` |
-| `MEM/WB.valid` | `MEM/WB` |
-| `MEM/WB.reg_write` | `MEM/WB` |
-| `MEM/WB.rd[4:0]` | `MEM/WB` |
-| `IF/ID.instruction[19:15]` | `IF/ID` |
-| `IF/ID.instruction[24:20]` | `IF/ID` |
+| Señal                      | Origen              |
+|----------------------------|---------------------|
+| `cpu_cycle_fire`           | `Execution Control` |
+| `MEM/WB.valid`             | `MEM/WB`            |
+| `MEM/WB.reg_write`         | `MEM/WB`            |
+| `MEM/WB.rd[4:0]`           | `MEM/WB`            |
+| `IF/ID.instruction[19:15]` | `IF/ID`             |
+| `IF/ID.instruction[24:20]` | `IF/ID`             |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal           | Destino                  |
+|-----------------|--------------------------|
 | `rf_write_fire` | `Registers.write_enable` |
-| `bypass_rs1` | `RS1 Bypass MUX.sel` |
-| `bypass_rs2` | `RS2 Bypass MUX.sel` |
+| `bypass_rs1`    | `RS1 Bypass MUX.sel`     |
+| `bypass_rs2`    | `RS2 Bypass MUX.sel`     |
 
 ---
 
@@ -615,21 +615,21 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `IF/ID.valid` | `IF/ID` |
-| `IF/ID.pc[31:0]` | `IF/ID` |
-| `IF/ID.fetch_fault_valid` | `IF/ID` |
-| `IF/ID.fetch_fault_cause[2:0]` | `IF/ID` |
-| `decode_legal` | `Decoder` |
+| Señal                          | Origen    |
+|--------------------------------|-----------|
+| `IF/ID.valid`                  | `IF/ID`   |
+| `IF/ID.pc[31:0]`               | `IF/ID`   |
+| `IF/ID.fetch_fault_valid`      | `IF/ID`   |
+| `IF/ID.fetch_fault_cause[2:0]` | `IF/ID`   |
+| `decode_legal`                 | `Decoder` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `id_fault_candidate` | `Pipeline Hazard Control` |
-| `id_fault_cause[2:0]` | `Fault Metadata Control` |
-| `id_fault_pc[31:0]` | `Fault Metadata Control` |
+| Señal                 | Destino                   |
+|-----------------------|---------------------------|
+| `id_fault_candidate`  | `Pipeline Hazard Control` |
+| `id_fault_cause[2:0]` | `Fault Metadata Control`  |
+| `id_fault_pc[31:0]`   | `Fault Metadata Control`  |
 
 ---
 
@@ -645,21 +645,21 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `IF/ID.valid` | `IF/ID` |
-| `rs1[4:0]` | `IF/ID.instruction[19:15]` |
-| `rs2[4:0]` | `IF/ID.instruction[24:20]` |
-| `uses_rs1` | `Decoder` |
-| `uses_rs2` | `Decoder` |
-| `ID/EX.valid` | `ID/EX` |
-| `ID/EX.rd[4:0]` | `ID/EX` |
-| `ID/EX.mem_op[3:0]` | `ID/EX` |
+| Señal               | Origen                     |
+|---------------------|----------------------------|
+| `IF/ID.valid`       | `IF/ID`                    |
+| `rs1[4:0]`          | `IF/ID.instruction[19:15]` |
+| `rs2[4:0]`          | `IF/ID.instruction[24:20]` |
+| `uses_rs1`          | `Decoder`                  |
+| `uses_rs2`          | `Decoder`                  |
+| `ID/EX.valid`       | `ID/EX`                    |
+| `ID/EX.rd[4:0]`     | `ID/EX`                    |
+| `ID/EX.mem_op[3:0]` | `ID/EX`                    |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal            | Destino                   |
+|------------------|---------------------------|
 | `load_use_stall` | `Pipeline Hazard Control` |
 
 ---
@@ -678,23 +678,23 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 Todas provienen de `Pipeline Hazard Control`.
 
-| Señal |
-|---|
-| `act_ex_fault` |
-| `act_halt` |
-| `act_redirect` |
-| `act_id_fault` |
-| `act_load_use` |
-| `act_normal` |
+| Señal                |
+|----------------------|
+| `act_ex_fault`       |
+| `act_halt`           |
+| `act_redirect`       |
+| `act_id_fault`       |
+| `act_load_use`       |
+| `act_normal`         |
 | `act_drain_load_use` |
-| `act_drain_advance` |
+| `act_drain_advance`  |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal     | Destino         |
+|-----------|-----------------|
 | `capture` | `ID/EX.capture` |
-| `bubble` | `ID/EX.bubble` |
+| `bubble`  | `ID/EX.bubble`  |
 
 ---
 
@@ -710,87 +710,87 @@ Todas provienen de `Pipeline Hazard Control`.
 
 #### Entradas de datos
 
-| Campo | Origen |
-|---|---|
-| `valid` | `IF/ID.valid` |
-| `pc[31:0]` | `IF/ID.pc` |
-| `instruction[31:0]` | `IF/ID.instruction` |
-| `rs1[4:0]` | `IF/ID.instruction[19:15]` |
-| `rs2[4:0]` | `IF/ID.instruction[24:20]` |
-| `rd[4:0]` | `IF/ID.instruction[11:7]` |
-| `rs1_value[31:0]` | `RS1 Bypass MUX` |
-| `rs2_value[31:0]` | `RS2 Bypass MUX` |
-| `immediate[31:0]` | `Immediate Generator` |
-| `alu_op[5:0]` | `Decoder` |
-| `alu_src` | `Decoder` |
-| `result_sel[1:0]` | `Decoder` |
-| `flow_op[2:0]` | `Decoder` |
-| `mem_op[3:0]` | `Decoder` |
-| `reg_write` | `Decoder` |
+| Campo               | Origen                     |
+|---------------------|----------------------------|
+| `valid`             | `IF/ID.valid`              |
+| `pc[31:0]`          | `IF/ID.pc`                 |
+| `instruction[31:0]` | `IF/ID.instruction`        |
+| `rs1[4:0]`          | `IF/ID.instruction[19:15]` |
+| `rs2[4:0]`          | `IF/ID.instruction[24:20]` |
+| `rd[4:0]`           | `IF/ID.instruction[11:7]`  |
+| `rs1_value[31:0]`   | `RS1 Bypass MUX`           |
+| `rs2_value[31:0]`   | `RS2 Bypass MUX`           |
+| `immediate[31:0]`   | `Immediate Generator`      |
+| `alu_op[5:0]`       | `Decoder`                  |
+| `alu_src`           | `Decoder`                  |
+| `result_sel[1:0]`   | `Decoder`                  |
+| `flow_op[2:0]`      | `Decoder`                  |
+| `mem_op[3:0]`       | `Decoder`                  |
+| `reg_write`         | `Decoder`                  |
 
 #### Entradas de control
 
-| Señal | Origen |
-|---|---|
-| `capture` | `ID/EX Update Control` |
-| `bubble` | `ID/EX Update Control` |
-| clear de sesión | `Session Preparation` |
-| `reset` | [GLOBAL] reset funcional |
+| Señal           | Origen                   |
+|-----------------|--------------------------|
+| `capture`       | `ID/EX Update Control`   |
+| `bubble`        | `ID/EX Update Control`   |
+| clear de sesión | `Session Preparation`    |
+| `reset`         | [GLOBAL] reset funcional |
 
 #### Salidas
 
-| Campo | Destino |
-|---|---|
-| `valid` | `Forwarding Unit` |
-| `valid` | `Load-Use Detector` |
-| `valid` | `Flow Control` |
-| `valid` | `EX Fault Check` |
-| `valid` | `EX/MEM.valid` |
-| `pc[31:0]` | `Link Adder` |
-| `pc[31:0]` | `Target Adder` |
-| `pc[31:0]` | `EX/MEM.pc` |
-| `pc[31:0]` | `Fault Metadata Control` para fault EX |
-| `instruction[31:0]` | `Forwarding Unit` |
-| `instruction[31:0]` | `EX/MEM.instruction` |
-| `rs1[4:0]` | `Forwarding Unit` |
-| `rs2[4:0]` | `Forwarding Unit` |
-| `rd[4:0]` | `Load-Use Detector` |
-| `rd[4:0]` | `EX/MEM.rd` |
-| `rs1_value[31:0]` | `Forward MUX A` |
-| `rs2_value[31:0]` | `Forward MUX B` |
-| `immediate[31:0]` | `ALUSrc MUX` |
-| `immediate[31:0]` | `Result MUX` |
-| `immediate[31:0]` | `Target Adder` |
-| `immediate[31:0]` | `JALR Adder` |
-| `immediate[31:0]` | `EX Fault Check` |
-| `alu_op[5:0]` | `ALU` |
-| `alu_src` | `ALUSrc MUX.sel` |
-| `result_sel[1:0]` | `Result MUX.sel` |
-| `flow_op[2:0]` | `Flow Control` |
-| `mem_op[3:0]` | `EX Fault Check` |
-| `mem_op[3:0]` | `EX/MEM.mem_op` |
-| `reg_write` | `EX/MEM.reg_write` |
+| Campo               | Destino                                |
+|---------------------|----------------------------------------|
+| `valid`             | `Forwarding Unit`                      |
+| `valid`             | `Load-Use Detector`                    |
+| `valid`             | `Flow Control`                         |
+| `valid`             | `EX Fault Check`                       |
+| `valid`             | `EX/MEM.valid`                         |
+| `pc[31:0]`          | `Link Adder`                           |
+| `pc[31:0]`          | `Target Adder`                         |
+| `pc[31:0]`          | `EX/MEM.pc`                            |
+| `pc[31:0]`          | `Fault Metadata Control` para fault EX |
+| `instruction[31:0]` | `Forwarding Unit`                      |
+| `instruction[31:0]` | `EX/MEM.instruction`                   |
+| `rs1[4:0]`          | `Forwarding Unit`                      |
+| `rs2[4:0]`          | `Forwarding Unit`                      |
+| `rd[4:0]`           | `Load-Use Detector`                    |
+| `rd[4:0]`           | `EX/MEM.rd`                            |
+| `rs1_value[31:0]`   | `Forward MUX A`                        |
+| `rs2_value[31:0]`   | `Forward MUX B`                        |
+| `immediate[31:0]`   | `ALUSrc MUX`                           |
+| `immediate[31:0]`   | `Result MUX`                           |
+| `immediate[31:0]`   | `Target Adder`                         |
+| `immediate[31:0]`   | `JALR Adder`                           |
+| `immediate[31:0]`   | `EX Fault Check`                       |
+| `alu_op[5:0]`       | `ALU`                                  |
+| `alu_src`           | `ALUSrc MUX.sel`                       |
+| `result_sel[1:0]`   | `Result MUX.sel`                       |
+| `flow_op[2:0]`      | `Flow Control`                         |
+| `mem_op[3:0]`       | `EX Fault Check`                       |
+| `mem_op[3:0]`       | `EX/MEM.mem_op`                        |
+| `reg_write`         | `EX/MEM.reg_write`                     |
 
 #### Conexiones de próximo estado y observación
 
-| Señal / contenido | Destino |
-|---|---|
-| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next` |
-| `valid` actual | `response_serializer.debug_idex_valid` |
-| `pc[31:0]` actual | `response_serializer.debug_idex_pc[31:0]` |
-| `instruction[31:0]` actual | `response_serializer.debug_idex_instruction[31:0]` |
-| `rs1[4:0]` actual | `response_serializer.debug_idex_rs1[4:0]` |
-| `rs2[4:0]` actual | `response_serializer.debug_idex_rs2[4:0]` |
-| `rd[4:0]` actual | `response_serializer.debug_idex_rd[4:0]` |
-| `rs1_value[31:0]` actual | `response_serializer.debug_idex_rs1_value[31:0]` |
-| `rs2_value[31:0]` actual | `response_serializer.debug_idex_rs2_value[31:0]` |
-| `immediate[31:0]` actual | `response_serializer.debug_idex_immediate[31:0]` |
-| `alu_op[5:0]` actual | `response_serializer.debug_idex_alu_op[5:0]` |
-| `alu_src` actual | `response_serializer.debug_idex_alu_src` |
-| `result_sel[1:0]` actual | `response_serializer.debug_idex_result_sel[1:0]` |
-| `flow_op[2:0]` actual | `response_serializer.debug_idex_flow_op[2:0]` |
-| `mem_op[3:0]` actual | `response_serializer.debug_idex_mem_op[3:0]` |
-| `reg_write` actual | `response_serializer.debug_idex_reg_write` |
+| Señal / contenido                   | Destino                                            |
+|-------------------------------------|----------------------------------------------------|
+| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next`         |
+| `valid` actual                      | `response_serializer.debug_idex_valid`             |
+| `pc[31:0]` actual                   | `response_serializer.debug_idex_pc[31:0]`          |
+| `instruction[31:0]` actual          | `response_serializer.debug_idex_instruction[31:0]` |
+| `rs1[4:0]` actual                   | `response_serializer.debug_idex_rs1[4:0]`          |
+| `rs2[4:0]` actual                   | `response_serializer.debug_idex_rs2[4:0]`          |
+| `rd[4:0]` actual                    | `response_serializer.debug_idex_rd[4:0]`           |
+| `rs1_value[31:0]` actual            | `response_serializer.debug_idex_rs1_value[31:0]`   |
+| `rs2_value[31:0]` actual            | `response_serializer.debug_idex_rs2_value[31:0]`   |
+| `immediate[31:0]` actual            | `response_serializer.debug_idex_immediate[31:0]`   |
+| `alu_op[5:0]` actual                | `response_serializer.debug_idex_alu_op[5:0]`       |
+| `alu_src` actual                    | `response_serializer.debug_idex_alu_src`           |
+| `result_sel[1:0]` actual            | `response_serializer.debug_idex_result_sel[1:0]`   |
+| `flow_op[2:0]` actual               | `response_serializer.debug_idex_flow_op[2:0]`      |
+| `mem_op[3:0]` actual                | `response_serializer.debug_idex_mem_op[3:0]`       |
+| `reg_write` actual                  | `response_serializer.debug_idex_reg_write`         |
 
 La observación de `ID/EX` usa sus campos registrados actuales, incluidos los inactivos, bajo exclusión Debug y sin copia adicional, según la [regla común de selección y avance](architecture/debug/response_serializer.md#regla-común-de-selección-y-avance) basada en `fixed_byte_index`. `next.valid` es combinacional y no se transmite. La tabla anterior conserva las conexiones propias de este registro interetapa.
 
@@ -810,24 +810,24 @@ La observación de `ID/EX` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `ID/EX.valid` | `ID/EX` |
-| `ID/EX.instruction[31:0]` | `ID/EX` |
-| `ID/EX.rs1[4:0]` | `ID/EX` |
-| `ID/EX.rs2[4:0]` | `ID/EX` |
-| `EX/MEM.valid` | `EX/MEM` |
-| `EX/MEM.rd[4:0]` | `EX/MEM` |
-| `EX/MEM.reg_write` | `EX/MEM` |
-| `EX/MEM.mem_op[3:0]` | `EX/MEM` |
-| `MEM/WB.valid` | `MEM/WB` |
-| `MEM/WB.rd[4:0]` | `MEM/WB` |
-| `MEM/WB.reg_write` | `MEM/WB` |
+| Señal                     | Origen   |
+|---------------------------|----------|
+| `ID/EX.valid`             | `ID/EX`  |
+| `ID/EX.instruction[31:0]` | `ID/EX`  |
+| `ID/EX.rs1[4:0]`          | `ID/EX`  |
+| `ID/EX.rs2[4:0]`          | `ID/EX`  |
+| `EX/MEM.valid`            | `EX/MEM` |
+| `EX/MEM.rd[4:0]`          | `EX/MEM` |
+| `EX/MEM.reg_write`        | `EX/MEM` |
+| `EX/MEM.mem_op[3:0]`      | `EX/MEM` |
+| `MEM/WB.valid`            | `MEM/WB` |
+| `MEM/WB.rd[4:0]`          | `MEM/WB` |
+| `MEM/WB.reg_write`        | `MEM/WB` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal                | Destino             |
+|----------------------|---------------------|
 | `forward_a_sel[1:0]` | `Forward MUX A.sel` |
 | `forward_b_sel[1:0]` | `Forward MUX B.sel` |
 
@@ -845,19 +845,19 @@ La observación de `ID/EX` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| base `ID/EX.rs1_value[31:0]` | `ID/EX` |
-| `EX/MEM.ex_result[31:0]` | `EX/MEM` |
-| `MEM/WB.wb_value[31:0]` | `MEM/WB` |
-| `forward_a_sel[1:0]` | `Forwarding Unit` |
+| Señal                        | Origen            |
+|------------------------------|-------------------|
+| base `ID/EX.rs1_value[31:0]` | `ID/EX`           |
+| `EX/MEM.ex_result[31:0]`     | `EX/MEM`          |
+| `MEM/WB.wb_value[31:0]`      | `MEM/WB`          |
+| `forward_a_sel[1:0]`         | `Forwarding Unit` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `rs1_effective[31:0]` | `ALU.A` |
-| `rs1_effective[31:0]` | `JALR Adder` |
+| Señal                 | Destino          |
+|-----------------------|------------------|
+| `rs1_effective[31:0]` | `ALU.A`          |
+| `rs1_effective[31:0]` | `JALR Adder`     |
 | `rs1_effective[31:0]` | `EX Fault Check` |
 
 ---
@@ -874,18 +874,18 @@ La observación de `ID/EX` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| base `ID/EX.rs2_value[31:0]` | `ID/EX` |
-| `EX/MEM.ex_result[31:0]` | `EX/MEM` |
-| `MEM/WB.wb_value[31:0]` | `MEM/WB` |
-| `forward_b_sel[1:0]` | `Forwarding Unit` |
+| Señal                        | Origen            |
+|------------------------------|-------------------|
+| base `ID/EX.rs2_value[31:0]` | `ID/EX`           |
+| `EX/MEM.ex_result[31:0]`     | `EX/MEM`          |
+| `MEM/WB.wb_value[31:0]`      | `MEM/WB`          |
+| `forward_b_sel[1:0]`         | `Forwarding Unit` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `rs2_effective[31:0]` | `ALUSrc MUX` |
+| Señal                 | Destino             |
+|-----------------------|---------------------|
+| `rs2_effective[31:0]` | `ALUSrc MUX`        |
 | `rs2_effective[31:0]` | `EX/MEM.store_data` |
 
 ---
@@ -902,16 +902,16 @@ La observación de `ID/EX` usa sus campos registrados actuales, incluidos los in
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `rs2_effective[31:0]` | `Forward MUX B` |
-| `ID/EX.immediate[31:0]` | `ID/EX` |
-| `alu_src` | `ID/EX` |
+| Señal                   | Origen          |
+|-------------------------|-----------------|
+| `rs2_effective[31:0]`   | `Forward MUX B` |
+| `ID/EX.immediate[31:0]` | `ID/EX`         |
+| `alu_src`               | `ID/EX`         |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal                 | Destino |
+|-----------------------|---------|
 | `alu_operand_b[31:0]` | `ALU.B` |
 
 ---
@@ -935,18 +935,18 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `A[31:0]` | `Forward MUX A.rs1_effective` |
-| `B[31:0]` | `ALUSrc MUX.alu_operand_b` |
-| `alu_op[5:0]` | `ID/EX` |
+| Señal         | Origen                        |
+|---------------|-------------------------------|
+| `A[31:0]`     | `Forward MUX A.rs1_effective` |
+| `B[31:0]`     | `ALUSrc MUX.alu_operand_b`    |
+| `alu_op[5:0]` | `ID/EX`                       |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `alu_result[31:0]` | `Result MUX` |
-| `zero` | `Flow Control` |
+| Señal              | Destino        |
+|--------------------|----------------|
+| `alu_result[31:0]` | `Result MUX`   |
+| `zero`             | `Flow Control` |
 
 ---
 
@@ -962,14 +962,14 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal            | Origen  |
+|------------------|---------|
 | `ID/EX.pc[31:0]` | `ID/EX` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal                       | Destino      |
+|-----------------------------|--------------|
 | `link_value[31:0] = pc + 4` | `Result MUX` |
 
 ---
@@ -986,17 +986,17 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `alu_result[31:0]` | `ALU` |
-| `immediate[31:0]` | `ID/EX` |
+| Señal              | Origen       |
+|--------------------|--------------|
+| `alu_result[31:0]` | `ALU`        |
+| `immediate[31:0]`  | `ID/EX`      |
 | `link_value[31:0]` | `Link Adder` |
-| `result_sel[1:0]` | `ID/EX` |
+| `result_sel[1:0]`  | `ID/EX`      |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal             | Destino            |
+|-------------------|--------------------|
 | `ex_result[31:0]` | `EX/MEM.ex_result` |
 
 ---
@@ -1013,15 +1013,15 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `ID/EX.pc[31:0]` | `ID/EX` |
+| Señal                   | Origen  |
+|-------------------------|---------|
+| `ID/EX.pc[31:0]`        | `ID/EX` |
 | `ID/EX.immediate[31:0]` | `ID/EX` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal                      | Destino      |
+|----------------------------|--------------|
 | `pc_relative_target[31:0]` | `Target MUX` |
 
 ---
@@ -1038,15 +1038,15 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `rs1_effective[31:0]` | `Forward MUX A` |
-| `ID/EX.immediate[31:0]` | `ID/EX` |
+| Señal                   | Origen          |
+|-------------------------|-----------------|
+| `rs1_effective[31:0]`   | `Forward MUX A` |
+| `ID/EX.immediate[31:0]` | `ID/EX`         |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal            | Destino       |
+|------------------|---------------|
 | `jalr_sum[31:0]` | `Clear bit 0` |
 
 ---
@@ -1063,14 +1063,14 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal            | Origen       |
+|------------------|--------------|
 | `jalr_sum[31:0]` | `JALR Adder` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal               | Destino      |
+|---------------------|--------------|
 | `jalr_target[31:0]` | `Target MUX` |
 
 ---
@@ -1087,17 +1087,17 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal                      | Origen         |
+|----------------------------|----------------|
 | `pc_relative_target[31:0]` | `Target Adder` |
-| `jalr_target[31:0]` | `Clear bit 0` |
-| `target_sel` | `Flow Control` |
+| `jalr_target[31:0]`        | `Clear bit 0`  |
+| `target_sel`               | `Flow Control` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `redirect_target[31:0]` | `Next PC MUX` |
+| Señal                   | Destino          |
+|-------------------------|------------------|
+| `redirect_target[31:0]` | `Next PC MUX`    |
 | `redirect_target[31:0]` | `EX Fault Check` |
 
 ---
@@ -1114,20 +1114,20 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `ID/EX.valid` | `ID/EX` |
+| Señal                | Origen  |
+|----------------------|---------|
+| `ID/EX.valid`        | `ID/EX` |
 | `ID/EX.flow_op[2:0]` | `ID/EX` |
-| `ALU.zero` | `ALU` |
+| `ALU.zero`           | `ALU`   |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `target_sel` | `Target MUX.sel` |
-| `redirect_requested` | `EX Fault Check` |
+| Señal                | Destino                   |
+|----------------------|---------------------------|
+| `target_sel`         | `Target MUX.sel`          |
+| `redirect_requested` | `EX Fault Check`          |
 | `redirect_requested` | `Pipeline Hazard Control` |
-| `ex_halt_candidate` | `Pipeline Hazard Control` |
+| `ex_halt_candidate`  | `Pipeline Hazard Control` |
 
 ---
 
@@ -1143,22 +1143,22 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `ID/EX.valid` | `ID/EX` |
-| `ID/EX.mem_op[3:0]` | `ID/EX` |
-| `rs1_effective[31:0]` | `Forward MUX A` |
-| `ID/EX.immediate[31:0]` | `ID/EX` |
-| `redirect_requested` | `Flow Control` |
-| `redirect_target[31:0]` | `Target MUX` |
-| `DMEM_CAPACITY_BYTES` | [CFG] configuración de memoria |
+| Señal                   | Origen                         |
+|-------------------------|--------------------------------|
+| `ID/EX.valid`           | `ID/EX`                        |
+| `ID/EX.mem_op[3:0]`     | `ID/EX`                        |
+| `rs1_effective[31:0]`   | `Forward MUX A`                |
+| `ID/EX.immediate[31:0]` | `ID/EX`                        |
+| `redirect_requested`    | `Flow Control`                 |
+| `redirect_target[31:0]` | `Target MUX`                   |
+| `DMEM_CAPACITY_BYTES`   | [CFG] configuración de memoria |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `ex_fault_candidate` | `Pipeline Hazard Control` |
-| `ex_fault_cause[2:0]` | `Fault Metadata Control` |
+| Señal                 | Destino                   |
+|-----------------------|---------------------------|
+| `ex_fault_candidate`  | `Pipeline Hazard Control` |
+| `ex_fault_cause[2:0]` | `Fault Metadata Control`  |
 
 ---
 
@@ -1176,22 +1176,22 @@ En `SUB`, `zero` expresa igualdad entre los operandos efectivos para `BEQ`/`BNE`
 
 Todas provienen de `Pipeline Hazard Control`.
 
-| Señal |
-|---|
-| `act_ex_fault` |
-| `act_halt` |
-| `act_redirect` |
-| `act_id_fault` |
-| `act_load_use` |
-| `act_normal` |
+| Señal                |
+|----------------------|
+| `act_ex_fault`       |
+| `act_halt`           |
+| `act_redirect`       |
+| `act_id_fault`       |
+| `act_load_use`       |
+| `act_normal`         |
 | `act_drain_load_use` |
-| `act_drain_advance` |
+| `act_drain_advance`  |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `capture` | `EX/MEM.capture` |
+| Señal        | Destino             |
+|--------------|---------------------|
+| `capture`    | `EX/MEM.capture`    |
 | `invalidate` | `EX/MEM.invalidate` |
 
 ---
@@ -1208,62 +1208,62 @@ Todas provienen de `Pipeline Hazard Control`.
 
 #### Entradas de datos
 
-| Campo | Origen |
-|---|---|
-| `valid` | `ID/EX.valid` |
-| `pc[31:0]` | `ID/EX.pc` |
-| `instruction[31:0]` | `ID/EX.instruction` |
-| `rd[4:0]` | `ID/EX.rd` |
-| `reg_write` | `ID/EX.reg_write` |
-| `mem_op[3:0]` | `ID/EX.mem_op` |
-| `ex_result[31:0]` | `Result MUX` |
-| `store_data[31:0]` | `Forward MUX B.rs2_effective` |
+| Campo               | Origen                        |
+|---------------------|-------------------------------|
+| `valid`             | `ID/EX.valid`                 |
+| `pc[31:0]`          | `ID/EX.pc`                    |
+| `instruction[31:0]` | `ID/EX.instruction`           |
+| `rd[4:0]`           | `ID/EX.rd`                    |
+| `reg_write`         | `ID/EX.reg_write`             |
+| `mem_op[3:0]`       | `ID/EX.mem_op`                |
+| `ex_result[31:0]`   | `Result MUX`                  |
+| `store_data[31:0]`  | `Forward MUX B.rs2_effective` |
 
 #### Entradas de control
 
-| Señal | Origen |
-|---|---|
-| `capture` | `EX/MEM Update Control` |
-| `invalidate` | `EX/MEM Update Control` |
-| clear de sesión | `Session Preparation` |
-| `reset` | [GLOBAL] reset funcional |
+| Señal           | Origen                   |
+|-----------------|--------------------------|
+| `capture`       | `EX/MEM Update Control`  |
+| `invalidate`    | `EX/MEM Update Control`  |
+| clear de sesión | `Session Preparation`    |
+| `reset`         | [GLOBAL] reset funcional |
 
 #### Salidas
 
-| Campo | Destino |
-|---|---|
-| `valid` | `Forwarding Unit` |
-| `valid` | `DMEM Write Control` |
-| `valid` | `MEM/WB.valid` |
-| `pc[31:0]` | `MEM/WB.pc` |
-| `instruction[31:0]` | `MEM/WB.instruction` |
-| `rd[4:0]` | `Forwarding Unit` |
-| `rd[4:0]` | `MEM/WB.rd` |
-| `reg_write` | `Forwarding Unit` |
-| `reg_write` | `MEM/WB.reg_write` |
-| `mem_op[3:0]` | `Forwarding Unit` |
-| `mem_op[3:0]` | `MEM Decode` |
-| `mem_op[3:0]` | `DMEM Write Control` |
-| `ex_result[31:0]` | `Forward MUX A` |
-| `ex_result[31:0]` | `Forward MUX B` |
-| `ex_result[31:0]` | `Data Memory.Address` |
-| `ex_result[1:0]` | `Load Select/Extend.address_low_bits` |
-| `ex_result[31:0]` | `WB Value MUX` |
-| `store_data[31:0]` | `Data Memory.Write Data` |
+| Campo               | Destino                               |
+|---------------------|---------------------------------------|
+| `valid`             | `Forwarding Unit`                     |
+| `valid`             | `DMEM Write Control`                  |
+| `valid`             | `MEM/WB.valid`                        |
+| `pc[31:0]`          | `MEM/WB.pc`                           |
+| `instruction[31:0]` | `MEM/WB.instruction`                  |
+| `rd[4:0]`           | `Forwarding Unit`                     |
+| `rd[4:0]`           | `MEM/WB.rd`                           |
+| `reg_write`         | `Forwarding Unit`                     |
+| `reg_write`         | `MEM/WB.reg_write`                    |
+| `mem_op[3:0]`       | `Forwarding Unit`                     |
+| `mem_op[3:0]`       | `MEM Decode`                          |
+| `mem_op[3:0]`       | `DMEM Write Control`                  |
+| `ex_result[31:0]`   | `Forward MUX A`                       |
+| `ex_result[31:0]`   | `Forward MUX B`                       |
+| `ex_result[31:0]`   | `Data Memory.Address`                 |
+| `ex_result[1:0]`    | `Load Select/Extend.address_low_bits` |
+| `ex_result[31:0]`   | `WB Value MUX`                        |
+| `store_data[31:0]`  | `Data Memory.Write Data`              |
 
 #### Conexiones de próximo estado y observación
 
-| Señal / contenido | Destino |
-|---|---|
-| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next` |
-| `valid` actual | `response_serializer.debug_exmem_valid` |
-| `pc[31:0]` actual | `response_serializer.debug_exmem_pc[31:0]` |
-| `instruction[31:0]` actual | `response_serializer.debug_exmem_instruction[31:0]` |
-| `rd[4:0]` actual | `response_serializer.debug_exmem_rd[4:0]` |
-| `reg_write` actual | `response_serializer.debug_exmem_reg_write` |
-| `mem_op[3:0]` actual | `response_serializer.debug_exmem_mem_op[3:0]` |
-| `ex_result[31:0]` actual | `response_serializer.debug_exmem_ex_result[31:0]` |
-| `store_data[31:0]` actual | `response_serializer.debug_exmem_store_data[31:0]` |
+| Señal / contenido                   | Destino                                             |
+|-------------------------------------|-----------------------------------------------------|
+| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next`          |
+| `valid` actual                      | `response_serializer.debug_exmem_valid`             |
+| `pc[31:0]` actual                   | `response_serializer.debug_exmem_pc[31:0]`          |
+| `instruction[31:0]` actual          | `response_serializer.debug_exmem_instruction[31:0]` |
+| `rd[4:0]` actual                    | `response_serializer.debug_exmem_rd[4:0]`           |
+| `reg_write` actual                  | `response_serializer.debug_exmem_reg_write`         |
+| `mem_op[3:0]` actual                | `response_serializer.debug_exmem_mem_op[3:0]`       |
+| `ex_result[31:0]` actual            | `response_serializer.debug_exmem_ex_result[31:0]`   |
+| `store_data[31:0]` actual           | `response_serializer.debug_exmem_store_data[31:0]`  |
 
 La observación de `EX/MEM` usa sus campos registrados actuales, incluidos los inactivos, bajo exclusión Debug y sin copia adicional, según la [regla común de selección y avance](architecture/debug/response_serializer.md#regla-común-de-selección-y-avance) basada en `fixed_byte_index`. `next.valid` es combinacional y no se transmite. La tabla anterior conserva las conexiones propias de este registro interetapa.
 
@@ -1283,23 +1283,23 @@ La observación de `EX/MEM` usa sus campos registrados actuales, incluidos los i
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
+| Señal                | Origen   |
+|----------------------|----------|
 | `EX/MEM.mem_op[3:0]` | `EX/MEM` |
 
 #### Salidas externas necesarias
 
-| Señal | Destino |
-|---|---|
-| `is_store` | `DMEM Write Control` |
+| Señal              | Destino              |
+|--------------------|----------------------|
+| `is_store`         | `DMEM Write Control` |
 | `access_size[1:0]` | `Load Select/Extend` |
-| `load_unsigned` | `Load Select/Extend` |
-| `wb_value_sel` | `WB Value MUX.sel` |
+| `load_unsigned`    | `Load Select/Extend` |
+| `wb_value_sel`     | `WB Value MUX.sel`   |
 
 #### Señal derivada interna
 
-| Señal | Uso |
-|---|---|
+| Señal     | Uso                                                                                                                  |
+|-----------|----------------------------------------------------------------------------------------------------------------------|
 | `is_load` | Se usa internamente para derivar `wb_value_sel`; no necesita ser un puerto externo si ningún otro bloque la consume. |
 
 > `is_load` se mantiene interno cuando solo deriva `wb_value_sel`. Una salida adicional requiere un consumidor explícito; no se agrega aquí un pulso de acceso ni un campo registrado.
@@ -1318,27 +1318,27 @@ La observación de `EX/MEM` usa sus campos registrados actuales, incluidos los i
 
 #### Entradas CPU
 
-| Señal | Origen |
-|---|---|
-| `Address[31:0]` | `EX/MEM.ex_result` |
-| `Write Data[31:0]` | `EX/MEM.store_data` |
-| `write_enable` | `DMEM Write Control.dmem_store_fire` |
-| `byte_enable[3:0]` | `DMEM Write Control.byte_enable[3:0]` |
-| `DMEM_CAPACITY_BYTES` | [CFG] perfil autoritativo |
+| Señal                 | Origen                                |
+|-----------------------|---------------------------------------|
+| `Address[31:0]`       | `EX/MEM.ex_result`                    |
+| `Write Data[31:0]`    | `EX/MEM.store_data`                   |
+| `write_enable`        | `DMEM Write Control.dmem_store_fire`  |
+| `byte_enable[3:0]`    | `DMEM Write Control.byte_enable[3:0]` |
+| `DMEM_CAPACITY_BYTES` | [CFG] perfil autoritativo             |
 
 #### Entradas de mantenimiento
 
-| Señal | Origen |
-|---|---|
-| `prepare_dmem_clear` | `Session Preparation`, un bit, limpiar marca seleccionada |
-| `prepare_dmem_addr` | `Session Preparation`, `BYTE_ADDRESS_WIDTH`, dirección de byte |
+| Señal                | Origen                                                         |
+|----------------------|----------------------------------------------------------------|
+| `prepare_dmem_clear` | `Session Preparation`, un bit, limpiar marca seleccionada      |
+| `prepare_dmem_addr`  | `Session Preparation`, `BYTE_ADDRESS_WIDTH`, dirección de byte |
 
 #### Entrada de consulta Debug
 
-| Señal | Ancho | Origen |
-|---|---|---|
-| `debug_dmem_addr` | max(1, ceil(log2(`DMEM_CAPACITY_BYTES`))) | Registro de dirección de recorrido de `response_serializer`: 11 bits en `REFERENCE` y diez en `ALT_1000` |
-| `dmem_debug_select` | 1 | `Protocol Controller`: selecciona lectura Debug durante su ventana exclusiva |
+| Señal               | Ancho                                     | Origen                                                                                                   |
+|---------------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `debug_dmem_addr`   | max(1, ceil(log2(`DMEM_CAPACITY_BYTES`))) | Registro de dirección de recorrido de `response_serializer`: 11 bits en `REFERENCE` y diez en `ALT_1000` |
+| `dmem_debug_select` | 1                                         | `Protocol Controller`: selecciona lectura Debug durante su ventana exclusiva                             |
 
 La [consulta Debug de DMEM](architecture/debug/response_serializer.md#señales-de-consulta-de-dmem) utiliza la dirección de byte seleccionada para devolver valor y metadatos de esa misma posición.
 
@@ -1350,10 +1350,10 @@ Los controles de consumo del serializador están definidos en §15.12; la genera
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `mem_read_data[31:0]` | `Load Select/Extend` |
-| `debug_dmem_data[7:0]` | [EXT] `response_serializer`, valor del byte seleccionado |
+| Señal                     | Destino                                                                     |
+|---------------------------|-----------------------------------------------------------------------------|
+| `mem_read_data[31:0]`     | `Load Select/Extend`                                                        |
+| `debug_dmem_data[7:0]`    | [EXT] `response_serializer`, valor del byte seleccionado                    |
 | `debug_dmem_used` (1 bit) | [EXT] `response_serializer`, metadatos de utilización del byte seleccionado |
 
 El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--señales-de-consulta-debug-de-dmem) fija esos tres puertos. El conteo consume solo el indicador de utilizado. En la lista, un indicador cero omite la posición e ignora su valor; uno permite producir dirección y valor, incluidos ceros escritos. La observación conserva cero lógico y ownership de DMEM; CPU y mantenimiento no modifican el estado durante la exclusión Debug.
@@ -1372,17 +1372,17 @@ El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `mem_read_data[31:0]` | `Data Memory` |
+| Señal                   | Origen                  |
+|-------------------------|-------------------------|
+| `mem_read_data[31:0]`   | `Data Memory`           |
 | `address_low_bits[1:0]` | `EX/MEM.ex_result[1:0]` |
-| `access_size[1:0]` | `MEM Decode` |
-| `load_unsigned` | `MEM Decode` |
+| `access_size[1:0]`      | `MEM Decode`            |
+| `load_unsigned`         | `MEM Decode`            |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal              | Destino        |
+|--------------------|----------------|
 | `load_value[31:0]` | `WB Value MUX` |
 
 ---
@@ -1399,16 +1399,16 @@ El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `EX/MEM.ex_result[31:0]` | `EX/MEM` |
-| `load_value[31:0]` | `Load Select/Extend` |
-| `wb_value_sel` | `MEM Decode` |
+| Señal                    | Origen               |
+|--------------------------|----------------------|
+| `EX/MEM.ex_result[31:0]` | `EX/MEM`             |
+| `load_value[31:0]`       | `Load Select/Extend` |
+| `wb_value_sel`           | `MEM Decode`         |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal            | Destino           |
+|------------------|-------------------|
 | `wb_value[31:0]` | `MEM/WB.wb_value` |
 
 ---
@@ -1425,19 +1425,19 @@ El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `cpu_cycle_fire` | `Execution Control` |
-| `EX/MEM.valid` | `EX/MEM` |
-| `is_store` | `MEM Decode` |
-| `EX/MEM.mem_op[3:0]` | `EX/MEM` |
+| Señal                | Origen              |
+|----------------------|---------------------|
+| `cpu_cycle_fire`     | `Execution Control` |
+| `EX/MEM.valid`       | `EX/MEM`            |
+| `is_store`           | `MEM Decode`        |
+| `EX/MEM.mem_op[3:0]` | `EX/MEM`            |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `dmem_store_fire` / `write_enable` | `Data Memory.write_enable` |
-| `byte_enable[3:0]` | `Data Memory.byte_enable[3:0]` |
+| Señal                              | Destino                        |
+|------------------------------------|--------------------------------|
+| `dmem_store_fire` / `write_enable` | `Data Memory.write_enable`     |
+| `byte_enable[3:0]`                 | `Data Memory.byte_enable[3:0]` |
 
 `byte_enable[3:0]` genera 0001/0011/1111 para `SB`/`SH`/`SW` y 0000 para otros `mem_op`. DMEM aplica `EX/MEM.ex_result[1:0]` para desplazar máscara y dato: `SB` en A escribe `store_data[7:0]` en la posición A, incluso en lane 3. Adaptación a lanes aprobada y combinacional; ningún byte/marca no seleccionado cambia. [Acuerdo de escritura](decisions/DEC-ARCH-006.md#acuerdo-de-concreción-de-dec-arch-006--máscara-y-alineación-de-escritura-dmem).
 
@@ -1459,21 +1459,21 @@ El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007
 
 Todas provienen de `Pipeline Hazard Control`.
 
-| Señal |
-|---|
-| `act_ex_fault` |
-| `act_halt` |
-| `act_redirect` |
-| `act_id_fault` |
-| `act_load_use` |
-| `act_normal` |
+| Señal                |
+|----------------------|
+| `act_ex_fault`       |
+| `act_halt`           |
+| `act_redirect`       |
+| `act_id_fault`       |
+| `act_load_use`       |
+| `act_normal`         |
 | `act_drain_load_use` |
-| `act_drain_advance` |
+| `act_drain_advance`  |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal     | Destino          |
+|-----------|------------------|
 | `capture` | `MEM/WB.capture` |
 
 ---
@@ -1490,53 +1490,53 @@ Todas provienen de `Pipeline Hazard Control`.
 
 #### Entradas de datos
 
-| Campo | Origen |
-|---|---|
-| `valid` | `EX/MEM.valid` |
-| `pc[31:0]` | `EX/MEM.pc` |
+| Campo               | Origen               |
+|---------------------|----------------------|
+| `valid`             | `EX/MEM.valid`       |
+| `pc[31:0]`          | `EX/MEM.pc`          |
 | `instruction[31:0]` | `EX/MEM.instruction` |
-| `rd[4:0]` | `EX/MEM.rd` |
-| `reg_write` | `EX/MEM.reg_write` |
-| `wb_value[31:0]` | `WB Value MUX` |
+| `rd[4:0]`           | `EX/MEM.rd`          |
+| `reg_write`         | `EX/MEM.reg_write`   |
+| `wb_value[31:0]`    | `WB Value MUX`       |
 
 #### Entradas de control
 
-| Señal | Origen |
-|---|---|
-| `capture` | `MEM/WB Update Control` |
-| clear de sesión | `Session Preparation` |
-| `reset` | [GLOBAL] reset funcional |
+| Señal           | Origen                   |
+|-----------------|--------------------------|
+| `capture`       | `MEM/WB Update Control`  |
+| clear de sesión | `Session Preparation`    |
+| `reset`         | [GLOBAL] reset funcional |
 
 #### Salidas
 
-| Campo | Destino |
-|---|---|
-| `valid` | `Forwarding Unit` |
-| `valid` | `WB Bypass Control` |
-| `rd[4:0]` | `Forwarding Unit` |
-| `rd[4:0]` | `WB Bypass Control` |
-| `rd[4:0]` | `Registers.Write Register` |
-| `reg_write` | `Forwarding Unit` |
-| `reg_write` | `WB Bypass Control` |
-| `wb_value[31:0]` | `Forward MUX A` |
-| `wb_value[31:0]` | `Forward MUX B` |
-| `wb_value[31:0]` | `RS1 Bypass MUX` |
-| `wb_value[31:0]` | `RS2 Bypass MUX` |
-| `wb_value[31:0]` | `Registers.Write Data` |
-| `pc[31:0]` | [EXT] Debug/Snapshot |
-| `instruction[31:0]` | [EXT] Debug/Snapshot |
+| Campo               | Destino                    |
+|---------------------|----------------------------|
+| `valid`             | `Forwarding Unit`          |
+| `valid`             | `WB Bypass Control`        |
+| `rd[4:0]`           | `Forwarding Unit`          |
+| `rd[4:0]`           | `WB Bypass Control`        |
+| `rd[4:0]`           | `Registers.Write Register` |
+| `reg_write`         | `Forwarding Unit`          |
+| `reg_write`         | `WB Bypass Control`        |
+| `wb_value[31:0]`    | `Forward MUX A`            |
+| `wb_value[31:0]`    | `Forward MUX B`            |
+| `wb_value[31:0]`    | `RS1 Bypass MUX`           |
+| `wb_value[31:0]`    | `RS2 Bypass MUX`           |
+| `wb_value[31:0]`    | `Registers.Write Data`     |
+| `pc[31:0]`          | [EXT] Debug/Snapshot       |
+| `instruction[31:0]` | [EXT] Debug/Snapshot       |
 
 #### Conexiones de próximo estado y observación
 
-| Señal / contenido | Destino |
-|---|---|
-| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next` |
-| `valid` actual | `response_serializer.debug_memwb_valid` |
-| `pc[31:0]` actual | `response_serializer.debug_memwb_pc[31:0]` |
-| `instruction[31:0]` actual | `response_serializer.debug_memwb_instruction[31:0]` |
-| `rd[4:0]` actual | `response_serializer.debug_memwb_rd[4:0]` |
-| `reg_write` actual | `response_serializer.debug_memwb_reg_write` |
-| `wb_value[31:0]` actual | `response_serializer.debug_memwb_wb_value[31:0]` |
+| Señal / contenido                   | Destino                                             |
+|-------------------------------------|-----------------------------------------------------|
+| `next.valid` (1 bit, combinacional) | `Pipeline Empty Logic.pipeline_empty_next`          |
+| `valid` actual                      | `response_serializer.debug_memwb_valid`             |
+| `pc[31:0]` actual                   | `response_serializer.debug_memwb_pc[31:0]`          |
+| `instruction[31:0]` actual          | `response_serializer.debug_memwb_instruction[31:0]` |
+| `rd[4:0]` actual                    | `response_serializer.debug_memwb_rd[4:0]`           |
+| `reg_write` actual                  | `response_serializer.debug_memwb_reg_write`         |
+| `wb_value[31:0]` actual             | `response_serializer.debug_memwb_wb_value[31:0]`    |
 
 La observación de `MEM/WB` usa sus campos registrados actuales, incluidos los inactivos, bajo exclusión Debug y sin copia adicional, según la [regla común de selección y avance](architecture/debug/response_serializer.md#regla-común-de-selección-y-avance) basada en `fixed_byte_index`. `next.valid` es combinacional y no se transmite. La tabla anterior conserva las conexiones propias de este registro interetapa.
 
@@ -1562,28 +1562,28 @@ En drain, `load_use_stall` decide entre las dos ramas.
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `cpu_cycle_fire` | `Execution Control` |
-| `drain_mode` | `Execution Control` |
-| `ex_fault_candidate` | `EX Fault Check` |
-| `ex_halt_candidate` | `Flow Control` |
-| `redirect_requested` | `Flow Control` |
-| `id_fault_candidate` | `ID Fault Check` |
-| `load_use_stall` | `Load-Use Detector` |
+| Señal                | Origen              |
+|----------------------|---------------------|
+| `cpu_cycle_fire`     | `Execution Control` |
+| `drain_mode`         | `Execution Control` |
+| `ex_fault_candidate` | `EX Fault Check`    |
+| `ex_halt_candidate`  | `Flow Control`      |
+| `redirect_requested` | `Flow Control`      |
+| `id_fault_candidate` | `ID Fault Check`    |
+| `load_use_stall`     | `Load-Use Detector` |
 
 #### Salidas
 
-| Señal | Destinos |
-|---|---|
-| `act_ex_fault` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Fault Metadata Control` |
-| `act_halt` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Global FSM` como `halt_confirm` |
-| `act_redirect` | `PC Update Control`, `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control` |
-| `act_id_fault` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Fault Metadata Control` |
-| `act_load_use` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control` |
-| `act_normal` | `PC Update Control`, `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control` |
-| `act_drain_load_use` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control` |
-| `act_drain_advance` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control` |
+| Señal                | Destinos                                                                                                                           |
+|----------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `act_ex_fault`       | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Fault Metadata Control`         |
+| `act_halt`           | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Global FSM` como `halt_confirm` |
+| `act_redirect`       | `PC Update Control`, `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`              |
+| `act_id_fault`       | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`, `Fault Metadata Control`         |
+| `act_load_use`       | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`                                   |
+| `act_normal`         | `PC Update Control`, `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`              |
+| `act_drain_load_use` | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`                                   |
+| `act_drain_advance`  | `IF/ID Update Control`, `ID/EX Update Control`, `EX/MEM Update Control`, `MEM/WB Update Control`                                   |
 
 > No debe existir `act_if_fault_exception`.
 
@@ -1603,23 +1603,23 @@ En drain, `load_use_stall` decide entre las dos ramas.
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `act_ex_fault` | `Pipeline Hazard Control` |
-| `act_id_fault` | `Pipeline Hazard Control` |
-| `ex_fault_cause[2:0]` | `EX Fault Check` |
-| `ID/EX.pc[31:0]` | `ID/EX` |
-| `id_fault_cause[2:0]` | `ID Fault Check` |
-| `id_fault_pc[31:0]` | `ID Fault Check` |
+| Señal                 | Origen                    |
+|-----------------------|---------------------------|
+| `act_ex_fault`        | `Pipeline Hazard Control` |
+| `act_id_fault`        | `Pipeline Hazard Control` |
+| `ex_fault_cause[2:0]` | `EX Fault Check`          |
+| `ID/EX.pc[31:0]`      | `ID/EX`                   |
+| `id_fault_cause[2:0]` | `ID Fault Check`          |
+| `id_fault_pc[31:0]`   | `ID Fault Check`          |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `fault_confirm` | `Global FSM` |
-| `fault_capture_fire` | registros `fault_cause` y `fault_pc` |
-| `fault_cause_in[2:0]` | registro `fault_cause` |
-| `fault_pc_in[31:0]` | registro `fault_pc` |
+| Señal                 | Destino                              |
+|-----------------------|--------------------------------------|
+| `fault_confirm`       | `Global FSM`                         |
+| `fault_capture_fire`  | registros `fault_cause` y `fault_pc` |
+| `fault_cause_in[2:0]` | registro `fault_cause`               |
+| `fault_pc_in[31:0]`   | registro `fault_pc`                  |
 
 ---
 
@@ -1635,15 +1635,15 @@ En drain, `load_use_stall` decide entre las dos ramas.
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `fault_cause_in[2:0]` | `Fault Metadata Control` |
-| `capture` | `Fault Metadata Control.fault_capture_fire` |
+| Señal                 | Origen                                      |
+|-----------------------|---------------------------------------------|
+| `fault_cause_in[2:0]` | `Fault Metadata Control`                    |
+| `capture`             | `Fault Metadata Control.fault_capture_fire` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal              | Destino            |
+|--------------------|--------------------|
 | `fault_cause[2:0]` | [EXT] Debug/Status |
 
 ---
@@ -1660,15 +1660,15 @@ En drain, `load_use_stall` decide entre las dos ramas.
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `fault_pc_in[31:0]` | `Fault Metadata Control` |
-| `capture` | `Fault Metadata Control.fault_capture_fire` |
+| Señal               | Origen                                      |
+|---------------------|---------------------------------------------|
+| `fault_pc_in[31:0]` | `Fault Metadata Control`                    |
+| `capture`           | `Fault Metadata Control.fault_capture_fire` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal            | Destino            |
+|------------------|--------------------|
 | `fault_pc[31:0]` | [EXT] Debug/Status |
 
 ---
@@ -1688,17 +1688,17 @@ En drain, `load_use_stall` decide entre las dos ramas.
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `IF/ID.next.valid` | lógica de próximo estado de `IF/ID` |
-| `ID/EX.next.valid` | lógica de próximo estado de `ID/EX` |
+| Señal               | Origen                               |
+|---------------------|--------------------------------------|
+| `IF/ID.next.valid`  | lógica de próximo estado de `IF/ID`  |
+| `ID/EX.next.valid`  | lógica de próximo estado de `ID/EX`  |
 | `EX/MEM.next.valid` | lógica de próximo estado de `EX/MEM` |
 | `MEM/WB.next.valid` | lógica de próximo estado de `MEM/WB` |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal                 | Destino      |
+|-----------------------|--------------|
 | `pipeline_empty_next` | `Global FSM` |
 
 ---
@@ -1721,65 +1721,65 @@ En un drain alcanzable de halt queda únicamente WB: el siguiente ciclo efectivo
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `clk` | [GLOBAL] clock funcional común |
-| `reset` | [GLOBAL] reset funcional acondicionado |
-| `load_request` | `Protocol Controller` |
-| `run_request` | `Protocol Controller` |
-| `step_request` | `Protocol Controller` |
-| `load_ok` | `Loader` |
-| `load_fail` | `Loader` |
-| `prepare_done` | `Session Preparation` |
-| `halt_confirm` | `Pipeline Hazard Control.act_halt` |
-| `fault_confirm` | `Fault Metadata Control.fault_confirm` |
-| `pipeline_empty_next` | `Pipeline Empty Logic` |
+| Señal                 | Origen                                 |
+|-----------------------|----------------------------------------|
+| `clk`                 | [GLOBAL] clock funcional común         |
+| `reset`               | [GLOBAL] reset funcional acondicionado |
+| `load_request`        | `Protocol Controller`                  |
+| `run_request`         | `Protocol Controller`                  |
+| `step_request`        | `Protocol Controller`                  |
+| `load_ok`             | `Loader`                               |
+| `load_fail`           | `Loader`                               |
+| `prepare_done`        | `Session Preparation`                  |
+| `halt_confirm`        | `Pipeline Hazard Control.act_halt`     |
+| `fault_confirm`       | `Fault Metadata Control.fault_confirm` |
+| `pipeline_empty_next` | `Pipeline Empty Logic`                 |
 
 #### Salidas principales
 
-| Señal | Tipo | Destino |
-|---|---|---|
-| `command_accepted` | Mealy | `Protocol Controller` |
-| `load_start` | Mealy | `Loader` y registro local `loaded_image_size_bytes` |
-| `cpu_cycle_fire` | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, `Cycle Counter` y `Protocol Controller` |
-| `image_publish` | Mealy | registro local `loaded_image_size_bytes` |
-| `loader_active` | Moore | `Loader` |
-| `prepare_active` | Moore | `Session Preparation` y `Protocol Controller` |
-| `drain_mode` | Moore | `Pipeline Hazard Control` |
-| `load_available` | Moore | `Protocol Controller` |
-| `program_finished` | Moore | `Protocol Controller` |
-| `fault_terminal` | Moore | `Protocol Controller` |
-| `global_state_code[7:0]` | Moore | `Response Serializer` |
+| Señal                    | Tipo  | Destino                                                                                                       |
+|--------------------------|-------|---------------------------------------------------------------------------------------------------------------|
+| `command_accepted`       | Mealy | `Protocol Controller`                                                                                         |
+| `load_start`             | Mealy | `Loader` y registro local `loaded_image_size_bytes`                                                           |
+| `cpu_cycle_fire`         | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, `Cycle Counter` y `Protocol Controller` |
+| `image_publish`          | Mealy | registro local `loaded_image_size_bytes`                                                                      |
+| `loader_active`          | Moore | `Loader`                                                                                                      |
+| `prepare_active`         | Moore | `Session Preparation` y `Protocol Controller`                                                                 |
+| `drain_mode`             | Moore | `Pipeline Hazard Control`                                                                                     |
+| `load_available`         | Moore | `Protocol Controller`                                                                                         |
+| `program_finished`       | Moore | `Protocol Controller`                                                                                         |
+| `fault_terminal`         | Moore | `Protocol Controller`                                                                                         |
+| `global_state_code[7:0]` | Moore | `Response Serializer`                                                                                         |
 
 #### Frontera de `Execution Control`
 
 El contenedor conserva los registros de causa/PC, tamaño confirmado y contador, junto con la selección local de metadatos y la reducción de próximos `valid`. Sus conexiones son más amplias que las de `Global FSM`:
 
-| Entradas del contenedor | Origen / uso |
-|---|---|
-| `clk`, `reset` | [GLOBAL], FSM y recursos registrados locales |
-| `load_request`, `run_request`, `step_request` | `Protocol Controller` → `system_top` → `processor_top` → `Execution Control` → `Global FSM` |
-| `load_ok`, `load_fail` | `Loader`, hacia la FSM |
-| `prepare_done` | `Session Preparation`, hacia la FSM |
-| `prepare_init` | `Session Preparation`, clear local del contador |
-| `halt_confirm` | `Pipeline Hazard Control.act_halt`, hacia la FSM |
-| `act_ex_fault`, `act_id_fault` | `Pipeline Hazard Control`, OR para la FSM y captura de metadatos |
-| `ex_fault_cause[2:0]`, `ID/EX.pc[31:0]` | `EX Fault Check` y registro `ID/EX`, selección local de metadatos |
-| `id_fault_cause[2:0]`, `id_fault_pc[31:0]` | `ID Fault Check`, PC equivalente a `IF/ID.pc`, selección local de metadatos |
-| `IF/ID.next.valid`, `ID/EX.next.valid`, `EX/MEM.next.valid`, `MEM/WB.next.valid` | controles de actualización en `processor_top`, un bit cada uno, reducción local para la FSM |
-| `pending_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | tamaño retenido por `Protocol Controller` y presentado por el alias del Loader, hacia el registro de tamaño |
-| `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH` | [CFG], capacidad y ancho derivado para los recursos de imagen |
+| Entradas del contenedor                                                          | Origen / uso                                                                                                |
+|----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `clk`, `reset`                                                                   | [GLOBAL], FSM y recursos registrados locales                                                                |
+| `load_request`, `run_request`, `step_request`                                    | `Protocol Controller` → `system_top` → `processor_top` → `Execution Control` → `Global FSM`                 |
+| `load_ok`, `load_fail`                                                           | `Loader`, hacia la FSM                                                                                      |
+| `prepare_done`                                                                   | `Session Preparation`, hacia la FSM                                                                         |
+| `prepare_init`                                                                   | `Session Preparation`, clear local del contador                                                             |
+| `halt_confirm`                                                                   | `Pipeline Hazard Control.act_halt`, hacia la FSM                                                            |
+| `act_ex_fault`, `act_id_fault`                                                   | `Pipeline Hazard Control`, OR para la FSM y captura de metadatos                                            |
+| `ex_fault_cause[2:0]`, `ID/EX.pc[31:0]`                                          | `EX Fault Check` y registro `ID/EX`, selección local de metadatos                                           |
+| `id_fault_cause[2:0]`, `id_fault_pc[31:0]`                                       | `ID Fault Check`, PC equivalente a `IF/ID.pc`, selección local de metadatos                                 |
+| `IF/ID.next.valid`, `ID/EX.next.valid`, `EX/MEM.next.valid`, `MEM/WB.next.valid` | controles de actualización en `processor_top`, un bit cada uno, reducción local para la FSM                 |
+| `pending_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]`                                 | tamaño retenido por `Protocol Controller` y presentado por el alias del Loader, hacia el registro de tamaño |
+| `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH`                                        | [CFG], capacidad y ancho derivado para los recursos de imagen                                               |
 
-| Salidas del contenedor | Destino / uso |
-|---|---|
-| `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire` | `Protocol Controller`, por `processor_top` y `system_top` |
-| `load_start`, `loader_active` | `Loader`, mediante `processor_top` |
-| `prepare_active` | `Session Preparation`, mediante `processor_top` |
-| `cpu_cycle_fire`, `drain_mode` | `Pipeline Hazard Control`; fire también llega a `WB Bypass Control` y `DMEM Write Control` |
-| `global_state_code[7:0]` | `response_serializer.debug_state_code`, por los contenedores |
-| `loaded_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | `Fetch Fault Check` |
-| `image_valid` | `Fetch Fault Check`, `Protocol Controller` y observación Debug |
-| `fault_cause[2:0]`, `fault_pc[31:0]`, `cycle_count[63:0]` | observación Debug mediante `response_serializer` |
+| Salidas del contenedor                                                                                         | Destino / uso                                                                              |
+|----------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire` | `Protocol Controller`, por `processor_top` y `system_top`                                  |
+| `load_start`, `loader_active`                                                                                  | `Loader`, mediante `processor_top`                                                         |
+| `prepare_active`                                                                                               | `Session Preparation`, mediante `processor_top`                                            |
+| `cpu_cycle_fire`, `drain_mode`                                                                                 | `Pipeline Hazard Control`; fire también llega a `WB Bypass Control` y `DMEM Write Control` |
+| `global_state_code[7:0]`                                                                                       | `response_serializer.debug_state_code`, por los contenedores                               |
+| `loaded_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]`                                                                | `Fetch Fault Check`                                                                        |
+| `image_valid`                                                                                                  | `Fetch Fault Check`, `Protocol Controller` y observación Debug                             |
+| `fault_cause[2:0]`, `fault_pc[31:0]`, `cycle_count[63:0]`                                                      | observación Debug mediante `response_serializer`                                           |
 
 `image_publish`, `fault_confirm`, `fault_capture_fire` y las entradas de datos de los registros se conectan localmente donde corresponde; no necesitan salir del contenedor. `prepare_done` se distribuye también desde `Session Preparation` a UART, por `processor_top` y `system_top`; no se transforma en una salida nueva de la FSM.
 
@@ -1805,22 +1805,22 @@ El transporte descarta RX durante preparación y confirmación final. Admite la 
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `loader_active` | `Execution Control` |
-| `load_start` | `Execution Control` |
+| Señal                                                                                                           | Origen                                                                 |
+|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| `loader_active`                                                                                                 | `Execution Control`                                                    |
+| `load_start`                                                                                                    | `Execution Control`                                                    |
 | `load_size_bytes`, `load_byte_valid`, `load_byte_data[7:0]`, `load_byte_offset`, `load_last_byte`, `load_abort` | `Protocol Controller`, tamaño/entrega/posición/último/aborto aprobados |
-| `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH` | [CFG] perfil autoritativo |
-| `reset` | [GLOBAL] reset |
+| `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH`                                                                       | [CFG] perfil autoritativo                                              |
+| `reset`                                                                                                         | [GLOBAL] reset                                                         |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| interfaz de escritura IMEM | `Instruction Memory` |
-| `load_ok` | `Execution Control` |
-| `load_fail` | `Execution Control` |
-| `pending_image_size_bytes[]` | `Execution Control` |
+| Señal                        | Destino              |
+|------------------------------|----------------------|
+| interfaz de escritura IMEM   | `Instruction Memory` |
+| `load_ok`                    | `Execution Control`  |
+| `load_fail`                  | `Execution Control`  |
+| `pending_image_size_bytes[]` | `Execution Control`  |
 
 > El tamaño pendiente de la carga se conecta desde `load_size_bytes`, retenido por el controlador, y se presenta como `pending_image_size_bytes` hasta el commit de la nueva sesión. Es un alias combinacional, sin un registro privado duplicado; véanse [Loader](architecture/session/loader.md#progreso-mantenido-por-el-controlador) y los [aliases de composición](architecture/system_composition.md#aliases-y-conexiones-internas-sensibles).
 
@@ -1842,23 +1842,23 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `prepare_active` | `Execution Control` |
+| Señal                                       | Origen                                         |
+|---------------------------------------------|------------------------------------------------|
+| `prepare_active`                            | `Execution Control`                            |
 | `DMEM_CAPACITY_BYTES`, `BYTE_ADDRESS_WIDTH` | [CFG] perfil autoritativo y ancho de dirección |
-| `reset` | [GLOBAL] reset |
+| `reset`                                     | [GLOBAL] reset                                 |
 
 #### Salidas
 
-| Señal / acción | Destino |
-|---|---|
-| `prepare_done` | `Execution Control` |
-| `prepare_done` | `Protocol Controller` |
-| `prepare_init`: inicializar `PC = 0` | `PC` |
-| `prepare_init`: inicialización simultánea RF | `Registers`, banco de flip-flops |
-| `prepare_init`: invalidar pipeline | `IF/ID`, `ID/EX`, `EX/MEM`, `MEM/WB` |
-| `prepare_dmem_clear`, `prepare_dmem_addr` | `Data Memory`, limpiar una marca de byte |
-| `prepare_init`: poner `cycle_count = 0` | `Cycle Counter`, por `Execution Control` |
+| Señal / acción                               | Destino                                  |
+|----------------------------------------------|------------------------------------------|
+| `prepare_done`                               | `Execution Control`                      |
+| `prepare_done`                               | `Protocol Controller`                    |
+| `prepare_init`: inicializar `PC = 0`         | `PC`                                     |
+| `prepare_init`: inicialización simultánea RF | `Registers`, banco de flip-flops         |
+| `prepare_init`: invalidar pipeline           | `IF/ID`, `ID/EX`, `EX/MEM`, `MEM/WB`     |
+| `prepare_dmem_clear`, `prepare_dmem_addr`    | `Data Memory`, limpiar una marca de byte |
+| `prepare_init`: poner `cycle_count = 0`      | `Cycle Counter`, por `Execution Control` |
 
 > `prepare_init` y `prepare_dmem_clear` son de un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits. La limpieza de marcas deja vacío el conjunto utilizado que observa Debug, sin una orden adicional al serializador. `prepare_index` y su incremento permanecen internos; no se agrega dirección de mantenimiento RF. Cuando `prepare_done=1`, las habilitaciones de inicialización y limpieza valen cero aunque `prepare_active` todavía refleje el estado de preparación.
 
@@ -1876,21 +1876,21 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `reset` | [GLOBAL] reset, clear a cero |
-| `load_start` | `Global FSM`, clear a cero |
-| `image_publish` | `Global FSM`, habilitación de captura |
+| Señal                                            | Origen                                                                    |
+|--------------------------------------------------|---------------------------------------------------------------------------|
+| `reset`                                          | [GLOBAL] reset, clear a cero                                              |
+| `load_start`                                     | `Global FSM`, clear a cero                                                |
+| `image_publish`                                  | `Global FSM`, habilitación de captura                                     |
 | `pending_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | alias del tamaño pendiente del Loader, retenido por `Protocol Controller` |
-| `IMAGE_SIZE_WIDTH` | [CFG] derivado de `IMEM_CAPACITY_BYTES` |
+| `IMAGE_SIZE_WIDTH`                               | [CFG] derivado de `IMEM_CAPACITY_BYTES`                                   |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
-| `loaded_image_size_bytes` | `Fetch Fault Check` |
+| Señal                                          | Destino                                                        |
+|------------------------------------------------|----------------------------------------------------------------|
+| `loaded_image_size_bytes`                      | `Fetch Fault Check`                                            |
 | `image_valid = (loaded_image_size_bytes != 0)` | `Fetch Fault Check`, `Protocol Controller` y observación Debug |
-| valor confirmado | [EXT] Debug/Status, si se expone |
+| valor confirmado                               | [EXT] Debug/Status, si se expone                               |
 
 > Su ancho es `IMAGE_SIZE_WIDTH` de §0.2 y representa la capacidad inclusive. En `REFERENCE` son 11 bits; en `ALT_1000` son 10. No se confunde con el ancho del índice de palabras.
 
@@ -1908,16 +1908,16 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 #### Entradas
 
-| Señal | Origen |
-|---|---|
-| `cpu_cycle_fire` | `Global FSM` |
-| `prepare_init` | `Session Preparation`, clear a cero de nueva sesión |
-| `reset` | [GLOBAL] reset |
+| Señal            | Origen                                              |
+|------------------|-----------------------------------------------------|
+| `cpu_cycle_fire` | `Global FSM`                                        |
+| `prepare_init`   | `Session Preparation`, clear a cero de nueva sesión |
+| `reset`          | [GLOBAL] reset                                      |
 
 #### Salidas
 
-| Señal | Destino |
-|---|---|
+| Señal               | Destino            |
+|---------------------|--------------------|
 | `cycle_count[63:0]` | [EXT] Debug/Status |
 
 > Contador unsigned de 64 bits con wrap modulo `2^64`.
@@ -1932,14 +1932,14 @@ Estas fuentes/destinos explican las flechas que salen del CPU sin terminar en ot
 
 ### 10.1 Fuentes externas
 
-| Fuente | Destino |
-|---|---|
-| `clk` funcional común, generado por plataforma | todos los bloques secuenciales; objetivo 50 MHz |
-| `reset` funcional acondicionado | control/estado global y consumidores de §0.3 |
-| `load_request` / `step_request` / `run_request` | `Global FSM` |
-| stream de programa | `Loader` |
-| `IMEM_CAPACITY_BYTES` | `Instruction Memory`, `Fetch Fault Check`, `Loader` y derivación de `IMAGE_SIZE_WIDTH` |
-| `DMEM_CAPACITY_BYTES` | `Data Memory`, `EX Fault Check` y preparación de metadatos |
+| Fuente                                          | Destino                                                                                |
+|-------------------------------------------------|----------------------------------------------------------------------------------------|
+| `clk` funcional común, generado por plataforma  | todos los bloques secuenciales; objetivo 50 MHz                                        |
+| `reset` funcional acondicionado                 | control/estado global y consumidores de §0.3                                           |
+| `load_request` / `step_request` / `run_request` | `Global FSM`                                                                           |
+| stream de programa                              | `Loader`                                                                               |
+| `IMEM_CAPACITY_BYTES`                           | `Instruction Memory`, `Fetch Fault Check`, `Loader` y derivación de `IMAGE_SIZE_WIDTH` |
+| `DMEM_CAPACITY_BYTES`                           | `Data Memory`, `EX Fault Check` y preparación de metadatos                             |
 
 <a id="bloque-10-2"></a>
 
@@ -1965,18 +1965,18 @@ Los predicados de esta lista expresan significado observable y pueden reconstrui
 
 Processor Top conecta el datapath, registros interetapa, controles locales y recursos de memoria descritos en 1–7 con el control de sesión de 8–9. El wrapper de plataforma aporta clock/reset; la capa de protocolo aporta solicitudes válidas y el stream; Debug consume el estado observable. La inclusión física de memorias o controles en un mismo módulo top puede variar sin cambiar la propiedad de cada señal.
 
-| Frontera conceptual | Dirección hacia el sistema integrado | Contrato / estado |
-|---|---|---|
-| `clk` | entrada | único dominio funcional; generación física en plataforma |
-| `reset` | entrada | interno activo alto y acondicionado; consumo funcional síncrono |
-| `load_request` / `run_request` / `step_request` | entradas hacia `Global FSM`, por `Execution Control` | una solicitud por ciclo desde UART; elegibilidad y prioridad resueltas por la FSM, §8.1 |
-| aceptación e indicadores de sesión | salidas de `Global FSM` hacia `Protocol Controller`, por los contenedores | `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal` y `cpu_cycle_fire`; §15.17 |
-| stream de imagen | entrada hacia `Loader` | reconstrucción de palabras completas y recuperación aprobadas; puertos definidos en §15.17/15.18 |
-| [CFG] perfil de memoria | configuración | capacidades y anchos comunes a loader, memorias, validadores y software |
-| PC, contador, `global_state_code[7:0]`, `image_valid` | salidas lógicas de observación | estado actual coherente; código conectado a `Response Serializer`, §15.12/15.21 |
-| RF completo y campos de los cuatro registros interetapa | observación concretada | lectura RF compartida, conexiones y selección de bytes de registros interetapa y señales de acción aprobadas en §15.12 |
-| `fault_cause` / `fault_pc` | salidas lógicas de observación | bits actuales conectados a `response_serializer` según §15.12; par vigente solo en estados de fault |
-| DMEM utilizada | interfaz, backend y composición del top concretados | criterio/lista, puertos y recorrido aprobados en §15.12; cero lógico y ownership obligatorios |
+| Frontera conceptual                                     | Dirección hacia el sistema integrado                                      | Contrato / estado                                                                                                       |
+|---------------------------------------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| `clk`                                                   | entrada                                                                   | único dominio funcional; generación física en plataforma                                                                |
+| `reset`                                                 | entrada                                                                   | interno activo alto y acondicionado; consumo funcional síncrono                                                         |
+| `load_request` / `run_request` / `step_request`         | entradas hacia `Global FSM`, por `Execution Control`                      | una solicitud por ciclo desde UART; elegibilidad y prioridad resueltas por la FSM, §8.1                                 |
+| aceptación e indicadores de sesión                      | salidas de `Global FSM` hacia `Protocol Controller`, por los contenedores | `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal` y `cpu_cycle_fire`; §15.17 |
+| stream de imagen                                        | entrada hacia `Loader`                                                    | reconstrucción de palabras completas y recuperación aprobadas; puertos definidos en §15.17/15.18                        |
+| [CFG] perfil de memoria                                 | configuración                                                             | capacidades y anchos comunes a loader, memorias, validadores y software                                                 |
+| PC, contador, `global_state_code[7:0]`, `image_valid`   | salidas lógicas de observación                                            | estado actual coherente; código conectado a `Response Serializer`, §15.12/15.21                                         |
+| RF completo y campos de los cuatro registros interetapa | observación concretada                                                    | lectura RF compartida, conexiones y selección de bytes de registros interetapa y señales de acción aprobadas en §15.12  |
+| `fault_cause` / `fault_pc`                              | salidas lógicas de observación                                            | bits actuales conectados a `response_serializer` según §15.12; par vigente solo en estados de fault                     |
+| DMEM utilizada                                          | interfaz, backend y composición del top concretados                       | criterio/lista, puertos y recorrido aprobados en §15.12; cero lógico y ownership obligatorios                           |
 
 Esta tabla no declara una lista final de puertos HDL del top ni prescribe llevar todos los registros como un bus externo ancho. La [composición aprobada](architecture/system_composition.md) concreta tres tops, cinco etapas, puertos, campos individuales de observación, aliases y cobertura de bloques; revisión local completada el 2026-10-06, FPGA-05/06 cerrado en diseño documental. Una frontera de observación no realimenta controles de ejecución por sí misma.
 
@@ -1986,20 +1986,20 @@ Esta tabla no declara una lista final de puertos HDL del top ni prescribe llevar
 
 Cada entrada funcional tiene un productor y cada salida enumerada tiene un consumidor, una conexión de observación o una frontera parcial explícita. Una señal derivada usada solo dentro de un bloque puede permanecer interna.
 
-| Conexión sensible | Contrato |
-|---|---|
-| `id_fault_cause`, `id_fault_pc`, `ex_fault_cause`, `ID/EX.pc` | convergen en la selección local de metadatos de `Execution Control`, §6.1; no entran en la FSM |
-| `ex_halt_candidate` | `Flow Control` → `Pipeline Hazard Control` |
-| `forward_a_sel` / `forward_b_sel` | cada selector controla exclusivamente su mux correspondiente |
-| `EX/MEM.ex_result[1:0]` | posición de selección de `Load Select/Extend` |
-| `mem_read_data`, dirección y `byte_enable` | selección little-endian consistente; la frontera física de lanes permanece abierta |
-| los cuatro `next.valid` | `Pipeline Empty Logic` → `Global FSM`; no usan la FSM siguiente |
-| `load_request`, `run_request`, `step_request` / `command_accepted` | solicitud y aceptación combinacionales, consumidas en el mismo flanco; UART distingue la operación por su propia fase |
-| `load_start` / `image_publish` | órdenes de la FSM al registro de tamaño; inicio también llega al Loader, publicación no pasa por preparación |
-| `cpu_cycle_fire`, `drain_mode` | contexto ordinario/drain hacia hazards, sin decodificar `global_state` fuera de la FSM |
-| `global_state_code[7:0]` | observación en `Response Serializer`; no controla UART |
-| RF completo, PC, imagen válida y mínimos de los cuatro registros interetapa | Debug/Snapshot; contenido, representación y puertos definidos en §15.12–15.17 |
-| `fault_cause`, `fault_pc`, `cycle_count` | Debug/Status, con validez y sesión coherentes |
+| Conexión sensible                                                           | Contrato                                                                                                              |
+|-----------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `id_fault_cause`, `id_fault_pc`, `ex_fault_cause`, `ID/EX.pc`               | convergen en la selección local de metadatos de `Execution Control`, §6.1; no entran en la FSM                        |
+| `ex_halt_candidate`                                                         | `Flow Control` → `Pipeline Hazard Control`                                                                            |
+| `forward_a_sel` / `forward_b_sel`                                           | cada selector controla exclusivamente su mux correspondiente                                                          |
+| `EX/MEM.ex_result[1:0]`                                                     | posición de selección de `Load Select/Extend`                                                                         |
+| `mem_read_data`, dirección y `byte_enable`                                  | selección little-endian consistente; la frontera física de lanes permanece abierta                                    |
+| los cuatro `next.valid`                                                     | `Pipeline Empty Logic` → `Global FSM`; no usan la FSM siguiente                                                       |
+| `load_request`, `run_request`, `step_request` / `command_accepted`          | solicitud y aceptación combinacionales, consumidas en el mismo flanco; UART distingue la operación por su propia fase |
+| `load_start` / `image_publish`                                              | órdenes de la FSM al registro de tamaño; inicio también llega al Loader, publicación no pasa por preparación          |
+| `cpu_cycle_fire`, `drain_mode`                                              | contexto ordinario/drain hacia hazards, sin decodificar `global_state` fuera de la FSM                                |
+| `global_state_code[7:0]`                                                    | observación en `Response Serializer`; no controla UART                                                                |
+| RF completo, PC, imagen válida y mínimos de los cuatro registros interetapa | Debug/Snapshot; contenido, representación y puertos definidos en §15.12–15.17                                         |
+| `fault_cause`, `fault_pc`, `cycle_count`                                    | Debug/Status, con validez y sesión coherentes                                                                         |
 
 Las siguientes conexiones o estados contradicen los acuerdos vigentes y no se implementan:
 
@@ -2012,16 +2012,16 @@ Las siguientes conexiones o estados contradicen los acuerdos vigentes y no se im
 
 ## 12. Nombres y equivalencias
 
-| Nombre del mapa formal | Equivalente en arquitectura | Alcance |
-|---|---|---|
-| `Registers` | Register File / Register Bank | mismo banco de 32 × 32 bits |
-| `ALUSrc MUX` | `ALU` Source MUX | mismo selector `RS2`/inmediato |
-| `Load Select/Extend` | Load Select / Extend | misma selección y extensión de load |
+| Nombre del mapa formal                    | Equivalente en arquitectura                             | Alcance                                                               |
+|-------------------------------------------|---------------------------------------------------------|-----------------------------------------------------------------------|
+| `Registers`                               | Register File / Register Bank                           | mismo banco de 32 × 32 bits                                           |
+| `ALUSrc MUX`                              | `ALU` Source MUX                                        | mismo selector `RS2`/inmediato                                        |
+| `Load Select/Extend`                      | Load Select / Extend                                    | misma selección y extensión de load                                   |
 | `capture`, `hold`, `invalidate`, `bubble` | enables locales del registro interetapa correspondiente | señales locales; se identifican por bloque, no un enable global único |
-| `IF/ID.next.valid` y análogos | `valid_next` | salida de lógica combinacional de actualización |
-| `fault_capture_fire` | `fault_confirm = act_ex_fault \|\| act_id_fault` | mismo evento; captura metadatos y notifica FSM |
-| `halt_confirm` | `act_halt` | mismo evento hacia FSM |
-| `loader_active` | estado `LOADING` | predicado del estado actual |
+| `IF/ID.next.valid` y análogos             | `valid_next`                                            | salida de lógica combinacional de actualización                       |
+| `fault_capture_fire`                      | `fault_confirm = act_ex_fault \|\| act_id_fault`        | mismo evento; captura metadatos y notifica FSM                        |
+| `halt_confirm`                            | `act_halt`                                              | mismo evento hacia FSM                                                |
+| `loader_active`                           | estado `LOADING`                                        | predicado del estado actual                                           |
 
 `MEM/WB Update Control` controla exclusivamente `MEM/WB`; `EX/MEM Update Control` controla `EX/MEM`. Hay un solo bloque funcional `IF/ID Update Control`. No se certifica ni se prescribe una edición de un XML externo no incluido en el repositorio.
 
@@ -2105,30 +2105,30 @@ flowchart TD
 
 Esta matriz concreta las salidas de los controles locales para conectarlos sin reinterpretar los nombres. Los términos corresponden a [las ecuaciones aprobadas](architecture/cpu/control_and_hazards.md#controles-locales-derivados-de-las-acciones); se comparan en la verificación documental. Capture, `invalidate` y `bubble` son mutuamente excluyentes para cada registro interetapa; una ausencia de acción significa retención implícita, aunque la salida `hold` de `IF/ID` sea cero.
 
-| Salida local | Ecuación |
-|---|---|
-| `pc_write_enable` | `act_normal \|\| act_redirect` |
-| `next_pc_sel` | `act_redirect` |
-| `ifid_capture_if` (`IF/ID.capture`) | `act_normal` |
-| `ifid_hold` (`IF/ID.hold`) | `act_load_use \|\| act_drain_load_use` |
-| `ifid_invalidate` (`IF/ID.invalidate`) | `act_redirect \|\| act_halt \|\| act_ex_fault \|\| act_id_fault \|\| act_drain_advance` |
-| `idex_capture_id` (`ID/EX.capture`) | `act_normal \|\| act_drain_advance` |
-| `idex_bubble` (`ID/EX.bubble`) | `act_load_use \|\| act_redirect \|\| act_halt \|\| act_ex_fault \|\| act_id_fault \|\| act_drain_load_use` |
-| `exmem_capture_ex` (`EX/MEM.capture`) | `act_normal \|\| act_load_use \|\| act_redirect \|\| act_id_fault \|\| act_drain_load_use \|\| act_drain_advance` |
-| `exmem_invalidate` (`EX/MEM.invalidate`) | `act_halt \|\| act_ex_fault` |
-| `memwb_capture_mem` (`MEM/WB.capture`) | `pipeline_action` (OR de las ocho acciones) |
+| Salida local                             | Ecuación                                                                                                          |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `pc_write_enable`                        | `act_normal \|\| act_redirect`                                                                                    |
+| `next_pc_sel`                            | `act_redirect`                                                                                                    |
+| `ifid_capture_if` (`IF/ID.capture`)      | `act_normal`                                                                                                      |
+| `ifid_hold` (`IF/ID.hold`)               | `act_load_use \|\| act_drain_load_use`                                                                            |
+| `ifid_invalidate` (`IF/ID.invalidate`)   | `act_redirect \|\| act_halt \|\| act_ex_fault \|\| act_id_fault \|\| act_drain_advance`                           |
+| `idex_capture_id` (`ID/EX.capture`)      | `act_normal \|\| act_drain_advance`                                                                               |
+| `idex_bubble` (`ID/EX.bubble`)           | `act_load_use \|\| act_redirect \|\| act_halt \|\| act_ex_fault \|\| act_id_fault \|\| act_drain_load_use`        |
+| `exmem_capture_ex` (`EX/MEM.capture`)    | `act_normal \|\| act_load_use \|\| act_redirect \|\| act_id_fault \|\| act_drain_load_use \|\| act_drain_advance` |
+| `exmem_invalidate` (`EX/MEM.invalidate`) | `act_halt \|\| act_ex_fault`                                                                                      |
+| `memwb_capture_mem` (`MEM/WB.capture`)   | `pipeline_action` (OR de las ocho acciones)                                                                       |
 
 Los aliases entre paréntesis son el mismo cable local; no agregan campos o enables registrados.
 
-| Commit / evento | Predicado / efecto |
-|---|---|
-| `rf_write_fire` | `cpu_cycle_fire && MEM/WB.valid && MEM/WB.reg_write && MEM/WB.rd!=0`; escribe el `rd`/dato preflanco |
-| `dmem_store_fire` | `cpu_cycle_fire && EX/MEM.valid && is_store(EX/MEM.mem_op)`; aplica dirección/dato preflanco |
-| `dmem_metadata_write_fire` | mismo `dmem_store_fire`; modifica validez solo de bytes seleccionados |
-| `fault_capture_fire` / `fault_confirm` | `act_ex_fault \|\| act_id_fault`; captura par del causante y notifica FSM |
-| `halt_confirm` | `act_halt`; no es `FINISHED` por sí solo |
-| `redirect_apply` | `act_redirect`; actualización de PC y descarte de jóvenes |
-| `cycle_counter_increment` | `cpu_cycle_fire`; exactamente una vez por ciclo, también stall/drain |
+| Commit / evento                        | Predicado / efecto                                                                                   |
+|----------------------------------------|------------------------------------------------------------------------------------------------------|
+| `rf_write_fire`                        | `cpu_cycle_fire && MEM/WB.valid && MEM/WB.reg_write && MEM/WB.rd!=0`; escribe el `rd`/dato preflanco |
+| `dmem_store_fire`                      | `cpu_cycle_fire && EX/MEM.valid && is_store(EX/MEM.mem_op)`; aplica dirección/dato preflanco         |
+| `dmem_metadata_write_fire`             | mismo `dmem_store_fire`; modifica validez solo de bytes seleccionados                                |
+| `fault_capture_fire` / `fault_confirm` | `act_ex_fault \|\| act_id_fault`; captura par del causante y notifica FSM                            |
+| `halt_confirm`                         | `act_halt`; no es `FINISHED` por sí solo                                                             |
+| `redirect_apply`                       | `act_redirect`; actualización de PC y descarte de jóvenes                                            |
+| `cycle_counter_increment`              | `cpu_cycle_fire`; exactamente una vez por ciclo, también stall/drain                                 |
 
 Los commits CPU están suprimidos por `RESET` o `LOAD` aceptado/preparación efectiva a través de la autorización y prioridad común. Un store MEM o writeback WB anterior puede coexistir con fault/halt/redirect joven; no se agrega un veto por el tipo de frontera.
 
@@ -2152,9 +2152,9 @@ Operaciones, resultados, códigos de estado, orden de intercambios, errores, pla
 
 ### 15.1 Decisiones que siguen abiertas
 
-| Decisión | Interfaz / entregable afectado | Alcance abierto |
-|---|---|---|
-| DEC-SYS-008 | aplicación PC | CLI/TUI/GUI y presentación de estado |
+| Decisión    | Interfaz / entregable afectado | Alcance abierto                      |
+|-------------|--------------------------------|--------------------------------------|
+| DEC-SYS-008 | aplicación PC                  | CLI/TUI/GUI y presentación de estado |
 
 El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). La decisión de aplicación PC se registra en [Decisiones pendientes](decisions/pending_decisions.md); las condiciones de cierre global se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto). DEC-ARCH-009, DEC-SYS-005 y DEC-SYS-007 están aprobadas; sus fronteras se consultan en los contratos especializados, sin reabrirlas por textos históricos.
 
@@ -2162,18 +2162,18 @@ El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.m
 
 ### 15.2 Estado de los detalles de realización por módulo
 
-| Detalle | Contrato ya fijado | Concreción vigente y límite |
-|---|---|---|
-| Escritura `Loader`→IMEM | palabra completa, escritura síncrona, ownership y perfil | Concretada: `imem_write_index` `WORD_INDEX_WIDTH` (ocho en perfiles actuales), `imem_write_data[31:0]`, `imem_write_enable`; posición derivada y cuarto byte según [Loader](architecture/session/loader.md). |
-| Stream y estado privado `Loader` | validación de imagen, `load_ok`/`load_fail` exclusivos, tamaño retenido hasta commit | Concretado en §15.18: entrega/posición/último/aborto, buffer 24 bits y tamaño retenido por controlador; sin FSM privada adicional. |
-| Preparación y mantenimiento | estado inicial listo antes de `prepare_done`, sin writes concurrentes con primer ciclo | Concretados en §15.19: `prepare_init`, `prepare_dmem_clear`/addr, índice y done; RF simultáneo, marcas DMEM secuenciales. |
-| Lanes de DMEM / `byte_enable` | selección por dirección/tamaño, little-endian y dato/validez atómicos | Lectura aprobada: palabra alineada y selección/extensión en MEM. Escritura aprobada: máscara relativa de cuatro bits y alineación del dato en DMEM. Camino de metadatos CPU/preparación seleccionado por `prepare_dmem_clear`, prioridad reset > clear > store; cierre local en §15.27. |
-| Ownership físico | un agente incompatible autorizado por memoria | UART/`Loader`/preparación/Debug concretados y contrastados en [comprobación](architecture/uart/uart_core.md#presupuesto-de-integración); DMEM concretada en §15.27; composición de tops concretada y revisada en §15.28. |
-| Observación Debug | lectura retenida y envío exclusivo postciclo hasta último Stop; reset físico puede abortar | Concretada en §15.12–15.17/15.21: RF/DMEM, contexto/registros interetapa, recorrido, encolado, fin físico y descarte RX. |
-| Codificación de `global_state` | 14 estados/predicados y códigos externos 0x00–0x0D aprobados | Concretada en §15.21: catorce bits one-hot internos de `Global FSM` y código combinacional de ocho para `Response Serializer`. |
-| Plataforma | un dominio, referencia y mínimo exigido 50 MHz, reset acondicionado; Clocking Wizard requerido (REQ-TIM-008) | Configuración Clocking Wizard/MMCM aprobada en [plataforma](architecture/platform/platform_reference.md#generador-del-clock); reset/pinout/duración/constraints aprobados en [plataforma](architecture/platform/platform_reference.md#pines-y-restricciones-aprobados); FPGA-04 cerrado en diseño, timing/placa pendientes. |
-| Configuración común | perfiles/capacidades/fórmulas ya aprobados | [Diseño aprobado](architecture/common_configuration.md): `system_pkg`, selección única en wrapper, capacidades explícitas, tipos/validadores; FPGA-03 cerrado en diseño. |
-| Agrupación RTL / Processor Top | todas las conexiones y prioridades de este documento | [Diseño aprobado y revisado](architecture/system_composition.md#revisión-local-y-cierre-de-composición): tres tops, cinco etapas, nombres/puertos/aliases y agrupación explícita de 51 bloques; FPGA-05/06 cerrado en diseño. |
+| Detalle                          | Contrato ya fijado                                                                                           | Concreción vigente y límite                                                                                                                                                                                                                                                                                                 |
+|----------------------------------|--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Escritura `Loader`→IMEM          | palabra completa, escritura síncrona, ownership y perfil                                                     | Concretada: `imem_write_index` `WORD_INDEX_WIDTH` (ocho en perfiles actuales), `imem_write_data[31:0]`, `imem_write_enable`; posición derivada y cuarto byte según [Loader](architecture/session/loader.md).                                                                                                                |
+| Stream y estado privado `Loader` | validación de imagen, `load_ok`/`load_fail` exclusivos, tamaño retenido hasta commit                         | Concretado en §15.18: entrega/posición/último/aborto, buffer 24 bits y tamaño retenido por controlador; sin FSM privada adicional.                                                                                                                                                                                          |
+| Preparación y mantenimiento      | estado inicial listo antes de `prepare_done`, sin writes concurrentes con primer ciclo                       | Concretados en §15.19: `prepare_init`, `prepare_dmem_clear`/addr, índice y done; RF simultáneo, marcas DMEM secuenciales.                                                                                                                                                                                                   |
+| Lanes de DMEM / `byte_enable`    | selección por dirección/tamaño, little-endian y dato/validez atómicos                                        | Lectura aprobada: palabra alineada y selección/extensión en MEM. Escritura aprobada: máscara relativa de cuatro bits y alineación del dato en DMEM. Camino de metadatos CPU/preparación seleccionado por `prepare_dmem_clear`, prioridad reset > clear > store; cierre local en §15.27.                                     |
+| Ownership físico                 | un agente incompatible autorizado por memoria                                                                | UART/`Loader`/preparación/Debug concretados y contrastados en [comprobación](architecture/uart/uart_core.md#presupuesto-de-integración); DMEM concretada en §15.27; composición de tops concretada y revisada en §15.28.                                                                                                    |
+| Observación Debug                | lectura retenida y envío exclusivo postciclo hasta último Stop; reset físico puede abortar                   | Concretada en §15.12–15.17/15.21: RF/DMEM, contexto/registros interetapa, recorrido, encolado, fin físico y descarte RX.                                                                                                                                                                                                    |
+| Codificación de `global_state`   | 14 estados/predicados y códigos externos 0x00–0x0D aprobados                                                 | Concretada en §15.21: catorce bits one-hot internos de `Global FSM` y código combinacional de ocho para `Response Serializer`.                                                                                                                                                                                              |
+| Plataforma                       | un dominio, referencia y mínimo exigido 50 MHz, reset acondicionado; Clocking Wizard requerido (REQ-TIM-008) | Configuración Clocking Wizard/MMCM aprobada en [plataforma](architecture/platform/platform_reference.md#generador-del-clock); reset/pinout/duración/constraints aprobados en [plataforma](architecture/platform/platform_reference.md#pines-y-restricciones-aprobados); FPGA-04 cerrado en diseño, timing/placa pendientes. |
+| Configuración común              | perfiles/capacidades/fórmulas ya aprobados                                                                   | [Diseño aprobado](architecture/common_configuration.md): `system_pkg`, selección única en wrapper, capacidades explícitas, tipos/validadores; FPGA-03 cerrado en diseño.                                                                                                                                                    |
+| Agrupación RTL / Processor Top   | todas las conexiones y prioridades de este documento                                                         | [Diseño aprobado y revisado](architecture/system_composition.md#revisión-local-y-cierre-de-composición): tres tops, cinco etapas, nombres/puertos/aliases y agrupación explícita de 51 bloques; FPGA-05/06 cerrado en diseño.                                                                                               |
 
 Las filas concretadas remiten al diseño aprobado y a sus comprobaciones documentales. Todas las filas anteriores están concretadas; el plan de verificación y los criterios de comparación están cerrados documentalmente. El diseño PC continúa pendiente antes del cierre global. No se confunde cierre UART con cierre D0/M6 ni con RTL validado.
 

@@ -160,13 +160,13 @@ La PC puede guardar y volver a mostrar el snapshot recibido. Mientras la sesión
 
 **Decisión:** La lista final de solicitudes consta de cinco operaciones:
 
-| Nombre definitivo | Servicio | Campos de solicitud ya aprobados |
-|---|---|---|
-| `LOAD` | Cargar el programa y preparar una sesión | Código de un byte y tamaño unsigned de cinco bytes little-endian; contenido de N bytes después de aceptación |
-| `RUN` | Ejecución continua y resultado final con Debug | Código de un byte, sin parámetros |
-| `STEP` | Un ciclo efectivo y respuesta con Debug | Código de un byte, sin parámetros |
-| `RESET` | Reset global solicitado por PC, con aceptación antes de aplicarlo | Código de un byte, sin parámetros |
-| `CHECK_READY` | Consultar disponibilidad para recibir `LOAD` | Código de un byte, sin parámetros |
+| Nombre definitivo | Servicio                                                          | Campos de solicitud ya aprobados                                                                             |
+|-------------------|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| `LOAD`            | Cargar el programa y preparar una sesión                          | Código de un byte y tamaño unsigned de cinco bytes little-endian; contenido de N bytes después de aceptación |
+| `RUN`             | Ejecución continua y resultado final con Debug                    | Código de un byte, sin parámetros                                                                            |
+| `STEP`            | Un ciclo efectivo y respuesta con Debug                           | Código de un byte, sin parámetros                                                                            |
+| `RESET`           | Reset global solicitado por PC, con aceptación antes de aplicarlo | Código de un byte, sin parámetros                                                                            |
+| `CHECK_READY`     | Consultar disponibilidad para recibir `LOAD`                      | Código de un byte, sin parámetros                                                                            |
 
 `CHECK_READY` es la misma consulta informativa aprobada: devuelve `[CHECK_READY][DISPONIBLE / NO_DISPONIBLE]`, dos bytes, sin datos ni reserva de una carga. La PC consulta antes de `LOAD`; la FPGA valida `LOAD` por sus condiciones actuales y no exige recordar una consulta previa. Disponible no implica imagen ejecutable válida. Se conservan elegibilidad, tiempos, exclusión y descarte durante recuperación/envío Debug previamente aprobados.
 
@@ -178,13 +178,13 @@ Debug se entrega automáticamente en las respuestas de `STEP` y final `RUN`. Rei
 
 **Consecuencias y alcance pendiente:** Se cierra C01 y la selección de servicios de DEC-SYS-007/DEC-PROTO-002. Estos identificadores siguen abiertos por realización de bloques y códigos/integración respectivamente.
 
-| Acuerdo | Alcance previsto |
-|---|---|
-| C02 | Asignará códigos |
-| C03 | Definirá resultados/estados |
-| C04 | Reunirá elegibilidad y reglas de intercambios |
-| C05/C06 | Definirán errores y plazos |
-| C07 | Definirá el perfil compartido |
+| Acuerdo | Alcance previsto                              |
+|---------|-----------------------------------------------|
+| C02     | Asignará códigos                              |
+| C03     | Definirá resultados/estados                   |
+| C04     | Reunirá elegibilidad y reglas de intercambios |
+| C05/C06 | Definirán errores y plazos                    |
+| C07     | Definirá el perfil compartido                 |
 
 No se modifica la semántica de las operaciones ni se inicia implementación.
 
