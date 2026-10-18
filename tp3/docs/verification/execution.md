@@ -9,6 +9,8 @@ Este documento reúne las pruebas del control global de ejecución y preparació
 
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
 
+En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_request`, `step_request` y las condiciones de sus productores. Observa `command_accepted`, `load_start`, `cpu_cycle_fire`, `image_publish`, las salidas Moore y el código de estado. En integración, `Execution Control` recibe las acciones de fault y los cuatro próximos `valid` desde sus productores y forma localmente `fault_confirm` y `pipeline_empty_next`.
+
 ## Índice
 
 - [TEST-EXEC-001 — Elegibilidad, arbitraje y autorización global](#test-exec-001)
@@ -26,8 +28,8 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 ## TEST-EXEC-001 — Elegibilidad, arbitraje y autorización global
 
-- **Nivel:** unidad execution_control.
-- **Tipo de estímulo:** estados y solicitudes locales controlados.
+- **Nivel:** unidad global_fsm e integración execution_control.
+- **Tipo de estímulo:** fixtures de estado y solicitudes locales; cruces simultáneos artificiales.
 - **Estado:** diseñada, sin ejecutar.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline).
@@ -44,9 +46,9 @@ Los cruces de solicitudes comprueban que la misma orden pueda tener efectos dist
 
 ### Condiciones iniciales
 
-El banco prepara el estado one-hot del caso en la unidad de control. No hay `load_ok`, `load_fail` ni nuevas confirmaciones de `halt` o fault.
+El banco prepara el registro interno one-hot del caso en `Global FSM` y presenta `load_ok=load_fail=halt_confirm=fault_confirm=0`. En unidad, `pipeline_empty_next` procede del fixture; en integración se obtiene de los próximos `valid` de los registros interetapa.
 
-READY y las sesiones con imagen publicada tienen tamaño confirmado 16. LOADING, NO_IMAGE y PREPARING_READY tienen tamaño cero.
+En integración con `Execution Control`, READY y las sesiones con imagen publicada tienen tamaño confirmado 16. LOADING, NO_IMAGE y PREPARING_READY tienen tamaño cero.
 
 Para un drain se coloca una instrucción anterior en MEM/WB. Un drain vacío no se utiliza como si fuera una sesión alcanzable. Cuando `prepare_done=1`, el fixture representa un mantenimiento ya terminado, sin inicialización ni clear activos.
 
@@ -64,17 +66,19 @@ Los 14 estados son NO_IMAGE, LOADING, PREPARING_READY, READY, RUNNING, STEPPING,
 
 Las nueve solicitudes son: `ninguna`, `LOAD`, `RUN`, `STEP`, `LOAD+STEP`, `LOAD+RUN`, `STEP+RUN`, `LOAD+STEP+RUN`, `RESET+LOAD+STEP+RUN`. Se aplican en cada estado con prepare_done=0. Solo los tres PREPARING repiten esas nueve solicitudes con prepare_done=1. De ahí salen 14×9+3×9=153 casos; no se ensayan todos los subconjuntos posibles de comandos.
 
+`LOAD`, `RUN` y `STEP` activan sus entradas `load_request`, `run_request` y `step_request`; `RESET` activa `reset`. Los cruces simultáneos comprueban prioridad en la unidad; UART presenta una sola solicitud por ciclo.
+
 ### Procedimiento
 
 1. **Preparar el estado y las solicitudes.** Instalar el fixture y los comandos de la variante.
 
-2. **Observar la elegibilidad y el arbitraje.** Evaluar primero qué comandos pueden aceptarse y después la prioridad RESET, LOAD, STEP y RUN.
+2. **Observar la elegibilidad y el arbitraje.** Evaluar primero qué comandos pueden aceptarse y después la prioridad RESET, LOAD, STEP y RUN. Comparar `command_accepted` con la selección de LOAD/RUN/STEP. Reset debe llevar a NO_IMAGE con las cuatro salidas Mealy en cero.
 
-3. **Comparar la autorización preflanco.** Comprobar la aceptación y `cpu_cycle_fire`. Una LOAD aceptada o reset deben excluir un ciclo coincidente; una LOAD rechazada no debe cancelar un ciclo automático.
+3. **Comparar los controles preflanco.** Comprobar `command_accepted`, `load_start`, `cpu_cycle_fire` e `image_publish`. LOAD seleccionada activa aceptación e inicio y excluye un ciclo coincidente; LOAD rechazada conserva el ciclo automático. La publicación corresponde a PREPARING_READY con `prepare_done=1` y sin reset.
 
-4. **Observar el código de estado.** Exigir que el código UART provenga del estado actual y se comparta combinacionalmente, sin un registro adicional.
+4. **Observar las salidas Moore.** Comparar las seis salidas de control y `global_state_code[7:0]` con el estado actual, según la [tabla de decodificación](../architecture/session/execution_control.md#señales-derivadas-de-global_state). El código llega a `Response Serializer.debug_state_code`.
 
-5. **Aplicar el flanco y comparar la transición.** Revisar la FSM según el caso. La terminación y el inicio de preparación también se comprueban en TEST-EXEC-005, TEST-EXEC-006 y TEST-EXEC-007.
+5. **Aplicar el flanco y comparar la transición.** Revisar la FSM según el caso, incluidas las transiciones de carga o preparación con `cpu_cycle_fire=0`. La terminación y el inicio de preparación también se comprueban en TEST-EXEC-005, TEST-EXEC-006 y TEST-EXEC-007.
 
 ### Resultados y criterio de aprobación
 
@@ -84,7 +88,7 @@ Hay ciclos automáticos en RUNNING y los drains AUTO. READY, STEPPING y los drai
 
 La autorización debe depender del estado actual. El encoder entrega los códigos 0 a 13 correspondientes sin demora ni un estado UART adicional.
 
-La aprobación exige aceptación, autorización y origen de ciclo correctos en todas las filas, conservación de un estado one-hot legal y ausencia de una cola adicional que recuerde la orden durante preparación.
+La aprobación exige aceptación, inicio de carga, autorización, publicación y decodificación correctos en todas las filas, conservación de un estado one-hot legal y ausencia de una cola adicional que recuerde la orden durante preparación. El comando seleccionado y el destino de la FSM identifican el origen del ciclo.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -112,7 +116,7 @@ La preparación utiliza el mismo mecanismo para READY, RUN y STEP. Las capacidad
 
 El fixture prepara `x1…x31=0xA5A5A5A5`, `PC=64` y contador 99. Los latches tienen entradas válidas, todas las marcas de DMEM están activas y el dato físico de dirección a contiene `a mod 256`.
 
-En unidad se inicia `session_preparation` con índice cero y se conectan los recursos que reciben sus acciones de inicialización y limpieza. Se utiliza PREPARING_READY para observar el recorrido sin autorizar una ejecución de CPU. Los registros `x1…x31` deben inicializarse simultáneamente incluso cuando C sea 4 o 28, mientras `x0` permanece en cero.
+En unidad se inicia `Session Preparation` con índice cero y `prepare_active=1`, y se conectan los recursos que reciben sus acciones de inicialización y limpieza. El destino READY/RUN/STEP pertenece al fixture de integración con la FSM. Los registros `x1…x31` deben inicializarse simultáneamente incluso cuando C sea 4 o 28, mientras `x0` permanece en cero.
 
 En integración se utiliza REFERENCE, con DMEM de 2048 bytes. PREPARING_READY tiene una imagen pendiente de 16 bytes; PREPARING_RUN y PREPARING_STEP conservan una imagen confirmada de ese tamaño. La primera palabra contiene `halt`, de modo que el primer fetch desde cero puede observarse sin depender de operandos anteriores.
 
@@ -136,9 +140,9 @@ Los tres casos de reset, C019, C020 y C021, utilizan capacidad 4 y los destinos 
 
 3. **Observar el final del mantenimiento.** Después de la última limpieza, exigir índice C y `prepare_done` activo, con inicialización y limpieza inactivas. El flanco que consume done debe estar separado del último clear.
 
-4. **Comprobar los tres destinos en integración.** En C016, consumir done debe publicar el tamaño 16 y alcanzar READY sin un ciclo CPU. En C017 y C018, debe ejecutar el primer fetch desde PC cero sobre el estado preparado y llevar el contador de cero a uno. RUN continúa automáticamente; STEP conserva ese estado hasta una orden nueva.
+4. **Comprobar los tres destinos en integración.** En C016, consumir `prepare_done` debe activar `image_publish=1`, publicar el tamaño 16 y alcanzar READY con `cpu_cycle_fire=0`. En C017 y C018, exigir `image_publish=0` y `cpu_cycle_fire=1`: se ejecuta el primer fetch desde PC cero y el contador pasa de cero a uno. RUN continúa automáticamente; STEP conserva ese estado hasta una orden nueva.
 
-5. **Aplicar reset durante el recorrido.** En C019–C021, comprobar que reset impida una limpieza coincidente y alcance NO_IMAGE. Preparar después el estado y la imagen del destino en el fixture local, sin modificar el índice reiniciado. Verificar que la preparación nueva recorra desde dirección cero, sin reanudar el índice anterior.
+5. **Aplicar reset durante el recorrido.** En C019–C021, comprobar que reset impida una limpieza coincidente; en integración, la FSM alcanza NO_IMAGE. Preparar después el estado y la imagen del destino y volver a activar el servicio, sin modificar el índice reiniciado. Verificar que la preparación nueva recorra desde dirección cero, sin reanudar el índice anterior.
 
 ### Resultados y criterio de aprobación
 
@@ -398,8 +402,8 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-EXEC-006 — Fault drain, cambio STEP a AUTO y metadata retenida
 
-- **Nivel:** CPU.
-- **Tipo de estímulo:** legal.
+- **Nivel:** CPU y unidad global_fsm.
+- **Tipo de estímulo:** recorridos legales y fixtures locales artificiales.
 - **Estado:** diseñada, sin ejecutar.
 
 **Requisitos:** [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
@@ -420,7 +424,7 @@ Para fault se utiliza el prefijo que escribe 11 en `x8`, 12 en `x9` y 3 en la pa
 
 Para `halt` se ejecutan tres ADDI independientes seguidos de `halt`. La confirmación deja únicamente el writeback anterior pendiente.
 
-En la unidad FSM se controla localmente `empty_next`. Ese fixture verifica una transición; no es un programa end-to-end.
+En unidad se instala HALT_DRAIN_STEP en el registro interno de `Global FSM` y se presenta `run_request=1`, con `reset=load_request=step_request=0`. El fixture controla `pipeline_empty_next` y observa la aceptación, la autorización y el estado siguiente.
 
 ### Variantes cerradas
 
@@ -430,19 +434,28 @@ Los tres recorridos de fault completan dos ciclos mediante STEP, aceptan RUN con
 
 Los dos recorridos legales de `halt` completan el único WB remanente mediante STEP o RUN.
 
-Los dos casos locales restantes aplican ambos valores de `empty_next` a RUN desde halt-drain STEP. No se interpreta el caso local como dos ciclos pendientes después de un `halt` legal.
+Los dos casos locales restantes conservan estas expectativas:
+
+| Caso | Entrada local | Estado siguiente esperado |
+|---|---|---|
+| C006 | `run_request=1`, `pipeline_empty_next=0` | `HALT_DRAIN_AUTO` |
+| C007 | `run_request=1`, `pipeline_empty_next=1` | `FINISHED` |
+
+C006 comprueba el contrato combinacional artificial de la FSM. En el drain legal de `halt`, el único WB pendiente se consume en un ciclo efectivo y deja `pipeline_empty_next=1`; la transición artificial de C006 queda fuera del grafo de sesiones alcanzables.
 
 ### Procedimiento
 
-1. **Llegar al drain STEP.** Ejecutar la secuencia correspondiente hasta HALT_DRAIN_STEP o FAULT_DRAIN_STEP.
+1. **Llegar al drain STEP.** En C001–C005, ejecutar la secuencia correspondiente hasta HALT_DRAIN_STEP o FAULT_DRAIN_STEP.
 
 2. **Observar la espera.** Pausar 50 clocks y comprobar la retención del PC, latches, contador y metadatos.
 
 3. **Aplicar las órdenes del recorrido.** Cada STEP autoriza un ciclo. RUN ejecuta el ciclo actual y pasa a AUTO si queda trabajo, o directamente al terminal si el pipeline queda vacío.
 
-4. **Comparar los mensajes de STEP.** Registrar DONE en cada paso, incluso al alcanzar FAULT. El estado del snapshot distingue el fault; no se reemplaza la cabecera DONE.
+4. **Comparar los mensajes de STEP.** En los recorridos de CPU, registrar DONE en cada paso, incluso al alcanzar FAULT. El estado del snapshot distingue el fault; no se reemplaza la cabecera DONE.
 
 5. **Observar el ciclo final.** Comprobar metadatos estables, ausencia de confirmaciones nuevas y selección del terminal mediante la validez `next` del último ciclo.
+
+6. **Comprobar C006 y C007 en unidad.** Aplicar cada fixture con `run_request=1`. Antes del flanco, exigir `command_accepted=1`, `cpu_cycle_fire=1`, `drain_mode=1` y `load_start=image_publish=0`. Después del flanco, comparar el estado con la tabla de los dos casos locales.
 
 ### Resultados y criterio de aprobación
 
@@ -452,7 +465,7 @@ Durante drain y HOLD no cambian los metadatos ni se confirma otra frontera. Las 
 
 RUN devuelve el resultado terminal automático. STEP conserva DONE y utiliza el estado observado para distinguir la situación.
 
-La aprobación exige las cuatro clases de drain y ambos resultados del cambio a RUN: trabajo restante o pipeline vacío. Debe distinguirse la comprobación local de FSM del caso de `halt` alcanzable.
+La aprobación exige las cuatro clases de drain y ambos resultados del cambio a RUN: trabajo restante o pipeline vacío. C006 conserva su destino artificial HALT_DRAIN_AUTO y C007 alcanza FINISHED; los recorridos legales de halt terminan en el único ciclo de drenado.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -494,11 +507,11 @@ Son cuatro trayectorias sobre la misma imagen retenida. LOAD y reset se comprueb
 
 1. **Ejecutar la primera sesión.** Llegar al terminal y guardar el contenido de IMEM y el tamaño confirmado.
 
-2. **Aceptar RUN o STEP.** Enviar la orden sin una LOAD intermedia y seguir la entrada a preparación.
+2. **Aceptar RUN o STEP.** Enviar la orden sin una LOAD intermedia y seguir la entrada a preparación. Observar `command_accepted=1` con `load_start=image_publish=cpu_cycle_fire=0` en el flanco de aceptación.
 
 3. **Observar la preparación.** Exigir ausencia de CPU y de snapshot mientras se inicializan el Register File, los latches y el contador y se limpian las marcas de DMEM. IMEM debe conservarse.
 
-4. **Observar el consumo de done.** En ese flanco, comprobar el primer fetch desde PC cero y el contador de cero a uno.
+4. **Observar el consumo de done.** En ese flanco, exigir `cpu_cycle_fire=1` e `image_publish=0`, y comprobar el primer fetch desde PC cero y el contador de cero a uno.
 
 5. **Comparar la nueva sesión.** RUN continúa; STEP retiene después de ese primer ciclo. Los metadatos anteriores no deben interpretarse como un fault vigente de la sesión nueva.
 
@@ -704,11 +717,11 @@ También se ejecutan las comprobaciones reutilizadas de [TEST-PIPE-002](pipeline
 
 1. **Preparar el trabajo anterior.** Instalar los latches y el contexto de escritura que correspondan al estado.
 
-2. **Aceptar LOAD en los tres estados de espera.** Comprobar la invalidez de imagen y la ausencia de ciclo, store o writeback de la sesión abandonada.
+2. **Solicitar LOAD en los tres estados de espera.** Presentar `load_request=1` y observar `command_accepted=load_start=1`, con `cpu_cycle_fire=0`. Comprobar la invalidez de imagen y la ausencia de store o writeback de la sesión abandonada.
 
-3. **Rechazar LOAD durante AUTO.** Verificar que el ciclo efectivo y los commits anteriores continúen en los tres estados previstos.
+3. **Solicitar LOAD durante AUTO.** Presentar `load_request=1` y observar `command_accepted=load_start=0`, con `cpu_cycle_fire=1`. Verificar que el ciclo efectivo y los commits anteriores continúen en los tres estados previstos.
 
-4. **Aplicar reset antes del flanco.** En cada contexto, exigir que todas las habilitaciones de escritura queden inactivas.
+4. **Aplicar reset antes del flanco.** En cada contexto, exigir las cuatro salidas Mealy de la FSM y todas las habilitaciones de escritura inactivas.
 
 5. **Comprobar las prioridades reutilizadas.** Revisar init frente a WB en TEST-PIPE-002 y clear frente a store en TEST-MEM-006.
 

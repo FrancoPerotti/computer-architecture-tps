@@ -536,23 +536,23 @@ No existe un código `NONE`. La validez de `fault_cause` se deriva del estado te
 
 ## Confirmación y prioridad según el orden del programa
 
-Las confirmaciones principales son:
+`Pipeline Hazard Control` selecciona las confirmaciones durante un ciclo ordinario, con `cpu_cycle_fire=1` y `drain_mode=0`. Ambas señales provienen de `Execution Control`.
 
 ```text
 ex_fault_confirm =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && ex_fault_candidate
 
 halt_confirm =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && !ex_fault_candidate
     && ex_halt_candidate
 
 redirect_apply =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && !ex_fault_candidate
     && !ex_halt_candidate
     && redirect_requested
@@ -568,17 +568,17 @@ ex_frontier_selected =
 
 id_fault_confirm =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && !ex_frontier_selected
     && id_fault_candidate
 ```
 
-La confirmación total de fault es:
+`Execution Control` forma la confirmación total de fault a partir de las acciones de fault seleccionadas:
 
 ```text
 fault_confirm =
-    ex_fault_confirm
-    || id_fault_confirm
+    act_ex_fault
+    || act_id_fault
 ```
 
 Estas ecuaciones se integran con las ocho acciones en [Control del pipeline y hazards](../cpu/control_and_hazards.md).
@@ -633,19 +633,11 @@ No forman parte de los registros interetapa.
 
 ### Captura
 
-La habilitación es:
+La selección de causa/PC y sus registros pertenecen a la lógica local de `Execution Control`. `fault_capture_fire` es la habilitación local de ambos registros:
 
 ```text
 fault_capture_fire =
     fault_confirm
-```
-
-equivalentemente:
-
-```text
-fault_capture_fire =
-    act_ex_fault
-    || act_id_fault
 ```
 
 Si el fault se confirma en EX:
@@ -662,7 +654,7 @@ fault_cause ← id_fault_cause
 fault_pc    ← IF/ID.pc
 ```
 
-Sin `fault_capture_fire`, ambos registros conservan su contenido.
+La captura ocurre en el flanco de confirmación, con la causa y el PC anteriores al flanco. Durante `HOLD` y drenado, ambos registros conservan el contenido capturado.
 
 ```mermaid
 flowchart LR
@@ -775,19 +767,19 @@ EX/MEM
 MEM/WB
 ```
 
-Cada ciclo autorizado aplica `act_drain_advance` y desplaza ese trabajo hacia el final.
+Con `cpu_cycle_fire=1` y `drain_mode=1`, cada ciclo aplica `act_drain_advance` y desplaza ese trabajo hacia el final.
 
 ### Drenado AUTO y STEP
 
 En modo `AUTO`, los ciclos de drenado se autorizan automáticamente.
 
-En modo `STEP`, cada ciclo de drenado necesita una nueva orden `STEP`. Esperar esa orden mantiene el pipeline en `HOLD` sin modificar los metadatos ni repetir los efectos que ya hicieron commit.
+En modo `STEP`, una orden `STEP` autoriza un ciclo de drenado. Una orden `RUN` autoriza el ciclo actual y continúa automáticamente si todavía queda trabajo. Entre órdenes, el pipeline permanece en `HOLD` y conserva los metadatos capturados.
 
 Esta diferencia modifica el ritmo del vaciado, pero se dejan terminar las mismas instrucciones anteriores.
 
 ### Detección de pipeline vacío
 
-El control global calcula [pipeline_empty_next](execution_control.md#pipeline-vacío) con los cuatro `valid` posteriores al flanco. Los datos residuales no representan trabajo pendiente.
+`Execution Control` calcula [pipeline_empty_next](execution_control.md#pipeline-vacío) con los cuatro `next.valid` del pipeline. Los datos residuales no representan trabajo pendiente.
 
 `fetch_fault_valid` no participa en el cálculo. Confirmar `halt` o fault también invalida ese candidato.
 

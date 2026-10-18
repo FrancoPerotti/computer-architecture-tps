@@ -14,15 +14,15 @@ El alcance comprende:
 
 - La implementación de `global_state[13:0]` como un registro one-hot, con un bit activo por estado.
 - La correspondencia entre cada bit, el estado de la CPU y su código UART de ocho bits.
-- La formación combinacional y compartida de `global_state_code[7:0]` para el controlador UART y el serializador Debug.
-- La derivación de las habilitaciones combinacionales existentes a partir del estado one-hot.
+- La formación combinacional de `global_state_code[7:0]` para la entrada `debug_state_code` de `Response Serializer`.
+- La derivación de las salidas Moore a partir del estado one-hot y su relación con las salidas Mealy de control.
 - Las condiciones de reset, la conservación de un único bit activo y los valores definidos para representaciones internas inválidas.
 
 Este documento no redefine las transiciones de la FSM ni agrega estados de CPU. La lógica de sesión y ejecución se describe en [Control de ejecución y sesión](execution_control.md); el controlador UART y el serializador mantienen sus propias FSM. Los [códigos UART](../../protocol.md#global_state) se conservan sin cambios: la codificación one-hot interna solo establece cómo se representa el estado dentro de la CPU y cómo se convierte para su observación externa.
 
 ## Estado registrado one-hot de catorce bits
 
-El estado global utiliza `global_state[13:0]` con un bit activo por estado. El orden de bits sigue el orden de códigos UART existente:
+El estado global utiliza `global_state[13:0]`, un registro interno de `Global FSM` dentro de `Execution Control`, con un bit activo por estado. El orden de bits sigue el orden de códigos UART existente:
 
 | Bit activo | Estado CPU         | Código UART de ocho bits |
 |-----------:|--------------------|--------------------------|
@@ -49,39 +49,50 @@ Este criterio de representación y transición es el mismo que se aplica en la U
 
 One-hot usa catorce bits de estado; una codificación binaria compacta usaría cuatro. El diseño utiliza one-hot por coherencia del criterio de FSM y acceso directo a estados individuales, sin afirmar que use menos área o alcance más frecuencia que binario antes de síntesis.
 
-## Código combinacional compartido
+## Código combinacional para Debug
 
 La CPU utiliza dos representaciones del mismo estado porque cumplen funciones distintas. Internamente, `global_state[13:0]` usa un bit activo por estado; hacia UART y Debug se necesita un byte compacto, como `0x03` para `READY` o `0x08` para `FAULT_DRAIN_AUTO`. El codificador combinacional funciona como puente entre ambas representaciones.
 
-La lógica Moore global observa únicamente el estado one-hot actualmente registrado y genera `global_state_code[7:0]` según la tabla anterior. Por ejemplo, si `global_state[3]=1`, la salida es `0x03`; si `global_state[8]=1`, la salida es `0x08`. Como esta conversión es combinacional, no incorpora un segundo registro de estado, un contador ni otro flanco de captura.
+`Global FSM` observa únicamente el estado one-hot actualmente registrado y genera la salida Moore `global_state_code[7:0]` según la tabla anterior. Por ejemplo, si `global_state[3]=1`, la salida es `0x03`; si `global_state[8]=1`, la salida es `0x08`. La conversión es combinacional y refleja el estado actual durante el mismo intervalo de clock.
 
-`protocol_controller` recibe `global_state_code`, mientras que `response_serializer` recibe esa misma conexión con el nombre de entrada `debug_state_code`. Ambos consumidores observan el mismo código y no necesitan adaptadores separados. El codificador puede estar agrupado en la lógica de decodificación global. Los cuatro bits superiores del byte son cero porque los códigos legales solo abarcan `0x00`–`0x0D`.
+`Execution Control` entrega el código a `Response Serializer` mediante su entrada `debug_state_code[7:0]`. `Protocol Controller` recibe las señales de control `load_available`, `prepare_active`, `program_finished` y `fault_terminal` para decidir disponibilidad, preparación y terminación. Los cuatro bits superiores del código son cero porque los valores legales solo abarcan `0x00`–`0x0D`.
 
-El registro one-hot se actualiza en el flanco de la CPU y, durante el intervalo posterior, el código refleja ese nuevo estado. La exclusión de Debug y `terminal_due` observan el código actual, por lo que conservan el instante postciclo. El codificador no autoriza ciclos, no solicita reset y no modifica ningún estado; durante la retención de Debug, tanto el registro one-hot como su código permanecen estables.
+El registro one-hot se actualiza en el flanco positivo del `clk` y, durante el intervalo posterior, el código y las salidas Moore reflejan ese nuevo estado. Durante la retención de Debug, tanto el registro one-hot como su código permanecen estables.
 
-## Decodificación de habilitaciones existentes
+## Decodificación de salidas Moore
 
-Estas señales son vistas combinacionales del estado global. No agregan información nueva ni guardan estado: permiten que otros bloques sepan si la CPU está cargando una imagen, preparando una sesión, en una condición terminal o conservando metadata de fault.
+Las seis salidas Moore de control de `Global FSM` indican carga, preparación, modo de drenado, disponibilidad para `LOAD` y terminación normal o por fault. Se decodifican combinacionalmente del estado registrado actual.
 
 Como la codificación es one-hot, cada señal se obtiene observando uno o más bits de `global_state`. Para estados legales, las ecuaciones son:
 
 ```text
 loader_active = global_state[1]
 prepare_active = global_state[2] OR global_state[12] OR global_state[13]
+drain_mode = global_state[6] OR global_state[7] OR global_state[8] OR global_state[9]
+load_available = global_state[0] OR global_state[3] OR global_state[5]
+                 OR global_state[7] OR global_state[9] OR global_state[10] OR global_state[11]
 program_finished = global_state[10]
-fault_info_valid = global_state[8] OR global_state[9] OR global_state[11]
+fault_terminal = global_state[11]
 ```
 
 La interpretación de cada señal es:
 
 - `loader_active` vale uno únicamente durante `LOADING`.
 - `prepare_active` vale uno durante `PREPARING_READY`, `PREPARING_RUN` o `PREPARING_STEP`.
+- `drain_mode` vale uno durante los cuatro estados de drenado.
+- `load_available` vale uno en los estados que permiten iniciar `LOAD` y llega a `Protocol Controller` para responder `CHECK_READY`.
 - `program_finished` vale uno únicamente en `FINISHED`.
-- `fault_info_valid` vale uno durante los estados de drenado por fault y en `FAULT`, cuando la metadata del fault es válida.
+- `fault_terminal` vale uno únicamente en `FAULT`.
+
+Para la observación Debug, el predicado `fault_info_valid` indica vigencia de la metadata durante el drenado por fault y en `FAULT`:
+
+```text
+fault_info_valid = global_state[8] OR global_state[9] OR global_state[11]
+```
 
 Todas estas señales son combinacionales y conservan los contratos existentes; no son registros nuevos. El reset y las autorizaciones de escritura o de ciclo siguen suprimiendo los efectos normales cuando corresponde. En particular, que `prepare_active` esté activo no implica habilitar una escritura durante `prepare_done`.
 
-El árbitro de comandos y la autorización de ciclo consumen el estado actual registrado. `next_state` describe el estado que se capturará en el próximo flanco, pero no se utiliza para autorizar ese mismo flanco.
+Las salidas Mealy `command_accepted`, `load_start`, `cpu_cycle_fire` e `image_publish` combinan el estado actual y las entradas, según las [condiciones de la FSM](execution_control.md#tabla-de-transiciones). `Global FSM` resuelve la aceptación y la autorización del ciclo antes de consultar las confirmaciones y el vacío futuro del pipeline. `next_state` describe el estado que se capturará en el próximo flanco.
 
 En todas las transiciones legales, el diseño conserva exactamente un bit activo desde el reset. La comprobación futura de RTL debe verificar tanto esa invariante como la correspondencia entre la representación one-hot y el código externo.
 

@@ -227,12 +227,12 @@ El `DMEM Write Control` determina si la instrucción que ocupa MEM hace commit d
 
 ##### Entradas
 
-| Señal                | Origen                | Tipo    |
-|----------------------|-----------------------|---------|
-| `cpu_cycle_fire`     | `Cycle Authorization` | Control |
-| `EX/MEM.valid`       | `EX/MEM`              | Control |
-| `is_store`           | `MEM Decode`          | Control |
-| `EX/MEM.mem_op[3:0]` | `EX/MEM`              | Control |
+| Señal                | Origen              | Tipo    |
+|----------------------|---------------------|---------|
+| `cpu_cycle_fire`     | `Execution Control` | Control |
+| `EX/MEM.valid`       | `EX/MEM`            | Control |
+| `is_store`           | `MEM Decode`        | Control |
+| `EX/MEM.mem_op[3:0]` | `EX/MEM`            | Control |
 
 La habilitación efectiva es:
 

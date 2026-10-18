@@ -180,11 +180,17 @@ CHECK_READY informa disponibilidad actual. No reserva ni garantiza la aceptació
 
 ### Condiciones iniciales
 
-La unidad de protocolo se conecta a FIFO RX, a un sustituto controlado de CPU y a un serializador libre. El banco presenta el código de estado actual de la variante.
+La unidad de protocolo se conecta a FIFO RX, a un sustituto controlado de CPU y a un serializador libre. El sustituto presenta `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire`, `prepare_done` e `image_valid`, conforme al contexto de la variante y a la solicitud recibida.
+
+El estado de la variante identifica el fixture. Los indicadores se calculan con un modelo de referencia independiente, según los contratos de `Execution Control` y `Session Preparation`. El código de ocho bits se utiliza en la observación de `Response Serializer`.
+
+En el manifiesto, `cpu_context` contiene los valores iniciales del sustituto y `cpu_reply_on_request` fija su respuesta cuando aparece la solicitud de la fase indicada. `command_accepted` permanece en cero mientras esa solicitud no esté activa. Después de una aceptación, el sustituto sigue el nuevo contexto y los eventos de finalización del recorrido.
 
 READY y los terminales tienen una imagen válida; NO_IMAGE no la tiene. El sustituto mantiene un estado de drain AUTO durante la observación local, sin afirmar que ese estado dure una trama UART en CPU real.
 
 Los intercambios físicos de sistema se comprueban en TEST-UART-004 y TEST-UART-010. En esta unidad se observan la respuesta y las solicitudes de CPU o Loader, sin modificar la imagen por una orden rechazada.
+
+Al aceptar RUN o STEP, el sustituto actualiza el contexto en ese mismo flanco. Desde FINISHED o FAULT entra primero en preparación, baja los indicadores terminales y presenta `prepare_done` con el primer ciclo posterior. En los fixtures de drain STEP queda únicamente WB; el ciclo aceptado alcanza FINISHED o FAULT según la clase de drain.
 
 ### Variantes cerradas
 
@@ -198,11 +204,11 @@ Los ocho casos restantes entregan cuatro valores de byte en las fases de tamaño
 
 ### Procedimiento
 
-1. **Preparar el estado y el transporte.** Presentar el código CPU actual, la imagen válida o inválida y la fase de protocolo del caso.
+1. **Preparar el contexto y el transporte.** Presentar los indicadores del fixture, la imagen válida o inválida y la fase de protocolo del caso. CHECK_READY utiliza `load_available`; la admisión de comandos utiliza también `prepare_active` y las condiciones locales de transporte.
 
 2. **Entregar la solicitud.** Aplicar el opcode o la cabecera LOAD completa de tamaño 4. La decisión debe usar el estado actual, no el que resultaría de aceptar la orden.
 
-3. **Comparar la respuesta.** Verificar los dos bytes binarios y las solicitudes dirigidas a CPU o Loader. No interpretar ASCII como una codificación alternativa.
+3. **Comparar la respuesta y la aceptación.** Verificar los dos bytes binarios y las solicitudes dirigidas a CPU o Loader. En CHECK_SIZE, EXEC_RUN y EXEC_STEP, asociar `command_accepted` con la solicitud activa de esa fase. Observar solicitud, aceptación y `cpu_cycle_fire` antes del flanco que los consume. Una STEP aceptada ejecuta el ciclo en ese flanco o espera la preparación de una sesión nueva. No interpretar ASCII como una codificación alternativa.
 
 4. **Comprobar los datos de LOAD.** En READ_SIZE y LOAD_DATA, entregar el byte y observar el avance de la fase, sin ejecutar RUN, STEP o RESET por su valor.
 
@@ -266,7 +272,7 @@ La selección no agrega otras combinaciones de instrucciones ni filtros de ISA d
 
 3. **Enviar y reconstruir la imagen.** Transmitir los N bytes seguidos y comparar las N/4 palabras de IMEM desde dirección cero, incluida la última.
 
-4. **Observar la preparación.** Comprobar `load_ok` con el último byte y la publicación posterior al consumir `prepare_done`. DONE debe llegar después de READY, con CPU inactiva, Register File preparado y estado lógico de DMEM en cero.
+4. **Observar la preparación.** Comprobar `load_ok` con el último byte y `image_publish` al consumir `prepare_done` en PREPARING_READY. Ese flanco publica el tamaño y alcanza READY con `cpu_cycle_fire=0`. DONE debe llegar después, con Register File preparado y estado lógico de DMEM en cero.
 
 5. **Ejecutar la imagen ilegal cargada.** Después de DONE completa, comprobar que la ejecución produzca causa 2 en PC cero. Ese resultado pertenece al decoder, no a un rechazo de LOAD.
 
@@ -738,7 +744,7 @@ C031 aplica el botón durante el cuerpo del snapshot posterior a STEP, con K=1. 
 
 ### Procedimiento
 
-1. **Preparar y conservar la observación.** Alcanzar el ciclo STEP o terminal RUN y guardar el estado postflanco. En RUN, mantener la respuesta breve anterior para comprobar que la exclusión comience aunque Debug todavía no pueda enviarse.
+1. **Preparar y conservar la observación.** Alcanzar el ciclo STEP o terminal RUN y guardar el estado postflanco. En RUN, comprobar `terminal_due = run_terminal_owed && (program_finished || fault_terminal)` y la exclusión inmediatamente después del flanco terminal, antes de registrar `debug_hold`. Mantener la respuesta breve anterior para comprobar que la exclusión comience aunque Debug todavía no pueda enviarse.
 
 2. **Entregar los bytes del caso.** Escribirlos en FIFO RX y observar su consumo en los flancos indicados. Para la espera y el cuerpo, exigir exclusión activa durante todo el mensaje. En la frontera E, comprobar su valor preflanco y observar simultáneamente el descarte del último byte RX y el fin físico de Debug.
 
@@ -784,7 +790,7 @@ La decisión depende de los flags y del estado registrados en preflanco. Los cru
 
 ### Condiciones iniciales
 
-El controlador y el serializador se preparan en un fixture de integración con `run_terminal_owed` activo.
+El controlador y el serializador se preparan en un fixture de integración con `run_terminal_owed` activo. FINISHED se presenta mediante `program_finished=1` y FAULT mediante `fault_terminal=1`; el otro indicador permanece en cero. El fixture respeta el valor preflanco o postflanco del terminal según el cruce.
 
 En los casos D, el descriptor de rechazo o error breve ya estaba guardado en preflanco. En C y E, la cabecera LOAD todavía no tiene una aceptación ni un rechazo.
 

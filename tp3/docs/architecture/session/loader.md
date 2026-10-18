@@ -23,7 +23,7 @@
 
 ## Propósito y alcance
 
-Este documento describe la función de Loader, que forma parte del mecanismo de carga de imágenes ejecutables en el procesador. `Loader` transforma la secuencia de bytes recibida durante una operación `LOAD` en palabras de instrucción de 32 bits y las escribe en `Instruction Memory` (IMEM). Los bytes llegan desde `protocol_controller`, que ya comprobó el tamaño de la imagen y coordina su entrega. Loader los agrupa de cuatro en cuatro, respeta el orden *little-endian* y efectúa una escritura síncrona únicamente cuando dispone de los cuatro bytes de una palabra.
+Este documento describe la función de Loader, que forma parte del mecanismo de carga de imágenes ejecutables en el procesador. `Loader` transforma la secuencia de bytes recibida durante una operación `LOAD` en palabras de instrucción de 32 bits y las escribe en `Instruction Memory` (IMEM). Los bytes llegan desde `Protocol Controller`, que ya comprobó el tamaño de la imagen y coordina su entrega. Loader los agrupa de cuatro en cuatro, respeta el orden *little-endian* y efectúa una escritura síncrona únicamente cuando dispone de los cuatro bytes de una palabra.
 
 El alcance comprende:
 
@@ -36,7 +36,7 @@ El alcance comprende:
 - La entrega del tamaño pendiente de la imagen al mecanismo encargado de publicarla.
 - Las prioridades de reset y aborto, y la relación entre la última escritura, la preparación de sesión y el inicio de la ejecución.
 
-La responsabilidad de Loader es **escribir la representación binaria de la imagen**, no interpretar su contenido. No decodifica instrucciones ni determina si sus codificaciones pertenecen a la ISA implementada. Tampoco recibe direcciones arbitrarias desde el host: la dirección de escritura se obtiene de la posición secuencial del byte que `protocol_controller` entrega.
+La responsabilidad de Loader es **escribir la representación binaria de la imagen**, no interpretar su contenido. No decodifica instrucciones ni determina si sus codificaciones pertenecen a la ISA implementada. Tampoco recibe direcciones arbitrarias desde el host: la dirección de escritura se obtiene de la posición secuencial del byte que `Protocol Controller` entrega.
 
 Una escritura en IMEM no equivale a publicar una imagen ejecutable. Mientras `LOADING` está activo, pueden existir palabras ya escritas en la memoria, pero la imagen solo adquiere validez para ejecución después de completar la carga y preparar la sesión. La publicación y la autorización para ejecutar pertenecen al control global. Véase [Arquitectura de memoria](../memory/memory_architecture.md#carga-y-publicación-de-una-imagen).
 
@@ -44,17 +44,17 @@ Una escritura en IMEM no equivale a publicar una imagen ejecutable. Mientras `LO
 
 ### Bloques y estado involucrados
 
-Loader utiliza un único registro propio para conservar bytes incompletos. El progreso de la transferencia y el tamaño de la imagen se mantienen en `protocol_controller`; no se duplican en Loader.
+Loader utiliza un único registro propio para conservar bytes incompletos. El progreso de la transferencia y el tamaño de la imagen se mantienen en `Protocol Controller`; no se duplican en Loader.
 
 | Elemento | Naturaleza | Función |
 |---|---|---|
-| `protocol_controller` | Control externo | Valida el tamaño, entrega bytes, mantiene el progreso y señala el último byte. |
+| `Protocol Controller` | Control externo | Valida el tamaño, entrega bytes, mantiene el progreso y señala el último byte. |
 | `load_byte_offset` | Conexión combinacional | Indica la posición, comenzando en cero, del byte que se está entregando. |
 | `partial_word[23:0]` | Registro de Loader | Conserva los primeros tres bytes de la palabra actual. |
 | Lógica de índice y lane | Lógica combinacional de Loader | Obtiene `word_index` y `byte_lane` a partir de la posición. |
 | Lógica de escritura | Lógica combinacional de Loader | Forma `imem_write_data`, `imem_write_index` y `imem_write_enable`. |
 | `Instruction Memory` | Memoria externa a Loader | Captura la palabra completa durante el flanco de escritura. |
-| FSM global | Control externo | Determina cuándo existe una carga activa y qué ocurre al completarla o abortarla. |
+| `Global FSM` | Control externo | Genera `load_start` y `loader_active`, y determina el destino de la carga al completarla o abortarla. |
 
 El recorrido funcional puede representarse así:
 
@@ -67,7 +67,7 @@ flowchart LR
     INDEX -->|word_index| IMEM[Instruction Memory]
     INDEX -->|byte_lane| WRITE[Control de escritura]
     CTRL -->|validación, último byte y aborto| WRITE
-    GLOBAL[FSM global: LOADING] -->|loader_active| WRITE
+    GLOBAL[Global FSM: LOADING] -->|loader_active| WRITE
     WRITE -->|imem_write_enable| IMEM
     ASSEMBLE -->|imem_write_data| IMEM
     WRITE -->|load_ok / load_fail| GLOBAL
@@ -81,12 +81,12 @@ Durante la operación `LOAD` intervienen mecanismos diferentes:
 
 | Responsabilidad | Mecanismo |
 |---|---|
-| Recibir y validar el tamaño de imagen | `protocol_controller` |
-| Controlar cuántos bytes faltan por entregar | `protocol_controller` |
-| Entregar el byte actual con `load_byte_valid` | `protocol_controller` |
+| Recibir y validar el tamaño de imagen | `Protocol Controller` |
+| Controlar cuántos bytes faltan por entregar | `Protocol Controller` |
+| Entregar el byte actual con `load_byte_valid` | `Protocol Controller` |
 | Conservar temporalmente bytes de una palabra incompleta | `Loader.partial_word` |
 | Empaquetar y escribir palabras de 32 bits | `Loader` e IMEM |
-| Determinar si la imagen completa puede publicarse | Control global y preparación de sesión |
+| Autorizar la publicación de la imagen preparada | `Global FSM`, al recibir `prepare_done` |
 | Buscar y validar instrucciones durante ejecución | Etapa IF |
 
 Esta distribución evita que Loader tenga un contador de bytes, un registro propio del tamaño de imagen o una FSM para cuatro posiciones. La posición determina qué hacer con cada entrega y el estado global determina cuándo ese trabajo está permitido.
@@ -95,7 +95,7 @@ Esta distribución evita que Loader tenga un contador de bytes, un registro prop
 
 ### Progreso mantenido por el controlador
 
-Antes de iniciar el suministro de bytes, `protocol_controller` valida el tamaño total de la imagen y conserva dos valores:
+Antes de iniciar el suministro de bytes, `Protocol Controller` valida el tamaño total de la imagen y conserva dos valores:
 
 - `load_size_received`: cantidad total de bytes de la imagen aceptada.
 - `load_bytes_remaining`: cantidad de bytes que todavía falta entregar.
@@ -237,16 +237,16 @@ Cuando `byte_lane=3`, los primeros tres bytes ya quedaron capturados en flancos 
 |---|---|---|
 | `clk` | Reloj común | Sincroniza las capturas parciales y las escrituras. |
 | `reset` | Control funcional global | Impide que una recepción o escritura produzca efectos normales durante reset. |
-| `loader_active` | Estado global `LOADING` | Autoriza el procesamiento de bytes de la carga en curso. |
-| `load_accept` | `Command Arbiter`, dentro de `execution_control` | Indica el inicio de una operación de carga aceptada. |
-| `load_size_bytes` | Tamaño validado mantenido por el controlador | Transporta el tamaño de la imagen pendiente de publicación. |
-| `load_byte_valid` | `protocol_controller` | Indica que `load_byte_data` contiene un byte que se entrega en el ciclo actual. |
-| `load_byte_data[7:0]` | `protocol_controller` | Byte recibido que corresponde a `load_byte_offset`. |
-| `load_byte_offset` | `protocol_controller` | Posición de byte de la entrega actual; permite derivar lane e índice de palabra. |
-| `load_last_byte` | `protocol_controller` | Identifica la última entrega de la imagen. |
-| `load_abort` | `protocol_controller` | Solicita cancelar la carga actual. |
+| `loader_active` | `Execution Control` | Autoriza el procesamiento de bytes durante `LOADING`. |
+| `load_start` | `Execution Control` | Indica el inicio de carga en el flanco que la FSM acepta LOAD. |
+| `load_size_bytes` | `Protocol Controller` | Transporta el tamaño validado de la imagen pendiente de publicación. |
+| `load_byte_valid` | `Protocol Controller` | Indica que `load_byte_data` contiene un byte que se entrega en el ciclo actual. |
+| `load_byte_data[7:0]` | `Protocol Controller` | Byte recibido que corresponde a `load_byte_offset`. |
+| `load_byte_offset` | `Protocol Controller` | Posición de byte de la entrega actual; permite derivar lane e índice de palabra. |
+| `load_last_byte` | `Protocol Controller` | Identifica la última entrega de la imagen. |
+| `load_abort` | `Protocol Controller` | Solicita cancelar la carga actual. |
 
-`load_accept` inicia la operación; no exige poner en cero `partial_word` para evitar residuos. Las posiciones `0`, `1` y `2` de cada nueva palabra se sobrescriben antes de habilitar cualquier escritura de IMEM.
+`load_start` identifica el inicio de cada operación. La entrega comienza en el offset cero y las posiciones `0`, `1` y `2` de cada nueva palabra se sobrescriben antes de habilitar la escritura de IMEM.
 
 La entrega de un byte requiere `load_byte_valid=1`. Los valores combinacionales que puedan existir en `load_byte_data`, `load_byte_offset` o sus derivados cuando ese flag está en cero no representan una transferencia y no provocan capturas.
 
@@ -257,11 +257,13 @@ La entrega de un byte requiere `load_byte_valid=1`. Los valores combinacionales 
 | `imem_write_enable` | Puerto de escritura de IMEM | Autoriza escribir una palabra completa. |
 | `imem_write_index[WORD_INDEX_WIDTH-1:0]` | Puerto de escritura de IMEM | Selecciona la palabra a modificar. |
 | `imem_write_data[31:0]` | Puerto de escritura de IMEM | Contiene la palabra little-endian ensamblada. |
-| `load_ok` | Control global | Indica que la última palabra se escribe correctamente en el flanco actual. |
-| `load_fail` | Control global | Informa que la operación activa fue abortada. |
-| `pending_image_size_bytes` | Control de publicación | Presenta el tamaño validado de la imagen que se está cargando. |
+| `load_ok` | `Execution Control` | Indica que la última palabra se escribe correctamente en el flanco actual. |
+| `load_fail` | `Execution Control` | Informa que la operación activa fue abortada. |
+| `pending_image_size_bytes` | Registro `loaded_image_size_bytes` de `Execution Control` | Presenta el tamaño validado para su publicación. |
 
 `pending_image_size_bytes` reutiliza el tamaño recibido mediante `load_size_bytes`: Loader no conserva otra copia. No debe confundirse con `loaded_image_size_bytes`, que corresponde a la **imagen ya confirmada**.
+
+`load_size_bytes` y `pending_image_size_bytes` tienen `IMAGE_SIZE_WIDTH` bits.
 
 ### Señales de habilitación y resultado
 
@@ -305,13 +307,13 @@ load_fail =
 
 ### Inicio de la recepción
 
-El controlador comprueba el tamaño de imagen antes de aceptar la operación. Los tamaños admitidos son:
+`Protocol Controller` comprueba el tamaño de imagen antes de presentar `load_request`. Los tamaños admitidos son:
 
 - Mayores que cero.
 - Múltiplos de cuatro bytes.
 - No superiores a `IMEM_CAPACITY_BYTES`.
 
-Estas condiciones garantizan que la imagen contiene un número entero de palabras de 32 bits y que todas sus escrituras caben en IMEM. Una vez aceptada, la FSM global entra en `LOADING`, y `loader_active` habilita el camino de recepción.
+Estas condiciones garantizan que la imagen contiene un número entero de palabras de 32 bits y que todas sus escrituras caben en IMEM. Al aceptar la solicitud, la FSM genera `load_start` y entra en `LOADING` en el mismo flanco. En ese flanco, `Execution Control` pone el tamaño confirmado en cero. Durante `LOADING`, `loader_active` habilita el camino de recepción.
 
 Loader no vuelve a validar esos requisitos en cada byte ni crea una segunda política de rechazo. Utiliza las entregas que ya cumplen el contrato del controlador.
 
@@ -376,8 +378,8 @@ En el flanco de la última entrega se producen simultáneamente los siguientes e
 1. IMEM captura la última palabra.
 2. `load_bytes_remaining` pasa a cero.
 3. `load_ok` informa al control global que la recepción terminó.
-4. La FSM global pasa de `LOADING` a `PREPARING_READY`.
-5. `protocol_controller` pasa a `WAIT_LOAD_PREP`.
+4. La `Global FSM` pasa de `LOADING` a `PREPARING_READY`.
+5. `Protocol Controller` pasa a `WAIT_LOAD_PREP`.
 
 La preparación comienza bajo el nuevo estado global después de ese flanco. No existe un ciclo intermedio dedicado a escribir la palabra completa: la última escritura ya ocurrió.
 
@@ -387,7 +389,7 @@ La FSM del controlador también contempla el estado `WAIT_LOAD_RESULT`, aunque e
 
 La memoria puede contener todas las palabras recibidas inmediatamente después del último flanco de carga, pero eso todavía no significa que el procesador pueda ejecutarlas.
 
-Durante la preparación se restablece el estado inicial de sesión y, al completarse, el control global publica la imagen y alcanza `READY`. `prepare_done` identifica esa finalización: la publicación se realiza sin un acceso de mantenimiento concurrente y **sin ejecutar un ciclo de CPU**.
+Durante la preparación se restablece el estado inicial de sesión. Al recibir `prepare_done` en `PREPARING_READY`, la FSM activa `image_publish` y entra en `READY`. En ese mismo flanco, el registro de tamaño de `Execution Control` captura `pending_image_size_bytes`.
 
 Existen dos tamaños conceptualmente distintos:
 
@@ -434,7 +436,7 @@ load_ok           = 0
 load_fail         = 1
 ```
 
-El cuarto byte no completa una escritura válida en IMEM. El controlador y la FSM global cancelan la operación, y la FSM vuelve a `NO_IMAGE`.
+El cuarto byte no completa una escritura válida en IMEM. El controlador y la `Global FSM` cancelan la operación, y la FSM vuelve a `NO_IMAGE`.
 
 Las palabras que se hubieran escrito en ciclos anteriores pueden permanecer físicamente en IMEM. No se necesita revertirlas, porque esa imagen parcial **nunca fue publicada como ejecutable**. El nuevo estado global impide interpretarla como una imagen válida.
 
@@ -454,7 +456,7 @@ El control de autorización es lo que distingue una palabra efectivamente escrit
 
 Loader depende de las siguientes garantías del controlador:
 
-- El tamaño se valida antes de `load_accept`.
+- El tamaño se valida antes de `load_start`.
 - La entrega comienza en el offset cero y recorre la imagen de forma contigua.
 - `load_bytes_remaining` disminuye exactamente una vez por byte entregado.
 - `load_last_byte` coincide con una entrega cuyo restante anterior es uno.
@@ -626,6 +628,7 @@ Las siguientes propiedades resumen el comportamiento que debe conservar Loader:
 
 ## Referencias y trazabilidad
 
+- [Control de ejecución y sesión](execution_control.md): inicio de carga, señales de actividad y publicación de la imagen.
 - [Arquitectura de memoria](../memory/memory_architecture.md): almacenamiento de IMEM, validez y publicación de la imagen.
 - [Etapa IF](../cpu/stage_if.md): lectura de instrucciones desde IMEM una vez iniciada la ejecución.
 - [Preparación de sesión](session_preparation.md): inicialización, limpieza de DMEM y transición a `READY`.

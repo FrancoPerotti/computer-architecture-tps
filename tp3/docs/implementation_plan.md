@@ -243,7 +243,7 @@ Los cambios de interfaz, prioridades o comportamiento se acuerdan entre ambos y 
 
 ## Cierre de la entrega
 
-El trabajo termina cuando el sistema implementa todo el diseño acordado, cumple todos los requisitos y tiene evidencia de todas las pruebas previstas. El [inventario](architecture/module_inventory.md) y la [composición](architecture/system_composition.md) permiten comprobar los 54 bloques del CPU, los módulos de integración/transporte y el IP de clock, incluidos los controles que comparten archivo con un top o una etapa.
+El trabajo termina cuando el sistema implementa todo el diseño acordado, cumple todos los requisitos y tiene evidencia de todas las pruebas previstas. El [inventario](architecture/module_inventory.md) y la [composición](architecture/system_composition.md) permiten comprobar los 51 bloques del CPU, los módulos de integración/transporte y el IP de clock, incluidos los controles que comparten archivo con un top o una etapa.
 
 La documentación final debe corresponder al RTL, software, restricciones y bitstream entregados. Se reúne la relación requisito, diseño, prueba y resultado, y se conservan logs, reportes de recursos/timing, herramientas y versiones. Las instrucciones de preparación, build y ejecución deben poder repetirse desde un checkout limpio, según [TEST-PLAT-006](verification/platform.md#test-plat-006).
 

@@ -319,7 +319,7 @@ Durante Debug, la CPU está retenida y no consume la primera lectura como operan
 
 La [derivación de dirección y byte Debug](../debug/response_serializer.md#derivación-de-registro-y-byte-rf) desde `fixed_byte_index` está aprobada. El índice determina combinacionalmente el registro y el byte que deben observarse durante la respuesta.
 
-El selector `rf_debug_select` deriva de `debug_hold` en `protocol_controller`. La captura del byte se habilita mediante las acciones de `response_serializer`, según la [composición aprobada](../system_composition.md).
+`Protocol Controller` genera `rf_debug_select` con la condición [debug_exclusive](../debug/protocol_controller.md#terminal-run-y-exclusión-debug), que cubre la retención y el terminal `RUN` pendiente. La captura del byte se habilita mediante las acciones de `response_serializer`, según la [composición aprobada](../system_composition.md).
 
 ### `Immediate Generator`
 
@@ -351,14 +351,14 @@ Una instrucción en ID puede leer un registro en el mismo ciclo en que WB escrib
 
 #### Entradas
 
-| Señal                      | Origen                | Tipo    |
-|----------------------------|-----------------------|---------|
-| `cpu_cycle_fire`           | `Cycle Authorization` | Control |
-| `MEM/WB.valid`             | `MEM/WB`              | Control |
-| `MEM/WB.reg_write`         | `MEM/WB`              | Control |
-| `MEM/WB.rd[4:0]`           | `MEM/WB`              | Data    |
-| `IF/ID.instruction[19:15]` | `IF/ID`               | Data    |
-| `IF/ID.instruction[24:20]` | `IF/ID`               | Data    |
+| Señal                      | Origen              | Tipo    |
+|----------------------------|---------------------|---------|
+| `cpu_cycle_fire`           | `Execution Control` | Control |
+| `MEM/WB.valid`             | `MEM/WB`            | Control |
+| `MEM/WB.reg_write`         | `MEM/WB`            | Control |
+| `MEM/WB.rd[4:0]`           | `MEM/WB`            | Data    |
+| `IF/ID.instruction[19:15]` | `IF/ID`             | Data    |
+| `IF/ID.instruction[24:20]` | `IF/ID`             | Data    |
 
 #### ¿Cuándo escribe WB?
 
@@ -519,8 +519,8 @@ Si `IF/ID.valid=0` y `IF/ID.fetch_fault_valid=0`, la entrada es simplemente una 
 | Señal                 | Destino                   | Tipo    |
 |-----------------------|---------------------------|---------|
 | `id_fault_candidate`  | `Pipeline Hazard Control` | Control |
-| `id_fault_cause[2:0]` | `Fault Metadata Control`  | Control |
-| `id_fault_pc[31:0]`   | `Fault Metadata Control`  | Control |
+| `id_fault_cause[2:0]` | `Execution Control`       | Control |
+| `id_fault_pc[31:0]`   | `Execution Control`       | Control |
 
 `ID Fault Check` genera el candidato. Para confirmarlo se necesita un ciclo de la CPU y que en EX no se confirme un fault o `halt` ni se aplique un redirect de la instrucción anterior.
 

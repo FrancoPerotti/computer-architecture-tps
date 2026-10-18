@@ -3,6 +3,7 @@
 - **Tipo:** plan de verificación.
 - **Estado documental:** plan cerrado documentalmente; pruebas diseñadas, sin ejecutar.
 - **Fecha:** 2026-10-15.
+- **Revisión de interfaces de ejecución:** 2026-10-16.
 
 ## Propósito y alcance
 
@@ -62,6 +63,8 @@ Salvo indicación contraria, todas las variantes utilizan el perfil `REFERENCE`,
 
 Cada variante parte de ese estado. Si necesita inicializaciones adicionales, la propia prueba debe indicarlas. Cuando se prueba la CPU sin UART, el banco de pruebas debe alcanzar el mismo estado mediante reset, carga y preparación, o mediante un fixture controlado equivalente. Ese fixture no puede interpretarse como un comando externo nuevo del sistema.
 
+Los bancos presentan las entradas del bloque probado y observan sus salidas. En `Global FSM`, presentan las solicitudes y condiciones de sus productores, y observan aceptación, inicio de carga, autorización de ciclo y publicación. En unidad de hazards presentan `cpu_cycle_fire` y `drain_mode`; en unidad de protocolo, el sustituto de CPU produce los indicadores de control y la aceptación común. Los nombres de estado que identifican un fixture se distinguen de los puertos conectados al DUT. Las salidas combinacionales se comparan antes del flanco y los registros después de su captura.
+
 ### Instrucciones y assembler de estímulo
 
 Los números de instrucción siempre representan valores de 32 bits. La instrucción `halt` debe utilizar exactamente la codificación `0x0000000B`.
@@ -94,7 +97,7 @@ Para describir correctamente cada ciclo se distinguen dos momentos:
 | **Preflanco**  | Valores que existían antes del flanco y que generan los datos y las señales de control a capturar. |
 | **Postflanco** | Valores registrados después del flanco, cuando los registros del pipeline ya fueron actualizados.  |
 
-Una prueba debe tomar sus observaciones después del flanco correspondiente y esperar a que se estabilice la lógica combinacional. De ese modo, distingue los valores que quedaron registrados de las señales que todavía se están calculando para el ciclo siguiente.
+Una prueba compara las habilitaciones combinacionales en preflanco y los valores registrados después del flanco correspondiente, esperando a que se estabilice la lógica combinacional. De ese modo, distingue los valores que quedaron registrados de las señales que todavía se están calculando para el ciclo siguiente.
 
 La detección de una condición tampoco equivale automáticamente a su confirmación. Un candidato de fault todavía debe pasar por la prioridad y el arbitraje del pipeline antes de producir una terminación.
 
@@ -239,7 +242,7 @@ Este documento define la organización, los vectores y los resultados que deben 
 
 ## Condición de entrega y cierre
 
-El plan define las comprobaciones de cada requisito en alcance y las condiciones iniciales, estímulos, expectativas, niveles y criterios de aprobación de sus pruebas. La matriz cubre los 54 bloques y las 25 invariantes, ambos perfiles y las interacciones críticas. Los IDs y las referencias relacionan cada variante con su especificación y sus contratos.
+El plan define las comprobaciones de cada requisito en alcance y las condiciones iniciales, estímulos, expectativas, niveles y criterios de aprobación de sus pruebas. La matriz cubre los 51 bloques y las 25 invariantes, ambos perfiles y las interacciones críticas. Los IDs y las referencias relacionan cada variante con su especificación y sus contratos.
 
 El cierre documental de FPGA-07 y FPGA-08 comprende el diseño de las pruebas y las reglas de comparación. Su correspondencia con el diseño FPGA forma parte del cierre de FPGA-09. La ejecución exitosa de las pruebas y la habilitación de la implementación son resultados independientes del cierre de estos documentos.
 

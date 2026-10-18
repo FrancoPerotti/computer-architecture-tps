@@ -427,52 +427,31 @@ Esta diferencia entre `act_ex_fault` y `act_id_fault` responde al orden de las i
 
 ### Separación entre autorización y coordinación
 
-`Pipeline Hazard Control` no decide si la CPU ejecuta un ciclo.
+`Global FSM` genera `cpu_cycle_fire` y `drain_mode`, distribuidas por `Execution Control`. `Pipeline Hazard Control` utiliza esas señales y los eventos del pipeline para seleccionar la acción del ciclo.
 
-La autorización proviene de [Control de ejecución y sesión](../session/execution_control.md) mediante:
-
-```text
-cpu_cycle_fire
-```
-
-Solo dentro de un ciclo efectivo se selecciona una acción del pipeline.
-
-Esto separa dos preguntas:
-
-```text
-¿hay ciclo de la CPU?
-    → Cycle Authorization
-
-¿cómo se actualiza el pipeline durante ese ciclo?
-    → Pipeline Hazard Control
-```
+| Entrada | Origen |
+|---|---|
+| `cpu_cycle_fire` | `Execution Control` |
+| `drain_mode` | `Execution Control` |
+| `ex_fault_candidate` | `EX Fault Check` |
+| `ex_halt_candidate` | `Flow Control` |
+| `redirect_requested` | `Flow Control` |
+| `id_fault_candidate` | `ID Fault Check` |
+| `load_use_stall` | `Load-Use Detector` |
 
 RESET, un LOAD aceptado y la preparación tienen prioridad global sobre la ejecución de la CPU y se resuelven fuera de estas acciones.
 
 ### Estado terminal y drenado
 
-El control utiliza:
+`cpu_cycle_fire` habilita el ciclo y `drain_mode` selecciona su contexto:
 
-```text
-terminal_active =
-    global_state en {
-        HALT_DRAIN_AUTO,
-        HALT_DRAIN_STEP,
-        FAULT_DRAIN_AUTO,
-        FAULT_DRAIN_STEP,
-        FINISHED,
-        FAULT
-    }
+| `cpu_cycle_fire` | `drain_mode` | Selección |
+|---:|---:|---|
+| 0 | Cualquiera | Todas las acciones en cero. |
+| 1 | 0 | Una de las seis acciones ordinarias. |
+| 1 | 1 | Una de las dos acciones de drain. |
 
-terminal_none =
-    !terminal_active
-
-drain_active =
-    terminal_active
-    && !pipeline_empty
-```
-
-Mientras `terminal_none=1`, pueden seleccionarse las seis acciones ordinarias. Durante un drenado activo se utilizan las dos acciones de drain.
+En una sesión legal, cada ciclo autorizado corresponde a ejecución ordinaria o a drenado con instrucciones pendientes. `Execution Control` determina la finalización mediante `pipeline_empty_next` y pasa al estado terminal cuando se completa ese trabajo.
 
 ### Prioridad de los eventos no terminales
 
@@ -498,23 +477,54 @@ La secuencia no significa que `halt` tenga prioridad universal sobre cualquier f
 
 ### Confirmaciones
 
-Los candidatos se convierten en eventos aplicados durante un ciclo efectivo según [las confirmaciones y la prioridad según el orden del programa](../session/faults_and_termination.md#confirmación-y-prioridad-según-el-orden-del-programa). Ese contrato define `ex_fault_confirm`, `halt_confirm`, `redirect_apply`, `ex_frontier_selected`, `id_fault_confirm` y `fault_confirm`.
+Durante un ciclo ordinario, los candidatos se convierten en eventos aplicados según la prioridad anterior:
 
-El control utiliza esos eventos para seleccionar las acciones. Si no se confirma `halt` o fault ni se aplica un redirect, decide entre load-use y avance normal.
+```text
+ex_fault_confirm =
+    cpu_cycle_fire
+    && !drain_mode
+    && ex_fault_candidate
+
+halt_confirm =
+    cpu_cycle_fire
+    && !drain_mode
+    && !ex_fault_candidate
+    && ex_halt_candidate
+
+redirect_apply =
+    cpu_cycle_fire
+    && !drain_mode
+    && !ex_fault_candidate
+    && !ex_halt_candidate
+    && redirect_requested
+
+ex_frontier_selected =
+    ex_fault_confirm
+    || halt_confirm
+    || redirect_apply
+
+id_fault_confirm =
+    cpu_cycle_fire
+    && !drain_mode
+    && !ex_frontier_selected
+    && id_fault_candidate
+```
+
+La selección se aplica mediante `act_ex_fault`, `act_halt`, `act_redirect` y `act_id_fault`. Las acciones de fault llegan a `Execution Control` para capturar causa/PC y notificar la confirmación a la FSM. La semántica de esos eventos se desarrolla en [Faults, redirects y terminación](../session/faults_and_termination.md#confirmación-y-prioridad-según-el-orden-del-programa).
 
 Finalmente:
 
 ```text
 load_use_apply =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && !ex_frontier_selected
     && !id_fault_confirm
     && load_use_stall
 
 normal_advance =
     cpu_cycle_fire
-    && terminal_none
+    && !drain_mode
     && !ex_frontier_selected
     && !id_fault_confirm
     && !load_use_apply
@@ -545,7 +555,7 @@ Se derivan mediante:
 ```text
 drain_cycle =
     cpu_cycle_fire
-    && drain_active
+    && drain_mode
 
 drain_load_use =
     drain_cycle
@@ -600,14 +610,14 @@ La clase de ciclo determina cuántas acciones se seleccionan:
 |----------------------------|-----------------------------------------------------|
 | Ciclo efectivo no terminal | Exactamente una de las seis acciones no terminales. |
 | Ciclo efectivo de drenado  | Una de las dos acciones de drenado.                 |
-| `HOLD` o terminal ya vacío | Ninguna acción.                                     |
+| `cpu_cycle_fire=0`          | Ninguna acción.                                     |
 
 ## Efecto de cada acción sobre el pipeline
 
 La tabla resume el efecto de cada acción sobre el PC y los registros interetapa.
 
 | Acción               | PC                | `IF/ID.next`          | `ID/EX.next` | `EX/MEM.next` | `MEM/WB.next` |
-|-------------------- -|-------------------|-----------------------|--------------|---------------|---------------|
+|----------------------|-------------------|-----------------------|--------------|---------------|---------------|
 | `act_ex_fault`       | Retener           | Invalidar ambos flags | Bubble       | Invalidar     | Capturar MEM  |
 | `act_halt`           | Retener           | Invalidar ambos flags | Bubble       | Invalidar     | Capturar MEM  |
 | `act_redirect`       | `redirect_target` | Invalidar ambos flags | Bubble       | Capturar EX   | Capturar MEM  |
@@ -773,12 +783,11 @@ En modo `AUTO` esos ciclos se autorizan automáticamente. En modo `STEP` cada av
 
 Puede verificarse mediante una prueba artificial que fuerce simultáneamente:
 
-- estado de drain activo;
-- ciclo efectivo;
-- un load válido en `ID/EX`;
-- un consumidor dependiente válido en `IF/ID`.
+- `cpu_cycle_fire=1`;
+- `drain_mode=1`;
+- `load_use_stall=1`.
 
-La prueba comprueba la ecuación, la exclusión mutua y la fila correspondiente de actualización. No representa una secuencia end-to-end alcanzable desde reset y no modifica la FSM para hacerla alcanzable.
+El stall puede construirse con un load válido en `ID/EX` y un consumidor dependiente válido en `IF/ID`. La prueba comprueba la ecuación, la exclusión mutua y la fila correspondiente de actualización como un caso combinacional separado de los recorridos legales de sesión.
 
 ## HOLD
 
@@ -837,5 +846,5 @@ Las propiedades formales y su clasificación entre comportamiento alcanzable y p
 - [Etapa MEM](stage_mem.md): stores, `MEM/WB` y efectos anteriores.
 - [Etapa WB](stage_wb.md): `rf_write_fire` y commit del Register File.
 - [Faults, redirects y terminación](../session/faults_and_termination.md): candidatos, causas, confirmaciones y precisión.
-- [Control de ejecución y sesión](../session/execution_control.md): `cpu_cycle_fire`, RUN, `STEP`, `HOLD` y drenado `AUTO`/`STEP`.
+- [Control de ejecución y sesión](../session/execution_control.md): `cpu_cycle_fire`, `drain_mode`, RUN, `STEP`, `HOLD` y drenado `AUTO`/`STEP`.
 - [Invariantes arquitectónicos](../architectural_invariants.md): propiedades de seguridad y cobertura.

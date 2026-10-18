@@ -26,7 +26,7 @@ Los acuerdos consolidados separan `reset` global de inicialización de sesión, 
 4. Exigir una FSM, grants y enables concretos, o fijar únicamente el contrato observable.
 5. Incorporar un debouncer obligatorio, o dejarlo como acondicionamiento opcional basado en evidencia física.
 
-**Decisión:** Se aprueba el siguiente contrato consolidado.
+**Decisión:** Se aprueba el siguiente contrato consolidado. La [revisión de control integrado y habilitaciones](#revisión-de-dec-arch-008--control-integrado-y-habilitaciones) actualiza las remisiones de realización y conserva las prioridades y condiciones de ciclo efectivo.
 
 #### 1. Separación entre reset global e inicialización de sesión
 
@@ -629,6 +629,8 @@ Esta garantía satisface la recuperación mínima exigida por `REQ-EXEC-015`. `D
 
 ##### Realización RTL no prescrita
 
+> **Realización revisada por el [control integrado](#revisión-de-dec-arch-008--control-integrado-y-habilitaciones) (2026-10-16).** La organización de la FSM y sus puertos se concreta mediante el acuerdo 48 de `DEC-ARCH-003` y las especificaciones consolidadas.
+
 La decisión fija semántica, prioridades, ownership y condiciones de enable. La FSM global de 14 estados, aceptación de comandos y autorización separada están fijadas por el acuerdo 44 de `DEC-ARCH-003`. Quedan libres la codificación binaria, nombres de puertos, FSM privadas, owners/grants, paralelismo físico de preparación e invalidación DMEM, respetando los enables y transiciones aprobados.
 
 La implementación materializará la FSM global aprobada y sus enables; la organización de submódulos es libre dentro del contrato. Deberá preservar el contrato observable, exclusión de ownership, atomicidad del commit y ausencia de escrituras duplicadas. Los contratos se distribuyen entre estos ámbitos:
@@ -676,3 +678,33 @@ Rechazar `LOAD` durante contexto continuo preserva ownership y evita un aborto i
 **Reemplaza / Reemplazada por:** No aplica.
 
 ---
+
+### Revisión de DEC-ARCH-008 — Control integrado y habilitaciones
+
+**Estado:** Aprobada.
+
+**Fecha:** 2026-10-16.
+
+**Alcance:** Las remisiones de este ADR al acuerdo 44 de `DEC-ARCH-003`, a la autorización separada y a la libertad inicial de realización se actualizan con el [acuerdo 48](DEC-ARCH-003.md#acuerdo-48-aprobado--integración-del-control-global-de-ejecución). [Execution Control](../architecture/session/execution_control.md), [Preparación de sesión](../architecture/session/session_preparation.md) e [Interfaces](../interfaces.md#bloque-8-1) concretan los controles vigentes. El [acondicionamiento de reset](../architecture/platform/reset_integration.md) conserva su contrato.
+
+**Decisión:** `Global FSM`, en `global_fsm.sv` dentro de `execution_control.sv`, selecciona las solicitudes directas `load_request`, `run_request` y `step_request`, comunica aceptación mediante `command_accepted` y genera los controles de los recursos. El estado interno es one-hot de catorce bits y captura `next_state` en cada flanco positivo de `clk`; `cpu_cycle_fire` autoriza un ciclo efectivo de la CPU.
+
+La prioridad funcional sigue siendo `RESET` > `LOAD` aceptado / preparación efectiva > ciclo CPU > `HOLD`. Su aplicación en la organización integrada es:
+
+| Situación | Control y efecto |
+|---|---|
+| Reset funcional activo | Suprime los controles Mealy y las escrituras CPU, Loader y mantenimiento; lleva la FSM a `NO_IMAGE`. |
+| `LOAD` seleccionado | `load_start` inicia Loader e invalida el tamaño confirmado en el flanco de aceptación; `cpu_cycle_fire=0`. |
+| Preparación efectiva | `prepare_active` activa `Session Preparation`; sus controles realizan inicialización y limpieza. Mientras el estado inicial se prepara, `cpu_cycle_fire=0`. |
+| `PREPARING_READY` con `prepare_done=1` | `image_publish` habilita la captura del tamaño pendiente y la FSM entra en `READY`, con contador cero y sin ciclo CPU. |
+| `PREPARING_RUN`/`PREPARING_STEP` con `prepare_done=1` | El estado inicial ya está completo antes del flanco y los controles de inicialización/limpieza están inactivos. La FSM emite `cpu_cycle_fire=1` y el primer ciclo deja `cycle_count=1`. |
+| Ciclo efectivo de CPU | Los recursos consumen `cpu_cycle_fire` y sus habilitaciones locales; el contador incrementa una vez, incluidos stalls y drenado. |
+| `HOLD` | PC, RF, registros interetapa y contador retienen sus valores; UART y control de transporte continúan funcionando. |
+
+`prepare_active` refleja la fase registrada y puede seguir activo en el flanco de `prepare_done`. La finalización certifica que las escrituras de preparación ya terminaron; la FSM decide publicar la imagen o autorizar el primer ciclo según el estado actual.
+
+`Global FSM` determina la autorización antes de consultar las confirmaciones y `pipeline_empty_next`. Se conservan la selección de acciones y sus prioridades, los efectos elegibles de instrucciones anteriores y la retención entre ciclos. Un `LOAD` rechazado durante ejecución continua conserva la autorización vigente.
+
+**Comprobación:** Se contrastan estas habilitaciones con las interfaces y las reglas de preparación, prioridad y ciclo efectivo de las especificaciones consolidadas. La comprobación es documental.
+
+**Reemplaza / Reemplazada por:** Actualiza las referencias de realización del control global. Los contratos de reset, ownership, commit de imagen, ciclo lógico y recuperación de este ADR conservan su alcance.

@@ -16,6 +16,8 @@
 - [LOAD durante una sesión existente](#load-durante-una-sesión-existente)
 - [RESET](#reset)
 - [FSM global](#fsm-global)
+  - [Entradas de la FSM](#entradas-de-la-fsm)
+  - [Salidas de la FSM](#salidas-de-la-fsm)
   - [Diagrama completo de estados](#diagrama-completo-de-estados)
 - [Estado global asociado a la sesión](#estado-global-asociado-a-la-sesión)
 - [Aceptación de LOAD, RUN y STEP](#aceptación-de-load-run-y-step)
@@ -98,33 +100,40 @@ Una misma orden externa puede significar cosas diferentes según el contexto. Pa
 
 Para conservar ese contexto, la arquitectura mantiene una fase global en `global_state`. Ese estado indica, entre otras cosas, si todavía no hay imagen, si la sesión está lista, si se está ejecutando o si debe drenarse o finalizarse el pipeline.
 
-La [representación física aprobada](global_state_encoding.md) utiliza catorce bits one-hot: `NO_IMAGE` ocupa el bit cero y los demás estados ocupan un bit cada uno. Además, existe una conversión combinacional compartida desde esa representación al código UART de ocho bits utilizado por el controlador y Debug. Las transiciones entre estados mantienen el contrato definido para cada situación.
+La [representación física](global_state_encoding.md) utiliza catorce bits one-hot: `NO_IMAGE` ocupa el bit cero y los demás estados ocupan un bit cada uno. Además, existe una conversión combinacional desde esa representación al código de ocho bits que se transmite en Debug.
 
 La FSM global no reemplaza al control del pipeline. Su responsabilidad es conservar el contexto de la sesión y, a partir de ese contexto, determinar qué operaciones externas son posibles y cuándo puede generarse `cpu_cycle_fire`.
 
+El esquema siguiente muestra la aceptación de comandos y la autorización de ciclos integradas en la FSM global, junto con los resultados del pipeline que determinan el estado siguiente.
+
 ```mermaid
 flowchart LR
-    CMD[LOAD · RUN · STEP] --> ARB[Command Arbiter]
-    STATE[global_state registrado actual] --> ARB
-    ARB -->|comandos aceptados| FSM[Cálculo de next_state]
-    STATE --> FSM
-    LOADER[Loader] -->|load_ok / load_fail| FSM
-    PREP[Session Preparation] -->|prepare_done| FSM
-    PREP -->|prepare_done| AUTH[Cycle Authorization]
-    STATE --> AUTH
-    ARB -->|comandos aceptados| AUTH
-    AUTH -->|cpu_cycle_fire| HAZ[Pipeline Hazard Control]
-    STATE -->|fase terminal| HAZ
-    CPU[Latches y estado de la CPU actuales] -->|candidatos / dependencias / pipeline_empty| HAZ
-    HAZ -->|halt_confirm / fault_confirm| FSM
-    HAZ -->|acción del ciclo| NEXT[PC y latches next]
-    CPU --> NEXT
-    NEXT -->|valid_next| EMPTY[pipeline_empty_next]
-    EMPTY --> FSM
-    FSM -->|captura en el flanco| STATE
+    subgraph globalFsm["FSM global"]
+        state["global_state registrado actual"]
+        control["Cálculo de next_state y salidas"]
+        state --> control
+        control -->|"next_state: captura en flanco de clk"| state
+    end
+
+    uart["Protocol Controller"] -->|"load_request / run_request / step_request"| control
+    control -->|"command_accepted"| uart
+    reset["reset funcional"] --> control
+    loader["Loader"] -->|"load_ok / load_fail"| control
+    control -->|"load_start / loader_active"| loader
+    prep["Session Preparation"] -->|"prepare_done"| control
+    control -->|"prepare_active"| prep
+    control -->|"cpu_cycle_fire / drain_mode"| hazards["Pipeline Hazard Control"]
+    cpu["PC y registros del pipeline actuales"] -->|"candidatos / dependencias / valid"| hazards
+    hazards -->|"halt_confirm"| control
+    hazards -->|"act_ex_fault / act_id_fault"| faultOr["OR de acciones de fault"]
+    faultOr -->|"fault_confirm"| control
+    hazards -->|"acción del ciclo"| nextValues["PC y registros del pipeline próximos"]
+    cpu --> nextValues
+    nextValues -->|"next.valid"| empty["Reducción de próximos valid"]
+    empty -->|"pipeline_empty_next"| control
 ```
 
-En este esquema la FSM conserva la fase de la sesión, `Cycle Authorization` decide si en el flanco actual se ejecuta un ciclo de la CPU y `Pipeline Hazard Control` determina cómo se utiliza ese ciclo. La única flecha de regreso a `global_state` representa una captura registrada en el flanco; `next_state` no autoriza ni modifica el ciclo que lo produce.
+La FSM conserva la fase de la sesión, acepta las solicitudes permitidas y genera `cpu_cycle_fire`. `Pipeline Hazard Control` recibe esa autorización junto con `drain_mode` y determina cómo se utiliza el ciclo. La captura de `global_state` es registrada; `next_state` no autoriza ni modifica el ciclo que lo produce.
 
 ---
 
@@ -162,7 +171,7 @@ Durante `PREPARING_READY`, `Session Preparation` establece el estado inicial de 
 
 La preparación puede ocupar varios clocks físicos. Mientras no termina, no existe un ciclo de la CPU.
 
-`prepare_done` certifica que ese trabajo ya terminó antes del flanco actual. En `PREPARING_READY`, ese flanco publica la imagen confirmada y lleva a `READY`, pero no ejecuta todavía una instrucción.
+`prepare_done` certifica que ese trabajo ya terminó antes del flanco actual. En `PREPARING_READY`, la FSM activa `image_publish`: el registro de tamaño captura la imagen confirmada en el mismo flanco que lleva a `READY`.
 
 `READY` representa una imagen válida y una sesión preparada que todavía espera una orden.
 
@@ -341,6 +350,8 @@ loaded_image_size_bytes = 0
 
 El flanco no ejecuta un ciclo de la CPU de la sesión anterior.
 
+La FSM indica ese inicio mediante `load_start=1` y comunica la aceptación del comando mediante `command_accepted=1`. `load_start` llega al `Loader` y al registro de tamaño confirmado; no se espera a entrar en `LOADING` para invalidar la imagen anterior.
+
 `RUNNING`, los drains `AUTO`, `LOADING` y los estados de preparación no aceptan `LOAD`. Una solicitud no elegible se rechaza y no altera por sí sola la ejecución actual. En particular, un `LOAD` rechazado durante `RUNNING` no cancela el ciclo automático correspondiente.
 
 ---
@@ -392,6 +403,10 @@ Las situaciones anteriores se representan mediante `global_state`.
 
 La FSM registra únicamente la fase de la sesión. No escribe directamente PC, banco de registros, memorias o registros interetapa, y tampoco selecciona las acciones internas del pipeline.
 
+La lógica combinacional evalúa el estado actual y las entradas para calcular `next_state` y sus salidas. En cada flanco positivo de `clk`, el registro captura `global_state <- next_state`. Si ambos estados coinciden, el estado se conserva.
+
+La FSM combina salidas Moore, que dependen del estado registrado, y salidas Mealy, que también dependen de las entradas actuales. Por ejemplo, `prepare_active` indica una fase y `load_start` ordena iniciar una carga seleccionada. Los recursos consumen esas señales y realizan sus actualizaciones en su propia lógica secuencial.
+
 Sus estados son:
 
 | Estado               | Significado                                                                                   |
@@ -411,17 +426,55 @@ Sus estados son:
 | `PREPARING_RUN`      | Preparación de una sesión nueva con `RUN` pendiente.                                          |
 | `PREPARING_STEP`     | Preparación de una sesión nueva con `STEP` pendiente.                                         |
 
+### Entradas de la FSM
+
+Esta interfaz corresponde a `global_fsm`, no a todos los puertos de `execution_control`.
+
+| Entrada               | Ancho | Origen                                      | Función                                                                    |
+| --------------------- | ----: | ------------------------------------------- | -------------------------------------------------------------------------- |
+| `clk`                 | 1     | Reloj funcional común                       | Capturar el estado en el flanco positivo.                                  |
+| `reset`               | 1     | Reset funcional acondicionado               | Suprimir controles Mealy y volver a `NO_IMAGE`.                            |
+| `load_request`        | 1     | `protocol_controller`                       | Solicitar una carga.                                                       |
+| `run_request`         | 1     | `protocol_controller`                       | Solicitar ejecución continua.                                              |
+| `step_request`        | 1     | `protocol_controller`                       | Solicitar un paso.                                                         |
+| `load_ok`             | 1     | `Loader`                                    | Indicar carga completada.                                                  |
+| `load_fail`           | 1     | `Loader`                                    | Indicar carga abortada.                                                    |
+| `prepare_done`        | 1     | `Session Preparation`                       | Indicar mantenimiento completado antes del flanco.                         |
+| `halt_confirm`        | 1     | `Pipeline Hazard Control`                   | Indicar confirmación de `halt`.                                            |
+| `fault_confirm`       | 1     | OR local de `act_ex_fault` y `act_id_fault` | Indicar confirmación de fault ya seleccionada por el control del pipeline. |
+| `pipeline_empty_next` | 1     | Lógica local sobre los cuatro `next.valid`  | Indicar si el ciclo deja el pipeline vacío.                                |
+
+`load_ok` y `load_fail` son excluyentes. También lo son `halt_confirm` y `fault_confirm`, porque proceden de acciones mutuamente excluyentes. Las tablas de transiciones respetan estas restricciones de los productores.
+
+### Salidas de la FSM
+
+Las salidas Mealy se calculan antes del flanco y tienen valor cero por defecto. Las salidas Moore reflejan el estado registrado actual.
+
+| Salida                   | Ancho | Tipo  | Consumidor y función                                                                                                                 |
+| ------------------------ | ----: | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `command_accepted`       | 1     | Mealy | `protocol_controller`: indicar aceptación de la solicitud presentada.                                                                |
+| `load_start`             | 1     | Mealy | `Loader` y registro de tamaño: iniciar la carga e invalidar la imagen anterior.                                                      |
+| `cpu_cycle_fire`         | 1     | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, contador y `protocol_controller`: autorizar un ciclo efectivo. |
+| `image_publish`          | 1     | Mealy | Registro de tamaño: capturar el tamaño pendiente de la imagen preparada.                                                             |
+| `loader_active`          | 1     | Moore | `Loader`: habilitar la fase `LOADING`.                                                                                               |
+| `prepare_active`         | 1     | Moore | `Session Preparation` y `protocol_controller`: indicar preparación activa.                                                           |
+| `drain_mode`             | 1     | Moore | `Pipeline Hazard Control`: identificar un ciclo de drenado junto con `cpu_cycle_fire`.                                               |
+| `load_available`         | 1     | Moore | `protocol_controller`: informar disponibilidad de sesión para `LOAD`.                                                                |
+| `program_finished`       | 1     | Moore | `protocol_controller`: indicar terminación normal con pipeline vacío.                                                                |
+| `fault_terminal`         | 1     | Moore | `protocol_controller`: indicar terminación por fault con pipeline vacío.                                                             |
+| `global_state_code[7:0]` | 8     | Moore | `response_serializer`: representar el estado en Debug.                                                                               |
+
 ### Diagrama completo de estados
 
 El diagrama reúne los catorce estados y las transiciones alcanzables de carga, preparación, ejecución, drenado y reutilización de la imagen. Las condiciones corresponden a la [tabla de transiciones](#tabla-de-transiciones), al [resultado de un ciclo](#resultado-de-un-ciclo) y a las [restricciones de alcanzabilidad](#alcanzabilidad-de-las-transiciones).
 
 [![FSM global de ejecución y sesión](../../diagrams/generated/fsm_global.drawio.svg)](../../diagrams/generated/fsm_global.drawio.svg)
 
-Los seis círculos del recuadro de estados elegibles para `LOAD` son referencias a estados del diagrama. Las reglas globales se aplican con prioridad `reset > load_accept > transiciones locales`; si ninguna transición es aplicable, se conserva `global_state`. `pipeline_empty_next` indica si el pipeline queda vacío después del ciclo actual.
+Los círculos del recuadro de estados elegibles para `LOAD` son referencias a estados del diagrama. Las reglas globales se aplican con prioridad `reset > load_request > transiciones locales`.
 
 [Abrir la versión SVG](../../diagrams/generated/fsm_global.drawio.svg) · [Fuente editable de draw.io](../../diagrams/generated/fsm_global.drawio.xml).
 
-La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla anterior. No impone la codificación física de la FSM. Véase el [acuerdo de estados](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state).
+La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla de estados de [FSM global](#fsm-global). No impone la codificación física de la FSM. Véase el [acuerdo de estados](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state).
 
 La modalidad `AUTO`/`STEP` del drain forma parte de `global_state`; no existe un registro `drain_auto`. El tipo terminal también está representado por el estado; no existe un flip-flop separado `terminal_kind`.
 
@@ -440,15 +493,28 @@ Además de `global_state`, el sistema conserva otros registros globales:
 
 PC, banco de registros, memorias y registros interetapa pertenecen al datapath.
 
-Señales como `image_valid`, `program_finished`, `fault_info_valid`, `continuous_mode` o `drain_mode` se derivan combinacionalmente de este estado y no agregan nuevos registros persistentes.
+`image_valid` deriva de `loaded_image_size_bytes != 0`. Las salidas Moore y la vigencia de los metadatos de fault se derivan del estado de sesión; no agregan registros persistentes.
+
+Los registros de causa y PC se habilitan con `fault_confirm`, formado por `act_ex_fault || act_id_fault`. La selección local utiliza causa EX e `ID/EX.pc` para un fault de EX, o causa ID e `IF/ID.pc` para uno de ID. Sin confirmación conservan el contenido. La captura ocurre en el mismo flanco que actualiza la fase, antes de perder el contexto al invalidar el pipeline.
+
+El registro de tamaño se actualiza por las órdenes de la FSM:
+
+| Condición                 | Tamaño confirmado después del flanco                          |
+| ------------------------- | ------------------------------------------------------------- |
+| `reset`                   | Cero.                                                         |
+| `load_start`              | Cero; la imagen anterior queda invalidada.                    |
+| `image_publish`           | Tamaño pendiente validado de `Loader`.                        |
+| Ninguna de las anteriores | Conservar, incluida la preparación de una imagen reutilizada. |
+
+Estas actualizaciones pertenecen a los recursos locales de `execution_control`, con la prioridad indicada. `load_ok` no publica por sí solo una imagen.
 
 ---
 
 ## Aceptación de LOAD, RUN y STEP
 
-`LOAD`, `RUN` y `STEP` son operaciones conceptuales. Su codificación UART se define en el protocolo externo.
+`LOAD`, `RUN` y `STEP` son  operaciones conceptuales. Su codificación UART se define en el protocolo externo.
 
-El `Command Arbiter` primero comprueba si cada operación es elegible en el estado actual y después aplica la prioridad:
+La FSM recibe `load_request`, `run_request` y `step_request`. Primero comprueba si cada operación es elegible en el estado actual y después aplica la prioridad:
 
 ```text
 RESET > LOAD > STEP > RUN
@@ -464,7 +530,9 @@ La elegibilidad es:
 | `RUN`       | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`               |
 | `STEP`      | `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED`, `FAULT`               |
 
-`load_accept`, `run_accept` y `step_accept` representan solicitudes que ya superaron este arbitraje.
+La selección se realiza en la lógica combinacional de la FSM teniendo en cuenta condiciones del estado actual. Las solicitudes que no interesan al estado se ignoran.
+
+`protocol_controller` presenta una sola solicitud por ciclo y conoce el comando que está atendiendo. La FSM responde con `command_accepted=1` si la acepta. Con una solicitud presente, cero significa rechazo; sin solicitud, cero no constituye un evento.
 
 ---
 
@@ -472,7 +540,7 @@ La elegibilidad es:
 
 ## Autorización de un ciclo de la CPU
 
-Una vez conocido el estado actual y las órdenes aceptadas, `Cycle Authorization` determina si existe un ciclo efectivo de la CPU.
+La FSM determina si existe un ciclo efectivo de la CPU a partir del estado actual, las solicitudes y la finalización de preparación.
 
 Hay tres fuentes.
 
@@ -497,7 +565,7 @@ command_cycle_request =
         HALT_DRAIN_STEP,
         FAULT_DRAIN_STEP
     }
-    && (run_accept || step_accept)
+    && (run_request || step_request)
 ```
 
 La tercera corresponde al primer ciclo de una sesión reutilizada:
@@ -525,11 +593,13 @@ La autorización efectiva incorpora las prioridades globales:
 ```text
 cpu_cycle_fire =
     !reset
-    && !load_accept
+    && !load_start
     && cycle_request
 ```
 
-Estas ecuaciones utilizan siempre `global_state` actual. `next_state` no realimenta la autorización del mismo flanco.
+Estas expresiones son términos internos de la FSM, no puertos adicionales. Utilizan siempre `global_state` actual. La selección de solicitudes y `load_start` se resuelven primero, a partir del estado, reset y solicitudes.
+
+La autorización no depende de `halt_confirm`, `fault_confirm`, `pipeline_empty_next` ni `next_state`. El control del pipeline recibe `cpu_cycle_fire` y `drain_mode`, selecciona sus acciones y produce las confirmaciones y los valores `next.valid`. Recién entonces la FSM utiliza esos resultados para decidir el estado siguiente. Así se evita una dependencia combinacional circular.
 
 ---
 
@@ -537,37 +607,19 @@ Estas ecuaciones utilizan siempre `global_state` actual. `next_state` no realime
 
 Cuando un ciclo confirma `halt` o fault, el control necesita distinguir si las instrucciones anteriores continuarán automáticamente o por pasos.
 
-Un ciclo es de origen continuo cuando proviene de `RUNNING`, de un drain `AUTO`, de una orden `RUN` aceptada en un estado de espera de comandos o del final de `PREPARING_RUN`.
+El origen se determina dentro de la FSM, en la misma rama que autoriza el ciclo:
 
-```text
-continuous_cycle =
-    automatic_cycle_request
-    ||
-    (
-        state en {
-            READY,
-            STEPPING,
-            HALT_DRAIN_STEP,
-            FAULT_DRAIN_STEP
-        }
-        && run_accept
-    )
-    ||
-    (
-        state == PREPARING_RUN
-        && prepare_done
-    )
-```
+| Situación durante un ciclo autorizado                                                           | Origen    |
+| ----------------------------------------------------------------------------------------------- | --------- |
+| `RUNNING`, `HALT_DRAIN_AUTO` o `FAULT_DRAIN_AUTO`                                               | Continuo. |
+| `READY`, `STEPPING`, `HALT_DRAIN_STEP` o `FAULT_DRAIN_STEP`, con `run_request && !step_request` | Continuo. |
+| `READY`, `STEPPING`, `HALT_DRAIN_STEP` o `FAULT_DRAIN_STEP`, con `step_request`                 | `STEP`.   |
+| `PREPARING_RUN`, con `prepare_done`                                                             | Continuo. |
+| `PREPARING_STEP`, con `prepare_done`                                                            | `STEP`.   |
 
-```text
-cycle_from_continuous =
-    cpu_cycle_fire
-    && continuous_cycle
-```
+La prioridad de `STEP` sobre `RUN` también se aplica a esta clasificación.
 
-Los demás ciclos efectivos corresponden a `STEP`.
-
-No se registra el origen por separado; al confirmar `halt` o fault, el estado siguiente `*_AUTO` o `*_STEP` ya conserva esa información.
+No se registra el origen por separado; al confirmar `halt` o fault, el estado siguiente `*_AUTO` o `*_STEP` conserva la modalidad del trabajo pendiente.
 
 ---
 
@@ -624,25 +676,7 @@ Así, `HALT_DRAIN_AUTO → HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP → HALT_DRAIN_STE
 
 Los bucles de drain de fault y `FAULT_DRAIN_STEP → FAULT_DRAIN_AUTO` son alcanzables cuando un fault de ID conserva una instrucción válida de EX en `EX/MEM`. Después del primer ciclo de drain queda únicamente WB; el segundo lleva necesariamente a `FAULT`. Un fault de EX no puede producir esos recorridos con trabajo restante.
 
-### Comprobaciones artificiales de la FSM
-
-El contrato combinacional general de drain conserva la regla: si `pipeline_empty_next=0`, un ciclo automático o `STEP` mantiene su modalidad y un `RUN` desde drain `STEP` selecciona `AUTO`; si `pipeline_empty_next=1`, selecciona el terminal correspondiente. Aplicar esa regla a entradas forzadas no demuestra que el pipeline pueda producirlas.
-
-Por ejemplo, [TEST-EXEC-006/C006](../../verification/execution.md#test-exec-006) fuerza `RUN` desde `HALT_DRAIN_STEP` con `pipeline_empty_next=0` y comprueba `HALT_DRAIN_AUTO`. Es una prueba artificial de la función combinacional; no constituye una transición alcanzable de una sesión. No se agrega trabajo al pipeline ni se exige cobertura end-to-end de esas combinaciones.
-
----
-
 ## Pipeline vacío
-
-Para conocer si existe trabajo activo en el pipeline:
-
-```text
-pipeline_empty =
-    !IF/ID.valid
-    && !ID/EX.valid
-    && !EX/MEM.valid
-    && !MEM/WB.valid
-```
 
 Para decidir el estado siguiente después del ciclo actual se utilizan los valores que quedarán después del flanco:
 
@@ -655,6 +689,8 @@ pipeline_empty_next =
 ```
 
 Así, si el ciclo actual consume la última instrucción anterior, la FSM puede entrar directamente en `FINISHED` o `FAULT` sin agregar un ciclo de drain vacío.
+
+Esta reducción se calcula localmente en `execution_control` sobre los valores próximos del pipeline, sin depender de `next_state`.
 
 `IF/ID.fetch_fault_valid` no forma parte de esta expresión porque la confirmación de `halt` o fault ya invalida ese candidato.
 
@@ -687,13 +723,22 @@ Las acciones globales siguen esta prioridad:
 RESET > LOAD aceptado / preparación efectiva > ciclo efectivo de la CPU > HOLD
 ```
 
-`Session Preparation` puede modificar PC, banco de registros, registros interetapa y metadatos de DMEM mientras la sesión todavía no está lista.
+`Session Preparation` recibe `prepare_active`, realiza la misma preparación en los tres estados `PREPARING_*` y devuelve `prepare_done`. Puede modificar PC, banco de registros, registros interetapa y metadatos de DMEM mientras la sesión todavía no está lista.
 
 `prepare_done=1` certifica que esas modificaciones ya terminaron antes del flanco actual. Por eso `PREPARING_RUN` y `PREPARING_STEP` pueden utilizar ese mismo flanco como primer ciclo de la nueva sesión sin competir con una escritura de preparación.
 
-Para `LOAD` en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../../decisions/DEC-PROTO-003.md#acuerdo-parcial-de-dec-proto-003--presupuesto-máximo-de-preparación-de-sesión) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en `READY`. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
+La FSM decide qué hacer con esa finalización. En `PREPARING_READY` publica el tamaño pendiente y pasa a `READY`, sin ciclo CPU:
 
-La [realización aprobada de preparación](session_preparation.md) inicializa RF localmente y recorre los metadatos de DMEM con un índice. Separa la última limpieza de `prepare_done` y se completa apenas `prepare_done` lo permita, sin espera fija.
+```text
+image_publish =
+    !reset
+    && global_state == PREPARING_READY
+    && prepare_done
+```
+
+En `PREPARING_RUN` o `PREPARING_STEP` conserva el tamaño confirmado y autoriza el primer ciclo. `prepare_active` todavía puede valer uno en ese flanco porque refleja el estado actual; las habilitaciones efectivas de inicialización y limpieza ya valen cero cuando `prepare_done=1`.
+
+Para `LOAD` en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../../decisions/DEC-PROTO-003.md#acuerdo-parcial-de-dec-proto-003--presupuesto-máximo-de-preparación-de-sesión) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en `READY`. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
 
 ---
 
@@ -703,15 +748,16 @@ La [realización aprobada de preparación](session_preparation.md) inicializa RF
 
 Se inicializa en cero durante la preparación y aumenta exactamente una vez por ciclo de la CPU:
 
-```text
-cycle_counter_increment =
-    cpu_cycle_fire
-```
+Su actualización sigue esta prioridad:
 
-```text
-cycle_count.next =
-    (cycle_count + 1) mod 2^64
-```
+| Condición                 | `cycle_count.next`            |
+| ------------------------- | ----------------------------- |
+| `reset`                   | Cero.                         |
+| `prepare_init`            | Cero.                         |
+| `cpu_cycle_fire`          | `(cycle_count + 1) mod 2^64`. |
+| Ninguna de las anteriores | Conservar.                    |
+
+La aceptación de `LOAD` no reinicia por sí sola el contador. La preparación posterior lo inicializa antes del primer ciclo; cuando `prepare_done` autoriza ese ciclo desde `PREPARING_RUN` o `PREPARING_STEP`, pasa de cero a uno.
 
 Cuenta avance normal, stalls `load-use`, redirects, ciclos que confirman `halt` o fault y cada ciclo de drain.
 
@@ -723,20 +769,24 @@ El wrap de `0xffffffffffffffff` a cero no genera fault ni modifica el modo de ej
 
 ## Señales derivadas de `global_state`
 
-Las siguientes señales son decodificaciones combinacionales:
+Las seis salidas Moore de control y el código de observación se decodifican del estado registrado actual:
 
-| Señal                                 | Estados                                                |
-| ------------------------------------- | ------------------------------------------------------ |
-| `loader_active`                       | `LOADING`                                              |
-| `prepare_active`                      | `PREPARING_READY`, `PREPARING_RUN`, `PREPARING_STEP`   |
-| `continuous_mode`                     | `RUNNING`, `HALT_DRAIN_AUTO`, `FAULT_DRAIN_AUTO`       |
-| `step_mode`                           | `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`      |
-| `drain_mode`                          | los cuatro estados DRAIN                               |
-| `halt_drain_active`                   | `HALT_DRAIN_AUTO`, `HALT_DRAIN_STEP`                   |
-| `fault_drain_active`                  | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP`                 |
-| `program_finished`                    | `FINISHED`                                             |
-| `fault_active` / `fault_info_valid`   | `FAULT_DRAIN_AUTO`, `FAULT_DRAIN_STEP`, `FAULT`        |
-| `fault_terminal`                      | `FAULT`                                                |
+| Estado actual      | `loader_active` | `prepare_active` | `drain_mode` | `load_available` | `program_finished` | `fault_terminal` | `global_state_code[7:0]` |
+| ------------------ | --------------: | ---------------: | -----------: | ---------------: | -----------------: | ---------------: | ------------------------ |
+| `NO_IMAGE`         | 0               | 0                | 0            | 1                | 0                  | 0                | `00000000`               |
+| `LOADING`          | 1               | 0                | 0            | 0                | 0                  | 0                | `00000001`               |
+| `PREPARING_READY`  | 0               | 1                | 0            | 0                | 0                  | 0                | `00000010`               |
+| `READY`            | 0               | 0                | 0            | 1                | 0                  | 0                | `00000011`               |
+| `RUNNING`          | 0               | 0                | 0            | 0                | 0                  | 0                | `00000100`               |
+| `STEPPING`         | 0               | 0                | 0            | 1                | 0                  | 0                | `00000101`               |
+| `HALT_DRAIN_AUTO`  | 0               | 0                | 1            | 0                | 0                  | 0                | `00000110`               |
+| `HALT_DRAIN_STEP`  | 0               | 0                | 1            | 1                | 0                  | 0                | `00000111`               |
+| `FAULT_DRAIN_AUTO` | 0               | 0                | 1            | 0                | 0                  | 0                | `00001000`               |
+| `FAULT_DRAIN_STEP` | 0               | 0                | 1            | 1                | 0                  | 0                | `00001001`               |
+| `FINISHED`         | 0               | 0                | 0            | 1                | 1                  | 0                | `00001010`               |
+| `FAULT`            | 0               | 0                | 0            | 1                | 0                  | 1                | `00001011`               |
+| `PREPARING_RUN`    | 0               | 1                | 0            | 0                | 0                  | 0                | `00001100`               |
+| `PREPARING_STEP`   | 0               | 1                | 0            | 0                | 0                  | 0                | `00001101`               |
 
 No constituyen nuevos estados persistentes.
 
@@ -744,48 +794,105 @@ No constituyen nuevos estados persistentes.
 
 ## Tabla de transiciones
 
-`RESET` domina cualquier fila y lleva a `NO_IMAGE`. La tabla muestra los destinos alcanzables en una sesión legal; las combinaciones forzadas se describen en [Comprobaciones artificiales de la FSM](#comprobaciones-artificiales-de-la-fsm).
+La tabla muestra los destinos alcanzables en una sesión legal.
 
-| Estado actual        | Evento               |  Ciclo CPU  | Siguiente                            |
-| -------------------- | -------------------- | :---------: | ------------------------------------ |
-| `NO_IMAGE`           | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `NO_IMAGE`           | otro                 |      no     | `NO_IMAGE`                           |
-| `LOADING`            | `load_ok`            |      no     | `PREPARING_READY`                    |
-| `LOADING`            | `load_fail`          |      no     | `NO_IMAGE`                           |
-| `LOADING`            | carga en curso       |      no     | `LOADING`                            |
-| `PREPARING_READY`    | `prepare_done`       |      no     | `READY`                              |
-| `PREPARING_READY`    | sin `prepare_done`   |      no     | `PREPARING_READY`                    |
-| `READY`              | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `READY`              | `STEP` aceptado      |      sí     | `STEPPING`                           |
-| `READY`              | `RUN` aceptado       |      sí     | `RUNNING`                            |
-| `READY`              | sin orden            |      no     | `READY`                              |
-| `STEPPING`           | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `STEPPING`           | `STEP` aceptado      |      sí     | según resultado del ciclo `STEP`     |
-| `STEPPING`           | `RUN` aceptado       |      sí     | según resultado del ciclo continuo   |
-| `STEPPING`           | sin orden            |      no     | `STEPPING`                           |
-| `RUNNING`            | automático           |      sí     | según resultado del ciclo continuo   |
-| `HALT_DRAIN_AUTO`    | automático           |      sí     | `FINISHED`                           |
-| `FAULT_DRAIN_AUTO`   | automático           |      sí     | `FAULT_DRAIN_AUTO` o `FAULT`         |
-| `HALT_DRAIN_STEP`    | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `HALT_DRAIN_STEP`    | `STEP` aceptado      |      sí     | `FINISHED`                           |
-| `HALT_DRAIN_STEP`    | `RUN` aceptado       |      sí     | `FINISHED`                           |
-| `HALT_DRAIN_STEP`    | sin orden            |      no     | `HALT_DRAIN_STEP`                    |
-| `FAULT_DRAIN_STEP`   | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `FAULT_DRAIN_STEP`   | `STEP` aceptado      |      sí     | `FAULT_DRAIN_STEP` o `FAULT`         |
-| `FAULT_DRAIN_STEP`   | `RUN` aceptado       |      sí     | `FAULT_DRAIN_AUTO` o `FAULT`         |
-| `FAULT_DRAIN_STEP`   | sin orden            |      no     | `FAULT_DRAIN_STEP`                   |
-| `FINISHED`           | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `FINISHED`           | `RUN` aceptado       |      no     | `PREPARING_RUN`                      |
-| `FINISHED`           | `STEP` aceptado      |      no     | `PREPARING_STEP`                     |
-| `FINISHED`           | sin orden            |      no     | `FINISHED`                           |
-| `FAULT`              | `LOAD` aceptado      |      no     | `LOADING`                            |
-| `FAULT`              | `RUN` aceptado       |      no     | `PREPARING_RUN`                      |
-| `FAULT`              | `STEP` aceptado      |      no     | `PREPARING_STEP`                     |
-| `FAULT`              | sin orden            |      no     | `FAULT`                              |
-| `PREPARING_RUN`      | `prepare_done`       |      sí     | `RUNNING`                            |
-| `PREPARING_RUN`      | sin `prepare_done`   |      no     | `PREPARING_RUN`                      |
-| `PREPARING_STEP`     | `prepare_done`       |      sí     | `STEPPING`                           |
-| `PREPARING_STEP`     | sin `prepare_done`   |      no     | `PREPARING_STEP`                     |
+`RESET` domina cualquier fila y lleva a `NO_IMAGE`. Después se resuelve LOAD, únicamente en `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED` y `FAULT`. Las filas locales omiten las negaciones de esas dos reglas globales. Un `load_request` no elegible se ignora y no bloquea una transición local ni un ciclo automático.
+
+Las condiciones se escriben completas, salvo por la anterior prioridad global. `OR` representa el operador lógico `||`. Cuando RUN y STEP tienen el mismo destino y salidas, se agrupan; cuando difieren, la rama de RUN exige `!step_request`. Las confirmaciones de halt y fault son excluyentes, igual que `load_ok` y `load_fail`.
+
+Las cuatro salidas Mealy valen cero por defecto. La última columna enumera únicamente las que valen uno; `—` significa que las cuatro valen cero. Las salidas Moore se consultan en la tabla anterior, según el estado actual.
+
+La autorización de un ciclo se calcula antes de consultar sus resultados, como se define en [Autorización de un ciclo de la CPU](#autorización-de-un-ciclo-cpu). Las condiciones con confirmaciones o `pipeline_empty_next` seleccionan el destino del ciclo ya autorizado; no habilitan retrospectivamente su ejecución.
+
+### Reglas globales
+
+| Estado actual               | Condición      | Estado siguiente | Salidas Mealy en 1               |
+| --------------------------- | -------------- | ---------------- | -------------------------------- |
+| Cualquier estado            | `reset`        | `NO_IMAGE`       | —                                |
+| Estados elegibles para LOAD | `load_request` | `LOADING`        | `command_accepted`, `load_start` |
+
+### Carga y preparación
+
+| Estado actual     | Condición                | Estado siguiente  | Salidas Mealy en 1 |
+| ----------------- | ------------------------ | ----------------- | ------------------ |
+| `NO_IMAGE`        | `1`                      | `NO_IMAGE`        | —                  |
+| `LOADING`         | `load_ok`                | `PREPARING_READY` | —                  |
+| `LOADING`         | `load_fail`              | `NO_IMAGE`        | —                  |
+| `LOADING`         | `!load_ok && !load_fail` | `LOADING`         | —                  |
+| `PREPARING_READY` | `prepare_done`           | `READY`           | `image_publish`    |
+| `PREPARING_READY` | `!prepare_done`          | `PREPARING_READY` | —                  |
+| `PREPARING_RUN`   | `prepare_done`           | `RUNNING`         | `cpu_cycle_fire`   |
+| `PREPARING_RUN`   | `!prepare_done`          | `PREPARING_RUN`   | —                  |
+| `PREPARING_STEP`  | `prepare_done`           | `STEPPING`        | `cpu_cycle_fire`   |
+| `PREPARING_STEP`  | `!prepare_done`          | `PREPARING_STEP`  | —                  |
+
+### Sesión preparada
+
+| Estado actual | Condición                       | Estado siguiente | Salidas Mealy en 1                   |
+| ------------- | ------------------------------- | ---------------- | ------------------------------------ |
+| `READY`       | `run_request && !step_request`  | `RUNNING`        | `command_accepted`, `cpu_cycle_fire` |
+| `READY`       | `step_request`                  | `STEPPING`       | `command_accepted`, `cpu_cycle_fire` |
+| `READY`       | `!run_request && !step_request` | `READY`          | —                                    |
+
+### Ejecución continua
+
+| Estado actual | Condición                               | Estado siguiente   | Salidas Mealy en 1 |
+| ------------- | --------------------------------------- | ------------------ | ------------------ |
+| `RUNNING`     | `!halt_confirm && !fault_confirm`       | `RUNNING`          | `cpu_cycle_fire`   |
+| `RUNNING`     | `halt_confirm && pipeline_empty_next`   | `FINISHED`         | `cpu_cycle_fire`   |
+| `RUNNING`     | `halt_confirm && !pipeline_empty_next`  | `HALT_DRAIN_AUTO`  | `cpu_cycle_fire`   |
+| `RUNNING`     | `fault_confirm && pipeline_empty_next`  | `FAULT`            | `cpu_cycle_fire`   |
+| `RUNNING`     | `fault_confirm && !pipeline_empty_next` | `FAULT_DRAIN_AUTO` | `cpu_cycle_fire`   |
+
+### Ejecución por pasos
+
+| Estado actual | Condición                                                               | Estado siguiente   | Salidas Mealy en 1                   |
+| ------------- | ----------------------------------------------------------------------- | ------------------ | ------------------------------------ |
+| `STEPPING`    | `!run_request && !step_request`                                         | `STEPPING`         | —                                    |
+| `STEPPING`    | `step_request && !halt_confirm && !fault_confirm`                       | `STEPPING`         | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `run_request && !step_request && !halt_confirm && !fault_confirm`       | `RUNNING`          | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `(run_request OR step_request) && halt_confirm && pipeline_empty_next`  | `FINISHED`         | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `run_request && !step_request && halt_confirm && !pipeline_empty_next`  | `HALT_DRAIN_AUTO`  | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `step_request && halt_confirm && !pipeline_empty_next`                  | `HALT_DRAIN_STEP`  | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `(run_request OR step_request) && fault_confirm && pipeline_empty_next` | `FAULT`            | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `run_request && !step_request && fault_confirm && !pipeline_empty_next` | `FAULT_DRAIN_AUTO` | `command_accepted`, `cpu_cycle_fire` |
+| `STEPPING`    | `step_request && fault_confirm && !pipeline_empty_next`                 | `FAULT_DRAIN_STEP` | `command_accepted`, `cpu_cycle_fire` |
+
+### Drenado por halt
+
+| Estado actual     | Condición                       | Estado siguiente  | Salidas Mealy en 1                   |
+| ----------------- | ------------------------------- | ----------------- | ------------------------------------ |
+| `HALT_DRAIN_AUTO` | `1`                             | `FINISHED`        | `cpu_cycle_fire`                     |
+| `HALT_DRAIN_STEP` | `!run_request && !step_request` | `HALT_DRAIN_STEP` | —                                    |
+| `HALT_DRAIN_STEP` | `(run_request OR step_request)` | `FINISHED`        | `command_accepted`, `cpu_cycle_fire` |
+
+### Drenado por fault
+
+| Estado actual      | Condición                                              | Estado siguiente   | Salidas Mealy en 1                   |
+| ------------------ | ------------------------------------------------------ | ------------------ | ------------------------------------ |
+| `FAULT_DRAIN_AUTO` | `pipeline_empty_next`                                  | `FAULT`            | `cpu_cycle_fire`                     |
+| `FAULT_DRAIN_AUTO` | `!pipeline_empty_next`                                 | `FAULT_DRAIN_AUTO` | `cpu_cycle_fire`                     |
+| `FAULT_DRAIN_STEP` | `!run_request && !step_request`                        | `FAULT_DRAIN_STEP` | —                                    |
+| `FAULT_DRAIN_STEP` | `(run_request OR step_request) && pipeline_empty_next` | `FAULT`            | `command_accepted`, `cpu_cycle_fire` |
+| `FAULT_DRAIN_STEP` | `run_request && !step_request && !pipeline_empty_next` | `FAULT_DRAIN_AUTO` | `command_accepted`, `cpu_cycle_fire` |
+| `FAULT_DRAIN_STEP` | `step_request && !pipeline_empty_next`                 | `FAULT_DRAIN_STEP` | `command_accepted`, `cpu_cycle_fire` |
+
+### Sesión terminada
+
+| Estado actual | Condición                       | Estado siguiente | Salidas Mealy en 1 |
+| ------------- | ------------------------------- | ---------------- | ------------------ |
+| `FINISHED`    | `run_request && !step_request`  | `PREPARING_RUN`  | `command_accepted` |
+| `FINISHED`    | `step_request`                  | `PREPARING_STEP` | `command_accepted` |
+| `FINISHED`    | `!run_request && !step_request` | `FINISHED`       | —                  |
+| `FAULT`       | `run_request && !step_request`  | `PREPARING_RUN`  | `command_accepted` |
+| `FAULT`       | `step_request`                  | `PREPARING_STEP` | `command_accepted` |
+| `FAULT`       | `!run_request && !step_request` | `FAULT`          | —                  |
+
+La condición `1` significa permanencia o avance incondicional cuando no interviene una regla global. En `NO_IMAGE`, las solicitudes RUN y STEP se ignoran.
+
+En un drain de halt legal queda únicamente WB. Por eso `HALT_DRAIN_AUTO` termina en el siguiente ciclo efectivo y `HALT_DRAIN_STEP` termina cuando RUN o STEP autoriza ese ciclo. El único bucle alcanzable de `HALT_DRAIN_STEP` espera una orden, con `cpu_cycle_fire=0`.
+
+Al salir de `PREPARING_READY`, `image_publish=1` y `cpu_cycle_fire=0`. Al salir por `prepare_done` de `PREPARING_RUN` o `PREPARING_STEP`, `cpu_cycle_fire=1` e `image_publish=0`. Aceptar RUN o STEP desde un terminal no ejecuta CPU en ese flanco: primero inicia la preparación.
 
 ---
 
@@ -794,6 +901,9 @@ No constituyen nuevos estados persistentes.
 ## Invariantes y condiciones de borde
 
 - `global_state` pertenece siempre al conjunto de estados definido por la FSM.
+- El registro de estado utiliza `clk`.
+- La selección de solicitudes y la autorización de ciclos forman parte de la FSM; las actualizaciones de recursos permanecen en sus consumidores.
+- `cpu_cycle_fire` no depende de las confirmaciones, de `pipeline_empty_next` ni de `next_state`.
 - No existe un ciclo de la CPU antes de que haya una sesión ejecutable.
 - `PREPARING_READY` llega a `READY` sin ejecutar CPU.
 - `PREPARING_RUN` y `PREPARING_STEP` utilizan `prepare_done` para ejecutar el primer ciclo de una sesión reutilizada.
@@ -810,7 +920,9 @@ No constituyen nuevos estados persistentes.
 - `RUN` o `STEP` desde un terminal inician una sesión nueva sobre la imagen retenida.
 - `RESET` prevalece sobre cualquier otro efecto.
 - `LOAD` aceptado abandona la sesión vigente y suprime un ciclo de la CPU coincidente.
+- `load_start` y `command_accepted` indican la carga seleccionada en el mismo flanco que invalida el tamaño confirmado.
 - Un `LOAD` rechazado no cancela un ciclo automático.
+- Solo `image_publish` publica el tamaño pendiente al completar `PREPARING_READY`; reutilizar la imagen conserva su tamaño.
 - `pipeline_empty_next` evita agregar un ciclo vacío al final del drain.
 - `cycle_count` incrementa exactamente una vez por `cpu_cycle_fire`.
 - `HOLD` no constituye un estado adicional.
@@ -821,8 +933,12 @@ No constituyen nuevos estados persistentes.
 
 - [Visión del sistema](../system_overview.md): carga, sesión y ejecución.
 - [Pipeline CPU](../cpu/cpu_pipeline.md): estructura del pipeline y ciclo efectivo.
+- [Loader](loader.md): recepción de imagen y tamaño pendiente.
+- [Session Preparation](session_preparation.md): inicialización y finalización del mantenimiento.
+- [Codificación del estado global](global_state_encoding.md): representación interna y código externo de observación.
 - [Control del pipeline y hazards](../cpu/control_and_hazards.md): acciones internas durante cada ciclo de la CPU.
 - [Faults, redirects y terminación](faults_and_termination.md): confirmación de `halt` o fault y drain.
 - [Arquitectura de memoria](../memory/memory_architecture.md): imagen confirmada y cero lógico de DMEM.
 - [Arquitectura de Debug](../debug/debug_architecture.md): estado observable de la sesión.
+- [Protocol Controller](../debug/protocol_controller.md): solicitudes, aceptación y respuestas UART.
 - [Invariantes arquitectónicos](../architectural_invariants.md): propiedades globales de seguridad.

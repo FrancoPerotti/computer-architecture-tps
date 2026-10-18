@@ -5,7 +5,7 @@
 
 **Estado:** especificación documental de interfaces internas, contrastada inicialmente el 2026-09-30 y actualizada con cierre UART el 2026-10-05. UART, `Loader`, preparación y Debug tienen diseños concretados. DMEM y plataforma tienen cierre local de diseño. Composición/agrupación y representación integrada tienen cierre local de diseño el 2026-10-06. El plan de verificación, los criterios de comparación y la correspondencia integral del diseño FPGA están cerrados documentalmente. Esta revisión no acredita RTL, simulación, síntesis ni timing.
 
-Este documento formaliza el mapa de bloques, entradas y salidas anterior. Cada conexión identifica productor, consumidor y ancho cuando está aprobado; cada bloque agrega responsabilidad, comportamiento temporal y criterios para su futura verificación. El [estado de cierre](#06-estado-de-cierre) y los [criterios de aceptación documental](#153-criterio-de-aceptación-documental-y-verificación-posterior) delimitan el alcance de la revisión.
+Este documento formaliza el mapa de bloques, entradas y salidas. Cada conexión identifica productor, consumidor y ancho cuando está aprobado; cada bloque agrega responsabilidad, comportamiento temporal y criterios para su futura verificación. Los [criterios de aceptación documental](#153-criterio-de-aceptación-documental-y-verificación-posterior) delimitan el alcance de la revisión.
 
 **Índice**
 
@@ -40,7 +40,7 @@ La [consigna](consigna.md) y los [requisitos](requirements.md) fijan las obligac
 
 En particular, DEC-ARCH-003 acuerdo 47 prevalece: IF detecta, `IF/ID` transporta y **ID confirma todo fetch fault**; existen **ocho acciones**. El acuerdo 44 fija la FSM de 14 estados y sustituye los registros globales `terminal_kind` y `drain_auto` por predicados del estado actual.
 
-Los bloques son unidades funcionales de conexión. No se exige un archivo o módulo SystemVerilog por cada sumador, mux o bloque de control; la agrupación RTL deberá conservar estos contratos. El [inventario aprobado del 2026-10-06](architecture/module_inventory.md) evalúa la correspondencia uno a uno y recomienda agrupación selectiva por etapas, con ubicación/archivo explícitos para los 54 bloques CPU; esa agrupación quedó aprobada el 2026-10-06, con revisión local FPGA-05/06, y no modifica los contratos de este documento. Los nombres de señales aprobados se preservan. Etiquetas como `Read Address`, `Write Data`, `capture` y `clear de sesión` identifican puertos o acciones locales: no obligan a usar espacios, barras o aliases gráficos como identificadores HDL.
+Los bloques son unidades funcionales de conexión. Etiquetas como `Read Address`, `Write Data`, `capture` y `clear de sesión` identifican puertos o acciones locales: no obligan a usar espacios, barras o aliases gráficos como identificadores HDL.
 
 ### 0.2 Convenciones, anchos y codificaciones
 
@@ -50,7 +50,7 @@ Los bloques son unidades funcionales de conexión. No se exige un archivo o mód
 - Una señal escalar de control, validez, selección binaria o evento tiene **1 bit**, salvo ancho explícito.
 - Datos, PC, instrucciones, inmediatos, resultados y direcciones arquitectónicas tienen **32 bits**; índices de registros, **5 bits**. Los bits se transportan sin signo; la operación que los interpreta aplica signed/unsigned donde corresponde.
 - `alu_op` tiene 6 bits; `result_sel` y selectores de forwarding, 2; `flow_op` y causas de fault, 3; `mem_op`, 4; `cycle_count`, 64 unsigned.
-- `global_state` utiliza catorce bits one-hot según la [representación aprobada](architecture/session/global_state_encoding.md). El código UART de ocho bits se genera combinacionalmente y se comparte entre controlador y serializador, sin otro registro de estado.
+- `global_state` utiliza catorce bits one-hot y permanece interno en `Global FSM`. `global_state_code[7:0]` se genera combinacionalmente para `response_serializer.debug_state_code`, sin otro registro de estado.
 - `loaded_image_size_bytes` y el tamaño validado pendiente usado por el `Loader` deben representar la capacidad inclusive. Su ancho es `IMAGE_SIZE_WIDTH = max(1, ceil(log2(IMEM_CAPACITY_BYTES + 1)))`.
 - `byte_enable[3:0]` es la **máscara relativa de bytes** aprobada: `SB`=0001, `SH`=0011, `SW`=1111 y otros `mem_op`=0000. DMEM desplaza máscara/dato por `Address[1:0]`; el controlador de escritura no recibe dirección. No es una máscara previamente alineada a lanes.
 - Las interfaces de stream, escritura de imagen, mantenimiento y observación están concretadas en §15 y en la composición aprobada. No se agregan handshakes, grants o anchos de paquetes por separar módulos.
@@ -74,8 +74,8 @@ Las interfaces secuenciales reciben implícitamente `clk` y, donde el contrato d
 | Register File | `x0`–`x31` en cero lógico | cero lógico completo | `rf_write_fire` |
 | `IF/ID` | `valid=0`, `fetch_fault_valid=0`; demás bits pueden retener residuos | ambos flags en cero | `capture` / `hold` / `invalidate` |
 | `ID/EX`, `EX/MEM`, `MEM/WB` | `valid=0`; demás bits pueden retener residuos | `valid=0` | controles locales de actualización |
-| `Global FSM` | `NO_IMAGE` | coordina fase, sin escribir el datapath | transiciones de sesión |
-| `loaded_image_size_bytes` | `0` | solo `PREPARING_READY` publica el tamaño | clear por `LOAD` aceptado / commit |
+| `Global FSM` | `NO_IMAGE` | coordina fase, sin escribir el datapath | captura `next_state` en cada flanco de `clk`, independientemente de `cpu_cycle_fire` |
+| `loaded_image_size_bytes` | `0` | captura tamaño pendiente con `image_publish` | clear por `load_start` / publicación por `image_publish` |
 | `cycle_count` | `0` | `0` antes del primer ciclo | `cpu_cycle_fire` |
 | `fault_cause`, `fault_pc` | condición invalidada por `Global FSM`; no exige borrar bits | condición anterior deja de ser vigente | solo `fault_capture_fire` |
 | IMEM | conserva array; imagen inválida por tamaño cero | no se borra para reutilizar imagen | escritura del `Loader` autorizado |
@@ -115,10 +115,6 @@ Las capacidades en bytes satisfacen `4 <= CAPACITY_BYTES <= 2^32` y son múltipl
 PC, EA y offsets están expresados en bytes; IMEM y DMEM tienen base cero y espacios independientes. EA se forma módulo `2^32`, pero se comprueba **EA+N completo en 33 bits antes de indexar**. Fetch comprueba además imagen confirmada. Desalineación prevalece sobre rango para el mismo acceso. No se hace alias mediante truncamiento.
 
 IMEM CPU/`Loader` y DMEM CPU/Debug/mantenimiento mantienen ownership exclusivo para operaciones incompatibles. IF y MEM pueden demandar simultáneamente sus memorias independientes. Debug lee directamente el estado retenido: requiere CPU quiescente y acceso exclusivo de DMEM frente a CPU/mantenimiento hasta el último Stop. El diseño aprobado no agrega una copia completa del estado. Un conflicto interno es una violación de implementación, no una octava causa de fault.
-
-### 0.6 Estado de cierre
-
-Las tablas de las secciones 1–9 concretan conexiones internas y contienen 54 bloques funcionales. La revisión documental comprueba sus fuentes, destinos, anchos y contratos. Las fronteras FPGA y la agrupación de los 54 bloques están concretadas y revisadas en [composición](architecture/system_composition.md) e [inventario](architecture/module_inventory.md). FPGA-01–09 están cerrados en diseño documental. El gate global D0/M6 permanece abierto por el diseño PC y el cierre conjunto del sistema.
 
 ---
 
@@ -392,7 +388,6 @@ Todas provienen de `Pipeline Hazard Control`.
 | `valid` | `ID Fault Check` |
 | `valid` | `Load-Use Detector` |
 | `valid` | entrada `ID/EX.valid` |
-| `valid` | `Pipeline Empty Logic` |
 | `pc[31:0]` | `ID Fault Check` |
 | `pc[31:0]` | entrada `ID/EX.pc` |
 | `instruction[31:0]` | `Decoder` |
@@ -476,7 +471,7 @@ La observación de `IF/ID` usa sus campos registrados actuales, incluidos los in
 | `Read Register 1[4:0]` | `IF/ID.instruction[19:15]` |
 | `Read Register 2[4:0]` | `IF/ID.instruction[24:20]` |
 | `debug_rf_addr[4:0]` | `response_serializer`, registro `x0`–x31 seleccionado para Debug |
-| `rf_debug_select` (1 bit) | `protocol_controller`, ventana exclusiva Debug |
+| `rf_debug_select` (1 bit) | `Protocol Controller`, ventana exclusiva Debug |
 | `Write Register[4:0]` | `MEM/WB.rd` |
 | `Write Data[31:0]` | `MEM/WB.wb_value` |
 | `write_enable` | `WB Bypass Control.rf_write_fire` |
@@ -591,7 +586,7 @@ La [derivación RF](architecture/debug/response_serializer.md#derivación-de-reg
 
 | Señal | Origen |
 |---|---|
-| `cpu_cycle_fire` | `Cycle Authorization` |
+| `cpu_cycle_fire` | `Execution Control` |
 | `MEM/WB.valid` | `MEM/WB` |
 | `MEM/WB.reg_write` | `MEM/WB` |
 | `MEM/WB.rd[4:0]` | `MEM/WB` |
@@ -751,7 +746,6 @@ Todas provienen de `Pipeline Hazard Control`.
 | `valid` | `Flow Control` |
 | `valid` | `EX Fault Check` |
 | `valid` | `EX/MEM.valid` |
-| `valid` | `Pipeline Empty Logic` |
 | `pc[31:0]` | `Link Adder` |
 | `pc[31:0]` | `Target Adder` |
 | `pc[31:0]` | `EX/MEM.pc` |
@@ -1241,7 +1235,6 @@ Todas provienen de `Pipeline Hazard Control`.
 | `valid` | `Forwarding Unit` |
 | `valid` | `DMEM Write Control` |
 | `valid` | `MEM/WB.valid` |
-| `valid` | `Pipeline Empty Logic` |
 | `pc[31:0]` | `MEM/WB.pc` |
 | `instruction[31:0]` | `MEM/WB.instruction` |
 | `rd[4:0]` | `Forwarding Unit` |
@@ -1345,7 +1338,7 @@ La observación de `EX/MEM` usa sus campos registrados actuales, incluidos los i
 | Señal | Ancho | Origen |
 |---|---|---|
 | `debug_dmem_addr` | max(1, ceil(log2(`DMEM_CAPACITY_BYTES`))) | Registro de dirección de recorrido de `response_serializer`: 11 bits en `REFERENCE` y diez en `ALT_1000` |
-| `dmem_debug_select` | 1 | `protocol_controller`: selecciona lectura Debug durante su ventana exclusiva |
+| `dmem_debug_select` | 1 | `Protocol Controller`: selecciona lectura Debug durante su ventana exclusiva |
 
 La [consulta Debug de DMEM](architecture/debug/response_serializer.md#señales-de-consulta-de-dmem) utiliza la dirección de byte seleccionada para devolver valor y metadatos de esa misma posición.
 
@@ -1434,7 +1427,7 @@ El [acuerdo de señales](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007
 
 | Señal | Origen |
 |---|---|
-| `cpu_cycle_fire` | `Cycle Authorization` |
+| `cpu_cycle_fire` | `Execution Control` |
 | `EX/MEM.valid` | `EX/MEM` |
 | `is_store` | `MEM Decode` |
 | `EX/MEM.mem_op[3:0]` | `EX/MEM` |
@@ -1520,7 +1513,6 @@ Todas provienen de `Pipeline Hazard Control`.
 |---|---|
 | `valid` | `Forwarding Unit` |
 | `valid` | `WB Bypass Control` |
-| `valid` | `Pipeline Empty Logic` |
 | `rd[4:0]` | `Forwarding Unit` |
 | `rd[4:0]` | `WB Bypass Control` |
 | `rd[4:0]` | `Registers.Write Register` |
@@ -1564,7 +1556,7 @@ La observación de `MEM/WB` usa sus campos registrados actuales, incluidos los i
 fault EX > halt EX > redirect EX > fault ID > load-use > normal
 ```
 
-En drain, `load_use_stall` decide entre las dos ramas. `terminal_none` y `drain_active` se derivan del estado actual.
+En drain, `load_use_stall` decide entre las dos ramas.
 
 **Fuente:** [contrato arquitectónico](architecture/cpu/control_and_hazards.md#las-ocho-acciones-del-pipeline). **Verificación futura:** onehot0, prioridad completa, `HOLD`/terminal vacío; `drain_load_use` se prueba como estado artificial separado.
 
@@ -1572,9 +1564,8 @@ En drain, `load_use_stall` decide entre las dos ramas. `terminal_none` y `drain_
 
 | Señal | Origen |
 |---|---|
-| `cpu_cycle_fire` | `Cycle Authorization` |
-| `terminal_none` | `Global Status Decode` |
-| `drain_active` | `Global Status Decode` |
+| `cpu_cycle_fire` | `Execution Control` |
+| `drain_mode` | `Execution Control` |
 | `ex_fault_candidate` | `EX Fault Check` |
 | `ex_halt_candidate` | `Flow Control` |
 | `redirect_requested` | `Flow Control` |
@@ -1604,11 +1595,11 @@ En drain, `load_use_stall` decide entre las dos ramas. `terminal_none` y `drain_
 
 ### 6.1 `Fault Metadata Control`
 
-**Tipo:** Combinacional. **Responsabilidad:** Seleccionar metadatos y evento de captura del fault confirmado.
+**Tipo:** Lógica combinacional local de `Execution Control`. **Responsabilidad:** Seleccionar metadatos y evento de captura del fault confirmado.
 
-**Contrato:** `fault_capture_fire`=`act_ex_fault` || `act_id_fault`; EX selecciona su causa e `ID/EX.pc`, ID selecciona su causa e `id_fault_pc`=`IF/ID.pc`. No usa PC global ni captura solo por candidato.
+**Contrato:** `fault_confirm = act_ex_fault || act_id_fault`; EX selecciona su causa e `ID/EX.pc`, ID selecciona su causa e `id_fault_pc`=`IF/ID.pc`.
 
-**Fuente:** [contrato arquitectónico](architecture/session/faults_and_termination.md#captura). **Verificación futura:** EX frente a ID, candidato descartado, causas legales y retención en `HOLD`/drain.
+**Fuente:** [contrato de captura](architecture/session/faults_and_termination.md#captura) y [recursos de ejecución](architecture/session/execution_control.md#estado-global-asociado-a-la-sesión). **Verificación futura:** EX frente a ID, candidato descartado, causas legales y retención en `HOLD`/drain.
 
 #### Entradas
 
@@ -1625,9 +1616,8 @@ En drain, `load_use_stall` decide entre las dos ramas. `terminal_none` y `drain_
 
 | Señal | Destino |
 |---|---|
-| `fault_capture_fire` | registro `fault_cause` |
-| `fault_capture_fire` | registro `fault_pc` |
-| `fault_capture_fire` | `Global FSM` como `fault_confirm` |
+| `fault_confirm` | `Global FSM` |
+| `fault_capture_fire` | registros `fault_cause` y `fault_pc` |
 | `fault_cause_in[2:0]` | registro `fault_cause` |
 | `fault_pc_in[31:0]` | registro `fault_pc` |
 
@@ -1689,24 +1679,14 @@ En drain, `load_use_stall` decide entre las dos ramas. `terminal_none` y `drain_
 
 ### 7.1 `Pipeline Empty Logic`
 
-**Tipo:** Combinacional. **Responsabilidad:** Calcular vacío actual y posterior al flanco.
+**Tipo:** Lógica combinacional local de `Execution Control`. **Responsabilidad:** Calcular si el ciclo actual dejará el pipeline vacío.
 
-**Contrato:** Cada salida niega el OR de los cuatro `valid` actuales o `next`; `fetch_fault_valid` no participa. `next` proviene de actualización de registros interetapa, no de `next_state`.
+**Contrato:** `pipeline_empty_next` niega el OR de los cuatro `next.valid`; `fetch_fault_valid` no participa. `next` proviene de la lógica de actualización de registros interetapa, no de `next_state` de la FSM global. No se requiere una salida de vacío actual.
 
 **Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#pipeline-vacío). **Verificación futura:** Último `valid` consumido, sin ciclo vacío adicional y ausencia de realimentación combinacional.
 
-Este bloque es lógica combinacional auxiliar; no contiene estado.
 
-#### Entradas para `pipeline_empty`
-
-| Señal | Origen |
-|---|---|
-| `IF/ID.valid` | `IF/ID` |
-| `ID/EX.valid` | `ID/EX` |
-| `EX/MEM.valid` | `EX/MEM` |
-| `MEM/WB.valid` | `MEM/WB` |
-
-#### Entradas para `pipeline_empty_next`
+#### Entradas
 
 | Señal | Origen |
 |---|---|
@@ -1719,36 +1699,7 @@ Este bloque es lógica combinacional auxiliar; no contiene estado.
 
 | Señal | Destino |
 |---|---|
-| `pipeline_empty` | `Global Status Decode` |
 | `pipeline_empty_next` | `Global FSM` |
-
----
-
-<a id="bloque-7-2"></a>
-
-### 7.2 `Global Status Decode`
-
-**Tipo:** Combinacional. **Responsabilidad:** Derivar fase terminal y necesidad de drain.
-
-**Contrato:** `terminal_none` niega pertenencia a los cuatro DRAIN, `FINISHED` o `FAULT`; `drain_active`=`terminal_active` && !`pipeline_empty`. No agrega registros.
-
-**Fuente:** [contrato arquitectónico](architecture/cpu/control_and_hazards.md#estado-terminal-y-drenado). **Verificación futura:** 14 estados y pipeline vacío/no vacío; distinguir `drain_mode` de `drain_active`.
-
-> Lógica combinacional auxiliar para no mezclar estos predicados con la FSM registrada.
-
-#### Entradas
-
-| Señal | Origen |
-|---|---|
-| `global_state` | `Global FSM` |
-| `pipeline_empty` | `Pipeline Empty Logic` |
-
-#### Salidas
-
-| Señal | Destino |
-|---|---|
-| `terminal_none` | `Pipeline Hazard Control` |
-| `drain_active` | `Pipeline Hazard Control` |
 
 ---
 
@@ -1756,133 +1707,81 @@ Este bloque es lógica combinacional auxiliar; no contiene estado.
 
 <a id="bloque-8-1"></a>
 
-### 8.1 `Command Arbiter`
+### 8.1 `Global FSM`
 
-**Tipo:** Combinacional. **Responsabilidad:** Filtrar solicitudes elegibles y resolver coincidencias.
+**Tipo:** Estado registrado y lógica combinacional Moore/Mealy. **Responsabilidad:** Conservar la fase global de sesión, seleccionar solicitudes, autorizar ciclos y emitir controles para los recursos.
 
-**Contrato:** Prioridad `RESET` > `LOAD` > `STEP` > `RUN` tras elegibilidad por `global_state`. `LOAD` no elegible no cancela `RUN` automático. Solicitudes aceptadas son eventos de una sola operación, no niveles UART persistentes.
-
-**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#aceptación-de-load-run-y-step). **Verificación futura:** 14 estados, ocho combinaciones `LOAD`/`RUN`/`STEP` y reset; aceptación mutuamente excluyente.
-
-#### Entradas
-
-| Señal | Origen |
-|---|---|
-| solicitud `LOAD` | [EXT] interfaz de comandos/UART |
-| solicitud `STEP` | [EXT] interfaz de comandos/UART |
-| solicitud `RUN` | [EXT] interfaz de comandos/UART |
-| `global_state` | `Global FSM` |
-| `reset` | [GLOBAL] reset |
-
-> Las solicitudes `LOAD`, `STEP` y `RUN` de esta tabla corresponden a `load_request`, `step_request` y `run_request`, generadas por `protocol_controller` y conectadas al árbitro mediante `processor_top`. Sus nombres y conexiones están aprobados en el [controlador](architecture/debug/protocol_controller.md#señales-y-conexiones-aprobadas) y en la [composición](architecture/system_composition.md#processor_top-comandos-carga-y-consultas).
-
-#### Salidas
-
-| Señal | Destino |
-|---|---|
-| `load_accept` | `Global FSM` |
-| `load_accept` | `Cycle Authorization` |
-| `load_accept` | `Loader` / reinicio de nueva carga |
-| `load_accept` | registro `loaded_image_size_bytes` para invalidar la imagen previa |
-| `step_accept` | `Global FSM` |
-| `step_accept` | `Cycle Authorization` |
-| `run_accept` | `Global FSM` |
-| `run_accept` | `Cycle Authorization` |
-
----
-
-<a id="bloque-8-2"></a>
-
-### 8.2 `Global FSM`
-
-**Tipo:** Estado registrado y decodificación Moore. **Responsabilidad:** Conservar la fase global de sesión y calcular su próximo estado.
-
-**Contrato:** 14 estados aprobados; reset→`NO_IMAGE`; `LOAD` aceptado→`LOADING`; `load_ok`→`PREPARING_READY`; `PREPARING_READY && prepare_done` publica imagen y pasa a `READY` sin ciclo CPU. El primer ciclo autorizado desde `READY` o al consumir `prepare_done` en `PREPARING_RUN`/`PREPARING_STEP` realiza fetch sin confirmar halt ni fault y alcanza `RUNNING`/`STEPPING` según su origen. Desde `RUNNING`/`STEPPING`, las confirmaciones y `pipeline_empty_next` seleccionan terminal o drain según el origen del ciclo. Terminal `RUN`/`STEP` prepara sesión nueva. No escribe directamente datapath ni autoriza el ciclo actual con `next_state`.
+**Contrato:** 14 estados; reset→`NO_IMAGE`; LOAD seleccionado→`LOADING`; `load_ok`→`PREPARING_READY`; `PREPARING_READY && prepare_done` activa `image_publish` y pasa a `READY` sin ciclo CPU. El primer ciclo desde `READY` o al consumir `prepare_done` en `PREPARING_RUN`/`PREPARING_STEP` realiza fetch sin confirmar halt ni fault y alcanza `RUNNING`/`STEPPING` según su origen. Desde `RUNNING`/`STEPPING`, las confirmaciones y `pipeline_empty_next` seleccionan terminal o drain según el origen del ciclo. RUN/STEP desde terminal prepara una sesión nueva. La FSM emite controles; los recursos realizan las escrituras.
 
 En un drain alcanzable de halt queda únicamente WB: el siguiente ciclo efectivo lleva a `FINISHED`. Desde `FAULT_DRAIN_STEP`, un `RUN` aceptado lleva a `FAULT` si ese ciclo vacía el pipeline, o a `FAULT_DRAIN_AUTO` si queda trabajo. Sin orden aceptada, los drains `STEP` conservan el estado.
 
-**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#tabla-de-transiciones). **Verificación futura:** Transiciones alcanzables, primer fetch sin confirmación terminal, rechazo `LOAD` continuo, resultado de confirmación, halt-drain completado en un ciclo efectivo, conversión `FAULT_DRAIN_STEP`→`FAULT_DRAIN_AUTO` por `RUN` solo si queda trabajo y sesiones reutilizadas. Las filas de FSM con entradas forzadas se comprueban por separado, conforme a [TEST-EXEC-006](verification/execution.md#test-exec-006); no se exige su alcanzabilidad en una sesión legal.
+**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#tabla-de-transiciones). **Verificación futura:** Transiciones alcanzables, primer fetch sin confirmación terminal, rechazo LOAD continuo, resultado de confirmación, halt-drain completado en un ciclo efectivo, conversión `FAULT_DRAIN_STEP`→`FAULT_DRAIN_AUTO` solo si queda trabajo y sesiones reutilizadas. Las entradas forzadas se comprueban por separado de los recorridos legales; los fixtures del contrato anterior se adaptan a solicitudes de entrada y controles observados, sin conducir salidas.
 
-FSM Moore de catorce estados con registro one-hot de catorce bits, reset a `NO_IMAGE` en bit cero. Código `global_state_code` de ocho bits combinacional, compartido con `debug_state_code` del serializador, según [representación aprobada](architecture/session/global_state_encoding.md).
+`Global FSM`, en `global_fsm.sv`, es un submódulo de `Execution Control`, en `execution_control.sv`. El registro interno `global_state` es one-hot de catorce bits, con `NO_IMAGE` en bit cero. Captura `next_state` en cada flanco ascendente de `clk`, aunque `cpu_cycle_fire=0`; ese fire habilita recursos CPU y no es el clock de la FSM. El código de ocho bits es una salida combinacional de observación.
 
 #### Entradas
 
 | Señal | Origen |
 |---|---|
-| `reset` | [GLOBAL] reset |
-| `load_accept` | `Command Arbiter` |
-| `step_accept` | `Command Arbiter` |
-| `run_accept` | `Command Arbiter` |
+| `clk` | [GLOBAL] clock funcional común |
+| `reset` | [GLOBAL] reset funcional acondicionado |
+| `load_request` | `Protocol Controller` |
+| `run_request` | `Protocol Controller` |
+| `step_request` | `Protocol Controller` |
 | `load_ok` | `Loader` |
 | `load_fail` | `Loader` |
 | `prepare_done` | `Session Preparation` |
 | `halt_confirm` | `Pipeline Hazard Control.act_halt` |
-| `fault_confirm` | `Fault Metadata Control.fault_capture_fire` |
+| `fault_confirm` | `Fault Metadata Control.fault_confirm` |
 | `pipeline_empty_next` | `Pipeline Empty Logic` |
-| `cycle_from_continuous` | `Cycle Authorization` |
 
 #### Salidas principales
 
-| Señal | Destino |
+| Señal | Tipo | Destino |
+|---|---|---|
+| `command_accepted` | Mealy | `Protocol Controller` |
+| `load_start` | Mealy | `Loader` y registro local `loaded_image_size_bytes` |
+| `cpu_cycle_fire` | Mealy | `Pipeline Hazard Control`, `WB Bypass Control`, `DMEM Write Control`, `Cycle Counter` y `Protocol Controller` |
+| `image_publish` | Mealy | registro local `loaded_image_size_bytes` |
+| `loader_active` | Moore | `Loader` |
+| `prepare_active` | Moore | `Session Preparation` y `Protocol Controller` |
+| `drain_mode` | Moore | `Pipeline Hazard Control` |
+| `load_available` | Moore | `Protocol Controller` |
+| `program_finished` | Moore | `Protocol Controller` |
+| `fault_terminal` | Moore | `Protocol Controller` |
+| `global_state_code[7:0]` | Moore | `Response Serializer` |
+
+#### Frontera de `Execution Control`
+
+El contenedor conserva los registros de causa/PC, tamaño confirmado y contador, junto con la selección local de metadatos y la reducción de próximos `valid`. Sus conexiones son más amplias que las de `Global FSM`:
+
+| Entradas del contenedor | Origen / uso |
 |---|---|
-| `global_state` | `Command Arbiter` |
-| `global_state` | `Cycle Authorization` |
-| `global_state` | `Global Status Decode` |
-| `global_state` | `Session Preparation` para distinguir `PREPARING_READY`/`RUN`/`STEP` |
-| `global_state_code[7:0]` | `protocol_controller` y `response_serializer.debug_state_code`, misma conversión combinacional |
-| `loader_active` | `Loader` |
-| `prepare_active` | `Session Preparation` |
-| `program_finished` | [EXT] Debug/Status |
-| `fault_info_valid` | [EXT] Debug/Status |
+| `clk`, `reset` | [GLOBAL], FSM y recursos registrados locales |
+| `load_request`, `run_request`, `step_request` | `Protocol Controller` → `system_top` → `processor_top` → `Execution Control` → `Global FSM` |
+| `load_ok`, `load_fail` | `Loader`, hacia la FSM |
+| `prepare_done` | `Session Preparation`, hacia la FSM |
+| `prepare_init` | `Session Preparation`, clear local del contador |
+| `halt_confirm` | `Pipeline Hazard Control.act_halt`, hacia la FSM |
+| `act_ex_fault`, `act_id_fault` | `Pipeline Hazard Control`, OR para la FSM y captura de metadatos |
+| `ex_fault_cause[2:0]`, `ID/EX.pc[31:0]` | `EX Fault Check` y registro `ID/EX`, selección local de metadatos |
+| `id_fault_cause[2:0]`, `id_fault_pc[31:0]` | `ID Fault Check`, PC equivalente a `IF/ID.pc`, selección local de metadatos |
+| `IF/ID.next.valid`, `ID/EX.next.valid`, `EX/MEM.next.valid`, `MEM/WB.next.valid` | controles de actualización en `processor_top`, un bit cada uno, reducción local para la FSM |
+| `pending_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | tamaño retenido por `Protocol Controller` y presentado por el alias del Loader, hacia el registro de tamaño |
+| `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH` | [CFG], capacidad y ancho derivado para los recursos de imagen |
 
-#### Salidas Moore opcionales de estado
-
-Si se dibujan explícitamente:
-
-| Señal | Destino |
+| Salidas del contenedor | Destino / uso |
 |---|---|
-| `continuous_mode` | [EXT] Debug/Status, si se expone |
-| `step_mode` | [EXT] Debug/Status, si se expone |
-| `drain_mode` | [EXT] Debug/Status |
-| `halt_drain_active` | [EXT] Debug/Status |
-| `fault_drain_active` | [EXT] Debug/Status |
-| `fault_active` | [EXT] Debug/Status |
-| `fault_terminal` | [EXT] Debug/Status |
+| `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire` | `Protocol Controller`, por `processor_top` y `system_top` |
+| `load_start`, `loader_active` | `Loader`, mediante `processor_top` |
+| `prepare_active` | `Session Preparation`, mediante `processor_top` |
+| `cpu_cycle_fire`, `drain_mode` | `Pipeline Hazard Control`; fire también llega a `WB Bypass Control` y `DMEM Write Control` |
+| `global_state_code[7:0]` | `response_serializer.debug_state_code`, por los contenedores |
+| `loaded_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | `Fetch Fault Check` |
+| `image_valid` | `Fetch Fault Check`, `Protocol Controller` y observación Debug |
+| `fault_cause[2:0]`, `fault_pc[31:0]`, `cycle_count[63:0]` | observación Debug mediante `response_serializer` |
 
-> Si ninguna lógica funcional consume estas señales, no hace falta dibujarlas como puertos separados.
-
----
-
-<a id="bloque-8-3"></a>
-
-### 8.3 `Cycle Authorization`
-
-**Tipo:** Combinacional. **Responsabilidad:** Autorizar exactamente un ciclo de CPU y determinar su origen.
-
-**Contrato:** `cpu_cycle_fire`=!reset && !`load_accept` && (`automatic_cycle_request` || `command_cycle_request` || `prepare_cycle_request`); requests y `cycle_from_continuous` según estado actual. `PREPARING_READY` nunca ejecuta CPU.
-
-**Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#autorización-de-un-ciclo-cpu). **Verificación futura:** `RUN` automático, `STEP` único, stalls contados, `prepare_done` `RUN`/`STEP` y supresión por reset/`LOAD` aceptado.
-
-#### Entradas
-
-| Señal | Origen |
-|---|---|
-| `global_state` | `Global FSM` |
-| `reset` | [GLOBAL] reset |
-| `load_accept` | `Command Arbiter` |
-| `run_accept` | `Command Arbiter` |
-| `step_accept` | `Command Arbiter` |
-| `prepare_done` | `Session Preparation` |
-
-#### Salidas
-
-| Señal | Destino |
-|---|---|
-| `cpu_cycle_fire` | `Pipeline Hazard Control` |
-| `cpu_cycle_fire` | `WB Bypass Control` |
-| `cpu_cycle_fire` | `DMEM Write Control` |
-| `cpu_cycle_fire` | `Cycle Counter` |
-| `cycle_from_continuous` | `Global FSM` |
+`image_publish`, `fault_confirm`, `fault_capture_fire` y las entradas de datos de los registros se conectan localmente donde corresponde; no necesitan salir del contenedor. `prepare_done` se distribuye también desde `Session Preparation` a UART, por `processor_top` y `system_top`; no se transforma en una salida nueva de la FSM.
 
 ---
 
@@ -1894,7 +1793,7 @@ Si se dibujan explícitamente:
 
 **Tipo:** Reconstrucción secuencial de bytes y control combinacional, sin FSM privada adicional. **Responsabilidad:** Escribir palabras completas de una imagen validada por el controlador, con ownership.
 
-**Contrato:** `LOAD` aceptado inicia carga privada y el tamaño confirmado sigue cero. El Loader recibe el programa seguido, sin confirmaciones intermedias, y reconstruye palabras completas little-endian para IMEM. Están aprobados las FIFO RX/TX de cuatro bytes y el consumo de cada byte antes del siguiente completo, incluida reconstrucción fuera de RX y escritura IMEM.
+**Contrato:** `load_start` inicia carga privada en el flanco de selección de LOAD y el tamaño confirmado queda cero. `loader_active` identifica la fase `LOADING`; el inicio no espera otro flanco ni se deduce únicamente de ese nivel. El Loader recibe el programa seguido, sin confirmaciones intermedias, y reconstruye palabras completas little-endian para IMEM. Están aprobados las FIFO RX/TX de cuatro bytes y el consumo de cada byte antes del siguiente completo, incluida reconstrucción fuera de RX y escritura IMEM.
 
 El [diseño aprobado](architecture/session/loader.md) usa un registro de 24 bits y escribe con el cuarto byte. El [presupuesto conjunto RX/LOAD](architecture/uart/uart_core.md#presupuesto-de-integración) está comprobado documentalmente.
 
@@ -1908,9 +1807,9 @@ El transporte descarta RX durante preparación y confirmación final. Admite la 
 
 | Señal | Origen |
 |---|---|
-| `loader_active` | `Global FSM` |
-| inicio/reinicio de carga | `Command Arbiter.load_accept` |
-| `load_size_bytes`, `load_byte_valid`, `load_byte_data[7:0]`, `load_byte_offset`, `load_last_byte`, `load_abort` | `protocol_controller`, tamaño/entrega/posición/último/aborto aprobados |
+| `loader_active` | `Execution Control` |
+| `load_start` | `Execution Control` |
+| `load_size_bytes`, `load_byte_valid`, `load_byte_data[7:0]`, `load_byte_offset`, `load_last_byte`, `load_abort` | `Protocol Controller`, tamaño/entrega/posición/último/aborto aprobados |
 | `IMEM_CAPACITY_BYTES`, `IMAGE_SIZE_WIDTH` | [CFG] perfil autoritativo |
 | `reset` | [GLOBAL] reset |
 
@@ -1919,9 +1818,9 @@ El transporte descarta RX durante preparación y confirmación final. Admite la 
 | Señal | Destino |
 |---|---|
 | interfaz de escritura IMEM | `Instruction Memory` |
-| `load_ok` | `Global FSM` |
-| `load_fail` | `Global FSM` |
-| tamaño validado pendiente de la nueva imagen | `Session Preparation` / commit de `loaded_image_size_bytes` |
+| `load_ok` | `Execution Control` |
+| `load_fail` | `Execution Control` |
+| `pending_image_size_bytes[]` | `Execution Control` |
 
 > El tamaño pendiente de la carga se conecta desde `load_size_bytes`, retenido por el controlador, y se presenta como `pending_image_size_bytes` hasta el commit de la nueva sesión. Es un alias combinacional, sin un registro privado duplicado; véanse [Loader](architecture/session/loader.md#progreso-mantenido-por-el-controlador) y los [aliases de composición](architecture/system_composition.md#aliases-y-conexiones-internas-sensibles).
 
@@ -1933,7 +1832,7 @@ El transporte descarta RX durante preparación y confirmación final. Admite la 
 
 **Tipo:** Progreso registrado de mantenimiento y control combinacional, sin FSM privada adicional. **Responsabilidad:** Establecer el estado inicial coherente de la nueva sesión.
 
-**Contrato:** PC/RF/pipeline/contador iniciales, DMEM cero lógico y conjunto utilizado vacío. `prepare_done` exige preparación completa preflanco sin writes concurrentes. `PREPARING_READY` publica tamaño; `RUN`/`STEP` reutilizan imagen.
+**Contrato:** PC/RF/pipeline/contador iniciales, DMEM cero lógico y conjunto utilizado vacío. `prepare_active` activa el mismo trabajo en los tres estados `PREPARING_*`; `prepare_done` exige preparación completa preflanco sin writes concurrentes. La FSM decide publicar mediante `image_publish` desde `PREPARING_READY` o autorizar el primer ciclo desde `PREPARING_RUN`/`PREPARING_STEP`.
 
 Para `LOAD` en `REFERENCE` y `ALT_1000`, el presupuesto máximo es 1 ms (50.000 clocks de 50 MHz) desde entrada a `PREPARING_READY` hasta commit. Se confirma apenas termine, sin espera fija.
 
@@ -1945,26 +1844,23 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 | Señal | Origen |
 |---|---|
-| `prepare_active` | `Global FSM` |
-| `global_state` / modo de preparación | `Global FSM` |
-| tamaño validado pendiente | `Loader` |
+| `prepare_active` | `Execution Control` |
+| `DMEM_CAPACITY_BYTES`, `BYTE_ADDRESS_WIDTH` | [CFG] perfil autoritativo y ancho de dirección |
 | `reset` | [GLOBAL] reset |
 
 #### Salidas
 
 | Señal / acción | Destino |
 |---|---|
-| `prepare_done` | `Global FSM` |
-| `prepare_done` | `Cycle Authorization` |
-| inicializar `PC = 0` | `PC` |
+| `prepare_done` | `Execution Control` |
+| `prepare_done` | `Protocol Controller` |
+| `prepare_init`: inicializar `PC = 0` | `PC` |
 | `prepare_init`: inicialización simultánea RF | `Registers`, banco de flip-flops |
-| invalidar pipeline | `IF/ID`, `ID/EX`, `EX/MEM`, `MEM/WB` |
+| `prepare_init`: invalidar pipeline | `IF/ID`, `ID/EX`, `EX/MEM`, `MEM/WB` |
 | `prepare_dmem_clear`, `prepare_dmem_addr` | `Data Memory`, limpiar una marca de byte |
-| inicializar conjunto de memoria utilizada de la sesión | [EXT] Debug/Snapshot; mecanismo dependiente de DEC-SYS-005 |
-| poner `cycle_count = 0` | `Cycle Counter` |
-| commit del tamaño de imagen en `PREPARING_READY` | registro `loaded_image_size_bytes` |
+| `prepare_init`: poner `cycle_count = 0` | `Cycle Counter`, por `Execution Control` |
 
-> Las órdenes `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done`, junto con dirección de mantenimiento DMEM, quedan concretadas en el diseño aprobado. `prepare_index` permanece interno; no se agrega dirección de mantenimiento RF.
+> `prepare_init` y `prepare_dmem_clear` son de un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits. La limpieza de marcas deja vacío el conjunto utilizado que observa Debug, sin una orden adicional al serializador. `prepare_index` y su incremento permanecen internos; no se agrega dirección de mantenimiento RF. Cuando `prepare_done=1`, las habilitaciones de inicialización y limpieza valen cero aunque `prepare_active` todavía refleje el estado de preparación.
 
 ---
 
@@ -1972,9 +1868,9 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 ### 9.3 Registro global `loaded_image_size_bytes`
 
-**Tipo:** Registro funcional y predicado combinacional. **Responsabilidad:** Conservar la única fuente persistente de imagen confirmada.
+**Tipo:** Registro funcional local de `Execution Control` y predicado combinacional. **Responsabilidad:** Conservar la única fuente persistente de imagen confirmada.
 
-**Contrato:** Reset o `load_accept` lo dejan cero; solo `PREPARING_READY` && `prepare_done` escribe tamaño validado; cualquier otro caso retiene, incluida preparación de reutilización. `image_valid`=(size!=0) no es registro.
+**Contrato:** Prioridad reset > `load_start` > `image_publish` > conservar. Reset o `load_start` lo dejan cero; `image_publish` captura `pending_image_size_bytes` al completar `PREPARING_READY`. Cualquier otro caso retiene, incluida preparación de reutilización. `load_ok` no publica la imagen. `image_valid`=(size!=0) no es registro.
 
 **Fuente:** [contrato arquitectónico](architecture/memory/memory_architecture.md#estado-persistente-de-la-imagen). **Verificación futura:** Capacidad inclusive, carga fallida, `LOAD` rechazado y reutilización sin modificar tamaño.
 
@@ -1982,9 +1878,10 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 | Señal | Origen |
 |---|---|
-| clear a `0` | [GLOBAL] `reset` |
-| clear a `0` | `Command Arbiter.load_accept` |
-| nuevo tamaño confirmado | `Session Preparation`, usando el tamaño pendiente del `Loader` |
+| `reset` | [GLOBAL] reset, clear a cero |
+| `load_start` | `Global FSM`, clear a cero |
+| `image_publish` | `Global FSM`, habilitación de captura |
+| `pending_image_size_bytes[IMAGE_SIZE_WIDTH-1:0]` | alias del tamaño pendiente del Loader, retenido por `Protocol Controller` |
 | `IMAGE_SIZE_WIDTH` | [CFG] derivado de `IMEM_CAPACITY_BYTES` |
 
 #### Salidas
@@ -1992,7 +1889,7 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 | Señal | Destino |
 |---|---|
 | `loaded_image_size_bytes` | `Fetch Fault Check` |
-| `image_valid = (loaded_image_size_bytes != 0)` | `Fetch Fault Check`, [EXT] Debug/Status |
+| `image_valid = (loaded_image_size_bytes != 0)` | `Fetch Fault Check`, `Protocol Controller` y observación Debug |
 | valor confirmado | [EXT] Debug/Status, si se expone |
 
 > Su ancho es `IMAGE_SIZE_WIDTH` de §0.2 y representa la capacidad inclusive. En `REFERENCE` son 11 bits; en `ALT_1000` son 10. No se confunde con el ancho del índice de palabras.
@@ -2003,9 +1900,9 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 ### 9.4 `Cycle Counter`
 
-**Tipo:** Registro funcional unsigned de 64 bits. **Responsabilidad:** Contar ciclos efectivos de la sesión módulo 2^64.
+**Tipo:** Registro funcional unsigned de 64 bits, local en `Execution Control`. **Responsabilidad:** Contar ciclos efectivos de la sesión módulo 2^64.
 
-**Contrato:** Reset/preparación lo dejan cero; incrementa una vez por `cpu_cycle_fire`, incluidos stalls y drain. Wrap no genera flags/fault ni cambia estado. Primer ciclo tras preparación consume el cero ya preparado.
+**Contrato:** Prioridad reset > `prepare_init` > `cpu_cycle_fire` > conservar. Reset/preparación lo dejan cero; incrementa una vez por `cpu_cycle_fire`, incluidos stalls y drain. Aceptar LOAD no lo reinicia por sí solo. Wrap no genera flags/fault ni cambia estado. Primer ciclo tras preparación consume el cero ya preparado.
 
 **Fuente:** [contrato arquitectónico](architecture/session/execution_control.md#contador-lógico-de-ciclos). **Verificación futura:** `HOLD` y actividad UART no cuentan; máximo→0→1 en ciclos normales, stall y drain.
 
@@ -2013,8 +1910,8 @@ La [realización aprobada](architecture/session/session_preparation.md) iniciali
 
 | Señal | Origen |
 |---|---|
-| `cpu_cycle_fire` | `Cycle Authorization` |
-| clear a `0` de nueva sesión | `Session Preparation` |
+| `cpu_cycle_fire` | `Global FSM` |
+| `prepare_init` | `Session Preparation`, clear a cero de nueva sesión |
 | `reset` | [GLOBAL] reset |
 
 #### Salidas
@@ -2039,7 +1936,7 @@ Estas fuentes/destinos explican las flechas que salen del CPU sin terminar en ot
 |---|---|
 | `clk` funcional común, generado por plataforma | todos los bloques secuenciales; objetivo 50 MHz |
 | `reset` funcional acondicionado | control/estado global y consumidores de §0.3 |
-| comandos `LOAD` / `STEP` / `RUN` | `Command Arbiter` |
+| `load_request` / `step_request` / `run_request` | `Global FSM` |
 | stream de programa | `Loader` |
 | `IMEM_CAPACITY_BYTES` | `Instruction Memory`, `Fetch Fault Check`, `Loader` y derivación de `IMAGE_SIZE_WIDTH` |
 | `DMEM_CAPACITY_BYTES` | `Data Memory`, `EX Fault Check` y preparación de metadatos |
@@ -2050,7 +1947,7 @@ Estas fuentes/destinos explican las flechas que salen del CPU sin terminar en ot
 
 Debe recibir o reconstruir coherentemente el contenido mínimo aprobado; el formato de serialización está aprobado en `protocol.md`. Las entradas de contexto del serializador y las consultas RF/DMEM están definidas en §15.12; las conexiones, selección de bytes de registros interetapa y señales de acción también están aprobadas en esa sección:
 
-- `global_state`
+- `global_state_code[7:0]`
 - `PC[31:0]`
 - `image_valid`
 - `program_finished`
@@ -2062,7 +1959,7 @@ Debe recibir o reconstruir coherentemente el contenido mínimo aprobado; el form
 - contenido completo del banco de registros, con índice y valor
 - memoria de datos utilizada según DEC-SYS-005; siempre con cero lógico y ownership respetados
 
-Los predicados `program_finished` y `fault_info_valid` pueden reconstruirse de `global_state`; no requieren campos externos redundantes. `fault_cause` y `fault_pc` solo representan un fault vigente en `FAULT_DRAIN_AUTO`/`STEP` o `FAULT`. PC, contador, RF, registros interetapa y DMEM utilizados pertenecen a un único instante lógico, aun si la serialización tarda múltiples clocks. Una consulta arbitraria durante `RUN` no queda aprobada por este contrato.
+Los predicados de esta lista expresan significado observable y pueden reconstruirse del código de estado para Debug; no requieren campos UART redundantes ni puertos opcionales nuevos de la FSM. `program_finished` sí tiene un consumidor de control concreto en `Protocol Controller`; `fault_info_valid` no sustituye a `fault_terminal`, porque también reconoce los drains de fault. `fault_cause` y `fault_pc` solo representan un fault vigente en `FAULT_DRAIN_AUTO`/`STEP` o `FAULT`. PC, contador, RF, registros interetapa y DMEM utilizados pertenecen a un único instante lógico, aun si la serialización tarda múltiples clocks. Una consulta arbitraria durante RUN no queda aprobada por este contrato.
 
 #### 10.3 Composición de Processor Top y frontera del sistema
 
@@ -2072,10 +1969,11 @@ Processor Top conecta el datapath, registros interetapa, controles locales y rec
 |---|---|---|
 | `clk` | entrada | único dominio funcional; generación física en plataforma |
 | `reset` | entrada | interno activo alto y acondicionado; consumo funcional síncrono |
-| solicitudes `LOAD` / `RUN` / `STEP` | entradas hacia `Command Arbiter` | eventos de operaciones válidas en dominio común; codificación/framing aprobados en `protocol.md` y puertos definidos en §15.17 |
+| `load_request` / `run_request` / `step_request` | entradas hacia `Global FSM`, por `Execution Control` | una solicitud por ciclo desde UART; elegibilidad y prioridad resueltas por la FSM, §8.1 |
+| aceptación e indicadores de sesión | salidas de `Global FSM` hacia `Protocol Controller`, por los contenedores | `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal` y `cpu_cycle_fire`; §15.17 |
 | stream de imagen | entrada hacia `Loader` | reconstrucción de palabras completas y recuperación aprobadas; puertos definidos en §15.17/15.18 |
 | [CFG] perfil de memoria | configuración | capacidades y anchos comunes a loader, memorias, validadores y software |
-| PC, contador, `global_state`, `image_valid` | salidas lógicas de observación | estado actual coherente; entradas de contexto hacia `response_serializer` aprobadas en §15.12; código combinacional de ocho bits desde FSM one-hot, §15.21 |
+| PC, contador, `global_state_code[7:0]`, `image_valid` | salidas lógicas de observación | estado actual coherente; código conectado a `Response Serializer`, §15.12/15.21 |
 | RF completo y campos de los cuatro registros interetapa | observación concretada | lectura RF compartida, conexiones y selección de bytes de registros interetapa y señales de acción aprobadas en §15.12 |
 | `fault_cause` / `fault_pc` | salidas lógicas de observación | bits actuales conectados a `response_serializer` según §15.12; par vigente solo en estados de fault |
 | DMEM utilizada | interfaz, backend y composición del top concretados | criterio/lista, puertos y recorrido aprobados en §15.12; cero lógico y ownership obligatorios |
@@ -2090,12 +1988,16 @@ Cada entrada funcional tiene un productor y cada salida enumerada tiene un consu
 
 | Conexión sensible | Contrato |
 |---|---|
-| `id_fault_cause`, `id_fault_pc`, `ex_fault_cause`, `ID/EX.pc` | convergen en `Fault Metadata Control`; no quedan sin destino |
+| `id_fault_cause`, `id_fault_pc`, `ex_fault_cause`, `ID/EX.pc` | convergen en la selección local de metadatos de `Execution Control`, §6.1; no entran en la FSM |
 | `ex_halt_candidate` | `Flow Control` → `Pipeline Hazard Control` |
 | `forward_a_sel` / `forward_b_sel` | cada selector controla exclusivamente su mux correspondiente |
 | `EX/MEM.ex_result[1:0]` | posición de selección de `Load Select/Extend` |
 | `mem_read_data`, dirección y `byte_enable` | selección little-endian consistente; la frontera física de lanes permanece abierta |
 | los cuatro `next.valid` | `Pipeline Empty Logic` → `Global FSM`; no usan la FSM siguiente |
+| `load_request`, `run_request`, `step_request` / `command_accepted` | solicitud y aceptación combinacionales, consumidas en el mismo flanco; UART distingue la operación por su propia fase |
+| `load_start` / `image_publish` | órdenes de la FSM al registro de tamaño; inicio también llega al Loader, publicación no pasa por preparación |
+| `cpu_cycle_fire`, `drain_mode` | contexto ordinario/drain hacia hazards, sin decodificar `global_state` fuera de la FSM |
+| `global_state_code[7:0]` | observación en `Response Serializer`; no controla UART |
 | RF completo, PC, imagen válida y mínimos de los cuatro registros interetapa | Debug/Snapshot; contenido, representación y puertos definidos en §15.12–15.17 |
 | `fault_cause`, `fault_pc`, `cycle_count` | Debug/Status, con validez y sesión coherentes |
 
@@ -2125,53 +2027,78 @@ Las siguientes conexiones o estados contradicen los acuerdos vigentes y no se im
 
 ## 13. Cadena global de control
 
-El siguiente diagrama representa la dependencia global:
+La dependencia vigente parte del estado registrado y las solicitudes hacia `Global FSM`, que genera aceptación, `cpu_cycle_fire` y `drain_mode`. Con esos controles, hazards selecciona la acción y los controles locales calculan los próximos registros interetapa. La reducción de sus cuatro `next.valid` produce `pipeline_empty_next`, utilizado para seleccionar `next_state`. La selección de metadatos de fault es lógica local de `Execution Control`, según §6.1 y §8.1.
 
-```text
-[EXT] comandos
-      │
-      ▼
-Command Arbiter
-      │ load_accept / step_accept / run_accept
-      ├──────────────────────────────┐
-      ▼                              ▼
- Global FSM                   Cycle Authorization
-      │ global_state                 │
-      │                              └──► cpu_cycle_fire
-      │                                      │
-      │                                      ▼
-      │                            Pipeline Hazard Control
-      │                                      │
-      │                                      ▼
-      │                           PC / registros de pipeline
-      │                                      │
-      │                                      ▼
-      │                            Pipeline Empty Logic
-      │                                      │
-      └──────────────────────────────◄──── pipeline_empty_next
+Los esquemas siguientes muestran la cadena de control y el camino de fault. Sus conexiones se desarrollan en [Execution Control](architecture/session/execution_control.md#por-qué-hace-falta-un-control-global) y en la [composición](architecture/system_composition.md#aliases-y-conexiones-internas-sensibles).
+
+```mermaid
+flowchart TD
+    protocolController["Protocol Controller"]
+    hazards["Pipeline Hazard Control"]
+    updates["Controles locales de actualización"]
+    pipeline["PC y registros del pipeline"]
+
+    subgraph executionControl["Execution Control"]
+        subgraph globalFsm["Global FSM"]
+            currentState["global_state registrado"]
+            fsmOutputs["Selección de comandos y salidas"]
+            nextStateLogic["Cálculo de next_state"]
+            currentState -->|"estado actual"| fsmOutputs
+            currentState -->|"estado actual"| nextStateLogic
+            fsmOutputs -->|"comando seleccionado y autorización"| nextStateLogic
+            nextStateLogic -->|"next_state: captura en flanco positivo de clk"| currentState
+        end
+        emptyLogic["Pipeline Empty Logic (local)"]
+        faultOr["OR local de acciones de fault"]
+        emptyLogic -->|"pipeline_empty_next"| nextStateLogic
+        faultOr -->|"fault_confirm"| nextStateLogic
+    end
+
+    protocolController -->|"load_request / run_request / step_request"| fsmOutputs
+    fsmOutputs -->|"command_accepted"| protocolController
+    fsmOutputs -->|"cpu_cycle_fire / drain_mode"| hazards
+    hazards -->|"halt_confirm = act_halt"| nextStateLogic
+    hazards -->|"act_ex_fault / act_id_fault"| faultOr
+    hazards -->|"acción del ciclo"| updates
+    pipeline -->|"estado actual"| updates
+    updates -->|"datos y habilitaciones: captura en clk"| pipeline
+    updates -->|"cuatro next.valid"| emptyLogic
 ```
 
 Y el camino de fault:
 
-```text
-ID Fault Check ── id_fault_candidate ──► Pipeline Hazard Control
-      │                                      │
-      ├─ id_fault_cause ─────┐               ├─ act_id_fault ──┐
-      └─ id_fault_pc ────────┤               │                 │
-                             ▼               ▼                 │
-                       Fault Metadata Control ◄────────────────┘
-                             ▲
-                             │
-EX Fault Check ─ ex_fault_cause
-       │
-       └─ ex_fault_candidate ──► Pipeline Hazard Control
-                                      │
-                                      └─ act_ex_fault ─────────► Fault Metadata Control
+```mermaid
+flowchart TD
+    idCheck["ID Fault Check"]
+    exCheck["EX Fault Check"]
+    idEx["Registro ID/EX"]
+    hazards["Pipeline Hazard Control"]
+    serializer["Response Serializer / Debug"]
 
-Fault Metadata Control
-      ├──► fault_cause register ──► Debug/Status
-      ├──► fault_pc register ─────► Debug/Status
-      └──► fault_confirm ─────────► Global FSM
+    subgraph executionControl["Execution Control"]
+        subgraph faultMetadata["Fault Metadata Control (lógica combinacional local)"]
+            faultOr["OR de act_ex_fault y act_id_fault"]
+            metadataSelect["Selección de metadatos EX / ID"]
+        end
+        globalFsm["Global FSM"]
+        causeRegister["Registro fault_cause"]
+        pcRegister["Registro fault_pc"]
+    end
+
+    idCheck -->|"id_fault_candidate"| hazards
+    exCheck -->|"ex_fault_candidate"| hazards
+    hazards -->|"act_ex_fault / act_id_fault"| faultOr
+    hazards -->|"act_ex_fault / act_id_fault"| metadataSelect
+    exCheck -->|"ex_fault_cause"| metadataSelect
+    idEx -->|"ID/EX.pc"| metadataSelect
+    idCheck -->|"id_fault_cause / id_fault_pc = IF/ID.pc"| metadataSelect
+    faultOr -->|"fault_confirm"| globalFsm
+    faultOr -->|"fault_capture_fire"| causeRegister
+    faultOr -->|"fault_capture_fire"| pcRegister
+    metadataSelect -->|"fault_cause_in"| causeRegister
+    metadataSelect -->|"fault_pc_in"| pcRegister
+    causeRegister -->|"fault_cause"| serializer
+    pcRegister -->|"fault_pc"| serializer
 ```
 
 ## 14. Contratos de integración por ciclo
@@ -2243,10 +2170,10 @@ El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.m
 | Lanes de DMEM / `byte_enable` | selección por dirección/tamaño, little-endian y dato/validez atómicos | Lectura aprobada: palabra alineada y selección/extensión en MEM. Escritura aprobada: máscara relativa de cuatro bits y alineación del dato en DMEM. Camino de metadatos CPU/preparación seleccionado por `prepare_dmem_clear`, prioridad reset > clear > store; cierre local en §15.27. |
 | Ownership físico | un agente incompatible autorizado por memoria | UART/`Loader`/preparación/Debug concretados y contrastados en [comprobación](architecture/uart/uart_core.md#presupuesto-de-integración); DMEM concretada en §15.27; composición de tops concretada y revisada en §15.28. |
 | Observación Debug | lectura retenida y envío exclusivo postciclo hasta último Stop; reset físico puede abortar | Concretada en §15.12–15.17/15.21: RF/DMEM, contexto/registros interetapa, recorrido, encolado, fin físico y descarte RX. |
-| Codificación de `global_state` | 14 estados/predicados y códigos externos 0x00–0x0D aprobados | Concretada en §15.21: catorce bits one-hot y código combinacional de ocho compartido. |
+| Codificación de `global_state` | 14 estados/predicados y códigos externos 0x00–0x0D aprobados | Concretada en §15.21: catorce bits one-hot internos de `Global FSM` y código combinacional de ocho para `Response Serializer`. |
 | Plataforma | un dominio, referencia y mínimo exigido 50 MHz, reset acondicionado; Clocking Wizard requerido (REQ-TIM-008) | Configuración Clocking Wizard/MMCM aprobada en [plataforma](architecture/platform/platform_reference.md#generador-del-clock); reset/pinout/duración/constraints aprobados en [plataforma](architecture/platform/platform_reference.md#pines-y-restricciones-aprobados); FPGA-04 cerrado en diseño, timing/placa pendientes. |
 | Configuración común | perfiles/capacidades/fórmulas ya aprobados | [Diseño aprobado](architecture/common_configuration.md): `system_pkg`, selección única en wrapper, capacidades explícitas, tipos/validadores; FPGA-03 cerrado en diseño. |
-| Agrupación RTL / Processor Top | todas las conexiones y prioridades de este documento | [Diseño aprobado y revisado](architecture/system_composition.md#revisión-local-y-cierre-de-composición): tres tops, cinco etapas, nombres/puertos/aliases y agrupación explícita de 54 bloques; FPGA-05/06 cerrado en diseño. |
+| Agrupación RTL / Processor Top | todas las conexiones y prioridades de este documento | [Diseño aprobado y revisado](architecture/system_composition.md#revisión-local-y-cierre-de-composición): tres tops, cinco etapas, nombres/puertos/aliases y agrupación explícita de 51 bloques; FPGA-05/06 cerrado en diseño. |
 
 Las filas concretadas remiten al diseño aprobado y a sus comprobaciones documentales. Todas las filas anteriores están concretadas; el plan de verificación y los criterios de comparación están cerrados documentalmente. El diseño PC continúa pendiente antes del cierre global. No se confunde cierre UART con cierre D0/M6 ni con RTL validado.
 
@@ -2254,7 +2181,7 @@ Las filas concretadas remiten al diseño aprobado y a sus comprobaciones documen
 
 La revisión documental debe demostrar:
 
-- Cobertura de los 54 bloques del mapa original, sin pérdida de entradas/salidas ni campos válidos de pipeline.
+- Cobertura de los 51 bloques del inventario vigente, con las funciones de control integradas y los campos válidos de pipeline conservados.
 - Concordancia con anchos/códigos aprobados y fuentes/destinos de las señales.
 - Clock, reset, enables, preparación, `HOLD` y orden preflanco/postflanco identificados para cada clase de recurso.
 - Ocho acciones exclusivas y controles locales equivalentes al acuerdo 47.
@@ -2307,13 +2234,13 @@ Contratos vigentes: [controlador](architecture/debug/protocol_controller.md#agru
 
 Contrato vigente: [response_serializer](architecture/debug/response_serializer.md). Organización, descriptor, seguimiento TX, recorridos DMEM, índices compartidos, captura/encolado, diez estados, codificación y trece acciones se consultan allí. Sus tablas conservan anchos, productor/consumidor y flanco de cada recurso. El [protocolo](protocol.md#distribución-general) fija la representación externa, y [Debug](architecture/debug/debug_architecture.md) el estado retenido. Aprobación/origen: acuerdos de DEC-SYS-007 y DEC-PROTO-001.
 
-### 15.13 Respuesta pendiente en protocol_controller
+### 15.13 Respuesta pendiente en Protocol Controller
 
 Contrato vigente: [registro de respuesta pendiente](architecture/debug/protocol_controller.md#registro-de-respuesta-pendiente), con conservación, entrega y terminal `RUN`. Aprobación/origen: DEC-SYS-007.
 
 <a id="1514-propuesta-conjunta-de-protocol_controller"></a>
 
-### 15.14 Diseño conjunto vigente de protocol_controller
+### 15.14 Diseño conjunto vigente de Protocol Controller
 
 Contrato vigente: [controlador completo](architecture/debug/protocol_controller.md#propuesta-conjunta-del-controlador-completo), con recorridos `LOAD`/`RUN`/`STEP`/`RESET`/`CHECK_READY` y recuperación. El diseño conjunto está aprobado y concretado; sus antiguos límites parciales quedan en el registro fechado. Aprobación/origen: DEC-SYS-007.
 
@@ -2321,7 +2248,7 @@ Contrato vigente: [controlador completo](architecture/debug/protocol_controller.
 
 Contrato vigente: [coordinación derivada del estado y marcas existentes](architecture/debug/protocol_controller.md#coordinación-derivada-del-estado-y-marcas-existentes). El acuerdo sustituye las propuestas de `active_response_kind` y `response_debug_active` sin añadir registro ni puerto; los detalles de evolución permanecen en DEC-SYS-007.
 
-### 15.16 Codificación y anchos de protocol_controller
+### 15.16 Codificación y anchos de Protocol Controller
 
 Contrato vigente: [codificación y dimensionamiento](architecture/debug/protocol_controller.md#codificación-y-dimensionamiento-aprobados). Estados, registros, tamaños y temporizador se consultan allí. Aprobación/origen: DEC-SYS-007.
 
@@ -2373,7 +2300,7 @@ Contrato vigente: [preparación y metadata compartida](architecture/memory/dmem_
 
 ### 15.28 Inventario completo de módulos y archivos aprobado
 
-Contrato vigente: [Inventario](architecture/module_inventory.md) para los 54 bloques CPU y su módulo/archivo/agrupación; [Composición](architecture/system_composition.md) para tops, aliases y diagrama. Entradas/salidas y temporización permanecen en §1–14 de este documento. Aprobación/origen: acuerdo de jerarquía y agrupación de DEC-ARCH-006 del 2026-10-06; FPGA-05/06 cerrados documentalmente.
+Contrato vigente: [Inventario](architecture/module_inventory.md) para los 51 bloques CPU y su módulo/archivo/agrupación; [Composición](architecture/system_composition.md) para tops, aliases y diagrama. Entradas/salidas y temporización permanecen en §1–14 de este documento. Aprobación/origen: acuerdo de jerarquía y agrupación de DEC-ARCH-006 del 2026-10-06 y su revisión de control global del 2026-10-16; FPGA-05/06 cerrados documentalmente.
 
 ## Referencias y trazabilidad
 

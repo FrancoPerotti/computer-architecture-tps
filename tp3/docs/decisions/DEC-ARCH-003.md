@@ -22,11 +22,12 @@
 - El mux de próximo PC entre `pc_plus_4` y `redirect_target`, la habilitación de escritura del PC, la captura, retención e invalidación física de `IF/ID` y la captura e invalidación de `ID/EX` y el avance físico de `EX/MEM` y `MEM/WB` y su coordinación nominal mediante `Pipeline Hazard Control` para esos casos.
 - La selección exacta e independiente de cada fuente según el productor más reciente, sin sustituirlo por un valor anterior si todavía no está disponible.
 
-La integración y las coincidencias se rigen por los acuerdos 40–47, con prevalencia del acuerdo 47 para la confirmación de fetch y sus acciones. La concreción posterior sigue esta secuencia:
+La integración y las coincidencias se rigen por los acuerdos 40–48, con prevalencia del acuerdo 47 para la confirmación de fetch y sus acciones, y del acuerdo 48 para la organización integrada del control. La concreción posterior sigue esta secuencia:
 
 1. El cuadragésimo cuarto acuerdo fija la generación global de `cpu_cycle_fire` y la temporización de inicio/drenado mediante una FSM de 14 estados.
 2. El cuadragésimo quinto audita y resuelve las coincidencias globales e integración funcional.
 3. El acuerdo 47 revisa la matriz final del acuerdo 46; el protocolo externo conserva su decisión propia.
+4. El [acuerdo 48](#acuerdo-48-aprobado--integración-del-control-global-de-ejecución) integra selección de comandos, autorización de ciclos y salidas Moore/Mealy en la FSM global, y actualiza el contexto que recibe `Pipeline Hazard Control`.
 
 `next_pc_sel`, `pc_write_enable`, la captura/invalidez de los cuatro registros interetapa y el transporte del enlace para las acciones aprobadas ya tienen ecuaciones de etapa.
 
@@ -55,7 +56,7 @@ Las transiciones de registros interetapa descritas previamente en `DEC-ARCH-003`
 
 **Opciones consideradas:** Mantener solo las reglas nominales de hazards sin integrar coincidencias, o cerrar explícitamente la selección por antigüedad, los controles del pipeline, la autorización global y su composición completa. Implementar un stall estructural compartiendo IF/MEM o respetar sus memorias independientes. Exigir un único bus `ID/EX.control` o preservar categorías funcionales con empaquetado RTL equivalente.
 
-**Decisión:** Se aprueba la política de hazards integrada y verificada documentalmente en los 47 acuerdos siguientes, incluida la auditoría de coincidencias del acuerdo 45, la matriz del 46 y su revisión explícita por el acuerdo 47. La última revisión expresa prevalece sobre representaciones históricas anteriores.
+**Decisión:** Se aprueba la política de hazards integrada y verificada documentalmente en los 48 acuerdos siguientes, incluida la auditoría de coincidencias del acuerdo 45, la matriz del 46, su revisión por el acuerdo 47 y la organización del control integrada por el acuerdo 48. La última revisión expresa prevalece sobre representaciones históricas anteriores.
 
 **Justificación:** La matriz final cubre forwarding, stalls, fronteras, acciones, actualización de registros interetapa, gating y FSM sin coincidencias funcionales restantes; separa el contrato arquitectónico de la representación externa Debug/UART y de la elección física de implementación.
 
@@ -63,7 +64,7 @@ Las transiciones de registros interetapa descritas previamente en `DEC-ARCH-003`
 
 **Dependencias resueltas:** `DEC-ARCH-001`, `DEC-ARCH-002`, `DEC-ARCH-004` y `DEC-ARCH-007`. M5 — Hazard Freeze.
 
-Los acuerdos 1–46 se conservan en orden cronológico: las referencias a aspectos «pendientes» describen el estado **al aprobar cada acuerdo parcial**, no el estado vigente de este ADR. La revisión del acuerdo 44 prevalece sobre los registros terminales propuestos en acuerdos anteriores, y el acuerdo 47 revisa la matriz del acuerdo 46 y fija la política vigente de confirmación de fetch en ID.
+Los acuerdos 1–47 se conservan en orden cronológico: las referencias a aspectos «pendientes» describen el estado **al aprobar cada acuerdo parcial**, no el estado vigente de este ADR. La revisión del acuerdo 44 prevalece sobre los registros terminales propuestos en acuerdos anteriores; el acuerdo 47 fija la confirmación de fetch en ID y el acuerdo 48 revisa la organización y las interfaces del control global.
 
 #### Acuerdo parcial aprobado — forwarding general hacia EX
 
@@ -2041,6 +2042,8 @@ Si `reset` o `LOAD`/preparación dominan el flanco, no se comprometen writeback,
 
 #### Acuerdo parcial aprobado — FSM global de ejecución y autorización de ciclos
 
+> **Revisado por el [acuerdo 48](#acuerdo-48-aprobado--integración-del-control-global-de-ejecución) (2026-10-16).** La organización Moore con arbitraje y autorización separados se sustituye por una FSM con salidas Moore/Mealy. Se actualizan las entradas de comandos, los controles de recursos y el contexto hacia hazards; se conservan los catorce estados y los contratos temporales de sesión.
+
 **Fecha:** 2026-09-25
 
 Se fija una **FSM Moore explícita de 14 estados** para el ciclo de vida global de la sesión. La FSM registra únicamente `global_state`, calcula `next_state` desde eventos aceptados y emite modos derivados del estado actual; **no** escribe PC, RF, IMEM, DMEM, pipeline o contador ni genera directamente `cpu_cycle_fire`. El `Command Arbiter` acepta comandos bajo `RESET` > `LOAD` > `STEP` > `RUN`; `Cycle Authorization`, Loader, `Session Preparation` y el datapath efectúan las acciones. La fase terminal y la modalidad de drenado se derivan de `global_state`, sin registros `terminal_kind` ni `drain_auto`. Las confirmaciones, las ocho acciones del pipeline, el gating de RF/DMEM/metadatos/fault y la regla `cycle_counter_increment=cpu_cycle_fire` conservan sus contratos.
@@ -2320,6 +2323,8 @@ Una instrucción válida completa normalmente, causa una frontera (sin efectos p
 
 #### Acuerdo 47 aprobado — confirmación de todo fetch fault en ID y revisión de AUD-001
 
+> **Revisión de interfaces por el [acuerdo 48](#acuerdo-48-aprobado--integración-del-control-global-de-ejecución) (2026-10-16).** La confirmación de fetch en ID y las ocho acciones se conservan. Las condiciones de ciclo ordinario y drenado utilizan `cpu_cycle_fire` y `drain_mode`, según la organización integrada.
+
 **Fecha:** 2026-09-26
 
 **Estado:** Aprobado por revisión explícita de DEC-ARCH-003.
@@ -2464,6 +2469,54 @@ Para fetch confirmado en ID, `id_fault_cause` copia `IF/ID.fetch_fault_cause` si
 Contraejemplos de AUD-001 convertidos en regresión: con imagen de 8 bytes y DMEM inicial cero, `lw x1,0(x0); beq x1,x0,-4` debe repetir el loop sin confirmar el fetch especulativo en PC=8. Con `lw x1,0(x0); sw x1,2(x0)`, debe confirmarse el store desalineado con `fault_cause=110`, `fault_pc=4`, sin writes de datos ni metadatos; el fetch PC=8 queda descartado. Repetir cambiando consumidor por un load inválido, jalr alineado/desalineado, branch no tomado y ALU dependiente para contrastar descarte y confirmación ID legítima.
 
 **Cierre de la revisión:** DEC-ARCH-003 permanece Aprobada, ahora con **47 acuerdos**. Este acuerdo resuelve documentalmente AUD-001 y prevalece sobre todas las referencias históricas incompatibles, incluida la matriz 46. La implementación y la verificación RTL siguen futuras; no se cambian otras políticas arquitectónicas ni se declaran resueltos los demás hallazgos de la auditoría.
+
+#### Acuerdo 48 aprobado — integración del control global de ejecución
+
+**Fecha:** 2026-10-16
+
+**Estado:** Aprobado por revisión de la organización de Execution Control.
+
+**Motivo y alcance de la revisión:** La FSM global reúne la selección de comandos, la autorización de ciclos y la generación de controles para los recursos. Se revisa la organización Moore con `Command Arbiter` y `Cycle Authorization` separados del acuerdo 44 y las referencias dependientes de los acuerdos 40–47. Las especificaciones vigentes son [Execution Control](../architecture/session/execution_control.md), [Control del pipeline y hazards](../architecture/cpu/control_and_hazards.md) e [Interfaces](../interfaces.md#bloque-8-1).
+
+**Organización acordada:**
+
+| Parte | Realización y responsabilidad |
+|---|---|
+| `Global FSM` | Submódulo `global_fsm.sv` dentro de `execution_control.sv`. Conserva la fase de sesión, selecciona las solicitudes y emite controles Moore/Mealy. |
+| Lógica y estado local de `Execution Control` | Selección y registros de causa/PC de fault, registro de tamaño confirmado, contador de ciclos y reducción de los cuatro próximos `valid` para `pipeline_empty_next`. |
+| `Pipeline Hazard Control` | Selecciona las ocho acciones del pipeline a partir de `cpu_cycle_fire`, `drain_mode` y los candidatos y condiciones locales. |
+| Recursos y servicios | Loader, `Session Preparation`, PC, RF, memorias y registros interetapa realizan sus acciones al consumir las habilitaciones correspondientes. |
+
+`global_state` permanece como registro interno one-hot de catorce bits. En cada flanco positivo de `clk` captura `next_state`; `cpu_cycle_fire` habilita el avance de los recursos CPU. La lógica combinacional de la FSM calcula el estado siguiente y las salidas desde el estado actual y las entradas.
+
+**Solicitudes y salidas:** La FSM recibe directamente `load_request`, `run_request` y `step_request`. Resuelve elegibilidad y prioridad con `casez`, bajo `reset` > `LOAD` > `STEP` > `RUN`. El controlador UART presenta una sola solicitud por ciclo y consume `command_accepted` según su fase en el mismo flanco en que la FSM selecciona el comando.
+
+| Tipo | Salidas |
+|---|---|
+| Mealy, cero por defecto | `command_accepted`, `load_start`, `cpu_cycle_fire`, `image_publish` |
+| Moore de control | `loader_active`, `prepare_active`, `drain_mode`, `load_available`, `program_finished`, `fault_terminal` |
+| Moore de observación | `global_state_code[7:0]`, conectado a `Response Serializer.debug_state_code` |
+
+`Protocol Controller` utiliza la aceptación común y los indicadores de sesión. El código externo de ocho bits representa el estado observado en Debug. Las [tablas vigentes de la FSM](../architecture/session/execution_control.md#tabla-de-transiciones) fijan las condiciones y salidas de cada transición.
+
+**Autorización y dependencia combinacional:** `Global FSM` determina la aceptación y `cpu_cycle_fire` desde el estado registrado, reset, las solicitudes y `prepare_done`, antes de consultar las confirmaciones y `pipeline_empty_next`. Con esa autorización, hazards selecciona la acción, los controles locales calculan los próximos registros interetapa y la reducción de sus `next.valid` informa el vacío futuro. La FSM utiliza ese resultado para seleccionar `next_state`. Se conserva la dependencia acíclica del mismo flanco.
+
+**Contexto de hazards:** Las condiciones que sustituyen los predicados de entrada `terminal_none`/`drain_active` son:
+
+| Contexto | Condición |
+|---|---|
+| Ciclo ordinario | `cpu_cycle_fire && !drain_mode` |
+| Ciclo de drenado | `cpu_cycle_fire && drain_mode` |
+
+Se conservan las seis acciones ordinarias y las dos de drenado del acuerdo 47, sus prioridades y sus efectos sobre PC y registros interetapa. Las confirmaciones proceden únicamente de EX o ID. La verificación mantiene el contrato combinacional de `act_drain_load_use` para entradas artificiales y distingue esos casos de los recorridos alcanzables de sesión.
+
+**Carga, preparación y metadatos:** Al seleccionar `LOAD`, la FSM activa `load_start` hacia Loader y el registro de tamaño confirmado. Ese flanco inicia la carga e invalida la imagen anterior. `Session Preparation` recibe `prepare_active`, realiza la misma preparación en los tres estados `PREPARING_*` y devuelve `prepare_done`. En `PREPARING_READY`, la FSM activa `image_publish` y el registro captura el tamaño pendiente al entrar en `READY`, sin ciclo CPU. En `PREPARING_RUN`/`PREPARING_STEP`, autoriza el primer ciclo sobre el estado inicial ya preparado.
+
+La selección de metadatos y sus registros permanecen locales en `Execution Control`. `act_ex_fault || act_id_fault` produce `fault_confirm` para la FSM y la habilitación `fault_capture_fire` de causa/PC. EX conserva como PC el de `ID/EX`; ID utiliza `IF/ID.pc`, incluida la confirmación de fetch.
+
+**Contratos conservados:** Los catorce estados, la prioridad global, el primer fetch, un ciclo por `STEP`, los ciclos continuos de `RUN`, la retención en `HOLD`, el vaciado sin ciclo adicional, los efectos de instrucciones anteriores, el contador módulo `2^64` y los códigos externos mantienen su significado. Las escrituras pertenecen a los recursos que consumen las señales de acción.
+
+**Alcance de la comprobación:** Revisión documental de responsabilidades, señales, dependencias y correspondencia con las especificaciones consolidadas. La implementación y la verificación RTL siguen siendo posteriores.
 
 **Requisitos afectados:** `REQ-DOC-008`, `REQ-CPU-004` a `REQ-CPU-011`, `REQ-CPU-015`, `REQ-CPU-017`, `REQ-MEM-005`, `REQ-MEM-006`, `REQ-MEM-016`, `REQ-MEM-017`, `REQ-MEM-020`, `REQ-MEM-025`, `REQ-MEM-030`, `REQ-EXEC-001` a `REQ-EXEC-005`, `REQ-EXEC-009`, `REQ-EXEC-013`, `REQ-EXEC-015` a `REQ-EXEC-018`, `REQ-HAZ-001` a `REQ-HAZ-010`, especialmente `REQ-HAZ-002` a `REQ-HAZ-006`, `REQ-HAZ-007` a `REQ-HAZ-009`, `REQ-DBG-006` a `REQ-DBG-009`, `REQ-DBG-013`, `REQ-DBG-014`, `REQ-DBG-016` y `REQ-DBG-017`; los metadatos CPU afectan también `REQ-MEM-029`.
 

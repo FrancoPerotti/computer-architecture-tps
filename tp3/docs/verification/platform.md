@@ -191,17 +191,17 @@ La revisión no supone un código numérico de encoder para estados internos ile
 
 La prueba tiene 1 caso canónico. El [manifiesto](cases.json) enumera los IDs `TEST-PLAT-003/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
 
-El único caso revisa los 54 bloques y los servicios adicionales del build.
+El único caso revisa los 51 bloques y los servicios adicionales del build.
 
 Cada puerto, ancho o dependencia es un ítem de esa misma comprobación estructural. No se convierte en un nuevo vector funcional por bloque.
 
 ### Procedimiento
 
-1. **Localizar cada bloque.** Identificar su archivo u objeto y comparar dirección, ancho, naturaleza y productor o consumidor con las interfaces.
+1. **Localizar cada bloque.** Identificar su archivo u objeto y comparar dirección, ancho, naturaleza y productor o consumidor con las interfaces. Comprobar `global_fsm.sv` dentro de `execution_control.sv` y las seis funciones locales del contenedor.
 
 2. **Comprobar los recursos.** Revisar los cuatro latches y sus 504 bits funcionales, el Register File de 32 por 32 bits, las memorias inferidas y el estado one-hot de 14 bits.
 
-3. **Seguir las dependencias.** Recorrer estado actual, aceptación, autorización de ciclo, acción, latches `next`, `empty_next` y `next_state`. Este último solo retorna mediante el registro de estado.
+3. **Seguir las dependencias.** Recorrer estado actual y solicitudes, aceptación y autorización de ciclo, acción, latches `next`, `pipeline_empty_next` y `next_state`. Este último solo retorna mediante el registro de estado. Comprobar que las solicitudes UART se generen independientemente de `command_accepted`, que el código de estado llegue a `Response Serializer` y que `Protocol Controller` reciba los indicadores de control aprobados. La FSM actualiza su registro en cada flanco funcional, también cuando `cpu_cycle_fire=0`.
 
 4. **Buscar estado duplicado.** Revisar `image_valid`, contador de instrucciones, `drain_auto`, `terminal_kind`, `uses_rs*`, estado UART global adicional o una copia completa de Debug.
 

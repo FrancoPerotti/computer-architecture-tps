@@ -529,7 +529,7 @@ Las coincidencias locales comprueban el árbitro. El caso de drain con load-use 
 
 El PC comienza en `0x40` y el destino de redirect es `0x80`. Cada latch tiene un payload distinto del de los demás latches y del de su entrada futura, para distinguir retención de captura.
 
-En cada caso se activan los candidatos y condiciones mínimos que producen el evento indicado; los restantes valen cero. Para drain se prepara un estado activo con trabajo pendiente.
+En cada caso se presentan `cpu_cycle_fire`, `drain_mode` y los candidatos y condiciones mínimos que producen el evento indicado; los restantes valen cero. `drain_mode=0` selecciona el contexto normal y `drain_mode=1` el de drenado. Los payloads y flags de los latches representan el trabajo pendiente.
 
 La dependencia de load-use durante drain se fuerza solamente en el bloque local. Los fixtures no autorizan nuevas señales, estados o trayectorias de CPU.
 
@@ -545,9 +545,9 @@ La prioridad de load-use sobre el avance normal ya se observa en su fila. Normal
 
 ### Testigos y actualizaciones concretas
 
-El [manifiesto](cases.json) fija el estado, el PC, el destino y los cinco candidatos o condiciones locales de cada caso.
+El [manifiesto](cases.json) fija los controles de ciclo y drenado, el PC, el destino y los cinco candidatos o condiciones locales de cada caso.
 
-Para comprobar una fila se activa únicamente su candidato y los demás permanecen en cero. `act_normal` utiliza todos en cero. Los drains se preparan en FAULT_DRAIN_AUTO con trabajo pendiente; solo el caso artificial de drain-load-use activa esa dependencia.
+Para comprobar una fila se activa únicamente su candidato y los demás permanecen en cero. `act_normal` utiliza todos en cero. Los drains se presentan con `drain_mode=1` y trabajo pendiente; solo el caso artificial de drain-load-use activa esa dependencia.
 
 En los pares de prioridad se activan los dos candidatos indicados. Son fixtures del bloque de control; no se presentan como instrucciones que puedan llegar juntas en una CPU legal.
 
@@ -566,7 +566,7 @@ Los payloads que se retienen o capturan se comparan con sus valores preflanco. I
 
 ### Procedimiento
 
-1. **Preparar el testigo.** Instalar los valores de PC, payloads, estado y candidatos de la variante, conforme a la subsección siguiente.
+1. **Preparar el testigo.** Instalar los valores de PC, payloads, `cpu_cycle_fire`, `drain_mode` y candidatos de la variante, conforme a la tabla de acciones.
 
 2. **Observar la acción preflanco.** Con un ciclo habilitado, comprobar que se seleccione exactamente una acción y que corresponda a la prioridad prevista.
 

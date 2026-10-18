@@ -436,11 +436,11 @@ Las variantes de aborto y reset comprueban que sus prioridades impidan una escri
 
 ### Condiciones iniciales
 
-Loader comienza activo con tamaño 8 y ocho bytes pendientes. El offset se obtiene de `size-remaining` en preflanco.
+El banco inicia Loader mediante `load_start`, con tamaño 8 y ocho bytes pendientes, y presenta `loader_active=1` durante la carga. El offset se obtiene de `size-remaining` en preflanco.
 
 El registro `partial_word` contiene el residuo `0x00DEADBE` e IMEM tiene valores centinela. Así se puede observar si una carga mezcla bytes anteriores.
 
-Para los casos de última palabra se utiliza `load_size=C` y se presentan los últimos cuatro bytes, con faltantes de 4 a 1. Después de un aborto, la carga nueva comienza en offset cero; el host no reasigna direcciones.
+Para los casos de última palabra se utiliza `load_size=C` y se presentan los últimos cuatro bytes, con faltantes de 4 a 1. Después de un aborto, un nuevo `load_start` inicia la carga en offset cero; el host no reasigna direcciones.
 
 El caso de Loader inactivo es una inyección local de byte válido. No representa una entrega normal autorizada de UART.
 
@@ -525,9 +525,9 @@ El último caso revisa el formato: LOAD no contiene entrypoint ni direcciones po
 
 1. **Ejecutar A y guardar su estado.** Conservar la imagen confirmada, el tamaño y los valores que permiten detectar residuos.
 
-2. **Aceptar la nueva LOAD.** Comprobar que el tamaño confirmado pase a cero y que no exista ejecución de CPU durante la carga. `load_ok` todavía no debe publicar N.
+2. **Aceptar la nueva LOAD.** Presentar la solicitud y comprobar `command_accepted=load_start=1`. En ese flanco, el tamaño confirmado pasa a cero y `cpu_cycle_fire=0`. `load_ok` todavía no debe publicar N.
 
-3. **Observar PREPARING_READY.** Al consumir `prepare_done`, comprobar la publicación de N y READY. El Register File, PC, latches, contador y estado lógico de DMEM deben estar preparados antes de ejecutar B, sin un ciclo automático.
+3. **Observar PREPARING_READY.** Al consumir `prepare_done`, comprobar `image_publish=1`, la publicación de N y READY con `cpu_cycle_fire=0`. El Register File, PC, latches, contador y estado lógico de DMEM deben estar preparados antes de ejecutar B.
 
 4. **Ejecutar B.** Enviar RUN o STEP después de completar físicamente DONE y comprobar que B no utilice palabras residuales de A.
 

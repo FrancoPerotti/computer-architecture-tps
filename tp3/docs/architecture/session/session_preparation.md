@@ -39,13 +39,13 @@ La preparación se ocupa de:
 
 Esta secuencia se utiliza en tres estados globales:
 
-| Estado | Para qué se prepara | Qué ocurre al finalizar |
+| Estado | Para qué se prepara | Qué decide la FSM global al finalizar |
 |---|---|---|
 | `PREPARING_READY` | Completar la preparación posterior a `LOAD`. | Publicar la imagen y quedar en `READY`, sin ejecutar instrucciones. |
 | `PREPARING_RUN` | Iniciar una ejecución continua sobre la imagen ya confirmada. | Ejecutar el primer ciclo de la CPU. |
 | `PREPARING_STEP` | Iniciar una ejecución paso a paso sobre la imagen ya confirmada. | Ejecutar el primer ciclo de la CPU. |
 
-Los tres estados utilizan el **mismo mecanismo de inicialización**. Su diferencia no requiere una FSM adicional en `Session Preparation`: la FSM global ya conserva el destino de la operación.
+Los tres estados utilizan el **mismo mecanismo de inicialización**. `Session Preparation` recibe `prepare_active` y devuelve `prepare_done`, sin recibir el estado global ni una indicación de publicación. La FSM global conserva el destino de la operación y decide si activa `image_publish` o `cpu_cycle_fire` al finalizar.
 
 La preparación no modifica el contenido de IMEM. La imagen de instrucciones permanece almacenada y puede ejecutarse nuevamente. Tampoco borra los arrays de datos de DMEM; invalida sus bytes lógicos mediante las marcas asociadas. La diferencia entre datos físicos y datos observables se desarrolla en [Acceso y mantenimiento DMEM](../memory/dmem_access.md).
 
@@ -57,7 +57,7 @@ La preparación no modifica el contenido de IMEM. La imagen de instrucciones per
 
 | Elemento | Naturaleza | Responsabilidad |
 |---|---|---|
-| FSM global | Estado externo | Selecciona `PREPARING_READY`, `PREPARING_RUN` o `PREPARING_STEP`, y determina el destino al finalizar. |
+| `Global FSM` | Control externo | Selecciona `PREPARING_READY`, `PREPARING_RUN` o `PREPARING_STEP`, genera `prepare_active` y determina el destino al finalizar. |
 | `prepare_active` | Decodificación combinacional | Indica que la FSM global está en cualquiera de los tres estados de preparación. |
 | `prepare_index` | Registro de progreso | Identifica el byte de DMEM cuya marca corresponde limpiar en el flanco actual. |
 | Lógica de preparación | Control combinacional | Produce `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done`. |
@@ -313,37 +313,26 @@ El registro de progreso no constituye una nueva FSM. Las fases `PREPARING_READY`
 
 ### Entradas y contexto de control
 
-La lógica de preparación recibe o utiliza las siguientes condiciones:
+`Session Preparation` recibe o utiliza las siguientes condiciones:
 
 | Señal o parámetro | Origen | Función |
 |---|---|---|
 | `clk` | Reloj común | Sincroniza inicialización, limpieza y avance de índice. |
 | `reset` | Control funcional global | Tiene prioridad y suprime las operaciones normales de preparación. |
-| Estado global | FSM global | Determina el estado `PREPARING_*` activo y el destino de la finalización. |
-| `prepare_active` | Decodificación del estado global | Agrupa los tres estados de preparación. |
-| `prepare_index` | Registro de progreso | Identifica la marca actual o el fin del recorrido. |
+| `prepare_active` | `Global FSM`, mediante `Execution Control` | Activa el mismo trabajo de preparación en cualquiera de los tres estados. |
 | `DMEM_CAPACITY_BYTES` | Configuración | Define el número de marcas que deben limpiarse. |
-
-La decodificación de actividad corresponde a:
-
-```text
-prepare_active =
-    (global_state == PREPARING_READY)
-    || (global_state == PREPARING_RUN)
-    || (global_state == PREPARING_STEP)
-```
-
-No se registra otro bit de propiedad de la preparación: basta con observar el estado global.
 
 ### Señales de salida
 
 | Señal | Destino | Significado |
 |---|---|---|
-| `prepare_init` | PC, `cycle_count`, `Register File` y registros interetapa | Inicializa el estado de la CPU en el primer flanco. |
+| `prepare_init` | PC, `Register File`, registros interetapa y contador local de `Execution Control` | Inicializa los recursos en el primer flanco. |
 | `prepare_dmem_clear` | Metadata de DMEM | Autoriza limpiar una sola marca en el flanco actual. |
 | `prepare_dmem_addr` | Metadata de DMEM | Dirección de byte de la marca seleccionada. |
-| `prepare_index_inc` | Registro `prepare_index` | Autoriza avanzar al siguiente byte. |
-| `prepare_done` | FSM global y control de ejecución | Indica que todas las marcas están limpias y puede realizarse la acción final. |
+| `prepare_done` | `Global FSM`, mediante `Execution Control` | Indica que terminó el mantenimiento, para decidir publicación o primer ciclo. |
+| `prepare_done` | `Protocol Controller`, por `processor_top` y `system_top` | Permite reconocer la finalización de LOAD o, junto con `cpu_cycle_fire`, el primer ciclo de STEP tras preparación. |
+
+Las señales de control tienen un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits.
 
 Las condiciones combinacionales completas son:
 
@@ -461,7 +450,7 @@ Cuando una carga completa pasa de `LOADING` a `PREPARING_READY`, la imagen ya ti
 
 La preparación restablece el estado de CPU y DMEM. Cuando `prepare_done=1`, la FSM global consume esa indicación y:
 
-- Publica el tamaño pendiente proveniente de Loader como `loaded_image_size_bytes`.
+- Activa `image_publish`, para que el registro local de `Execution Control` capture el tamaño pendiente proveniente de Loader como `loaded_image_size_bytes`.
 - Pasa al estado `READY`.
 - No ejecuta un ciclo de CPU en ese flanco.
 - Conserva `cycle_count=0`.
@@ -481,23 +470,23 @@ cycle_count antes  = 0
 cycle_count después = 1
 ```
 
-La CPU comienza desde el PC inicial y con registros y DMEM lógicos ya preparados. La continuidad de los ciclos posteriores pertenece al control global del modo de ejecución.
+La FSM activa `cpu_cycle_fire=1` e `image_publish=0`, y captura `RUNNING`. La CPU comienza desde el PC inicial y con registros y DMEM lógicos ya preparados. La continuidad de los ciclos posteriores pertenece al control global del modo de ejecución.
 
 ### Después de `STEP`: `PREPARING_STEP`
 
-La inicialización es exactamente la misma que en `PREPARING_RUN`. Al consumir `prepare_done`, se ejecuta el primer ciclo efectivo solicitado y `cycle_count` pasa de cero a uno.
+La inicialización es exactamente la misma que en `PREPARING_RUN`. Al consumir `prepare_done`, la FSM activa `cpu_cycle_fire=1` e `image_publish=0`, y captura `STEPPING`. Se ejecuta el primer ciclo efectivo solicitado y `cycle_count` pasa de cero a uno.
 
 El control global determina posteriormente el ritmo de ejecución paso a paso. **La limpieza de DMEM no consume órdenes `STEP` como si fueran ciclos de instrucciones**: los flancos de preparación no son ciclos efectivos de la CPU.
 
 ### Diferencia entre los tres destinos
 
-| Estado de preparación | Publica imagen nueva | Ejecuta ciclo de CPU al finalizar | `cycle_count` después del flanco final |
+| Estado de preparación | `image_publish` de la FSM | `cpu_cycle_fire` de la FSM | `cycle_count` después del flanco final |
 |---|---|---|---:|
-| `PREPARING_READY` | Sí | No | 0 |
-| `PREPARING_RUN` | No | Sí | 1 |
-| `PREPARING_STEP` | No | Sí | 1 |
+| `PREPARING_READY` | 1 | 0 | 0 |
+| `PREPARING_RUN` | 0 | 1 | 1 |
+| `PREPARING_STEP` | 0 | 1 | 1 |
 
-`prepare_done` no ordena por sí mismo cuál de estas tres acciones debe ocurrir. Solo declara que el mantenimiento terminó; la FSM global interpreta esa condición según el estado en el que se encuentre.
+Los valores de la tabla corresponden al flanco de finalización con `prepare_done=1` y sin reset. `prepare_done` solo declara que el mantenimiento terminó; la FSM global interpreta esa condición según su estado actual. Aunque `prepare_active` todavía vale uno antes de ese flanco, `prepare_init` y `prepare_dmem_clear` ya valen cero.
 
 ## Prioridades y exclusión de operaciones
 
@@ -525,7 +514,7 @@ En el flanco final de `PREPARING_RUN` o `PREPARING_STEP` puede comenzar el prime
 
 ### Acceso de Debug
 
-Debug observa el estado arquitectónico y, para DMEM, utiliza las mismas marcas que la preparación limpia. La FSM global mantiene excluidas las operaciones de Debug durante mantenimiento.
+Debug observa el estado arquitectónico y, para DMEM, utiliza las mismas marcas que la preparación limpia. La FSM global indica la preparación mediante `prepare_active`; `Protocol Controller` utiliza ese indicador para mantener la exclusión durante mantenimiento, junto con sus reglas de transporte.
 
 No hace falta un segundo bitmap ni un puerto especial para que Debug conozca qué posiciones se utilizaron. Cuando vuelve a estar permitida la observación, todas las marcas corresponden a la nueva sesión.
 
@@ -547,7 +536,7 @@ La prioridad corresponde a la actualización de las marcas y datos de DMEM; el d
 
 La preparación combina señales calculadas durante el ciclo con cambios de estado que ocurren en el flanco siguiente:
 
-- `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done` se calculan combinacionalmente a partir del estado global y del índice actual.
+- `prepare_init`, `prepare_dmem_clear`, `prepare_index_inc` y `prepare_done` se calculan combinacionalmente a partir de `reset`, `prepare_active` y el índice actual.
 - PC, contador, RF, flags del pipeline, marca seleccionada e índice cambian en los flancos habilitados correspondientes.
 - El índice actualizado después de un flanco determina las órdenes combinacionales del ciclo siguiente.
 - `prepare_done` se activa cuando el índice ya es igual al límite, no cuando todavía se está limpiando la última posición.

@@ -1,6 +1,6 @@
 ### DEC-SYS-007 — Servicios y parámetros generales de UART
 
-**Contrato vigente de consulta:** [uart_core](../architecture/uart/uart_core.md), [uart_rx](../architecture/uart/uart_rx.md), [uart_tx](../architecture/uart/uart_tx.md), [uart_fifo](../architecture/uart/uart_fifo.md), [uart_baud_tick_gen](../architecture/uart/uart_baud_tick_gen.md), [protocol_controller](../architecture/debug/protocol_controller.md), [response_serializer](../architecture/debug/response_serializer.md), [loader](../architecture/session/loader.md), [session_preparation](../architecture/session/session_preparation.md), [reset_integration](../architecture/platform/reset_integration.md), [global_state_encoding](../architecture/session/global_state_encoding.md). Este ADR conserva la aprobación y su evolución; las especificaciones consolidadas incorporan las revisiones aplicables.
+**Contrato vigente de consulta:** [uart_core](../architecture/uart/uart_core.md), [uart_rx](../architecture/uart/uart_rx.md), [uart_tx](../architecture/uart/uart_tx.md), [uart_fifo](../architecture/uart/uart_fifo.md), [uart_baud_tick_gen](../architecture/uart/uart_baud_tick_gen.md), [protocol_controller](../architecture/debug/protocol_controller.md), [response_serializer](../architecture/debug/response_serializer.md), [loader](../architecture/session/loader.md), [session_preparation](../architecture/session/session_preparation.md), [reset_integration](../architecture/platform/reset_integration.md), [global_state_encoding](../architecture/session/global_state_encoding.md), [execution_control](../architecture/session/execution_control.md). Este ADR conserva la aprobación y su evolución; las especificaciones consolidadas incorporan las revisiones aplicables.
 
 **Estado:** Aprobada.
 
@@ -19,13 +19,14 @@
 
 Las selecciones se documentan en los acuerdos parciales anteriores.
 
-**Decisión:** Los bloques se concretan con los siguientes contratos:
+**Decisión:** Los bloques se concretan con los siguientes contratos. La [revisión de interfaz con Execution Control](#revisión-de-dec-sys-007--interfaz-del-protocolo-con-execution-control) actualiza la aceptación y los indicadores que utiliza el controlador.
 
 | Bloque o frontera | Contrato aprobado |
 |---|---|
 | UART | Opera nominalmente a 19200 8N1, con sobremuestreo 16 y dominio común 50 MHz, divisor 163 y tick registrado |
 | RX/TX y FIFO | RX/TX utilizan sus FSM y recursos aprobados; las FIFO independientes contienen cuatro bytes y `uart_core` produce eventos de recepción/error/actividad/fin físico |
 | `protocol_controller` | Usa FSM one-hot de dieciséis estados y un descriptor pendiente |
+| Control CPU / protocolo | Solicitudes directas, aceptación común e indicadores de disponibilidad, preparación y terminación |
 | `response_serializer` | Usa diez estados one-hot, generación progresiva y finalización en el último Stop |
 | Respuestas y terminal `RUN` | Se coordinan por estado y marcas existentes, sin registro de clases |
 | Debug | Lee estado retenido con exclusión desde el instante observado hasta fin físico; comparte RF/DMEM según sus selectores |
@@ -33,7 +34,7 @@ Las selecciones se documentan en los acuerdos parciales anteriores.
 | Preparación | Inicializa RF/PC/ciclos/pipeline y limpia metadatos DMEM por índice, con `prepare_done` sin mantenimiento concurrente |
 | RF | Se realiza con flip-flops e inicialización simultánea |
 | Reset | Combina fuentes antes de `reset_sync` TP2 de dos etapas |
-| FSM CPU | Utiliza catorce bits one-hot y código UART combinacional compartido |
+| FSM CPU | Utiliza catorce bits one-hot y código UART combinacional hacia `Response Serializer` |
 
 Formatos, comandos, prioridades y recuperación conservan `protocol.md` y los acuerdos vigentes.
 
@@ -1338,6 +1339,8 @@ Una respuesta breve ya preparada para `LOAD` se conserva y completa primero, con
 
 ### Acuerdo parcial de DEC-SYS-007 — Señales y conexiones del controlador
 
+> **Interfaces revisadas por la [conexión con Execution Control](#revisión-de-dec-sys-007--interfaz-del-protocolo-con-execution-control) (2026-10-16).** Se concretan solicitudes directas, aceptación común e indicadores de sesión sobre los recorridos de transporte aprobados.
+
 **Estado del acuerdo:** Aprobado como base de diseño. DEC-SYS-007 continúa pendiente.
 
 **Dominio:** `protocol_controller` / Fronteras y acciones sobre recursos existentes.
@@ -1431,6 +1434,8 @@ Una respuesta breve ya preparada para `LOAD` se conserva y completa primero, con
 
 ### Acuerdo parcial de DEC-SYS-007 — Representación física del estado global
 
+> **Distribución revisada por la [conexión con Execution Control](#revisión-de-dec-sys-007--interfaz-del-protocolo-con-execution-control) (2026-10-16).** El código de ocho bits llega al serializador; el controlador utiliza los indicadores de sesión. Se conservan la representación one-hot y los códigos externos.
+
 **Estado del acuerdo:** Aprobado como base de diseño. DEC-SYS-007 continúa pendiente hasta revisión de conexiones y presupuesto.
 
 **Dominio:** `Global FSM` / Estado registrado y observación controlador/Debug.
@@ -1450,3 +1455,48 @@ Una respuesta breve ya preparada para `LOAD` se conserva y completa primero, con
 **Requisitos relacionados:** `REQ-UART-005`, `REQ-UART-009`, `REQ-DOC-001`.
 
 **Reemplaza / Reemplazada por:** Concreta representación física previamente pendiente; conserva FSM y códigos externos acordados.
+
+### Revisión de DEC-SYS-007 — Interfaz del protocolo con Execution Control
+
+**Estado:** Aprobada.
+
+**Fecha:** 2026-10-16.
+
+**Contexto:** El [acuerdo 48 de DEC-ARCH-003](DEC-ARCH-003.md#acuerdo-48-aprobado--integración-del-control-global-de-ejecución) integra la selección de comandos y la autorización en `Global FSM`. Se revisan las conexiones del controlador con CPU y servicios, y la distribución del código de estado.
+
+**Decisión:** `Protocol Controller` conserva la fase del intercambio UART y solicita operaciones a `Execution Control`. Las conexiones se concretan en [Protocol Controller](../architecture/debug/protocol_controller.md#puertos-del-controlador-aprobados), [Composición](../architecture/system_composition.md#processor_top-comandos-carga-y-consultas) e [Interfaces](../interfaces.md#bloque-8-1):
+
+| Conexión | Señales | Uso |
+|---|---|---|
+| `Protocol Controller` → `Execution Control` | `load_request`, `run_request`, `step_request` | Solicitudes en `CHECK_SIZE`, `EXEC_RUN` y `EXEC_STEP`, respectivamente. |
+| `Execution Control` → `Protocol Controller` | `command_accepted` | Aceptación de la solicitud presentada. |
+| `Execution Control` → `Protocol Controller` | `load_available` | Responder `CHECK_READY` con `READY` si vale uno o `BUSY` si vale cero. |
+| `Execution Control` → `Protocol Controller` | `prepare_active` | Admitir comandos con preparación inactiva, sujeto a disponibilidad local de transporte. |
+| `Execution Control` → `Protocol Controller` | `program_finished`, `fault_terminal` | Detectar y clasificar el terminal de un `RUN` debido, con pipeline vacío. |
+| `Execution Control` → `Protocol Controller` | `cpu_cycle_fire` | Identificar el ciclo efectivo de `STEP`. |
+| `Execution Control` → `Protocol Controller` | `image_valid` | Clasificar el rechazo de `RUN`/`STEP` como `NO_IMAGE` o `BUSY`. |
+| `Session Preparation` → `Protocol Controller` | `prepare_done` | Completar la espera de preparación de `LOAD`; con `cpu_cycle_fire`, completar la de `STEP`. |
+| `Execution Control` → `Response Serializer` | `global_state_code[7:0]` → `debug_state_code[7:0]` | Producir el byte de estado del contexto Debug. |
+
+Las solicitudes y los indicadores de control son de un bit. El controlador presenta una sola solicitud por ciclo, generada según su fase y las condiciones de transporte, independientemente de la aceptación. Ambas FSM consumen solicitud y `command_accepted` en el mismo flanco. Con solicitud activa, cero indica rechazo; sin solicitud, cero no constituye un evento.
+
+**Consumo de la aceptación común:**
+
+| Fase UART | Condición | Acción |
+|---|---|---|
+| `CHECK_SIZE` | `load_request && command_accepted` | Capturar faltantes y guardar `LOAD`/`ACCEPTED`. |
+| `EXEC_RUN` | `run_request && command_accepted` | Activar `run_terminal_owed` y guardar `RUN`/`ACCEPTED`. |
+| `EXEC_STEP` | `step_request && command_accepted && cpu_cycle_fire` | Activar retención y guardar `STEP`/`DONE` con Debug. |
+| `EXEC_STEP` | `step_request && command_accepted && !cpu_cycle_fire` | Pasar a `WAIT_STEP_PREP`. |
+
+`load_request` se presenta después de validar los cuarenta bits de tamaño. Ante rechazo de `RUN`/`STEP`, `image_valid=0` selecciona `NO_IMAGE` e `image_valid=1` selecciona `BUSY`. `load_available` expresa disponibilidad de sesión para `LOAD`; la consulta conserva las condiciones locales de admisión y la validación posterior de la carga.
+
+**Terminal y observación:** `terminal_due = run_terminal_owed && (program_finished || fault_terminal)`. `program_finished` selecciona el resultado `FINISHED` y `fault_terminal` selecciona `FAULT`. Se conserva `debug_exclusive = !reset && (debug_hold || terminal_due)` para la exclusión y los selectores RF/DMEM. La exclusión comienza al observar el estado posterior al ciclo terminal, incluida la espera por una respuesta previa, y termina con el último Stop de Debug.
+
+**Servicios de sesión:** `Global FSM` emite `load_start` hacia Loader y el registro de tamaño confirmado en el flanco de aceptación. `prepare_active` activa el mismo trabajo de `Session Preparation` en los tres estados `PREPARING_*`. Al recibir `prepare_done`, la FSM publica mediante `image_publish` desde `PREPARING_READY` o autoriza el primer ciclo desde `PREPARING_RUN`/`PREPARING_STEP`.
+
+**Contratos conservados:** Se mantienen los dieciséis estados del controlador, los diez del serializador y sus recursos, códigos, mensajes, tiempos y prioridades. `WAIT_LOAD_ACCEPT` y `WAIT_RUN_ACCEPT` esperan el fin físico de `ACCEPTED`. El descriptor pendiente, la obligación terminal, la retención Debug, el consumo RX durante espera TX, la recuperación y el intercambio de reset conservan sus funciones.
+
+**Comprobación:** Correspondencia documental de señales, productores, consumidores, condiciones de aceptación y predicados de terminación con las especificaciones consolidadas.
+
+**Reemplaza / Reemplazada por:** Actualiza la aceptación de comandos, los controles de carga/preparación y la distribución funcional del estado de los acuerdos anteriores. Conserva los contratos de transporte, serialización y protocolo externo.

@@ -10,7 +10,7 @@
 
 **Contexto:** `DEC-ARCH-001` fijó el comportamiento arquitectónico de `Instruction Memory` y `Data Memory`, pero dejó pendiente establecer un contrato físico inicial compatible con FPGA. Debían definirse la latencia observable, la estrategia base de implementación, la organización conceptual, la demanda mínima de puertos, la representación del cero lógico de DMEM, el estado persistente de la imagen y los perfiles utilizados para validar parametrización.
 
-Esta decisión debe preservar direccionamiento por bytes, espacios Harvard lógicamente independientes, little-endian, validación previa a indexación, reprogramación segura y el pipeline conceptual de cinco etapas, respetando la FSM y control de los acuerdos 40–47 de `DEC-ARCH-003`, alineación de `DEC-ARCH-004` y clock de `DEC-ARCH-005`; el criterio de memoria utilizada por Debug permanece en `DEC-SYS-005`.
+Esta decisión debe preservar direccionamiento por bytes, espacios Harvard lógicamente independientes, little-endian, validación previa a indexación, reprogramación segura y el pipeline conceptual de cinco etapas, respetando la FSM y control de los acuerdos 40–48 de `DEC-ARCH-003`, alineación de `DEC-ARCH-004` y clock de `DEC-ARCH-005`; el criterio de memoria utilizada por Debug permanece en `DEC-SYS-005`.
 
 **Opciones consideradas:**
 
@@ -23,7 +23,7 @@ Esta decisión debe preservar direccionamiento por bytes, espacios Harvard lógi
 7. `image_valid` persistente independiente o derivado del tamaño confirmado.
 8. Soportar todo el dominio arquitectónico o declarar perfiles concretos de validación.
 
-**Decisión:** Se aprueba el siguiente alcance.
+**Decisión:** Se aprueba el siguiente alcance. La [revisión de agrupación del control global](#revisión-de-dec-arch-006--agrupación-del-control-global-de-ejecución) actualiza la organización y los conteos de módulos.
 
 #### 1. Contrato físico aprobado
 
@@ -285,6 +285,8 @@ Derivar `image_valid` del tamaño elimina estado redundante. `ALT_1000` proporci
 
 ### Acuerdo de concreción de DEC-ARCH-006 — Jerarquía por etapas y agrupación selectiva de bloques
 
+> **Revisado por la [agrupación del control global](#revisión-de-dec-arch-006--agrupación-del-control-global-de-ejecución) (2026-10-16).** Este acuerdo conserva la aprobación del 2026-10-06. La ubicación de las funciones del control global y los conteos se actualizan en la revisión posterior.
+
 **Estado:** Aprobada.
 
 **Fecha:** 2026-10-06.
@@ -300,3 +302,29 @@ Derivar `image_valid` del tamaño elimina estado redundante. `ALT_1000` proporci
 **Comprobación y representación:** [Revisión local](../architecture/system_composition.md#revisión-local-y-cierre-de-composición) registra cobertura única de 54 IDs, padres/nombres, parámetros, comandos/carga, WB, `next.valid`, preparación/DMEM, Debug/faults, transporte y plataforma; 34 campos de registros interetapa suman 504 bits. Mermaid y tablas integradas remiten al detalle de los 54 contratos; los dibujos de presentación son complementarios y no se certifican todos sus cables. No se modifica RTL ni se presenta evidencia de elaboración/simulación/síntesis/timing/placa.
 
 **Consecuencias:** FPGA-05/06 cerrados en diseño documental. Continúan FPGA-07/08 (plan de verificación/oráculo) y FPGA-09 (revisión final integral). Assembler/aplicación PC pospuestos y D0/M6 global sigue abierto; no se habilita implementación.
+
+### Revisión de DEC-ARCH-006 — Agrupación del control global de ejecución
+
+**Estado:** Aprobada.
+
+**Fecha:** 2026-10-16.
+
+**Contexto:** El [acuerdo 48 de DEC-ARCH-003](DEC-ARCH-003.md#acuerdo-48-aprobado--integración-del-control-global-de-ejecución) integra selección de comandos, autorización de ciclos y salidas Moore/Mealy en `Global FSM`. La jerarquía y el inventario concretan esa organización.
+
+**Decisión:** `Execution Control` se realiza en `execution_control.sv` y contiene el submódulo `global_fsm.sv`. Las funciones se ubican así:
+
+| Función | Archivo / ubicación |
+|---|---|
+| Fase de sesión, selección de comandos, autorización de ciclos y decodificación de salidas | `global_fsm.sv`, hijo de `execution_control` |
+| Selección de metadatos y evento de captura de fault | Lógica combinacional local en `execution_control.sv` |
+| Registros de causa/PC de fault, tamaño confirmado y contador de ciclos | Estado local en `execution_control.sv` |
+| Reducción de los cuatro próximos `valid` para `pipeline_empty_next` | Lógica combinacional local en `execution_control.sv` |
+| Loader y preparación de sesión | `loader.sv` y `session_preparation.sv`, hijos de `processor_top` |
+
+**Totales revisados:** Los 51 bloques vigentes de Interfaces se distribuyen en 23 módulos específicos y 28 bloques de lógica/estado local. `Execution Control` reúne siete bloques: un submódulo y seis bloques locales. Los 19 tipos de integración, transporte y placa completan un catálogo de 42 tipos, incluido el IP de clock. Corresponden 41 archivos `.sv` de módulos propios, más `system_pkg.sv` como paquete compartido; `fifo` conserva dos instancias.
+
+**Contratos conservados:** La agrupación mantiene los catorce estados de sesión, las prioridades y efectos del pipeline, las latencias de memorias, ownership, cero lógico, publicación de imagen, preparación y observación Debug. Las acciones sobre los recursos se realizan al consumir sus habilitaciones.
+
+**Comprobación:** El [inventario vigente](../architecture/module_inventory.md#bloques-cpu-uno-por-uno) y la [composición](../architecture/system_composition.md#cobertura-de-los-bloques-cpu) relacionan cada ID con su módulo, archivo y ubicación. Se contrastan nombres únicos, padres, cobertura por ubicación y totales. La comprobación es documental.
+
+**Reemplaza / Reemplazada por:** Revisa la ubicación de las funciones del control global y los conteos del acuerdo de jerarquía del 2026-10-06. Los acuerdos de memoria y configuración conservan su alcance.

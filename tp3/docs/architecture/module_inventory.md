@@ -5,17 +5,17 @@
 
 ## Propósito y alcance
 
-Relaciona los 54 bloques funcionales con sus módulos, archivos y ubicación en la jerarquía FPGA. La agrupación conserva los contratos de interfaces y distingue bloques separados de lógica local.
+Relaciona los 51 bloques funcionales con sus módulos, archivos y ubicación en la jerarquía FPGA. La agrupación conserva los contratos de interfaces y distingue bloques separados de lógica local.
 
 ## Criterio y comparación de alternativas
 
-Interfaces define 54 bloques CPU en las secciones 1–9. El inventario mantiene la trazabilidad de cada bloque independientemente del número de archivos. La elección de módulos se fundamenta en responsabilidad, contrato y valor de verificación; la tabla siguiente compara las alternativas.
+Interfaces define 51 bloques CPU en las secciones 1–9. El inventario mantiene la trazabilidad de cada bloque independientemente del número de archivos. La elección de módulos se fundamenta en responsabilidad, contrato y valor de verificación; la tabla siguiente compara las alternativas.
 
 | Organización | Ventajas | Costes / riesgos | Juicio para este proyecto |
 |---|---|---|---|
 | Todo el procesador en un módulo | Pocas conexiones entre módulos y recorrido local directo | Archivo extenso, responsabilidades mezcladas y comprobación aislada más difícil | Demasiado concentrado para el diseño/documentación del TP |
-| Cada uno de los 54 bloques en su propio módulo | Correspondencia directa con el dibujo e identificación individual | Muchos puertos/instancias, navegación y mantenimiento para funciones muy pequeñas | Excesivamente fragmentado como regla universal para este CPU |
-| Etapas + submódulos seleccionados | Recorrido por pipeline claro y aislamiento de unidades con reglas propias | Requiere justificar y documentar cada agrupación; una etapa puede crecer si se concentra demasiado | **Recomendación:** elegir por responsabilidad, contrato y valor de verificación, manteniendo los 54 bloques trazados |
+| Cada uno de los 51 bloques en su propio módulo | Correspondencia directa con el dibujo e identificación individual | Muchos puertos/instancias, navegación y mantenimiento para funciones muy pequeñas | Excesivamente fragmentado como regla universal para este CPU |
+| Etapas + submódulos seleccionados | Recorrido por pipeline claro y aislamiento de unidades con reglas propias | Requiere justificar y documentar cada agrupación; una etapa puede crecer si se concentra demasiado | **Recomendación:** elegir por responsabilidad, contrato y valor de verificación, manteniendo los 51 bloques trazados |
 
 Se recomienda un módulo independiente cuando reúne una responsabilidad coherente, reglas/casos propios o una frontera registrada o puertos relevantes. La reutilización ayuda, pero no es requisito: un detector usado una sola vez puede justificar su módulo. No se usa un umbral de líneas de código como criterio único.
 
@@ -32,9 +32,11 @@ Para `Load-Use Detector` se recomienda `load_use_detector.sv`: su ecuación incl
 
 [AMD UG901](https://docs.amd.com/r/en-US/ug901-vivado-synthesis/KEEP_HIERARCHY) explica que la jerarquía y las optimizaciones entre módulos dependen de `flatten_hierarchy`/`KEEP_HIERARCHY`. La cantidad de archivos no implica por sí sola más ciclos, más área o menor frecuencia. Conservar forzosamente todas las fronteras puede limitar optimizaciones; no se añade una restricción de jerarquía para justificar el catálogo. El timing a 50 MHz se verificará durante implementación, sin inferirlo del número de módulos.
 
-## Los 54 bloques, uno por uno
+<a id="los-54-bloques-uno-por-uno"></a>
 
-«Separado» identifica un módulo específico para el bloque. «Local» identifica lógica/estado dentro del módulo indicado, con sus acciones/actualizaciones diferenciadas según los acuerdos. Cada fila conserva el ID/nombre original y señala exactamente el archivo donde se realizará. La ubicación está aprobada junto con la agrupación selectiva; la naturaleza del bloque ya estaba aprobada.
+## Bloques CPU, uno por uno
+
+«Separado» identifica un módulo específico para el bloque. «Local» identifica lógica/estado dentro del módulo indicado, con sus acciones/actualizaciones diferenciadas según los acuerdos. Cada fila utiliza el ID/nombre vigente en Interfaces y señala exactamente el archivo donde se realizará. La ubicación está aprobada junto con la agrupación selectiva; la naturaleza del bloque ya estaba aprobada.
 
 | ID / contrato | Bloque definido | Realización recomendada | Archivo futuro | Ubicación directa | Motivo | Naturaleza aprobada |
 |---|---|---|---|---|---|---|
@@ -80,14 +82,11 @@ Para `Load-Use Detector` se recomienda `load_use_detector.sv`: su ecuación incl
 | [4.6](../interfaces.md#bloque-4-6) | `MEM/WB Update Control` | Local en `processor_top` | `processor_top.sv` | `processor_top` | Controles pequeños ligados al registro interetapa; lógica local del top | Combinacional |
 | [4.7](../interfaces.md#bloque-4-7) | Registro `MEM/WB` | Separado: `mem_wb_register` | `mem_wb_register.sv` | `processor_top` | Frontera registrada del pipeline con payload y actualización propios | Registro funcional |
 | [5.1](../interfaces.md#bloque-5-1) | `Pipeline Hazard Control` | Separado: `pipeline_hazard_control` | `pipeline_hazard_control.sv` | `processor_top` | Arbitraje por edad y ocho acciones de pipeline | Combinacional |
-| [6.1](../interfaces.md#bloque-6-1) | `Fault Metadata Control` | Separado: `fault_metadata_control` | `fault_metadata_control.sv` | `execution_control` | Evento único y selección precisa de metadatos | Combinacional |
+| [6.1](../interfaces.md#bloque-6-1) | `Fault Metadata Control` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Selección de causa/PC y evento de captura junto a sus registros de sesión | Combinacional |
 | [6.2](../interfaces.md#bloque-6-2) | Registro global `fault_cause` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Recurso registrado de sesión; actualización local diferenciada en `execution_control` | Registro funcional de metadatos |
 | [6.3](../interfaces.md#bloque-6-3) | Registro global `fault_pc` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Recurso registrado de sesión; actualización local diferenciada en `execution_control` | Registro funcional de metadatos |
-| [7.1](../interfaces.md#bloque-7-1) | `Pipeline Empty Logic` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Predicados combinacionales del control global | Combinacional |
-| [7.2](../interfaces.md#bloque-7-2) | `Global Status Decode` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Predicados combinacionales del control global | Combinacional |
-| [8.1](../interfaces.md#bloque-8-1) | `Command Arbiter` | Separado: `command_arbiter` | `command_arbiter.sv` | `execution_control` | Elegibilidad y prioridad de comandos | Combinacional |
-| [8.2](../interfaces.md#bloque-8-2) | `Global FSM` | Separado: `global_fsm` | `global_fsm.sv` | `execution_control` | FSM de 14 estados y codificación compartida | Estado registrado y decodificación Moore |
-| [8.3](../interfaces.md#bloque-8-3) | `Cycle Authorization` | Separado: `cycle_authorization` | `cycle_authorization.sv` | `execution_control` | Autorización de ciclo y prioridad de sesión | Combinacional |
+| [7.1](../interfaces.md#bloque-7-1) | `Pipeline Empty Logic` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Reducción combinacional de los cuatro próximos `valid` | Combinacional |
+| [8.1](../interfaces.md#bloque-8-1) | `Global FSM` | Separado: `global_fsm` | `global_fsm.sv` | `execution_control` | FSM de 14 estados, selección de comandos, autorización de ciclos y decodificación de salidas | Estado registrado y lógica combinacional Moore/Mealy |
 | [9.1](../interfaces.md#bloque-9-1) | `Loader` | Separado: `loader` | `loader.sv` | `processor_top` | Reconstrucción de palabras y recursos de carga | Reconstrucción secuencial de bytes y control combinacional, sin FSM privada adicional |
 | [9.2](../interfaces.md#bloque-9-2) | `Session Preparation` | Separado: `session_preparation` | `session_preparation.sv` | `processor_top` | Progreso y acciones de preparación | Progreso registrado de mantenimiento y control combinacional, sin FSM privada adicional |
 | [9.3](../interfaces.md#bloque-9-3) | Registro global `loaded_image_size_bytes` | Local en `execution_control` | `execution_control.sv` | `execution_control` | Recurso registrado de sesión; actualización local diferenciada en `execution_control` | Registro funcional y predicado combinacional |
@@ -103,8 +102,8 @@ Para `Load-Use Detector` se recomienda `load_use_detector.sv`: su ecuación incl
 | `mem_stage` | 5 | 4 | 1 |
 | `wb_stage` | 1 | 0 | 1 |
 | `processor_top`: registros interetapa, sus controles, hazards, Loader y preparación | 11 | 7 | 4 |
-| `execution_control` | 10 | 4 | 6 |
-| **Total** | **54** | **26** | **28** |
+| `execution_control` | 7 | 1 | 6 |
+| **Total** | **51** | **23** | **28** |
 
 Los cuatro registros interetapa son `if_id_register`, `id_ex_register`, `ex_mem_register` y `mem_wb_register`, instanciados en `processor_top`. Sus controles de actualización son lógica local diferenciada del top; producen `next.valid` sin otro registro.
 
@@ -114,7 +113,7 @@ El PC queda como registro local de `if_stage`. `fault_cause`/`fault_pc`, tamaño
 
 ## Módulos adicionales de integración, transporte y placa
 
-Los siguientes 19 tipos se suman a los 26 módulos específicos recomendados. Los nombres/agrupaciones de UART/controlador/serializador/reset conservan sus acuerdos; tops/etapas/`execution_control` quedaron aprobados con la agrupación selectiva. `clock_generator` es IP y `fifo` tiene dos instancias.
+Los siguientes 19 tipos se suman a los 23 módulos específicos recomendados. Los nombres/agrupaciones de UART/controlador/serializador/reset conservan sus acuerdos; tops/etapas/`execution_control` quedaron aprobados con la agrupación selectiva. `clock_generator` es IP y `fifo` tiene dos instancias.
 
 | Módulo | Contenedor | Archivo futuro / realización |
 |---|---|---|
@@ -138,7 +137,7 @@ Los siguientes 19 tipos se suman a los 26 módulos específicos recomendados. Lo
 | `wb_stage` | `processor_top` | `wb_stage.sv` |
 | `execution_control` | `processor_top` | `execution_control.sv` |
 
-La agrupación aprobada tiene 45 tipos de módulo, incluido el IP; 44 archivos .sv de módulos propios y `system_pkg.sv` como paquete compartido aprobado. La cantidad es consecuencia de las agrupaciones justificadas, no un objetivo. No se incluyen archivos internos del IP o futuros testbenches.
+La agrupación tiene 42 tipos de módulo, incluido el IP; 41 archivos .sv de módulos propios y `system_pkg.sv` como paquete compartido aprobado. La cantidad es consecuencia de las agrupaciones justificadas, no un objetivo. No se incluyen archivos internos del IP o futuros testbenches.
 
 ## Recursos auxiliares y límites del inventario
 
@@ -151,15 +150,15 @@ La agrupación aprobada tiene 45 tipos de módulo, incluido el IP; 44 archivos .
 | Registro de 24 bits y formación/escritura de palabras | `loader` | Recursos internos del bloque 9.1 |
 | Índice de limpieza y acciones de inicialización | `session_preparation` | Recursos internos del bloque 9.2 |
 | Bancos/bitmap y selección CPU/Debug | `data_memory` | Una memoria y metadatos compartidos |
-| Encoder one-hot→código UART de ocho bits | `global_fsm` | Lógica combinacional aprobada del bloque 8.2 |
+| Salidas Moore/Mealy y código externo de ocho bits | `global_fsm` | Lógica combinacional del bloque 8.1; controles de los recursos y código de observación para `Response Serializer` |
 
 <a id="comprobación-y-pendientes"></a>
 
 ## Verificación y evidencia
 
-Se contrastaron los 54 IDs/nombres/naturalezas con interfaces, cada bloque con su módulo/archivo y cada módulo específico con su padre. Se comprobaron nombres únicos, jerarquía sin ciclos y correspondencia con `system_composition`. Ningún bloque desaparece por compartir archivo; el criterio deja 26 bloques separados y 28 explícitamente locales. Es revisión documental, no simulación RTL ni evidencia de timing.
+Se contrastaron los 51 IDs/nombres/naturalezas con interfaces, cada bloque con su módulo/archivo y cada módulo específico con su padre. Se comprobaron nombres únicos, jerarquía sin ciclos y correspondencia con `system_composition`. La distribución comprende 23 bloques con módulo específico y 28 como lógica/estado local. Es revisión documental, no simulación RTL ni evidencia de timing.
 
-La organización selectiva fue aprobada el 2026-10-06, con cobertura explícita de los 54 bloques, incluido `WB Bypass Control`. La [revisión local de composición](system_composition.md#revisión-local-y-cierre-de-composición) completó conexiones/anchos/propiedad: FPGA-05/06 cerrados en diseño documental. La correspondencia uno a uno queda como alternativa evaluada, sin aprobar ni implementar. El plan de verificación, sus criterios de comparación y la correspondencia integral del diseño están cerrados documentalmente en FPGA-07/08/09.
+La organización selectiva fue aprobada el 2026-10-06, con cobertura explícita de los bloques CPU, incluido `WB Bypass Control`. La [revisión local de composición](system_composition.md#revisión-local-y-cierre-de-composición) completó conexiones/anchos/propiedad: FPGA-05/06 cerrados en diseño documental. La correspondencia uno a uno queda como alternativa evaluada, sin aprobar ni implementar. El plan de verificación, sus criterios de comparación y la correspondencia integral del diseño están cerrados documentalmente en FPGA-07/08/09.
 
 ## Referencias y trazabilidad
 

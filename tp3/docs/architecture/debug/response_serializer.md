@@ -20,7 +20,7 @@ Los contratos aprobados se distribuyen por función:
 | Conteo y envío de DMEM | El [acuerdo de dos recorridos de DMEM](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--dos-recorridos-de-dmem-para-debug) fija su secuencia |
 | Observación y producción | Las conexiones de observación, índices, anchos y selección de bytes de contexto, RF y los cuatro registros interetapa se concretan más abajo |
 | Control privado | Los diez estados privados, sus acciones de transición y la generación de señales de acción se concretan en sus tablas aprobadas más abajo |
-| Representación global | La [adaptación física global](../session/global_state_encoding.md) utiliza one-hot de catorce bits y código combinacional de ocho compartido |
+| Representación global | La [adaptación física global](../session/global_state_encoding.md) utiliza one-hot interno de catorce bits y código combinacional de ocho para Debug |
 
 ## Organización
 
@@ -373,7 +373,7 @@ El [acuerdo de entradas de contexto](../../decisions/DEC-SYS-007.md#acuerdo-parc
 
 | Entrada del serializador | Ancho en bits | Fuente lógica | Posiciones de `fixed_byte_index` | Bytes UART |
 |---|---:|---|---|---:|
-| `debug_state_code` | 8 | Código UART derivado del estado actual de la FSM global | 2 | 1 |
+| `debug_state_code` | 8 | `global_state_code[7:0]` de `Execution Control` | 2 | 1 |
 | `debug_image_valid` | 1 | `loaded_image_size_bytes` != 0 | 3 | 1 |
 | `debug_pc` | 32 | Registro PC global | 4 a 7 | 4 |
 | `debug_cycle_count` | 64 | `Cycle Counter` | 8 a 15 | 8 |
@@ -386,7 +386,7 @@ Las conexiones observan el estado retenido directamente, sin agregar una copia c
 
 Los registros globales de fault se conectan con sus bits actuales incluso cuando no representan un fault vigente; el estado global determina su interpretación, conforme al protocolo. `debug_image_valid` es un predicado combinacional del tamaño de imagen, sin registro adicional.
 
-`debug_state_code` entrega el código externo aprobado, no la codificación interna de la FSM. La [representación global aprobada](../session/global_state_encoding.md) genera el código combinacional desde el estado CPU one-hot y comparte la conexión con el controlador, sin segundo registro. La selección de bytes por `fixed_byte_index` se define a continuación; los controles de captura se definen más abajo.
+`Global FSM`, dentro de `Execution Control`, genera `global_state_code[7:0]` combinacionalmente desde el estado one-hot registrado, según la [representación global aprobada](../session/global_state_encoding.md). El serializador recibe ese código externo mediante `debug_state_code[7:0]` y lo utiliza para producir el byte de estado del contexto. La selección de bytes por `fixed_byte_index` se define a continuación; los controles de captura se definen más abajo.
 
 #### Selección de bytes del contexto
 

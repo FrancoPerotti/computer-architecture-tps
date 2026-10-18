@@ -46,7 +46,7 @@ flowchart LR
     SER -->|"bytes TX"| UART
 ```
 
-La jerarquía, los puertos físicos/de tops y los aliases están en [Composición del sistema](system_composition.md). El [Inventario de módulos](module_inventory.md#los-54-bloques-uno-por-uno) sitúa cada uno de los 54 bloques originales en su módulo/archivo: 26 separados y 28 como lógica/estado local. El catálogo contiene 45 tipos, incluido el IP de clock; `fifo` se instancia dos veces. Esta separación organiza el código sin agregar estado ni latencia.
+La jerarquía, los puertos físicos/de tops y los aliases están en [Composición del sistema](system_composition.md). Los 51 bloques vigentes se distribuyen en 23 módulos específicos y 28 bloques de lógica/estado local; el detalle de archivos y ubicaciones corresponde al [Inventario de módulos](module_inventory.md). El catálogo contiene 42 tipos, incluido el IP de clock; `fifo` se instancia dos veces. Esta separación organiza el código sin agregar estado ni latencia.
 
 ## Plataforma, clock, reset y configuración
 
@@ -82,7 +82,7 @@ Se implementan **32 instrucciones RV32I y `halt` exacto 0x0000000B**, todas de 3
 
 El PC, los datos, las instrucciones y las direcciones arquitectónicas tienen 32 bits; los índices de RF tienen cinco bits. `x0` siempre es cero. RF tiene dos lecturas combinacionales y una escritura síncrona; la realización de referencia usa flip-flops para inicialización simultánea. El banco de registros comparte la primera lectura con Debug antes del bypass, sin tercer puerto.
 
-El estado global persistente incluye `global_state` (14 bits one-hot), `fault_cause`, `fault_pc`, `loaded_image_size_bytes` y `cycle_count` (64 bits). `image_valid` y vigencia de fault se derivan de tamaño/estado; no son registros duplicados. El código externo de estado tiene ocho bits y se calcula combinacionalmente.
+El estado global persistente incluye `global_state` (14 bits one-hot, interno de `Global FSM`), `fault_cause`, `fault_pc`, `loaded_image_size_bytes` y `cycle_count` (64 bits). `image_valid` y vigencia de fault se derivan de tamaño/estado; no son registros duplicados. El código externo de estado tiene ocho bits, se calcula combinacionalmente y llega a `Response Serializer` para Debug.
 
 ## El pipeline de cinco etapas
 
@@ -116,7 +116,7 @@ Los 34 campos suman 504 bits y se observan directamente en Debug. `valid` decide
 - Forwarding resuelve cada fuente; `EX/MEM` tiene prioridad sobre `MEM/WB`. Un load productor más reciente bloquea la utilización de un valor anterior.
 - Load-use conserva PC e `IF/ID`, introduce bubble en `ID/EX` y permite avanzar al productor. Solo cuenta fuentes realmente utilizadas y destinos distintos de `x0`.
 - EX resuelve branches/jumps; un redirect descarta trabajo joven y conserva los efectos de la instrucción de control.
-- `Pipeline Hazard Control` selecciona ocho acciones exclusivas. Reset, carga/preparación efectiva y `HOLD` conservan la prioridad global aprobada.
+- `Pipeline Hazard Control` recibe `cpu_cycle_fire` y `drain_mode` desde `Execution Control` y selecciona ocho acciones exclusivas según los candidatos del pipeline. Reset, carga/preparación efectiva y `HOLD` conservan la prioridad global aprobada.
 - Los bloques combinacionales pueden variar durante `HOLD`; los registros/memorias no repiten efectos sin su habilitación.
 
 [Control y hazards](cpu/control_and_hazards.md) fija las ecuaciones. `act_drain_load_use` conserva un contrato combinacional para inyección artificial; no se considera alcanzable en un drenado legal bajo la política vigente.
@@ -148,15 +148,17 @@ El resultado de la carga distingue estos casos:
 | Evento | Consecuencia |
 |---|---|
 | `LOAD` rechazada | Conserva la sesión previa. |
-| `LOAD` aceptada | Invalida la imagen anterior. |
+| `LOAD` aceptada | La FSM emite `load_start` para iniciar Loader e invalidar la imagen anterior. |
 | Aborto | Deja `NO_IMAGE` y no restaura la imagen anterior. |
-| `load_ok` | Certifica la última palabra escrita; todavía debe completarse preparación antes de publicar `READY`/DONE. |
+| `load_ok` | Certifica la última palabra escrita y lleva a la FSM a `PREPARING_READY`. |
 
 Detalle: [Loader](session/loader.md), [Preparación](session/session_preparation.md) y [Protocolo](../protocol.md).
 
 ## Control de la ejecución
 
-`execution_control` contiene `command_arbiter`, `global_fsm`, `cycle_authorization` y `fault_metadata_control`. `Pipeline Empty Logic`, `Global Status Decode` y los registros causa/PC de fault, tamaño confirmado y `Cycle Counter` son locales y explícitos. `pipeline_hazard_control`, `loader` y `session_preparation` se conectan en `processor_top`.
+`Execution Control` contiene `Global FSM` como submódulo en `global_fsm.sv`. La selección de metadatos, los registros de causa/PC de fault, el tamaño confirmado, el contador de ciclos y la reducción de los cuatro `next.valid` se realizan localmente en `execution_control.sv`. `Pipeline Hazard Control`, `Loader` y `Session Preparation` se conectan en `processor_top`.
+
+La FSM selecciona las solicitudes `LOAD`/`RUN`/`STEP`, informa su aceptación mediante `command_accepted` y autoriza ciclos mediante `cpu_cycle_fire`. El registro de estado captura `next_state` en cada flanco positivo de `clk`; los recursos consumen los controles de la FSM para realizar sus acciones.
 
 La FSM global tiene 14 estados, agrupados aquí por fase para facilitar su consulta:
 
@@ -177,7 +179,7 @@ La [tabla de estados/transiciones](session/execution_control.md#tabla-de-transic
 
 Cada `STEP` aceptado realiza exactamente un ciclo CPU, no una instrucción completa. En `READY`/`STEPPING`/drain `STEP` puede realizarse en el flanco de aceptación; desde terminal se prepara primero. Durante espera se retiene el estado CPU, mientras UART sigue activa.
 
-La preparación inicializa el PC, el RF, los registros interetapa y el contador en su primer flanco. También limpia las marcas de DMEM a razón de un byte por clock. `prepare_done` se activa después de completar esas escrituras. Su flanco de consumo publica `READY` sin ciclo para `LOAD`, o realiza el primer ciclo `RUN`/`STEP`. La preparación dura 2049 clocks en `REFERENCE` y 1001 en `ALT_1000`, dentro del presupuesto de 1 ms a 50 MHz.
+`Session Preparation` se activa con `prepare_active` e inicializa el PC, el RF, los registros interetapa y el contador en su primer flanco. También limpia las marcas de DMEM a razón de un byte por clock. `prepare_done` se activa después de completar esas escrituras. En su flanco de consumo, la FSM publica la imagen mediante `image_publish` y entra en `READY` sin ciclo CPU para `LOAD`, o autoriza el primer ciclo `RUN`/`STEP`. La preparación dura 2049 clocks en `REFERENCE` y 1001 en `ALT_1000`, dentro del presupuesto de 1 ms a 50 MHz.
 
 ## Finalización de la ejecución
 
@@ -216,6 +218,8 @@ La respuesta completa ocupa 230 + 5*K bytes para K bytes utilizados. [Protocolo]
 `uart_core` contiene `serial_input_sync`, `baud_tick_gen`, `uart_rx`, `uart_tx` y dos `fifo`. `protocol_controller` es consumidor RX y coordina comandos; `response_serializer` es productor TX. Fin físico de cada byte llega al serializador; fin físico de respuesta llega al controlador.
 
 Comandos: `LOAD` (0x01), `RUN` (0x02), `STEP` (0x03), `RESET` (0x04) y `CHECK_READY` (0x05). El controlador tiene 16 estados one-hot; el serializador 10; UART RX cinco y TX cuatro. Los estados/recursos/acciones privados permanecen dentro de sus módulos.
+
+`Protocol Controller` utiliza `load_available` para responder `CHECK_READY`, `prepare_active` para coordinar la admisión y `program_finished`/`fault_terminal` para detectar el terminal de `RUN`.
 
 Controlador conserva un descriptor pendiente de respuesta; serializador conserva el activo. Timeouts de cabecera/contenido y silencio de recuperación son 100 ms; recuperación consume RX, conserva TX y no finaliza mientras hay actividad/recepción o respuesta incompleta. La exclusión Debug y prioridades `RUN`/`LOAD`/`RESET` mantienen el contrato de [Protocolo](../protocol.md).
 

@@ -1295,7 +1295,7 @@
         "218"
       ],
       "source": "docs/diagrams/generated/id_organizacion.drawio.xml",
-      "source_sha256": "5984858c8c6f2a8491c631ae0c39569e2e4842c7e4481eb1d7f3548e06209f10",
+      "source_sha256": "9a4b7f0d33bfa5c6f3d04cd2f617ff47682d6f49a67618d0cb6be01a46b937eb",
       "bounds": {
         "x": 18,
         "y": 18,
@@ -17344,7 +17344,7 @@
         "73"
       ],
       "source": "docs/diagrams/generated/ex_load.drawio.xml",
-      "source_sha256": "3f1036d813b05255d94c2f755c8fe8406406fd02670e5461fff29b52a25a8c52",
+      "source_sha256": "da2268a44ee4495ecafd38389f725d93e2da5da28a97ac81547201f0a5938de7",
       "bounds": {
         "x": 128,
         "y": 78,
@@ -19053,7 +19053,7 @@
         "84"
       ],
       "source": "docs/diagrams/generated/ex_branch.drawio.xml",
-      "source_sha256": "82f4e731665841fc628072d2296803058cf3ed706f3dec3ca6f5decd9a34a695",
+      "source_sha256": "ffd63c76539a3c105e39cff146a61679e586a8e155eb033d1b0843996a96fe5e",
       "bounds": {
         "x": 528,
         "y": 545,
@@ -20186,7 +20186,7 @@
         "73"
       ],
       "source": "docs/diagrams/generated/ex_jal.drawio.xml",
-      "source_sha256": "0fa042c56b61918d98d5b938da6ac5d1d350871d608c76e8f7df78ddbb1415ef",
+      "source_sha256": "d4247d9d03ed8d196f48a9f1bce36e7ba2d0fbf48fc46b938d17b2fb31d095cb",
       "bounds": {
         "x": 278,
         "y": 188,
@@ -22201,7 +22201,7 @@
         "28"
       ],
       "source": "docs/diagrams/generated/ex_halt.drawio.xml",
-      "source_sha256": "b3600c7891699e66deedd0a9881692985637ee9d6fca05fb017fe8b25c8c0c6e",
+      "source_sha256": "0f02ffc61b6b24114c3a8e0a50fe5c17d8db4601c2419838590b7c434f3a250e",
       "bounds": {
         "x": 225,
         "y": 105,
@@ -22598,7 +22598,7 @@
         "131"
       ],
       "source": "docs/diagrams/generated/mem_organizacion.drawio.xml",
-      "source_sha256": "55e60b339fb3a79dc33595efbf486999c716da04607ecd4664c44a69ce24e866",
+      "source_sha256": "452cac3b5fda69508e576867f8028347ebeb0f731782854e23520435d6c54a4f",
       "bounds": {
         "x": -36,
         "y": 240,
@@ -24542,7 +24542,7 @@
         "50"
       ],
       "source": "docs/diagrams/generated/mem_store.drawio.xml",
-      "source_sha256": "ae8731e08646cc6f6cc2eea968429d35ab84f6195e0f39089e9018a3e5b48082",
+      "source_sha256": "087f2030cf46985e5a07247cbab78a3afa1232a58f99a425982f018d51c30eac",
       "bounds": {
         "x": -452,
         "y": -241,
@@ -25287,7 +25287,7 @@
         "80"
       ],
       "source": "docs/diagrams/generated/wb_organizacion.drawio.xml",
-      "source_sha256": "79b1b93edbcd7c230a5b562d946bbb8141054975d402852763e9e174594ced8a",
+      "source_sha256": "2e32b003f3064cd6cb169b569c8b47d9f90f89654efdb5a9b0df87e3b9d84c41",
       "bounds": {
         "x": -194,
         "y": -373,
@@ -26208,7 +26208,7 @@
         "36"
       ],
       "source": "docs/diagrams/generated/wb_escritura.drawio.xml",
-      "source_sha256": "525b229b65724bcd29590080fe2e04eb6d74e59864ee504f07966866f57e0694",
+      "source_sha256": "14ae8f5b1954e71051b6c02940fbacc162f68bebd08ef4c6ca5b6365ecd87f2e",
       "bounds": {
         "x": -186,
         "y": -96,
@@ -28013,7 +28013,7 @@
         "86"
       ],
       "source": "docs/diagrams/generated/bypass.drawio.xml",
-      "source_sha256": "96b1beca6301ad658687478e3328b54841109d8fcba46483ef2fb02af3cdd927",
+      "source_sha256": "df9731fd2131b139af3950a177841368d3b9b5dbf03db608e854853b4d42c8a5",
       "bounds": {
         "x": 415,
         "y": 558,
@@ -29108,7 +29108,7 @@
         "67"
       ],
       "source": "docs/diagrams/generated/fetch_fault.drawio.xml",
-      "source_sha256": "1feb433f254c94d375d8be57e677a84d1a814447645c8500d90603f266047cef",
+      "source_sha256": "52e9e52b305a7adf094082127b173f9da452429d638e45cc05fddf9f0f4ab054",
       "bounds": {
         "x": 215,
         "y": 215,
@@ -49281,7 +49281,7 @@
         "162"
       ],
       "source": "docs/diagrams/generated/load_completo.drawio.xml",
-      "source_sha256": "20b99457af5293e4b814eff60e70f432f816254111a6d18df50742a2312ab0b1",
+      "source_sha256": "6e880463b8ec27760ad59e0739b9c0db8087a731b655de42d6e597ffa1a8125f",
       "bounds": {
         "x": -533,
         "y": -106,
@@ -50905,7 +50905,7 @@
         "122"
       ],
       "source": "docs/diagrams/generated/store_completo.drawio.xml",
-      "source_sha256": "c4faaf272f5827bb699a8d15ea2a0d90f70032c1cdc9a5e116591a0d52d6d5d0",
+      "source_sha256": "10856dc994d344445252c892d73ad1fb74b414b0b7f3ecde1cf823cc4fb6c140",
       "bounds": {
         "x": -998,
         "y": -171,
@@ -52224,7 +52224,7 @@
         "108"
       ],
       "source": "docs/diagrams/generated/aritmetica_completa.drawio.xml",
-      "source_sha256": "6c10f31b94be9800be1bfcece939b6430da5d1f78b2f7262e3c8c6976ab5e002",
+      "source_sha256": "5f972614815ecb205bd3cbb8b02219ac69f8ea42f54b9886bf3f35b536490bc8",
       "bounds": {
         "x": 159,
         "y": 335,
@@ -53320,7 +53320,7 @@
         "101"
       ],
       "source": "docs/diagrams/generated/inmediata_completa.drawio.xml",
-      "source_sha256": "6686a61d4638c79660e53caa114dc0783750cfd2d4a6ec5c4471ab64068376fd",
+      "source_sha256": "e67afb76d7919de01598a5cdee87dc2bf5a3acd1ca054eb4515c1082b9066768",
       "bounds": {
         "x": 525,
         "y": 438,
@@ -54344,7 +54344,7 @@
         "80"
       ],
       "source": "docs/diagrams/generated/lui_completo.drawio.xml",
-      "source_sha256": "cd0d625bdcfe19d5833bb55e9086f51c39e87a051ee73c759046686c082616bf",
+      "source_sha256": "40d9dd8858e5abfc1baebfc80d2e21dd4b6f0e5e0edf42bd835d2e6a8e16f0d1",
       "bounds": {
         "x": 210,
         "y": 1543,
@@ -55210,7 +55210,7 @@
         "109"
       ],
       "source": "docs/diagrams/generated/jal_completo.drawio.xml",
-      "source_sha256": "ecdea9cc25c4d4d6fadb9bf4813c22ee790a8645d1c32aaceb40433d8185cd90",
+      "source_sha256": "e1c3fafdbfb3fd00b62bb8f30b770b89a1e0c755e99333229170e34f9a1b4d5b",
       "bounds": {
         "x": 686,
         "y": 915,
@@ -56771,7 +56771,7 @@
         "140"
       ],
       "source": "docs/diagrams/generated/jalr_completo.drawio.xml",
-      "source_sha256": "e7bc416e72b2ddfe3a4019c9d96e79a8b99eeffa62e2e791de772123e10e14c1",
+      "source_sha256": "1792c0053cec5e419a0b78268a8ded2e21549ae248848757c8d458fcab450530",
       "bounds": {
         "x": -486,
         "y": -1824,
@@ -58259,7 +58259,25 @@
         "108",
         "109",
         "110",
-        "111"
+        "111",
+        "112",
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127",
+        "128",
+        "execution-control-legend"
       ],
       "modules": [],
       "captions": [
@@ -58316,21 +58334,39 @@
         "88",
         "89",
         "90",
-        "91",
+        "92",
         "93",
         "94",
-        "95",
+        "96",
         "97",
-        "98",
-        "100",
-        "102",
-        "104",
-        "106",
-        "108",
-        "110"
+        "99",
+        "101",
+        "103",
+        "105",
+        "107",
+        "109",
+        "111",
+        "112",
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127",
+        "128",
+        "execution-control-legend"
       ],
       "source": "docs/diagrams/generated/fsm_global.drawio.xml",
-      "source_sha256": "079ad728d1ddd3f6f2c9eb23a2f32cbcf6a2397cc49318bb7153caa37d68074a",
+      "source_sha256": "4e0994c3e1e6a60d2ffda7af2e6ce57180b7b5fc54254b43789f55a10a8b3e54",
       "bounds": {
         "x": 129,
         "y": 43,
@@ -58447,7 +58483,25 @@
         "108",
         "109",
         "110",
-        "111"
+        "111",
+        "112",
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127",
+        "128",
+        "execution-control-legend"
       ],
       "native_nodes_identical": true,
       "png_dimensions": {
@@ -58456,7 +58510,7 @@
       },
       "native_pixel_comparison": true,
       "image_pixel_comparison": true,
-      "native_labels_verified": 102,
+      "native_labels_verified": 197,
       "max_label_delta": 0,
       "layout_source": "manual draw.io revision supplied by user"
     }
