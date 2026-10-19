@@ -6,4 +6,6 @@ El proyecto se encuentra en etapa de diseño. La documentación describe las eta
 
 [Ver el índice general de documentación](docs/README.md)
 
+[Preparar el entorno compartido de compilación y simulación](docs/development_environment.md)
+
 [Ver la documentación de arquitectura](docs/architecture/system_overview.md)

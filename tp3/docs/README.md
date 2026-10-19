@@ -31,6 +31,7 @@ Después de esa lectura, los documentos de consulta permiten profundizar en un t
 | Consulta | Documento | Propósito |
 |---|---|---|
 | Alcance docente | [Consigna](consigna.md) | Define el trabajo práctico y sus obligaciones originales. |
+| Compilación y simulación | [Entorno de desarrollo](development_environment.md) | Describe la imagen Docker compartida, sus entradas fijadas, su construcción y su uso. |
 | Obligaciones y aceptación | [Requisitos](requirements.md) | Relaciona cada requisito con su fuente, aceptación y decisión de origen. |
 | Arquitectura del sistema | [Diseño FPGA consolidado](architecture/system_overview.md) | Presenta el funcionamiento e identifica los contratos especializados de etapas, control, memoria, sesión, UART, Debug y plataforma. |
 | Bloques y agrupación RTL | [Inventario de módulos](architecture/module_inventory.md) | Relaciona los bloques funcionales con módulos, archivos y ubicación en la jerarquía. |
