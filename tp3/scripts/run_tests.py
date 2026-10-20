@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 
-from verification_manifest import MANIFEST, TP3_ROOT, index_manifest, load_manifest
+from verification_manifest import MANIFEST, TP3_ROOT, case_executions, index_manifest, load_manifest
 from simulation_runner import SIMULATION_LEVELS, run_selection
 
 
@@ -58,15 +58,20 @@ def select_cases(manifest, selectors=(), select_all=False):
 
 def require_executions(manifest, selection):
     groups = {group["id"]: group for group in manifest["groups"]}
-    selected_groups = dict.fromkeys(entry.group_id for entry in selection)
-    missing = [group_id for group_id in selected_groups if not groups[group_id]["executions"]]
+    missing = [entry.case_id for entry in selection
+               if not case_executions(groups[entry.group_id], entry.case_id)]
     if missing:
         visible = ", ".join(missing[:10])
         remaining = len(missing) - 10
-        suffix = f" (y {remaining} grupos más)" if remaining > 0 else ""
+        suffix = f" (y {remaining} casos más)" if remaining > 0 else ""
         raise ValueError(f"sin ejecuciones registradas: {visible}{suffix}")
-    for group_id in selected_groups:
-        for execution in groups[group_id]["executions"]:
+    checked = set()
+    for entry in selection:
+        group_id = entry.group_id
+        for index, execution in case_executions(groups[group_id], entry.case_id):
+            if (group_id, index) in checked:
+                continue
+            checked.add((group_id, index))
             if execution["level"] not in SIMULATION_LEVELS:
                 raise ValueError(f"el nivel {execution['level']!r} de {group_id} no corresponde a una simulación Icarus")
             for source in execution["sources"]:
@@ -78,7 +83,7 @@ def print_selection(manifest, selection, output_format):
     groups = {group["id"]: group for group in manifest["groups"]}
     rows = [
         {"group_id": entry.group_id, "case_id": entry.case_id,
-         "execution_count": len(groups[entry.group_id]["executions"])}
+         "execution_count": len(case_executions(groups[entry.group_id], entry.case_id))}
         for entry in selection
     ]
     if output_format == "json":

@@ -77,6 +77,49 @@ El parámetro de elaboración `MEMORY_PROFILE` selecciona el perfil. Su valor po
 
 Esta distribución permite elaborar el top funcional y bloques en simulación sin el Clocking Wizard ni la placa. Las capacidades alternativas para las pruebas locales de aritmética se suministran al bloque probado.
 
+### Interfaz de perfiles implementada
+
+El [paquete compartido](../../rtl/system_pkg.sv) publica `memory_profile_t`,
+un identificador de elaboración de 32 bits con cuatro estados. Sus
+constantes son `system_pkg::REFERENCE` y `system_pkg::ALT_1000`, con
+representaciones internas `0` y `1`. Los consumidores utilizan esos nombres;
+los identificadores no son códigos del protocolo UART.
+
+`memory_capacity_t` es `longint unsigned` de 64 bits. Las constantes
+`REFERENCE_IMEM_CAPACITY_BYTES`, `REFERENCE_DMEM_CAPACITY_BYTES`,
+`ALT_1000_IMEM_CAPACITY_BYTES` y `ALT_1000_DMEM_CAPACITY_BYTES` conservan
+las capacidades de la tabla de perfiles.
+
+Todas las funciones de esta interfaz reciben un `memory_profile_t`:
+
+- `memory_profile_supported(profile)` indica si el perfil está admitido.
+  Los identificadores desconocidos o con `X`/`Z` se rechazan.
+- `imem_capacity_bytes(profile)` y `dmem_capacity_bytes(profile)` devuelven
+  las capacidades correspondientes y se pueden usar en expresiones
+  constantes de elaboración.
+- `memory_profile_diagnostic(profile)` devuelve una cadena vacía para los
+  perfiles admitidos o `CONFIG_UNSUPPORTED` para los demás.
+
+Un perfil no admitido devuelve capacidad cero como centinela. El consumidor
+debe comprobar `memory_profile_supported` y separar mediante `generate`
+la rama rechazada de los recursos. El cero no representa un perfil válido
+ni una sustitución por `REFERENCE`.
+
+Este fragmento muestra la selección y resolución en un consumidor:
+
+~~~systemverilog
+parameter system_pkg::memory_profile_t MEMORY_PROFILE = system_pkg::REFERENCE;
+
+localparam system_pkg::memory_capacity_t IMEM_CAPACITY_BYTES =
+    system_pkg::imem_capacity_bytes(MEMORY_PROFILE);
+localparam system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES =
+    system_pkg::dmem_capacity_bytes(MEMORY_PROFILE);
+~~~
+
+El [banco de perfiles](../../tb/system_pkg_profiles_tb.sv) muestra el guard
+de elaboración y emite el diagnóstico con `$fatal(1, ...)` en la rama
+rechazada.
+
 ## Definiciones compartidas de `system_pkg`
 
 El paquete contiene las constantes y tipos que varios módulos utilizan juntos. 
@@ -206,11 +249,44 @@ Las fórmulas de anchos y límites se verificaron mediante un modelo matemático
 - los anchos derivados son siempre suficientes;
 - cada consumidor recibe la capacidad de la memoria correspondiente.
 
-La implementación de los validadores, sus mensajes y la distinción entre `CONFIG_INVALID_CAPACITY` y `CONFIG_UNSUPPORTED` deberá verificarse cuando se implemente el RTL.
+La evidencia RTL descrita a continuación cubre la API de perfiles y su diagnóstico. La comprobación matemática anterior conserva su alcance sobre las fórmulas y capacidades.
+
+### Comprobación RTL de la API de perfiles
+
+Dentro del contenedor, desde `/workspace/tp3`:
+
+~~~bash
+bash scripts/run_tests.sh \
+  --test TEST-PLAT-001/C001 \
+  --test TEST-PLAT-001/C002 \
+  --test TEST-PLAT-001/C014
+~~~
+
+Las ejecuciones están registradas en el
+[manifiesto](../verification/cases.json). El
+[ejecutor común](../verification/test_selection.md) aplica los parámetros
+de elaboración, compila el paquete antes del banco y prepara los datos de
+cada caso. El banco SystemVerilog compara las capacidades y el diagnóstico
+con esos datos mediante el
+[intercambio de datos externos](../verification/case_data.md).
+
+Las referencias utilizadas son las capacidades de `TEST-PLAT-001/C001`
+y `C002` y el diagnóstico de `C014`. El alcance es la resolución constante,
+la representación unsigned de 64 bits, el diagnóstico y la exclusión de
+recursos en la rama rechazada. Las ejecuciones declaran el nivel `Unidad`:
+un `PASS` acredita esta comprobación local, sin acreditar la propagación
+por la jerarquía funcional ni el grupo completo `TEST-PLAT-001`. Seleccionar
+el grupo completo produce un error si alguno de sus casos carece de una
+ejecución registrada.
+
+El banco informa `PASS` o `FAIL`; para el perfil desconocido informa
+`REJECT` y termina con código `1`. El ejecutor solo aprueba ese rechazo
+si coinciden el ID, el diagnóstico de `expected` y el código registrado.
+Las instancias temporales, los datos y los ejecutables se eliminan al terminar.
 
 ### Límites
 
-Esta evidencia es documental y matemática. No sustituye las pruebas de simulación, síntesis ni hardware, y no acredita soporte físico para todas las capacidades del dominio. Aún no hay elaboración RTL. Este acuerdo no modifica el diseño de la aplicación PC ni autoriza implementación.
+La evidencia del modelo es documental y matemática. La evidencia RTL local se limita a la API de perfiles y a la protección de elaboración del banco descrito. Estas comprobaciones no acreditan síntesis, timing ni soporte físico para todas las capacidades del dominio. Este acuerdo no modifica el diseño de la aplicación PC ni autoriza implementación.
 
 [Acuerdo de configuración común](../decisions/DEC-ARCH-006.md#acuerdo-de-concreción-de-dec-arch-006--paquete-común-y-propagación-de-configuración).
 

@@ -21,8 +21,21 @@ Para solicitar la ejecución de un grupo:
 bash scripts/run_tests.sh --test TEST-PIPE-001
 ~~~
 
-Cada grupo seleccionado debe tener sus testbenches registrados en
-`executions`. Una lista vacía produce un error, sin informar aprobaciones.
+Cada caso seleccionado debe tener al menos un testbench aplicable registrado
+en `executions`. Una selección con casos sin ejecución produce un error,
+sin informar aprobaciones.
+
+Para comprobar la API de perfiles compartidos:
+
+~~~bash
+bash scripts/run_tests.sh \
+  --test TEST-PLAT-001/C001 \
+  --test TEST-PLAT-001/C002 \
+  --test TEST-PLAT-001/C014
+~~~
+
+Estas ejecuciones comprueban la API al nivel `Unidad`, con el
+[alcance descrito en configuración común](../architecture/common_configuration.md#comprobación-rtl-de-la-api-de-perfiles).
 
 Para listar un grupo completo:
 
@@ -90,7 +103,7 @@ La salida estándar contiene un único array JSON:
 ]
 ~~~
 
-`execution_count` cuenta las configuraciones declaradas; no representa
+`execution_count` cuenta las configuraciones aplicables al caso; no representa
 pruebas ejecutadas. La lista de selección es distinta del
 [documento de resultados](results.schema.json).
 
@@ -106,7 +119,7 @@ de cada caso a su grupo, coincidencia de `case_count` y existencia de las
 referencias a grupos y casos.
 
 Sin `--list`, el comando exige configuraciones de ejecución para todos los
-grupos seleccionados y comprueba que sus fuentes existan, relativas a `tp3`.
+casos seleccionados y comprueba que las fuentes aplicables existan, relativas a `tp3`.
 La ejecución por Icarus admite los niveles `Unidad`, `Integración local`,
 `CPU` y `Sistema`. Los niveles `Elaboración/revisión`, `Implementación` y
 `Placa` se rechazan: una simulación no acredita esas comprobaciones.
@@ -133,6 +146,17 @@ Cada entrada de `executions` se compila una vez por invocación, con
 orden declarado. La compilación se realiza desde `tp3`; las rutas de
 las fuentes se resuelven respecto de ese directorio.
 
+`case_ids` limita una ejecución a los casos indicados del grupo, incluidas
+sus reejecuciones. Si se omite, se aplica a todos. Los casos sin ejecución
+aplicable se detectan antes de compilar.
+
+`parameters` permite fijar parámetros de elaboración. Sus valores son
+literales enteros de SystemVerilog o identificadores, incluidas constantes
+de paquete como `system_pkg::ALT_1000`. El ejecutor genera una instancia
+temporal del `top` con esas conexiones; no interpreta expresiones de shell.
+Cada entrada conserva su propia compilación, sin compartir parámetros con
+otras configuraciones.
+
 Para cada caso, Python prepara sus datos desde el manifiesto ya validado y
 ejecuta `vvp` con `+CASE=<id>` y `+CASE_DATA=<archivo>`. El
 [formato de datos externos](case_data.md) conserva las entradas,
@@ -142,11 +166,21 @@ El testbench informa una única línea de protocolo por `stdout`:
 
 - `PASS <ID>`, acompañado por código de salida `0`.
 - `FAIL <ID> <explicación>`, acompañado por código de salida distinto de cero.
+- `REJECT <ID> <diagnóstico>`, solo para ejecuciones con `expected_rejection`.
+
+Para un rechazo esperado, `expected_rejection.exit_code` indica el código
+positivo exigido y `diagnostic_key` identifica la clave de `expected`
+que contiene el diagnóstico. El rechazo se aprueba solo si coinciden los
+tres datos: ID, diagnóstico y código de salida. Un `PASS` con código cero
+cuando se esperaba rechazo es un fallo. Un diagnóstico diferente es un
+fallo; un código inesperado o un rechazo sin expectativa registrada es un
+error. Un error de compilación, un timeout o un `$fatal` sin resultado
+explícito nunca acreditan un rechazo esperado.
 
 El ID debe coincidir con el solicitado. La ausencia de resultado, los
 resultados múltiples, un ID ajeno, un `PASS` con salida distinta de cero o
 un `FAIL` con salida cero producen `error`. Las líneas de diagnóstico que
-no empiezan con `PASS` o `FAIL` no se interpretan como resultados.
+no empiezan con `PASS`, `FAIL` o `REJECT` no se interpretan como resultados.
 
 `timeout_seconds` limita el tiempo real de cada simulación; no limita la
 compilación. Al vencer, se termina el proceso y sus hijos, y se informa

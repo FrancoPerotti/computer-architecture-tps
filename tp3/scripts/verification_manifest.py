@@ -23,6 +23,22 @@ def reject_constant(value):
     raise ValueError(f"invalid JSON number: {value}")
 
 
+def case_executions(group, case_id):
+    """Keep the declared order and compile-cache index for applicable banks."""
+    return [(index, execution) for index, execution in enumerate(group["executions"])
+            if "case_ids" not in execution or case_id in execution["case_ids"]]
+
+
+def rejection_diagnostic(execution, case):
+    rejection = execution.get("expected_rejection")
+    if rejection is None:
+        return None
+    diagnostic = case["expected"].get(rejection["diagnostic_key"])
+    if not isinstance(diagnostic, str) or not diagnostic.strip() or "\n" in diagnostic or "\r" in diagnostic:
+        raise ValueError(f"expected rejection diagnostic must be a nonempty single line in {case['id']}")
+    return diagnostic
+
+
 def index_manifest(manifest):
     """Index canonical cases and verify relationships not covered by JSON Schema."""
     groups = {}
@@ -48,6 +64,13 @@ def index_manifest(manifest):
         for reference in group.get("replay_cases", []):
             if reference not in cases:
                 raise ValueError(f"unknown replay case {reference!r} in {group['id']}")
+        available = {case["id"] for case in group["cases"]} | set(group.get("replay_cases", []))
+        for execution in group["executions"]:
+            selected = set(execution.get("case_ids", available))
+            if not selected <= available:
+                raise ValueError(f"execution references cases outside {group['id']}: {sorted(selected - available)}")
+            for case_id in selected:
+                rejection_diagnostic(execution, cases[case_id][1])
     return groups, cases
 
 

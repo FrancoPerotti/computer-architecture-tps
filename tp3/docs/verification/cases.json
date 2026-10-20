@@ -36553,7 +36553,58 @@
       "source": "platform.md#test-plat-001",
       "case_count": 15,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/case_data.sv",
+            "tb/system_pkg_profiles_tb.sv"
+          ],
+          "top": "system_pkg_profiles_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PLAT-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/case_data.sv",
+            "tb/system_pkg_profiles_tb.sv"
+          ],
+          "top": "system_pkg_profiles_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PLAT-001/C002"
+          ],
+          "parameters": {
+            "MEMORY_PROFILE": "system_pkg::ALT_1000"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/case_data.sv",
+            "tb/system_pkg_profiles_tb.sv"
+          ],
+          "top": "system_pkg_profiles_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PLAT-001/C014"
+          ],
+          "parameters": {
+            "MEMORY_PROFILE": "32'hffffffff",
+            "FORBID_RESOURCES": "1"
+          },
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PLAT-001/C001",

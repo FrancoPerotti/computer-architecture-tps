@@ -1,5 +1,5 @@
 // Infrastructure fixture; its cases are supplied by a temporary manifest.
-module runner_smoke_tb;
+module runner_smoke_tb #(parameter integer OFFSET = 0);
     import runner_smoke_pkg::*;
     tp3_case_data data();
     string mode;
@@ -44,7 +44,20 @@ module runner_smoke_tb;
             $display("FAIL %s", data.case_id);
             $fatal(1, "intentional missing explanation");
         end
-        observed = add(data.get_integer("/inputs/a"), data.get_integer("/inputs/b"));
+        if (mode == "fatal_only")
+            $fatal(1, "CONFIG_UNSUPPORTED");
+        if (mode == "reject" || mode == "reject_zero" || mode == "reject_duplicate" || mode == "reject_wrong_id") begin
+            if (mode == "reject_wrong_id")
+                $display("REJECT TEST-SMOKE-999/C999 CONFIG_UNSUPPORTED");
+            else
+                $display("REJECT %s CONFIG_UNSUPPORTED", data.case_id);
+            if (mode == "reject_duplicate")
+                $display("REJECT %s CONFIG_UNSUPPORTED", data.case_id);
+            if (mode == "reject_zero")
+                $finish;
+            $fatal(1, "CONFIG_UNSUPPORTED");
+        end
+        observed = add(data.get_integer("/inputs/a"), data.get_integer("/inputs/b")) + OFFSET;
         expected_value = data.get_integer("/expected/result");
         assert (observed === expected_value) else begin
             $display("FAIL %s expected %0d, observed %0d", data.case_id, expected_value, observed);

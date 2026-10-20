@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 from prepare_case import case_payload, write_data
-from verification_manifest import TP3_ROOT, index_manifest
+from verification_manifest import TP3_ROOT, case_executions, index_manifest, rejection_diagnostic
 
 
 SIMULATION_LEVELS = frozenset({"Unidad", "Integración local", "CPU", "Sistema"})
@@ -55,13 +55,13 @@ def diagnostics(path, label):
         print(file=sys.stderr)
 
 
-def simulation_result(stdout_path, returncode):
+def simulation_result(stdout_path, returncode, rejection=None, expected_diagnostic=None):
     """Accept exactly one protocol line, including the requested ID later."""
     markers = []
     with stdout_path.open(encoding="utf-8", errors="replace") as source:
         for line in source:
             words = line.strip().split(None, 2)
-            if words and words[0] in {"PASS", "FAIL"}:
+            if words and words[0] in {"PASS", "FAIL", "REJECT"}:
                 markers.append(words)
                 if len(markers) > 1:
                     return "error", None, "la simulación informó más de un resultado"
@@ -73,11 +73,21 @@ def simulation_result(stdout_path, returncode):
     status, case_id = marker[:2]
     if returncode < 0:
         return "error", case_id, f"la simulación terminó por señal {-returncode}"
+    if status == "REJECT":
+        if rejection is None:
+            return "error", case_id, "rechazo sin expectativa registrada"
+        if len(marker) != 3 or marker[2] != expected_diagnostic:
+            return "failed", case_id, "el diagnóstico de rechazo difiere del esperado"
+        if returncode != rejection["exit_code"]:
+            return "error", case_id, f"rechazo con código {returncode}; se esperaba {rejection['exit_code']}"
+        return "passed", case_id, None
     if status == "PASS":
         if len(marker) != 2:
             return "error", case_id, "formato inválido: se esperaba PASS <ID>"
         if returncode != 0:
             return "error", case_id, f"PASS acompañado por código de salida {returncode}"
+        if rejection is not None:
+            return "failed", case_id, "se esperaba un rechazo y la configuración fue aceptada"
         return "passed", case_id, None
     if len(marker) != 3 or not marker[2].strip():
         return "error", case_id, "FAIL requiere una explicación"
@@ -91,8 +101,21 @@ def compile_execution(execution, directory):
     binary = directory / "simulation.vvp"
     stdout = directory / "compile.stdout"
     stderr = directory / "compile.stderr"
-    command = ["iverilog", "-g2012", "-s", execution["top"], "-o", str(binary)]
+    top = execution["top"]
+    wrapper = None
+    if parameters := execution.get("parameters"):
+        # JSON Schema restricts names and expressions to identifiers and integer literals.
+        # Instance bindings preserve package-qualified constant expressions.
+        wrapper = directory / "selected_top.sv"
+        bindings = ", ".join(f".{name}({value})" for name, value in parameters.items())
+        wrapper.write_text(
+            f"module __tp3_runner_top; {top} #({bindings}) dut(); endmodule\n", encoding="utf-8",
+        )
+        top = "__tp3_runner_top"
+    command = ["iverilog", "-g2012", "-s", top, "-o", str(binary)]
     command.extend(str((TP3_ROOT / source).resolve()) for source in execution["sources"])
+    if wrapper is not None:
+        command.append(str(wrapper))
     try:
         outcome = run_process(command, TP3_ROOT, stdout, stderr)
     except OSError as error:
@@ -123,7 +146,10 @@ def run_case(manifest, case, execution, binary, directory):
     if outcome.timed_out:
         status, message = "error", f"se excedió timeout_seconds={execution['timeout_seconds']}"
     else:
-        status, reported_id, message = simulation_result(stdout, outcome.returncode)
+        status, reported_id, message = simulation_result(
+            stdout, outcome.returncode, execution.get("expected_rejection"),
+            rejection_diagnostic(execution, case),
+        )
         if reported_id is not None and reported_id != case_id:
             status, message = "error", f"el resultado corresponde a {reported_id}, se solicitó {case_id}"
     diagnostics(stderr, f"simulación {case_id}: stderr")
@@ -155,7 +181,7 @@ def run_selection(manifest, selection):
     with tempfile.TemporaryDirectory(prefix="tp3-tests-") as temporary:
         root = Path(temporary)
         for entry in selection:
-            for execution_index, execution in enumerate(groups[entry.group_id]["executions"]):
+            for execution_index, execution in case_executions(groups[entry.group_id], entry.case_id):
                 key = (entry.group_id, execution_index)
                 if key not in compiled:
                     print(f"Compilando {entry.group_id}: {execution['top']} ({execution['level']})", file=sys.stderr)

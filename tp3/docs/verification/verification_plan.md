@@ -49,6 +49,8 @@ El manifiesto `tp3-verification-cases` reúne la descripción de los casos y la 
 
 Cada entrada de `executions` describe un testbench mediante sus fuentes en orden de compilación (`sources`), relativas a `tp3`, su módulo principal (`top`), el nivel de verificación que acredita (`level`) y el límite de tiempo por caso (`timeout_seconds`). Un grupo puede contener varias entradas para comprobar sus casos con distintos testbenches o en distintos niveles. Los IDs y las expectativas permanecen definidos en `cases` y `replay_cases`.
 
+Las propiedades opcionales `case_ids` y `parameters` restringen los casos aplicables y fijan los parámetros de elaboración del banco. Sin `case_ids`, la ejecución se aplica a todos los casos del grupo, incluidas sus reejecuciones. `expected_rejection` declara un rechazo controlado mediante su código de salida positivo y la clave del diagnóstico dentro de `expected`; el diagnóstico conserva su autoridad en el caso. La carga común verifica la pertenencia de los casos y la existencia de ese diagnóstico. El [ejecutor común](test_selection.md#compilación-y-simulación) aplica estas configuraciones y valida los resultados.
+
 `timeout_seconds` es un entero positivo que expresa el tiempo real máximo de cada simulación, en segundos. El límite corresponde a cada caso individual; no incluye la compilación ni representa tiempo simulado del circuito.
 
 La lista `executions` vacía indica que el grupo no tiene una ejecución registrada. Una entrada solo referencia fuentes y testbenches existentes. La presencia de un caso en el catálogo o de una configuración de ejecución no representa un resultado aprobado.

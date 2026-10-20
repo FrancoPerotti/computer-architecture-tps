@@ -194,6 +194,46 @@
           "description": "Tiempo real máximo en segundos por caso de simulación; no incluye la compilación.",
           "type": "integer",
           "minimum": 1
+        },
+        "case_ids": {
+          "description": "Casos del grupo (incluidas sus reejecuciones) a los que se aplica el banco; si se omite, se aplica a todos.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/caseId"
+          }
+        },
+        "parameters": {
+          "description": "Parámetros de elaboración del top: identificadores, constantes de paquete o literales enteros de SystemVerilog.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_$]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^(?:[A-Za-z_][A-Za-z0-9_$]*(?:::[A-Za-z_][A-Za-z0-9_$]*)*|-?[0-9]+|'[01xXzZ]|-?[1-9][0-9]*'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+)$"
+          }
+        },
+        "expected_rejection": {
+          "description": "Rechazo controlado: exige REJECT con el ID solicitado, el diagnóstico tomado de expected y el código de salida indicado.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "exit_code",
+            "diagnostic_key"
+          ],
+          "properties": {
+            "exit_code": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 255
+            },
+            "diagnostic_key": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
         }
       }
     },

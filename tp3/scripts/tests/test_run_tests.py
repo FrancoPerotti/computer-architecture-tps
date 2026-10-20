@@ -202,7 +202,26 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(len(rows), 1357 + 151)
         self.assertEqual(len({row["case_id"] for row in rows}), 1357)
         self.assertEqual(len({(row["group_id"], row["case_id"]) for row in rows}), 1508)
-        self.assertTrue(all(row["execution_count"] == 0 for row in rows))
+        registered = [row for row in rows if row["execution_count"]]
+        self.assertEqual([row["case_id"] for row in registered], [
+            "TEST-PLAT-001/C001", "TEST-PLAT-001/C002", "TEST-PLAT-001/C014",
+        ])
+        self.assertTrue(all(row["execution_count"] == 1 for row in registered))
+
+    def test_execution_case_references_and_parameter_structure_are_validated(self):
+        execution = {"sources": ["tb/common/case_data.sv"], "top": "tp3_case_data",
+                     "level": "Unidad", "timeout_seconds": 1, "case_ids": [f"{SECOND}/C001"]}
+        self.manifest["groups"][0]["executions"] = [execution]
+        result = self.cli("--test", FIRST, "--list")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("outside", result.stderr)
+        execution["case_ids"] = [f"{FIRST}/C001"]
+        for parameters in [{"BAD)": "1"}, {"GOOD": "1); $finish;"}]:
+            with self.subTest(parameters=parameters):
+                execution["parameters"] = parameters
+                result = self.cli("--test", FIRST, "--list")
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("manifest validation failed", result.stderr)
 
 
 if __name__ == "__main__":
