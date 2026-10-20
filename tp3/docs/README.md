@@ -38,7 +38,6 @@ Después de esa lectura, los documentos de consulta permiten profundizar en un t
 | Conexiones entre bloques                 | [Interfaces](interfaces.md)                                             | Fija entradas, salidas, anchos, productores, consumidores y temporización.                                                          |
 | Comunicación PC–FPGA                     | [Protocolo UART](protocol.md)                                           | Define mensajes, bytes, códigos, secuencias, plazos y recuperación.                                                                 |
 | Control del protocolo                    | [Protocol Controller](architecture/debug/protocol_controller.md)        | Define los 11 estados, interfaces, condiciones y salidas; incluye el diagrama de recorridos.                                       |
-| Criterios del controlador                | [Diseño de la FSM](proposal_protocol_controller.md)                     | Justifica la separación de fases, los recursos y la coordinación de operaciones y respuestas.                                      |
 | Lenguaje de los programas                | [Lenguaje assembler](software/assembler_language.md)                    | Define el alcance y la sintaxis aprobados en `DEC-SYS-009`.                                                                         |
 | Implementación del assembler             | [Costo y beneficio](software/assembler_cost_benefit.md)                 | Compara el esfuerzo total de un assembler propio, GNU y bibliotecas, y recomienda una estrategia para el alcance actual.            |
 | Entradas y salidas del assembler         | [Interfaz del assembler](software/assembler_interface.md)               | Define los datos de entrada, la imagen y relación PC–línea de salida, y los diagnósticos de traducción.                             |
@@ -82,7 +81,6 @@ Localice el identificador en [Requisitos](requirements.md) y consulte su contrat
 | [Decisiones pendientes](decisions/pending_decisions.md) | Registra las decisiones de diseño todavía abiertas, sus dependencias y condiciones de cierre. |
 | [Plan de desarrollo](plan.md)                           | Organiza fases, actividades, entregables, hitos y condiciones de salida.                      |
 | [Plan de implementación](implementation_plan.md)        | Ordena los trabajos de implementación e integración y sus comprobaciones.                    |
-| [Checklist del controlador](checklist_protocol_controller.md) | Registra el avance de la documentación del controlador, el protocolo y sus referencias. |
 
 El plan establece las condiciones para pasar del diseño a la implementación. Las especificaciones describen las pruebas previstas; los modelos aportan evidencia abstracta parcial. La ejecución RTL, el cliente implementado y las pruebas físicas siguen pendientes según el [plan de verificación](verification/verification_plan.md#evidencia-disponible-y-pendiente).
 

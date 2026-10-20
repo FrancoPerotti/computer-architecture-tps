@@ -318,7 +318,7 @@ Las cotas y sus condiciones se desarrollan en [UART](../architecture/uart/uart_c
 
 #### Consecuencias y verificación
 
-La implementación debe conservar un productor y consumidor definidos para cada conexión, la independencia RX/TX, la captura con serializador libre, el orden físico de respuestas, el ciclo único STEP y la exclusión de observación. La [composición](../architecture/system_composition.md) y las [interfaces](../interfaces.md) fijan esos recorridos; el [checklist del Controller](../checklist_protocol_controller.md) organiza su contraste documental.
+La implementación debe conservar un productor y consumidor definidos para cada conexión, la independencia RX/TX, la captura con serializador libre, el orden físico de respuestas, el ciclo único STEP y la exclusión de observación. La [composición](../architecture/system_composition.md) y las [interfaces](../interfaces.md) fijan esos recorridos.
 
 Las pruebas deben cubrir solicitudes y aceptación en el mismo flanco, quinto byte de tamaño, última escritura LOAD, publicación y respuesta posterior, STEP con preparación, terminal RUN antes/en/después del último Stop de ACCEPTED, recuperación RX con terminal pendiente, prioridades RESET y reset físico en cualquier fase. También deben comprobar errores, desbordamiento, flags previos al flanco, byte estable ante TX llena y fin físico del último byte.
 
