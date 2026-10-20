@@ -1,5 +1,6 @@
 {
-  "schema": "tp3-verification-cases-v1",
+  "$schema": "./cases.schema.json",
+  "schema": "tp3-verification-cases",
   "status": "designed-not-executed",
   "date": "2026-10-16",
   "scope": "finite logical cases; replays listed separately",
@@ -189,6 +190,7 @@
       "source": "isa.md#test-isa-001",
       "case_count": 20,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-001/C001",
@@ -517,6 +519,7 @@
       "source": "isa.md#test-isa-002",
       "case_count": 37,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-002/C001",
@@ -1080,6 +1083,7 @@
       "source": "isa.md#test-isa-003",
       "case_count": 24,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-003/C001",
@@ -1448,6 +1452,7 @@
       "source": "isa.md#test-isa-004",
       "case_count": 409,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-004/C001",
@@ -13901,6 +13906,7 @@
       "source": "isa.md#test-isa-005",
       "case_count": 8,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-005/C001",
@@ -14059,6 +14065,7 @@
       "source": "isa.md#test-isa-006",
       "case_count": 10,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-006/C001",
@@ -14251,6 +14258,7 @@
       "source": "isa.md#test-isa-007",
       "case_count": 22,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-007/C001",
@@ -14637,6 +14645,7 @@
       "reuse_groups": [
         "TEST-ISA-005"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-ISA-008/C001",
@@ -14774,6 +14783,7 @@
       "source": "pipeline.md#test-pipe-001",
       "case_count": 1,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-001/C001",
@@ -14798,6 +14808,7 @@
       "source": "pipeline.md#test-pipe-002",
       "case_count": 52,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-002/C001",
@@ -15687,6 +15698,7 @@
       "source": "pipeline.md#test-pipe-003",
       "case_count": 29,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-003/C001",
@@ -16263,6 +16275,7 @@
       "source": "pipeline.md#test-pipe-004",
       "case_count": 3,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-004/C001",
@@ -16327,6 +16340,7 @@
       "source": "pipeline.md#test-pipe-005",
       "case_count": 9,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-005/C001",
@@ -16506,6 +16520,7 @@
       "source": "pipeline.md#test-pipe-006",
       "case_count": 10,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-006/C001",
@@ -16656,6 +16671,7 @@
       "source": "pipeline.md#test-pipe-007",
       "case_count": 21,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-007/C001",
@@ -17297,6 +17313,7 @@
       "source": "pipeline.md#test-pipe-008",
       "case_count": 9,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-008/C001",
@@ -17447,6 +17464,7 @@
       "source": "pipeline.md#test-pipe-009",
       "case_count": 11,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-009/C001",
@@ -17636,6 +17654,7 @@
         "TEST-PIPE-007",
         "TEST-PIPE-008"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PIPE-010/C001",
@@ -18778,6 +18797,7 @@
       "source": "memory.md#test-mem-001",
       "case_count": 18,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-001/C001",
@@ -19133,6 +19153,7 @@
       "source": "memory.md#test-mem-002",
       "case_count": 25,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-002/C001",
@@ -19566,6 +19587,7 @@
       "source": "memory.md#test-mem-003",
       "case_count": 78,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-003/C001",
@@ -21056,6 +21078,7 @@
       "source": "memory.md#test-mem-004",
       "case_count": 23,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-004/C001",
@@ -21435,6 +21458,7 @@
       "source": "memory.md#test-mem-005",
       "case_count": 3,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-005/C001",
@@ -21493,6 +21517,7 @@
       "source": "memory.md#test-mem-006",
       "case_count": 10,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-006/C001",
@@ -21637,6 +21662,7 @@
       "source": "memory.md#test-mem-007",
       "case_count": 9,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-007/C001",
@@ -21812,6 +21838,7 @@
       "source": "memory.md#test-mem-008",
       "case_count": 7,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-MEM-008/C001",
@@ -21950,6 +21977,7 @@
       "source": "execution.md#test-exec-001",
       "case_count": 153,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-001/C001",
@@ -27619,6 +27647,7 @@
       "source": "execution.md#test-exec-002",
       "case_count": 11,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-002/C001",
@@ -27973,6 +28002,7 @@
       "source": "execution.md#test-exec-003",
       "case_count": 4,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-003/C001",
@@ -28057,6 +28087,7 @@
       "source": "execution.md#test-exec-004",
       "case_count": 11,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-004/C001",
@@ -28317,6 +28348,7 @@
         "TEST-ISA-004",
         "TEST-PIPE-008"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-005/C001",
@@ -28393,6 +28425,7 @@
       "source": "execution.md#test-exec-006",
       "case_count": 7,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-006/C001",
@@ -28542,6 +28575,7 @@
       "source": "execution.md#test-exec-007",
       "case_count": 4,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-007/C001",
@@ -28678,6 +28712,7 @@
       "source": "execution.md#test-exec-008",
       "case_count": 4,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-008/C001",
@@ -28754,6 +28789,7 @@
         "TEST-EXEC-006",
         "TEST-UART-007"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-009/C001",
@@ -28867,6 +28903,7 @@
         "TEST-PIPE-002",
         "TEST-MEM-006"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-EXEC-010/C001",
@@ -29049,6 +29086,7 @@
       "source": "uart_debug.md#test-uart-001",
       "case_count": 31,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-001/C001",
@@ -29575,6 +29613,7 @@
       "source": "uart_debug.md#test-uart-002",
       "case_count": 21,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-002/C001",
@@ -30055,6 +30094,7 @@
       "source": "uart_debug.md#test-uart-003",
       "case_count": 44,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-003/C001",
@@ -31385,6 +31425,7 @@
       "source": "uart_debug.md#test-uart-004",
       "case_count": 18,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-004/C001",
@@ -31729,6 +31770,7 @@
       "source": "uart_debug.md#test-uart-005",
       "case_count": 24,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-005/C001",
@@ -32197,6 +32239,7 @@
       "source": "uart_debug.md#test-uart-006",
       "case_count": 8,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-006/C001",
@@ -32390,6 +32433,7 @@
       "source": "uart_debug.md#test-uart-007",
       "case_count": 7,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-007/C001",
@@ -34195,6 +34239,7 @@
       "source": "uart_debug.md#test-uart-008",
       "case_count": 10,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-008/C001",
@@ -34450,6 +34495,7 @@
       "source": "uart_debug.md#test-uart-009",
       "case_count": 9,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-009/C001",
@@ -34663,6 +34709,7 @@
         "TEST-UART-003",
         "TEST-UART-011"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-010/C001",
@@ -34770,6 +34817,7 @@
       "source": "uart_debug.md#test-uart-011",
       "case_count": 31,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-011/C001",
@@ -35829,6 +35877,7 @@
       "reuse_groups": [
         "TEST-UART-010"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-012/C001",
@@ -36122,6 +36171,7 @@
         "TEST-UART-006",
         "TEST-UART-011"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-013/C001",
@@ -36308,6 +36358,7 @@
       "source": "uart_debug.md#test-uart-014",
       "case_count": 10,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-UART-014/C001",
@@ -36502,6 +36553,7 @@
       "source": "platform.md#test-plat-001",
       "case_count": 15,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PLAT-001/C001",
@@ -36740,6 +36792,7 @@
       "reuse_groups": [
         "TEST-UART-013"
       ],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PLAT-002/C001",
@@ -36906,6 +36959,7 @@
       "source": "platform.md#test-plat-003",
       "case_count": 1,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PLAT-003/C001",
@@ -36931,6 +36985,7 @@
       "source": "platform.md#test-plat-004",
       "case_count": 1,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PLAT-004/C001",
@@ -36974,6 +37029,7 @@
         "TEST-UART-008",
         "TEST-UART-013"
       ],
+      "executions": [],
       "cases": [],
       "replay_cases": [
         "TEST-EXEC-004/C001",
@@ -37134,6 +37190,7 @@
       "source": "platform.md#test-plat-006",
       "case_count": 1,
       "reuse_groups": [],
+      "executions": [],
       "cases": [
         {
           "id": "TEST-PLAT-006/C001",

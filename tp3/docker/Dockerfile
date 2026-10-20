@@ -35,6 +35,28 @@ RUN set -eu; \
     install -D -m644 /tmp/iverilog-source.tar.gz /opt/iverilog/share/tp3-dev/iverilog-source.tar.gz; \
     dpkg-query -W -f='${binary:Package}\t${Version}\n' > /opt/iverilog/share/tp3-dev/build-packages.txt
 
+FROM ubuntu:24.04@sha256:a2d43bffc46670d7108bb3c0468c67c5557c4c92e83e1e34cbff1322ad1b94dc AS validator
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+COPY ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+RUN set -eu; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      python3-pip python3-venv; \
+    rm -rf /var/lib/apt/lists/*
+
+COPY check-jsonschema.requirements.txt /tmp/check-jsonschema.requirements.txt
+RUN set -eu; \
+    python3 -m venv --without-pip /opt/check-jsonschema; \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip \
+      --python /opt/check-jsonschema/bin/python install \
+      --index-url https://pypi.org/simple \
+      --require-hashes --only-binary=:all: --no-cache-dir --no-compile \
+      --requirement /tmp/check-jsonschema.requirements.txt; \
+    install -D -m644 /tmp/check-jsonschema.requirements.txt \
+      /opt/check-jsonschema/share/requirements.txt
+
 FROM ubuntu:24.04@sha256:a2d43bffc46670d7108bb3c0468c67c5557c4c92e83e1e34cbff1322ad1b94dc AS runtime
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -43,7 +65,7 @@ COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 RUN set -eu; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
-      bash coreutils findutils grep sed \
+      bash coreutils findutils grep sed python3 \
       libbz2-1.0 libreadline8t64 libstdc++6 zlib1g; \
     mkdir -p /usr/local/share/tp3-dev; \
     dpkg-query -W -f='${binary:Package}\t${Version}\n' > /usr/local/share/tp3-dev/runtime-packages.txt; \
@@ -51,14 +73,17 @@ RUN set -eu; \
 
 # Incluye también ivl, ivlpp, targets, módulos VPI y archivos de soporte.
 COPY --from=build /opt/iverilog /opt/iverilog
-ENV PATH="/opt/iverilog/bin:$PATH"
+COPY --from=validator /opt/check-jsonschema /opt/check-jsonschema
+ENV PATH="/opt/check-jsonschema/bin:/opt/iverilog/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1
 
 LABEL org.opencontainers.image.title="TP3 development environment" \
-      org.opencontainers.image.description="Ubuntu 24.04, Icarus Verilog 13.0, Bash y utilidades GNU para TP3" \
+      org.opencontainers.image.description="Ubuntu 24.04, Icarus Verilog 13.0, check-jsonschema 0.38.2, Bash y utilidades GNU para TP3" \
       org.opencontainers.image.source="https://github.com/FrancoPerotti/computer-architecture-tps" \
       org.opencontainers.image.version="ubuntu24.04-iverilog13.0" \
-      io.github.francoperotti.tp3.iverilog.revision="dfeee909ed9f20b4870dd93423156c0170c0e1ff"
+      io.github.francoperotti.tp3.iverilog.revision="dfeee909ed9f20b4870dd93423156c0170c0e1ff" \
+      io.github.francoperotti.tp3.check-jsonschema.version="0.38.2"
 
-RUN iverilog -V && vvp -V
+RUN iverilog -V && vvp -V && check-jsonschema --version
 WORKDIR /workspace/tp3
 CMD ["bash"]
