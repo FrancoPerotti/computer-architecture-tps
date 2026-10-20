@@ -8,10 +8,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+# Permite importar las herramientas al descubrir pruebas desde otro directorio.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import prepare_case
+
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SCRIPTS))
-import prepare_case  # noqa: E402 -- La ruta de scripts se resuelve antes de importar las herramientas.
 
 # Raíz del proyecto e identificador del caso sintético de transporte de datos.
 ROOT = SCRIPTS.parent

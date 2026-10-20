@@ -320,12 +320,8 @@ package system_pkg;
   localparam memory_capacity_t MAX_MEMORY_CAPACITY_BYTES = 64'h0000000100000000;
 
   // Diagnósticos que distinguen una capacidad inválida de una configuración sin soporte.
-  // Conserva la constante de texto implícita, compatible con Icarus y XSim.
-  // verilog_lint: waive explicit-parameter-storage-type
-  localparam CONFIG_INVALID_CAPACITY = "CONFIG_INVALID_CAPACITY";
-  // Conserva la constante de texto implícita, compatible con Icarus y XSim.
-  // verilog_lint: waive explicit-parameter-storage-type
-  localparam CONFIG_UNSUPPORTED      = "CONFIG_UNSUPPORTED";
+  localparam string CONFIG_INVALID_CAPACITY = "CONFIG_INVALID_CAPACITY";
+  localparam string CONFIG_UNSUPPORTED      = "CONFIG_UNSUPPORTED";
 
   // Comprueba que la capacidad esté entre 4 y 2^32 bytes y sea múltiplo de cuatro.
   function automatic bit memory_capacity_valid(input memory_capacity_t capacity);

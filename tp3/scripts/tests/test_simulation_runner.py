@@ -9,11 +9,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+# Permite importar las herramientas al descubrir pruebas desde otro directorio.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from simulation_runner import result_report, run_process
+from verification_manifest import MANIFEST
+
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SCRIPTS))
-from simulation_runner import result_report, run_process  # noqa: E402 -- La ruta de scripts se resuelve antes de importar las herramientas.
-from verification_manifest import MANIFEST  # noqa: E402 -- La ruta de scripts se resuelve antes de importar las herramientas.
 
 # Grupo y fuentes sintéticos para comprobar el ejecutor con Icarus real.
 GROUP = "TEST-SMOKE-001"

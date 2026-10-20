@@ -8,11 +8,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+# Permite importar las herramientas al descubrir pruebas desde otro directorio.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import run_tests
+from verification_manifest import MANIFEST, index_manifest
+
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SCRIPTS))
-import run_tests  # noqa: E402 -- La ruta de scripts se resuelve antes de importar las herramientas.
-from verification_manifest import MANIFEST, index_manifest  # noqa: E402 -- La ruta de scripts se resuelve antes de importar las herramientas.
 
 # Grupos sintéticos para distinguir selección canónica, reutilización y reejecución.
 FIRST = "TEST-UNIT-001"
