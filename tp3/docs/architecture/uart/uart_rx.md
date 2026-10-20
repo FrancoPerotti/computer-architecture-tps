@@ -11,7 +11,7 @@ El receptor UART convierte la señal serie que llega desde la PC en bytes de och
 
 El receptor trabaja sobre cada trama 8N1. La interpretación de esos bytes como códigos de operación, tamaños o contenido de un programa corresponde a los bloques que realizan el [protocolo](../../protocol.md). Una instrucción de 32 bits, por ejemplo, requiere recibir cuatro bytes y reconstruirlos fuera del receptor.
 
-El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--correcciones-de-diseño-de-fsm-del-tp2). La [organización en cuatro partes](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--organización-del-receptor-uart) está aprobada. El [acuerdo de estados y agrupación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-y-agrupación-del-receptor-uart) conserva los cinco estados y el comportamiento de recepción del TP2, con los recursos dentro de `uart_rx`. Los [indicadores de recepción](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--indicadores-de-recepción-uart) y la [codificación one-hot](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-receptor-uart) están aprobados. Las conexiones e integración vigentes están concretadas en [uart_core](uart_core.md); DEC-SYS-007 está cerrada en diseño documental.
+El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). La [organización en cuatro partes](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) está aprobada. El [acuerdo de estados y agrupación](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) conserva los cinco estados y el comportamiento de recepción del TP2, con los recursos dentro de `uart_rx`. Los [indicadores de recepción](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) y la [codificación one-hot](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) están aprobados. Las conexiones e integración se definen en [uart_core](uart_core.md).
 
 ## Organización
 
@@ -40,8 +40,9 @@ flowchart LR
     CTRL -->|frame_error_tick| ERROR["UART Error Reporting"]
     CTRL -->|rx_receiving| ACT["RX Activity Detection"]
     SYNC -->|rx| ACT
-    CTRL -->|rx_receiving| PROTO["Control del protocolo"]
-    ACT -->|rx_activity| PROTO
+    CTRL -->|rx_receiving| UART["uart_core"]
+    ACT -->|rx_activity| UART
+    UART -->|rx_activity| PROTO["protocol_controller"]
 ```
 
 Los contadores y el registro de desplazamiento conservan el estado de la recepción. La FSM consulta el nivel de la línea y los contadores para decidir qué acción corresponde. Luego emite controles que esos recursos consumen en el flanco ascendente del clock funcional.
@@ -101,17 +102,17 @@ La salida `data_out[7:0]` presenta el contenido de este registro. Durante la rec
 
 La lista de señales del receptor queda definida de la siguiente manera; la integración debe llevar los dos indicadores nuevos hasta la frontera UART con el control del protocolo.
 
-| Dirección | Señal              | Ancho | Origen o destino                                            |
-|-----------|--------------------|-------|-------------------------------------------------------------|
-| Entrada   | `clk`              | 1     | Clock funcional común.                                      |
-| Entrada   | `reset`            | 1     | Reset funcional común, activo alto.                         |
-| Entrada   | `rx`               | 1     | Salida del sincronizador de la línea serie.                 |
-| Entrada   | `s_tick`           | 1     | Pulso de sobremuestreo del generador de baud.               |
-| Salida    | `data_out`         | 8     | Dato para la FIFO RX, consumido con `rx_done_tick`.         |
-| Salida    | `rx_done_tick`     | 1     | Evento para guardar el byte recibido en la FIFO RX.         |
-| Salida    | `frame_error_tick` | 1     | Reporte de error de trama hacia la integración UART.        |
-| Salida    | `rx_receiving`     | 1     | Indicador de trama en curso hacia el control del protocolo. |
-| Salida    | `rx_activity`      | 1     | Indicador de actividad hacia el control del protocolo.      |
+| Dirección | Señal              | Ancho | Origen o destino                                                          |
+| --------- | ------------------ | ----- | ------------------------------------------------------------------------- |
+| Entrada   | `clk`              | 1     | Clock funcional común.                                                    |
+| Entrada   | `reset`            | 1     | Reset funcional común, activo alto.                                       |
+| Entrada   | `rx`               | 1     | Salida del sincronizador de la línea serie.                               |
+| Entrada   | `s_tick`           | 1     | Pulso de sobremuestreo del generador de baud.                             |
+| Salida    | `data_out`         | 8     | Dato para la FIFO RX, consumido con `rx_done_tick`.                       |
+| Salida    | `rx_done_tick`     | 1     | Evento para guardar el byte recibido en la FIFO RX.                       |
+| Salida    | `frame_error_tick` | 1     | Reporte de error de trama hacia la integración UART.                      |
+| Salida    | `rx_receiving`     | 1     | Indicador de trama en curso hacia `uart_core`; incluido en `rx_activity`. |
+| Salida    | `rx_activity`      | 1     | Indicador de actividad hacia el control del protocolo.                    |
 
 Los controles de acción de los contadores y del registro de recepción son internos a `uart_rx`. El reporte combinado de error de trama y desbordamiento de FIFO está definido en [uart_core](uart_core.md#reporte-de-errores).
 
@@ -125,22 +126,22 @@ El registro de estado puede cambiar en ese mismo flanco. Separar la FSM de los r
 
 ### Indicadores para el control del protocolo
 
-El consumidor de los indicadores de actividad y recepción en curso es el control del protocolo dentro de la FPGA. Ese control recibe los bytes desde la FIFO RX, interpreta las solicitudes y coordina su procesamiento. Durante una recuperación, descarta la recepción pendiente y comprueba el silencio requerido antes de admitir otra solicitud, conforme a [Descarte y silencio](../../protocol.md#descarte-y-silencio).
+`uart_core` expone los indicadores de actividad y recepción en curso. `protocol_controller` utiliza `rx_activity`, que ya incluye la trama en curso, sin una entrada separada de `rx_receiving`. Ese control recibe los bytes desde la FIFO RX, interpreta las solicitudes y coordina su procesamiento. Durante una recuperación, descarta la recepción pendiente y comprueba el silencio requerido antes de admitir otra solicitud, conforme a [Descarte y silencio](../../protocol.md#descarte-y-silencio).
 
-La UART conserva la responsabilidad de recibir y transmitir bytes. El control del protocolo debe diseñarse para los servicios del TP3; el controlador que esperaba operandos en el TP2 no cubre esos servicios. La organización interna, FSM y recursos de ese control están aprobados en [protocol_controller](../debug/protocol_controller.md).
+La UART conserva la responsabilidad de recibir y transmitir bytes. [Protocol Controller](../debug/protocol_controller.md) interpreta los comandos y coordina los servicios, con su propia FSM y sus recursos.
 
-El receptor genera las siguientes salidas informativas, aprobadas en el [acuerdo de indicadores](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--indicadores-de-recepción-uart) y expuestas por la integración UART al control del protocolo:
+El receptor genera las siguientes salidas informativas, aprobadas en el [acuerdo de indicadores](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) y expuestas por la integración UART:
 
 | Señal          | Significado                                                                | Uso por el consumidor                                                                           |
-|----------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| `rx_receiving` | Hay una trama en curso, con la FSM en `START`, `DATA` o `STOP`.            | Impide declarar la recepción libre mientras se procesa esa trama.                               |
+| -------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `rx_receiving` | Hay una trama en curso, con la FSM en `START`, `DATA` o `STOP`.            | Participa en `rx_activity`, para impedir declarar silencio mientras se procesa la trama.        |
 | `rx_activity`  | La línea sincronizada cambia de nivel, está baja o hay una trama en curso. | Reinicia el contador de silencio durante la recuperación, aunque no se produzca un byte válido. |
 
 Estas señales informan sobre la recepción; no ordenan capturas ni actualizaciones de los contadores del receptor. El temporizador de 100 ms pertenece al control del protocolo. La condición de finalización también requiere línea en reposo y FIFO RX vacía, según el contrato ya aprobado.
 
 ```mermaid
 flowchart LR
-    UART["UART"] -->|rx_activity y rx_receiving| CTRL["Control del protocolo"]
+    UART["UART"] -->|rx_activity| CTRL["protocol_controller"]
     FIFO["RX FIFO"] -->|bytes y estado de vacío| CTRL
     CTRL -->|reiniciar o dejar avanzar| TIMER["Contador de silencio"]
     TIMER -->|100 ms cumplidos| CTRL
@@ -166,16 +167,9 @@ La comparación es combinacional. Cuando cambia el nivel sincronizado, `rx_chang
 
 Durante recuperación, el control del protocolo pone el contador de silencio en cero en cada flanco con `rx_activity = 1`. Cuando `rx_activity` vale cero, permite avanzar la cuenta.
 
-Al cumplir los 100 ms, comprueba estas condiciones antes de admitir solicitudes:
-
-- Ausencia de actividad.
-- Línea en reposo.
-- `rx_receiving = 0`.
-- FIFO RX vacía.
-
 Ante actividad coincidente con la finalización de la espera, prevalece reiniciar la cuenta, conforme al requisito de silencio continuo.
 
-Fuera de reset, `rx_activity = 0` acredita que la línea sincronizada está alta, no presenta un cambio de nivel y no hay trama en curso. El consumidor puede comprobar el reposo de la línea mediante ese indicador y completar la condición con el estado de vacío de la FIFO.
+Fuera de reset, `rx_activity = 0` acredita que la línea sincronizada está alta, no presenta un cambio de nivel y no hay trama en curso. El Controller comprueba ese indicador y FIFO RX vacía al cumplir los 100 ms. La salida de recuperación también exige serializador libre y Debug liberado, según sus [condiciones de salida](../debug/protocol_controller.md#tiempos-y-prioridades).
 
 ## Estado y temporización
 
@@ -216,7 +210,7 @@ Mientras no se cumple una condición de transición, el receptor conserva el est
 
 #### Codificación del estado
 
-Se conserva la codificación one-hot del TP2. El registro de estado tiene cinco bits y cada estado legal activa exactamente uno, según el [acuerdo de codificación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-receptor-uart).
+Se conserva la codificación one-hot del TP2. El registro de estado tiene cinco bits y cada estado legal activa exactamente uno, según el [acuerdo de codificación](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx).
 
 | Estado    | Valor de `state[4:0]` |
 |-----------|-----------------------|
@@ -296,18 +290,9 @@ Cada evento se consume una vez y corresponde a un ciclo del clock funcional, con
 
 Las condiciones de trama inválida y recuperación están en [Validación de Stop y recuperación](#validación-de-stop-y-recuperación). La definición de actividad y reposo se conserva en [Indicadores para el control del protocolo](#indicadores-para-el-control-del-protocolo).
 
-## Verificación y evidencia
-
-### Alcance del siguiente paso
-
-El receptor tiene definidos su organización interna, los recursos y controles, los estados y transiciones, la codificación one-hot, los eventos y los indicadores de actividad. Los nombres, las condiciones de generación y el consumidor de los indicadores quedan definidos.
-
-El [transmisor UART](uart_tx.md), el [generador de ticks compartido](uart_baud_tick_gen.md) y las [FIFO](uart_fifo.md) tienen definidos sus diseños. Sus conexiones están definidas en [uart_core](uart_core.md), que expone `rx_activity` y `rx_receiving` directamente al control del protocolo. La organización interna de ese control está aprobada en [protocol_controller](../debug/protocol_controller.md).
-
-El control del protocolo, sus servicios y el presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
-
 ## Referencias y trazabilidad
 
+- [Integración UART](uart_core.md#presupuesto-de-integración): conexiones entre módulos y cotas de recepción y transmisión.
 - [Mapa de autoridad documental](../system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../../requirements.md): obligaciones y criterios de aceptación.
 - [Decisiones pendientes](../../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

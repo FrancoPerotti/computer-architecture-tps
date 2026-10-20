@@ -23,7 +23,7 @@
 
 ## Propósito y alcance
 
-Presenta el diseño FPGA consolidado y orienta la lectura hacia el contrato vigente de cada tema. Los acuerdos y auditorías conservan la historia; esta vista reúne el funcionamiento y sus fuentes actuales.
+Presenta el diseño FPGA consolidado y orienta la lectura hacia el contrato vigente de cada tema. Esta vista reúne el funcionamiento y sus fuentes actuales.
 
 ## El sistema
 
@@ -141,16 +141,16 @@ La imagen aceptada es no vacía, contigua desde cero, múltiplo de cuatro y dent
 
 ### Transferencia hacia la FPGA
 
-`LOAD` lleva un tamaño original de cinco bytes, validado completo antes de reducir anchos. El controlador conserva tamaño/progreso. El Loader deriva posición, guarda los primeros tres bytes y escribe la palabra al recibir el cuarto. No tiene otra FSM ni otro contador de carga.
+`LOAD` lleva un tamaño original de cinco bytes. El Controller combina el quinto byte actual con los cuatro ya registrados, valida el tamaño completo antes de reducir anchos y lo presenta en el mismo flanco de aceptación. Conserva tamaño y progreso hasta completar la carga y publicar la imagen. El Loader deriva posición, guarda los primeros tres bytes y escribe la palabra al recibir el cuarto. No tiene otra FSM ni otro contador de carga.
 
 El resultado de la carga distingue estos casos:
 
-| Evento           | Consecuencia                                                                  |
-|------------------|-------------------------------------------------------------------------------|
-| `LOAD` rechazada | Conserva la sesión previa.                                                    |
-| `LOAD` aceptada  | La FSM emite `load_start` para iniciar Loader e invalidar la imagen anterior. |
-| Aborto           | Deja `NO_IMAGE` y no restaura la imagen anterior.                             |
-| `load_ok`        | Certifica la última palabra escrita y lleva a la FSM a `PREPARING_READY`.     |
+| Evento           | Consecuencia                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| `LOAD` rechazada | Conserva la sesión previa.                                                                            |
+| `LOAD` aceptada  | La FSM emite `load_start` para iniciar Loader e invalidar la imagen anterior.                         |
+| Aborto           | Deja `NO_IMAGE` y no restaura la imagen anterior.                                                     |
+| `load_ok`        | Certifica la última escritura en el flanco de la última entrega y lleva a la FSM a `PREPARING_READY`. |
 
 Detalle: [Loader](session/loader.md), [Preparación](session/session_preparation.md) y [Protocolo](../protocol.md).
 
@@ -158,7 +158,7 @@ Detalle: [Loader](session/loader.md), [Preparación](session/session_preparation
 
 `Execution Control` contiene `Global FSM` como submódulo en `global_fsm.sv`. La selección de metadatos, los registros de causa/PC de fault, el tamaño confirmado, el contador de ciclos y la reducción de los cuatro `next.valid` se realizan localmente en `execution_control.sv`. `Pipeline Hazard Control`, `Loader` y `Session Preparation` se conectan en `processor_top`.
 
-La FSM selecciona las solicitudes `LOAD`/`RUN`/`STEP`, informa su aceptación mediante `command_accepted` y autoriza ciclos mediante `cpu_cycle_fire`. El registro de estado captura `next_state` en cada flanco positivo de `clk`; los recursos consumen los controles de la FSM para realizar sus acciones.
+El Controller genera las solicitudes `LOAD`/`RUN`/`STEP` independientemente de su aceptación. La Global FSM decide combinacionalmente esa aceptación mediante `command_accepted` y autoriza ciclos mediante `cpu_cycle_fire`; solicitud y aceptación se consumen en el mismo flanco. El registro de estado captura `next_state` en cada flanco positivo de `clk`; los recursos consumen los controles de la FSM para realizar sus acciones.
 
 La FSM global tiene 14 estados, agrupados aquí por fase para facilitar su consulta:
 
@@ -197,7 +197,7 @@ Existen siete causas legales: fetch desalineado/fuera de rango, instrucción ile
 
 ### Función de Debug
 
-Debug observa directamente el estado posterior al `STEP` o al último ciclo `RUN`. Desde ese instante hasta el Stop del último byte no hay otro ciclo CPU, `LOAD` ni preparación; UART/serialización siguen activas y RX se descarta. No se crea una copia completa del estado.
+Debug observa directamente el estado posterior al `STEP` o al último ciclo `RUN`. Desde ese instante hasta el Stop del último byte no hay otro ciclo CPU, `LOAD` ni preparación; UART/serialización siguen activas y RX se descarta. La retención incluye la espera por el fin de `RUN/ACCEPTED`, si todavía se transmite. La señal común `debug_read_select` del Controller selecciona las direcciones independientes del serializador para RF y DMEM, sin habilitar escrituras. No se crea una copia completa del estado.
 
 ### Información observable
 
@@ -215,15 +215,19 @@ La respuesta completa ocupa 230 + 5*K bytes para K bytes utilizados. [Protocolo]
 
 ## UART y comandos
 
-`uart_core` contiene `serial_input_sync`, `baud_tick_gen`, `uart_rx`, `uart_tx` y dos `fifo`. `protocol_controller` es consumidor RX y coordina comandos; `response_serializer` es productor TX. Fin físico de cada byte llega al serializador; fin físico de respuesta llega al controlador.
+`uart_core` contiene `serial_input_sync`, `baud_tick_gen`, `uart_rx`, `uart_tx` y dos `fifo`. `protocol_controller` es consumidor RX y coordina comandos; `response_serializer` es productor TX. El fin físico de cada byte llega al serializador; el fin físico de respuesta llega al Controller.
 
-Comandos: `LOAD` (0x01), `RUN` (0x02), `STEP` (0x03), `RESET` (0x04) y `CHECK_READY` (0x05). El controlador tiene 16 estados one-hot; el serializador 10; UART RX cinco y TX cuatro. Los estados/recursos/acciones privados permanecen dentro de sus módulos.
+Comandos: `LOAD` (0x01), `RUN` (0x02), `STEP` (0x03), `RESET` (0x04) y `CHECK_READY` (0x05). El Controller tiene 11 estados one-hot y salidas Mealy; el serializador tiene 10 estados, UART RX cinco y TX cuatro. Los estados, recursos y acciones privados permanecen dentro de sus módulos; la Global FSM conserva sus 14 estados de sesión y ejecución.
 
-`Protocol Controller` utiliza `load_available` para responder `CHECK_READY`, `prepare_active` para coordinar la admisión y `program_finished`/`fault_terminal` para detectar el terminal de `RUN`.
+El Controller utiliza `load_available` para responder `CHECK_READY`, `prepare_active` para coordinar la admisión y completar LOAD, `cpu_cycle_fire` para reconocer el ciclo STEP y `program_finished`/`fault_terminal` para detectar el terminal RUN. `load_ok`, `load_fail` y `prepare_done` llegan a la Global FSM dentro de `processor_top`.
 
-Controlador conserva un descriptor pendiente de respuesta; serializador conserva el activo. Timeouts de cabecera/contenido y silencio de recuperación son 100 ms; recuperación consume RX, conserva TX y no finaliza mientras hay actividad/recepción o respuesta incompleta. La exclusión Debug y prioridades `RUN`/`LOAD`/`RESET` mantienen el contrato de [Protocolo](../protocol.md).
+El Controller presenta los campos de respuesta combinacionalmente y habilita su captura con `response_start` cuando el serializador está libre, indicado por `response_busy=0`. El descriptor de 17 bits se registra en el serializador. `run_result_required` conserva la obligación de entregar el resultado final RUN hasta capturar ese resultado en el serializador o reconocer RESET. `RUN/ACCEPTED` termina físicamente antes de transmitir el resultado terminal con Debug.
 
-Detalle: [UART](uart/uart_core.md), [Controlador](debug/protocol_controller.md) y [Serializador](debug/response_serializer.md).
+La PC mantiene una operación normal en curso por vez. Durante RUN o su drenado automático, solo se admite RESET después de completar `ACCEPTED` y la preparación. Otro byte o un error UART inicia recuperación RX sin respuesta; la CPU puede continuar y la imagen se conserva. Durante las aceptaciones, la preparación, Debug y recuperación RX, los bytes se descartan. Mientras el intercambio RUN sigue abierto, un terminal ya observado tiene prioridad sobre un nuevo RESET; reconocer RESET antes de esa observación cancela el resultado RUN pendiente y sigue su aceptación hasta solicitar el reset global.
+
+Los timeouts de tamaño y contenido LOAD y el silencio de recuperación son de 100 ms. `rx_activity` incluye cambios de nivel, línea baja y trama en curso. La recuperación consume RX y conserva TX; solo termina con el silencio completo, FIFO RX vacía, serializador libre y Debug liberado. Si RUN sigue pendiente y continúa ejecutando, el Controller vuelve a esperar su terminal.
+
+Detalle: [UART](uart/uart_core.md), [Controller](debug/protocol_controller.md), [Serializador](debug/response_serializer.md) y [admisión del protocolo](../protocol.md#estado-cpu-y-fase-de-transporte).
 
 ## Software de PC
 
@@ -231,16 +235,16 @@ El contrato UART y los plazos compartidos ya están definidos. [DEC-SYS-009](../
 
 ## Autoridad documental por tema
 
-El **contrato vigente de consulta** es la especificación consolidada que se usa para implementar y verificar. La **fuente de aprobación/origen** conserva la obligación, la elección, sus motivos y sus revisiones. No es necesario reconstruir una secuencia de acuerdos para conocer el diseño actual.
+El **contrato vigente de consulta** es la especificación consolidada que se usa para implementar y verificar. La **fuente de aprobación/origen** conserva la obligación, la elección y sus motivos. No es necesario reconstruir una secuencia de acuerdos para conocer el diseño actual.
 
 Las etapas `stage_*` desarrollan los bloques de su etapa. Las reglas compartidas se consultan en los contratos transversales de esta tabla.
 
 Una discrepancia se registra y se reconcilia contra la revisión aprobada aplicable antes de implementar. La discrepancia no habilita a elegir una versión histórica sustituida ni a modificar la política aprobada.
 
-El plan organiza actividades y las auditorías son evidencia fechada. Ninguno reemplaza los contratos vigentes.
+El plan organiza actividades y no reemplaza los contratos vigentes.
 
 | Tema                                                     | Contrato vigente de consulta                                                                                                                                             | Aprobación / origen                                                                                                                                                                                                                                                                                                                                                                                  |
-|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Obligaciones y aceptación                                | [Consigna](../consigna.md), [Requisitos](../requirements.md)                                                                                                             | [Consigna](../consigna.md) y ADR vinculados en cada requisito                                                                                                                                                                                                                                                                                                                                        |
 | ISA, whitelist y controles ID                            | [stage_id](cpu/stage_id.md#decoder)                                                                                                                                      | [DEC-SYS-010](../decisions/DEC-SYS-010.md#dec-sys-010--versión-del-isa), [DEC-ARCH-004](../decisions/DEC-ARCH-004.md#dec-arch-004--instrucciones-inválidas-y-accesos-desalineados), [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards)                                                                                                                                   |
 | Campos y temporización de registros interetapa           | [cpu_pipeline](cpu/cpu_pipeline.md)                                                                                                                                      | [DEC-ARCH-003](../decisions/DEC-ARCH-003.md#dec-arch-003--política-de-hazards), [DEC-ARCH-009](../decisions/DEC-ARCH-009.md#dec-arch-009--campos-de-pipeline-expuestos-por-debug)                                                                                                                                                                                                                    |
@@ -262,8 +266,8 @@ El plan organiza actividades y las auditorías son evidencia fechada. Ninguno re
 | Serializador: recorrido y producción de bytes            | [response_serializer](debug/response_serializer.md)                                                                                                                      | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart); representación de [DEC-PROTO-001](../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo)                                                                                                                                                                                    |
 | UART: integración y unidades                             | [uart_core](uart/uart_core.md); [uart_rx](uart/uart_rx.md), [uart_tx](uart/uart_tx.md), [uart_fifo](uart/uart_fifo.md), [uart_baud_tick_gen](uart/uart_baud_tick_gen.md) | [DEC-SYS-007](../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart)                                                                                                                                                                                                                                                                                                     |
 | Bloques: entradas, salidas, anchos y conexiones          | [Interfaces](../interfaces.md)                                                                                                                                           | ADR enlazados por bloque; concreción [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias)                                                                                                                                                                                                                                                                |
-| Bloque → módulo/archivo y agrupación                     | [module_inventory](module_inventory.md)                                                                                                                                  | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06                                                                                                                                                                                                                                                     |
-| Topología, tops y aliases de integración                 | [system_composition](system_composition.md)                                                                                                                              | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias), acuerdo de jerarquía por etapas del 2026-10-06                                                                                                                                                                                                                                                     |
+| Bloque → módulo/archivo y agrupación                     | [module_inventory](module_inventory.md)                                                                                                                                  | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias)                                                                                                                                                                                                                                                                                                     |
+| Topología, tops y aliases de integración                 | [system_composition](system_composition.md)                                                                                                                              | [DEC-ARCH-006](../decisions/DEC-ARCH-006.md#dec-arch-006--implementación-física-de-las-memorias)                                                                                                                                                                                                                                                                                                     |
 | Invariantes derivados I01–I25                            | [architectural_invariants](architectural_invariants.md)                                                                                                                  | Requisitos y ADR citados en cada invariante                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Fuentes de detalle y trabajo que sigue
@@ -277,9 +281,9 @@ El plan organiza actividades y las auditorías son evidencia fechada. Ninguno re
 | Qué exige el trabajo práctico                     | [Consigna](../consigna.md) y [Requisitos](../requirements.md) |
 | Decisiones de diseño pendientes                   | [Decisiones pendientes](../decisions/pending_decisions.md)    |
 
-Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` registra por qué/cuándo se acordó y qué revisión sustituyó a otra. `pending_decisions.md` registra las decisiones de diseño todavía abiertas. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
+Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` reúne las decisiones y sus justificaciones. `pending_decisions.md` registra las decisiones de diseño todavía abiertas. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
 
-La arquitectura FPGA, su plan de verificación, los criterios de comparación y su correspondencia integral están cerrados documentalmente en FPGA-01–09. El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md). Siguen pendientes el diseño de la aplicación PC y el cierre conjunto del sistema antes de D0/M6. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
+El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md). Siguen pendientes el diseño de la aplicación PC y el cierre conjunto del sistema antes de D0/M6. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
 
 ## Referencias y trazabilidad
 

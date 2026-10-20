@@ -141,24 +141,24 @@ La agrupación tiene 42 tipos de módulo, incluido el IP; 41 archivos .sv de mó
 
 ## Recursos auxiliares y límites del inventario
 
-| Grupo o lógica auxiliar                                          | Propietario                                   | Realización conservada                                                                                            |
-|------------------------------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| TX Start Logic y combinación de errores/actividad RX             | `uart_core`                                   | Coordinación local aprobada                                                                                       |
-| Divisor/tick, FSM RX/TX, punteros y flags FIFO                   | `baud_tick_gen`, `uart_rx`, `uart_tx`, `fifo` | Recursos internos aprobados                                                                                       |
-| FSM, tamaño/progreso LOAD, timeout, descriptor y marcas/reset    | `protocol_controller`                         | Recursos internos y acciones aprobados                                                                            |
-| FSM, descriptor, byte pendiente, índices/conteo y seguimiento TX | `response_serializer`                         | Cinco grupos internos aprobados                                                                                   |
-| Registro de 24 bits y formación/escritura de palabras            | `loader`                                      | Recursos internos del bloque 9.1                                                                                  |
-| Índice de limpieza y acciones de inicialización                  | `session_preparation`                         | Recursos internos del bloque 9.2                                                                                  |
-| Bancos/bitmap y selección CPU/Debug                              | `data_memory`                                 | Una memoria y metadatos compartidos                                                                               |
-| Salidas Moore/Mealy y código externo de ocho bits                | `global_fsm`                                  | Lógica combinacional del bloque 8.1; controles de los recursos y código de observación para `Response Serializer` |
+| Grupo o lógica auxiliar                                          | Propietario                                   | Realización conservada                                                                                                                         |
+| ---------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| TX Start Logic, reporte combinado de errores y conexiones RX/TX  | `uart_core`                                   | Coordinación local; los indicadores de actividad se generan en `uart_rx`                                                                       |
+| Divisor/tick, FSM RX/TX, actividad RX, punteros y flags FIFO     | `baud_tick_gen`, `uart_rx`, `uart_tx`, `fifo` | Recursos internos de sus módulos                                                                                                               |
+| FSM, tamaño/progreso LOAD, timeout y marcas/reset                | `protocol_controller`                         | FSM one-hot de 11 estados; campos de respuesta combinacionales y marcas registradas `run_result_required`, `debug_hold` y `uart_reset_request` |
+| FSM, descriptor, byte pendiente, índices/conteo y seguimiento TX | `response_serializer`                         | FSM one-hot de 10 estados; descriptor registrado de 17 bits y recursos propios de transmisión                                                  |
+| Registro de 24 bits y formación/escritura de palabras            | `loader`                                      | Recursos internos del bloque 9.1                                                                                                               |
+| Índice de limpieza y acciones de inicialización                  | `session_preparation`                         | Recursos internos del bloque 9.2                                                                                                               |
+| Bancos/bitmap y selección CPU/Debug                              | `data_memory`                                 | Una memoria y metadatos compartidos                                                                                                            |
+| Salidas Moore/Mealy y código externo de ocho bits                | `global_fsm`                                  | Lógica combinacional del bloque 8.1; controles de los recursos y código de observación para `Response Serializer`                              |
 
 <a id="comprobación-y-pendientes"></a>
 
-## Verificación y evidencia
+## Correspondencia con los contratos
 
-Se contrastaron los 51 IDs/nombres/naturalezas con interfaces, cada bloque con su módulo/archivo y cada módulo específico con su padre. Se comprobaron nombres únicos, jerarquía sin ciclos y correspondencia con `system_composition`. La distribución comprende 23 bloques con módulo específico y 28 como lógica/estado local. Es revisión documental, no simulación RTL ni evidencia de timing.
+Cada ID funcional debe conservar su nombre, ubicación y contrato de [Interfaces](../interfaces.md). Cada módulo específico tiene un archivo y un único contenedor; la jerarquía no contiene ciclos y coincide con [Composición del sistema](system_composition.md). La distribución comprende 23 bloques con módulo específico y 28 como lógica o estado local.
 
-La organización selectiva fue aprobada el 2026-10-06, con cobertura explícita de los bloques CPU, incluido `WB Bypass Control`. La [revisión local de composición](system_composition.md#revisión-local-y-cierre-de-composición) completó conexiones/anchos/propiedad: FPGA-05/06 cerrados en diseño documental. La correspondencia uno a uno queda como alternativa evaluada, sin aprobar ni implementar. El plan de verificación, sus criterios de comparación y la correspondencia integral del diseño están cerrados documentalmente en FPGA-07/08/09.
+Este inventario fija agrupación y responsabilidades. La elaboración RTL y la comprobación de timing corresponden a la implementación.
 
 ## Referencias y trazabilidad
 

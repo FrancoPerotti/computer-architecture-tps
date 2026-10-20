@@ -11,7 +11,7 @@ El transmisor UART convierte un byte de ocho bits en una trama serie 8N1. Envía
 
 El byte procede de la FIFO TX. El control del protocolo forma las respuestas y solicita su envío mediante la integración UART; `uart_tx` realiza la transmisión de cada byte. Por ello, terminar de encolar una respuesta y terminar de transmitirla físicamente son hitos diferentes.
 
-El diseño toma como referencia [uart_tx del TP2](../../../../tp2/rtl/uart_tx.sv) y aplica el [criterio de separación entre control y acciones](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--correcciones-de-diseño-de-fsm-del-tp2). La [organización interna](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--organización-del-transmisor-uart), los [cuatro estados y su comportamiento](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-del-transmisor-uart), la [codificación one-hot](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-transmisor-uart), el [selector de salida](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selector-de-salida-del-transmisor-uart) y los [puertos del módulo](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--puertos-del-transmisor-uart) están aprobados. La descripción concreta las transiciones, acciones y eventos a partir del TP2; el recorrido de señales y la coordinación están concretados en [uart_core](uart_core.md), con DEC-SYS-007 cerrada en diseño documental.
+El diseño toma como referencia [uart_tx del TP2](../../../../tp2/rtl/uart_tx.sv) y aplica el [criterio de separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). La [organización interna](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), los [cuatro estados y su comportamiento](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), la [codificación one-hot](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), el [selector de salida](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico) y los [puertos del módulo](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico) están aprobados. La descripción concreta las transiciones, acciones y eventos a partir del TP2; el recorrido de señales y la coordinación se definen en [uart_core](uart_core.md).
 
 ## Organización
 
@@ -99,7 +99,7 @@ El protocolo requiere conocer el fin físico del byte, incluido todo el Stop. Es
 
 ### Frontera de uart_tx
 
-Se conservan los puertos del transmisor del TP2 para la configuración de ocho bits, conforme al [acuerdo de puertos](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--puertos-del-transmisor-uart). Las señales de acción entre la FSM y los recursos permanecen internas, mientras la integración UART aporta el byte y la solicitud de envío y consume las salidas de estado.
+Se conservan los puertos del transmisor del TP2 para la configuración de ocho bits, conforme al [acuerdo de puertos](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). Las señales de acción entre la FSM y los recursos permanecen internas, mientras la integración UART aporta el byte y la solicitud de envío y consume las salidas de estado.
 
 | Dirección | Señal          | Ancho | Origen o destino                                                                              |
 |-----------|----------------|-------|-----------------------------------------------------------------------------------------------|
@@ -130,7 +130,7 @@ La configuración aprobada es 19200 baud nominales, ocho bits de datos, sin pari
 
 ### Estados y transiciones
 
-Se conservan los cuatro estados del TP2, conforme al [acuerdo de estados](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-del-transmisor-uart). Cada uno identifica la parte de la trama que se está transmitiendo.
+Se conservan los cuatro estados del TP2, conforme al [acuerdo de estados](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). Cada uno identifica la parte de la trama que se está transmitiendo.
 
 | Estado  | Función                                                                      |
 |---------|------------------------------------------------------------------------------|
@@ -153,7 +153,7 @@ Mientras no se cumple una transición, se conserva el estado actual. El reset ll
 
 #### Codificación del estado
 
-Se conserva la codificación one-hot del TP2, conforme al [acuerdo de codificación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-transmisor-uart). El registro `state[3:0]` utiliza cuatro bits y cada estado legal activa exactamente uno.
+Se conserva la codificación one-hot del TP2, conforme al [acuerdo de codificación](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). El registro `state[3:0]` utiliza cuatro bits y cada estado legal activa exactamente uno.
 
 | Estado  | Valor de `state[3:0]` |
 |---------|-----------------------|
@@ -204,7 +204,7 @@ Fuera de reset, `tx_busy` vale uno en `START`, `DATA` y `STOP` y cero en `IDLE`.
 
 #### Selección del nivel de salida
 
-La tabla de acciones utiliza las siguientes alternativas de `tx_output_select[1:0]`, conforme al [acuerdo del selector](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selector-de-salida-del-transmisor-uart):
+La tabla de acciones utiliza las siguientes alternativas de `tx_output_select[1:0]`, conforme al [acuerdo del selector](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico):
 
 | Código | Selección     | Valor que prepara la lógica de salida                                  |
 |--------|---------------|------------------------------------------------------------------------|
@@ -238,18 +238,9 @@ Los contadores y datos de entrada a las decisiones corresponden al instante prev
 
 Las condiciones de finalización física y conservación de la salida se describen en [Stop completo y evento de finalización](#stop-completo-y-evento-de-finalización) y [Selección del nivel de salida](#selección-del-nivel-de-salida).
 
-## Verificación y evidencia
-
-### Alcance del siguiente paso
-
-La organización, los cuatro estados, su codificación one-hot, las transiciones, los controles, el selector, los eventos y los puertos del transmisor quedan definidos.
-
-El [generador de ticks compartido](uart_baud_tick_gen.md) y las [FIFO RX y TX](uart_fifo.md) tienen definidos sus diseños. [uart_core](uart_core.md) conecta el byte y la solicitud de envío, retira el byte de FIFO al terminar Stop y expone `tx_done_tick` al control del protocolo sin registro adicional.
-
-El control del protocolo, sus servicios, seguimiento y presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
-
 ## Referencias y trazabilidad
 
+- [Integración UART](uart_core.md#presupuesto-de-integración): conexiones entre módulos y cotas de recepción y transmisión.
 - [Mapa de autoridad documental](../system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../../requirements.md): obligaciones y criterios de aceptación.
 - [Decisiones pendientes](../../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

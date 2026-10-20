@@ -9,7 +9,7 @@
 
 El generador produce la referencia temporal compartida por el receptor y el transmisor UART. Su salida `s_tick` es un pulso de un ciclo del clock funcional, utilizado para avanzar las cuentas que miden los intervalos de muestreo y transmisión.
 
-Se conserva el módulo [baud_tick_gen del TP2](../../../../tp2/rtl/baud_tick_gen.sv), adaptado a la frecuencia funcional del TP3 según el [acuerdo del generador](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--generador-de-ticks-uart). La configuración utiliza 50 MHz, 19200 baud nominales y factor 16. Receptor y transmisor reciben la misma salida del generador.
+Se conserva el módulo [baud_tick_gen del TP2](../../../../tp2/rtl/baud_tick_gen.sv), adaptado a la frecuencia funcional del TP3 según el [acuerdo del generador](../../decisions/DEC-SYS-007.md#configuración-física-y-ticks). La configuración utiliza 50 MHz, 19200 baud nominales y factor 16. Receptor y transmisor reciben la misma salida del generador.
 
 ## Organización
 
@@ -101,16 +101,12 @@ La cuenta permanece activa entre tramas, durante `HOLD` de la CPU y durante las 
 
 Los límites del divisor y la frecuencia resultante están en [Divisor y frecuencia efectiva](#divisor-y-frecuencia-efectiva). La relación entre pulso, cuenta y reinicio se precisa en [Cuenta y generación del pulso](#cuenta-y-generación-del-pulso) y [Clock y reset](#clock-y-reset).
 
-## Verificación y evidencia
-
-### Alcance del siguiente paso
-
-Quedan definidos el divisor, la cuenta, el pulso registrado, la relación con sus consumidores, el reset y los puertos del generador. Las [FIFO RX y TX](uart_fifo.md) tienen definido su funcionamiento. [uart_core](uart_core.md) conecta una única instancia del generador a RX y TX; el control del protocolo y su coordinación con los servicios quedaron aprobados y comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración).
-
-El diseño del clock de plataforma está aprobado en [plataforma](../platform/platform_reference.md). La generación de la IP y la validación temporal del enlace en simulación y FPGA corresponden a implementación y permanecen pendientes. La revisión de este documento no acredita esas pruebas. DEC-SYS-007 está aprobada; el trabajo continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc).
+La generación de la IP de clock y la validación del enlace en simulación y FPGA corresponden a la implementación.
 
 ## Referencias y trazabilidad
 
+- [Plataforma](../platform/platform_reference.md): generación y distribución del clock funcional.
+- [Integración UART](uart_core.md#presupuesto-de-integración): conexiones entre módulos y cotas de recepción y transmisión.
 - [Mapa de autoridad documental](../system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../../requirements.md): obligaciones y criterios de aceptación.
 - [Decisiones pendientes](../../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

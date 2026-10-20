@@ -1,7 +1,7 @@
 # TP3 — Matriz de cobertura de verificación
 
 - **Tipo:** matriz de verificación.
-- **Estado documental:** matriz vigente del plan de verificación; pruebas diseñadas, sin ejecutar.
+- **Estado documental:** matriz vigente; ejecución RTL pendiente.
 - **Base:** requisitos y contratos vigentes.
 
 ## Propósito y alcance
@@ -19,6 +19,8 @@ El alcance comprende:
 Cada prueba se describe una sola vez, incluso cuando cubre varios requisitos. Las filas correspondientes enlazan con esa descripción y con todas sus variantes. La fuente primaria orienta la lectura de cada contrato; los contratos adicionales continúan siendo válidos y se consideran tanto en el requisito como en las pruebas.
 
 La matriz también incluye comprobaciones documentales, de timing y de placa. Estas aportan evidencia sobre esos aspectos, pero no se consideran simulaciones funcionales de la CPU.
+
+Las filas de hardware indican el estado de sus pruebas RTL. Los [modelos abstractos y cálculos reproducibles](../../tools/verification/README.md) aportan evidencia parcial de control y recuperación, sin aprobar esos requisitos. Los niveles y pendientes se distinguen en el [plan](verification_plan.md#evidencia-disponible-y-pendiente).
 
 ## Requisitos
 
@@ -208,8 +210,8 @@ La matriz también incluye comprobaciones documentales, de timing y de placa. Es
 | [REQ-SW-007](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc)                                    | Fuera del alcance de la verificación de hardware.                                                                                   | PC/aplicación | Pospuesto; no cubierto por este entregable.  |
 | [REQ-SW-008](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc)                                    | Fuera del alcance de la verificación de hardware.                                                                                   | PC/aplicación | Pospuesto; no cubierto por este entregable.  |
 | [REQ-SW-009](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc)                                    | Fuera del alcance de la verificación de hardware.                                                                                   | PC/aplicación | Pospuesto; no cubierto por este entregable.  |
-| [REQ-SW-010](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc)                                    | Fuera del alcance de la verificación de hardware.                                                                                   | PC/aplicación | Pospuesto; no cubierto por este entregable.  |
-| [REQ-SW-011](../requirements.md#8-software-de-pc) | [Diseño PC pendiente](../decisions/pending_decisions.md#7-software-de-pc)                                    | Fuera del alcance de la verificación de hardware.                                                                                   | PC/aplicación | Pospuesto; no cubierto por este entregable.  |
+| [REQ-SW-010](../requirements.md#8-software-de-pc) | [Orden de intercambios](../protocol.md#orden-de-los-intercambios), [recuperación PC](../protocol.md#perder-una-respuesta-o-conexión) | `RecoveryChecks`: preservación del snapshot anterior, consulta y RESET único; presentación y operación de la aplicación pendientes. | Modelo PC / aplicación | Evidencia abstracta parcial; cliente pendiente. |
+| [REQ-SW-011](../requirements.md#8-software-de-pc) | [Esperas y recuperación](../protocol.md#esperas-y-recuperación-desde-pc) | `RecoveryChecks`: silencios, prefijos fragmentados, bytes pendientes, aceptación fallida y cruces con RUN. Recuperación LOAD y transporte real pendientes. | Modelo PC / transporte | Evidencia abstracta parcial; cliente pendiente. |
 | [REQ-SW-012](../requirements.md#8-software-de-pc) | [DEC-SYS-001](../decisions/DEC-SYS-001.md) y [lenguaje](../software/assembler_language.md)                   | [TEST-ASM-001/C033](../software/assembler_tests.md#test-asm-001), [TEST-ASM-005/C003](../software/assembler_tests.md#test-asm-005). | PC/assembler  | Catálogo de software aprobado; sin ejecutar. |
 
 ### TIM
@@ -304,10 +306,26 @@ La revisión estructural TEST-PLAT-003 aplica a todos los bloques; los enlaces s
 | Wrapper, Clocking Wizard, reset_sync                                                          | [TEST-PLAT-002](platform.md#test-plat-002), [TEST-PLAT-004](platform.md#test-plat-004), [TEST-UART-013](uart_debug.md#test-uart-013)                                                                                                                                               |
 | serial_input_sync, baud_tick_gen, uart_rx, uart_tx                                            | [TEST-UART-001](uart_debug.md#test-uart-001), [TEST-PLAT-002](platform.md#test-plat-002)                                                                                                                                                                                           |
 | FIFO RX/TX y TX Start Logic                                                                   | [TEST-UART-002](uart_debug.md#test-uart-002), [TEST-UART-009](uart_debug.md#test-uart-009)                                                                                                                                                                                         |
-| protocol_controller: comandos, tamaño/contador LOAD, timeout, recuperación y descriptor       | [TEST-UART-003](uart_debug.md#test-uart-003), [TEST-UART-004](uart_debug.md#test-uart-004), [TEST-UART-005](uart_debug.md#test-uart-005), [TEST-UART-006](uart_debug.md#test-uart-006), [TEST-UART-012](uart_debug.md#test-uart-012), [TEST-UART-013](uart_debug.md#test-uart-013) |
-| response_serializer: selección, RF/latches, conteo/lista, byte pendiente y seguimiento físico | [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-008](uart_debug.md#test-uart-008), [TEST-UART-009](uart_debug.md#test-uart-009), [TEST-UART-014](uart_debug.md#test-uart-014)                                                                                             |
-| Indicadores de sesión y aceptación UART, código Debug, selectores RF/DMEM y exclusión         | [TEST-EXEC-001](execution.md#test-exec-001), [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-011](uart_debug.md#test-uart-011)                                                                                                                                            |
+| protocol_controller: comandos, tamaño/progreso LOAD, recuperación y captura de respuestas | [TEST-UART-003](uart_debug.md#test-uart-003), [TEST-UART-004](uart_debug.md#test-uart-004), [TEST-UART-005](uart_debug.md#test-uart-005), [TEST-UART-006](uart_debug.md#test-uart-006), [TEST-UART-009](uart_debug.md#test-uart-009), [TEST-UART-010](uart_debug.md#test-uart-010), [TEST-UART-012](uart_debug.md#test-uart-012), [TEST-UART-013](uart_debug.md#test-uart-013) |
+| response_serializer: descriptor registrado, RF/latches, conteo/lista y seguimiento físico | [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-008](uart_debug.md#test-uart-008), [TEST-UART-009](uart_debug.md#test-uart-009), [TEST-UART-014](uart_debug.md#test-uart-014) |
+| Indicadores de sesión, aceptación UART, código Debug y selección común `debug_read_select` RF/DMEM | [TEST-EXEC-001](execution.md#test-exec-001), [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-011](uart_debug.md#test-uart-011) |
 | Tops, etapas y fronteras de system_top/uart_core/processor_top                                | [TEST-PIPE-001](pipeline.md#test-pipe-001), [TEST-MEM-005](memory.md#test-mem-005), [TEST-UART-004](uart_debug.md#test-uart-004), [TEST-UART-010](uart_debug.md#test-uart-010), [TEST-UART-014](uart_debug.md#test-uart-014), [TEST-PLAT-003](platform.md#test-plat-003)           |
+
+### Reglas del protocolo y coordinación
+
+Los [contratos del Controller](../architecture/debug/protocol_controller.md) y el [protocolo](../protocol.md) fijan estas reglas. Las referencias reutilizan variantes del catálogo; no agregan casos.
+
+| Regla o frontera | Comprobaciones |
+| ---------------- | -------------- |
+| Admisión por fase; durante RUN efectivo solo RESET, con descarte sin respuesta del resto | [UART-003](uart_debug.md#test-uart-003), [UART-006](uart_debug.md#test-uart-006), [UART-013](uart_debug.md#test-uart-013) |
+| Quinto byte LOAD, última escritura, publicación tras preparación y DONE un clock después | [UART-004](uart_debug.md#test-uart-004), [UART-005](uart_debug.md#test-uart-005), [EXEC-002](execution.md#test-exec-002) |
+| Un ciclo STEP, inmediato o tras preparación; captura y retención en ese flanco | [UART-010](uart_debug.md#test-uart-010), [EXEC-003](execution.md#test-exec-003), [EXEC-007](execution.md#test-exec-007) |
+| Captura directa con serializador libre y productor único; ACCEPTED antes de terminal RUN, entregado una vez | [UART-009](uart_debug.md#test-uart-009), [UART-012](uart_debug.md#test-uart-012) |
+| Observación y selección común RF/DMEM retenidas hasta el último Stop | [UART-007](uart_debug.md#test-uart-007), [UART-008](uart_debug.md#test-uart-008), [UART-011](uart_debug.md#test-uart-011), [UART-012](uart_debug.md#test-uart-012) |
+| Prioridad terminal/RESET y petición de reset registrada después de ACCEPTED físico | [UART-012](uart_debug.md#test-uart-012), [UART-013](uart_debug.md#test-uart-013), [EXEC-008](execution.md#test-exec-008) |
+| Recuperación por silencio, coordinación con Debug y retorno a WAIT_RUN_END si RUN continúa | [UART-006](uart_debug.md#test-uart-006), [UART-012](uart_debug.md#test-uart-012) |
+
+La recuperación PC de REQ-SW-010/011 se contrasta mediante `RecoveryChecks` en los [modelos](../../tools/verification/README.md): consulta válida sin reset, segundo silencio con datos, fragmentación, bytes pendientes, RESET confirmado o fallido y terminal que gana. La prueba del cliente implementado sigue pendiente, incluida la recuperación separada de LOAD; no hay reenvío automático de LOAD/RUN/STEP.
 
 ## Invariantes
 
@@ -324,7 +342,7 @@ Los commits se identifican por instancia dinámica, no solo PC. Las pruebas arti
 | [I07](../architecture/architectural_invariants.md) | [TEST-PIPE-002](pipeline.md#test-pipe-002), [TEST-PIPE-009](pipeline.md#test-pipe-009)                                                                                          |
 | [I08](../architecture/architectural_invariants.md) | [TEST-EXEC-009](execution.md#test-exec-009)                                                                                                                                     |
 | [I09](../architecture/architectural_invariants.md) | [TEST-EXEC-003](execution.md#test-exec-003), [TEST-PIPE-009](pipeline.md#test-pipe-009)                                                                                         |
-| [I10](../architecture/architectural_invariants.md) | [TEST-EXEC-003](execution.md#test-exec-003), [TEST-EXEC-007](execution.md#test-exec-007)                                                                                        |
+| [I10](../architecture/architectural_invariants.md) | [TEST-EXEC-003](execution.md#test-exec-003), [TEST-EXEC-007](execution.md#test-exec-007), [TEST-UART-010](uart_debug.md#test-uart-010) |
 | [I11](../architecture/architectural_invariants.md) | [TEST-PIPE-007](pipeline.md#test-pipe-007)                                                                                                                                      |
 | [I12](../architecture/architectural_invariants.md) | [TEST-PIPE-007](pipeline.md#test-pipe-007), [TEST-EXEC-005](execution.md#test-exec-005)                                                                                         |
 | [I13](../architecture/architectural_invariants.md) | [TEST-PIPE-007](pipeline.md#test-pipe-007)                                                                                                                                      |
@@ -334,12 +352,12 @@ Los commits se identifican por instancia dinámica, no solo PC. Las pruebas arti
 | [I17](../architecture/architectural_invariants.md) | [TEST-PIPE-008](pipeline.md#test-pipe-008), [TEST-PIPE-010](pipeline.md#test-pipe-010)                                                                                          |
 | [I18](../architecture/architectural_invariants.md) | [TEST-PIPE-005](pipeline.md#test-pipe-005), [TEST-PIPE-007](pipeline.md#test-pipe-007), [TEST-PIPE-008](pipeline.md#test-pipe-008), [TEST-EXEC-004](execution.md#test-exec-004) |
 | [I19](../architecture/architectural_invariants.md) | [TEST-EXEC-005](execution.md#test-exec-005), [TEST-EXEC-006](execution.md#test-exec-006)                                                                                        |
-| [I20](../architecture/architectural_invariants.md) | [TEST-PLAT-003](platform.md#test-plat-003), [TEST-EXEC-001](execution.md#test-exec-001)                                                                                         |
+| [I20](../architecture/architectural_invariants.md) | [TEST-PLAT-003](platform.md#test-plat-003), [TEST-EXEC-001](execution.md#test-exec-001), [TEST-UART-014](uart_debug.md#test-uart-014) |
 | [I21](../architecture/architectural_invariants.md) | [TEST-EXEC-005](execution.md#test-exec-005), [TEST-EXEC-006](execution.md#test-exec-006)                                                                                        |
 | [I22](../architecture/architectural_invariants.md) | [TEST-EXEC-004](execution.md#test-exec-004), [TEST-EXEC-006](execution.md#test-exec-006), [TEST-EXEC-007](execution.md#test-exec-007)                                           |
 | [I23](../architecture/architectural_invariants.md) | [TEST-MEM-003](memory.md#test-mem-003), [TEST-MEM-004](memory.md#test-mem-004)                                                                                                  |
-| [I24](../architecture/architectural_invariants.md) | [TEST-MEM-008](memory.md#test-mem-008), [TEST-UART-004](uart_debug.md#test-uart-004), [TEST-UART-005](uart_debug.md#test-uart-005)                                              |
-| [I25](../architecture/architectural_invariants.md) | [TEST-EXEC-007](execution.md#test-exec-007), [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-011](uart_debug.md#test-uart-011)                                         |
+| [I24](../architecture/architectural_invariants.md) | [TEST-MEM-008](memory.md#test-mem-008), [TEST-EXEC-002](execution.md#test-exec-002), [TEST-UART-004](uart_debug.md#test-uart-004), [TEST-UART-005](uart_debug.md#test-uart-005) |
+| [I25](../architecture/architectural_invariants.md) | [TEST-EXEC-007](execution.md#test-exec-007), [TEST-UART-007](uart_debug.md#test-uart-007), [TEST-UART-009](uart_debug.md#test-uart-009), [TEST-UART-011](uart_debug.md#test-uart-011), [TEST-UART-012](uart_debug.md#test-uart-012) |
 
 ## Perfiles y riesgos críticos
 
@@ -352,7 +370,7 @@ Los commits se identifican por instancia dinámica, no solo PC. Las pruebas arti
 | Aislamiento de sesión                | MEM-008, EXEC-002/007/010, UART-004/005/011.                                                                                                                                                                                                                                                                  |
 | Consumo RX con TX ocupada            | UART-009/014; El retiro y descarte de RX no dependen de los flags de TX.                                                                                                                                                                                                                                      |
 | Observación y final físico           | UART-007/008/009/011/012/013.                                                                                                                                                                                                                                                                                 |
-| Inyección artificial                 | PIPE-004/007; MEM-003/004/006; EXEC-001/009 y fila FSM local de EXEC-006; fixtures UART-002/003/005/007/008/009/012 y reconocimiento local durante drains en UART-013. No acredita alcanzabilidad normal.                                                                                                     |
+| Inyección artificial | PIPE-004/007; MEM-003/004/006; EXEC-001/009 y fila FSM local de EXEC-006; fixtures UART-002/003/005/007/008/009/011/012/013. La entrega RX por clock y las ventanas forzadas no acreditan alcanzabilidad mediante UART físico. |
 
 ### Secuencias obligatorias del acuerdo 47
 

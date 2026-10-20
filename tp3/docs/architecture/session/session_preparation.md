@@ -17,7 +17,6 @@
 - [Estado y temporización](#estado-y-temporización)
 - [Ejemplo completo de preparación](#ejemplo-completo-de-preparación)
 - [Invariantes y condiciones de borde](#invariantes-y-condiciones-de-borde)
-- [Verificación del modelo funcional](#verificación-del-modelo-funcional)
 - [Referencias y trazabilidad](#referencias-y-trazabilidad)
 
 <a id="estado-y-propósito"></a>
@@ -324,15 +323,14 @@ El registro de progreso no constituye una nueva FSM. Las fases `PREPARING_READY`
 
 ### Señales de salida
 
-| Señal                | Destino                                                                           | Significado                                                                                                        |
-|----------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `prepare_init`       | PC, `Register File`, registros interetapa y contador local de `Execution Control` | Inicializa los recursos en el primer flanco.                                                                       |
-| `prepare_dmem_clear` | Metadata de DMEM                                                                  | Autoriza limpiar una sola marca en el flanco actual.                                                               |
-| `prepare_dmem_addr`  | Metadata de DMEM                                                                  | Dirección de byte de la marca seleccionada.                                                                        |
-| `prepare_done`       | `Global FSM`, mediante `Execution Control`                                        | Indica que terminó el mantenimiento, para decidir publicación o primer ciclo.                                      |
-| `prepare_done`       | `Protocol Controller`, por `processor_top` y `system_top`                         | Permite reconocer la finalización de LOAD o, junto con `cpu_cycle_fire`, el primer ciclo de STEP tras preparación. |
+| Señal                | Destino                                                                           | Significado                                                                   |
+| -------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `prepare_init`       | PC, `Register File`, registros interetapa y contador local de `Execution Control` | Inicializa los recursos en el primer flanco.                                  |
+| `prepare_dmem_clear` | Metadata de DMEM                                                                  | Autoriza limpiar una sola marca en el flanco actual.                          |
+| `prepare_dmem_addr`  | Metadata de DMEM                                                                  | Dirección de byte de la marca seleccionada.                                   |
+| `prepare_done`       | `Global FSM`, mediante `Execution Control`                                        | Indica que terminó el mantenimiento, para decidir publicación o primer ciclo. |
 
-Las señales de control tienen un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits.
+Las señales de control tienen un bit; `prepare_dmem_addr` tiene `BYTE_ADDRESS_WIDTH` bits. `prepare_done` permanece dentro de `processor_top` y llega a la Global FSM por `execution_control`. El Controller observa las salidas `prepare_active` y `cpu_cycle_fire` de ese control de ejecución para continuar LOAD o STEP, respectivamente.
 
 Las condiciones combinacionales completas son:
 
@@ -455,6 +453,8 @@ La preparación restablece el estado de CPU y DMEM. Cuando `prepare_done=1`, la 
 - No ejecuta un ciclo de CPU en ese flanco.
 - Conserva `cycle_count=0`.
 
+Después del flanco de publicación, `prepare_active` queda en cero. El Controller, que espera en `WAIT_PREP_DONE`, entrega `LOAD/DONE` al serializador en el siguiente flanco funcional, 20 ns después a 50 MHz.
+
 De esta manera, el programa solo queda disponible para iniciar una sesión después de que el estado inicial ya está completo. La diferencia entre escritura de IMEM y publicación de imagen se desarrolla en [Loader](loader.md) y en [Arquitectura de memoria](../memory/memory_architecture.md#carga-y-publicación-de-una-imagen).
 
 ### Después de `RUN`: `PREPARING_RUN`
@@ -475,6 +475,8 @@ La FSM activa `cpu_cycle_fire=1` e `image_publish=0`, y captura `RUNNING`. La CP
 ### Después de `STEP`: `PREPARING_STEP`
 
 La inicialización es exactamente la misma que en `PREPARING_RUN`. Al consumir `prepare_done`, la FSM activa `cpu_cycle_fire=1` e `image_publish=0`, y captura `STEPPING`. Se ejecuta el primer ciclo efectivo solicitado y `cycle_count` pasa de cero a uno.
+
+El Controller reconoce ese único ciclo mediante `cpu_cycle_fire` en `WAIT_STEP_END`; en ese flanco activa la retención Debug y el serializador captura `STEP/DONE`. La observación corresponde al estado posterior al ciclo.
 
 El control global determina posteriormente el ritmo de ejecución paso a paso. **La limpieza de DMEM no consume órdenes `STEP` como si fueran ciclos de instrucciones**: los flancos de preparación no son ciclos efectivos de la CPU.
 
@@ -639,18 +641,6 @@ El comportamiento de preparación debe conservar estas propiedades:
 10. **Sin propagación de trabajo anterior:** las entradas inválidas del pipeline y los candidatos de fetch antiguos no producen efectos en la nueva sesión.
 11. **Reset prioritario:** reset suprime las acciones de preparación sin exigir un clear masivo de DMEM.
 12. **Sin control duplicado:** no se agrega una FSM privada ni un registro extra de modo o finalización.
-
-## Verificación del modelo funcional
-
-El comportamiento del recorrido se contrastó mediante un modelo abstracto para capacidades de **4, 28, 32, 36, 1000 y 2048 bytes**. La comprobación de la organización utilizada por esta especificación cubrió:
-
-- Inicialización local de RF una sola vez al comenzar la preparación.
-- Limpieza de cada marca de DMEM exactamente una vez.
-- Representación correcta del límite inclusivo en `prepare_index`.
-- Activación de `prepare_done` después de la última escritura, sin mantenimiento concurrente.
-- Duración de `C+1` flancos, incluidos 2049 para `REFERENCE` y 1001 para `ALT_1000`.
-
-Esta evidencia corresponde a un **modelo funcional abstracto**. No demuestra inferencia de recursos FPGA, simulación RTL, utilización de área ni cierre de timing. Las conexiones con recepción `LOAD`, control global y presupuestos UART se relacionan con [Loader](loader.md) y [Núcleo UART](../uart/uart_core.md#presupuesto-de-integración).
 
 ## Referencias y trazabilidad
 

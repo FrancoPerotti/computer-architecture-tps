@@ -156,7 +156,7 @@ Durante un load, `EX/MEM.ex_result` contiene la dirección efectiva que EX calcu
 flowchart LR
     EXMEM[EX/MEM.ex_result] -->|Address| RMUX[Selección CPU / Debug]
     DBG[debug_dmem_addr] --> RMUX
-    SEL[dmem_debug_select] --> RMUX
+    SEL[debug_read_select] --> RMUX
     RMUX -->|read_addr| DMEM[Data Memory: fila y marcas]
     DMEM -->|mem_read_data, 32 bits| LOAD[Load Select / Extend]
     EXMEM -->|bits bajos de dirección| LOAD
@@ -249,10 +249,10 @@ Esta comprobación es una protección del backend de memoria, **no una segunda d
 
 ### Selección de dirección
 
-CPU y Debug utilizan el mismo camino de lectura. `dmem_debug_select`, generado por `protocol_controller`, controla qué dirección se presenta como `read_addr`:
+CPU y Debug utilizan el mismo camino de lectura. `debug_read_select`, generado por `protocol_controller`, controla qué dirección se presenta como `read_addr`:
 
-| `dmem_debug_select` | Dirección consultada                        | Consumidor                 |
-|---------------------|---------------------------------------------|----------------------------|
+| `debug_read_select` | Dirección consultada                        | Consumidor                 |
+| ------------------- | ------------------------------------------- | -------------------------- |
 | `0`                 | dirección CPU (`EX/MEM.ex_result`)          | Camino de load en MEM.     |
 | `1`                 | `debug_dmem_addr` del `response_serializer` | Observación Debug de DMEM. |
 
@@ -480,14 +480,14 @@ En cambio, durante `HOLD`, no existe ciclo efectivo (`cpu_cycle_fire=0`) y no se
 La interfaz funcional de DMEM es:
 
 | Señal / elemento      | Ancho                | Origen o destino                     | Función                                             |
-|-----------------------|----------------------|--------------------------------------|-----------------------------------------------------|
+| --------------------- | -------------------- | ------------------------------------ | --------------------------------------------------- |
 | `clk`                 | 1 bit                | Reloj común                          | Flanco de escritura de stores y marcas.             |
 | Reset funcional       | 1 bit                | Control global                       | Inhibe actualizaciones y aborta la sesión activa.   |
 | `Address`             | 32 bits              | `EX/MEM.ex_result`                   | Dirección CPU de lectura o de escritura.            |
 | `Write Data`          | 32 bits              | `EX/MEM.store_data`                  | Valor que almacena un store.                        |
 | `write_enable`        | 1 bit                | `DMEM Write Control.dmem_store_fire` | Autoriza el store síncrono.                         |
 | `byte_enable`         | 4 bits               | `DMEM Write Control`                 | Máscara relativa a los bytes bajos de `Write Data`. |
-| `dmem_debug_select`   | 1 bit                | `protocol_controller`                | Selecciona la dirección de lectura CPU o Debug.     |
+| `debug_read_select`   | 1 bit                | `protocol_controller`                | Selecciona la dirección de lectura CPU o Debug.     |
 | `debug_dmem_addr`     | `BYTE_ADDRESS_WIDTH` | `response_serializer`                | Dirección de byte consultada por Debug.             |
 | `prepare_dmem_clear`  | 1 bit                | `Session Preparation`                | Habilita la limpieza de una marca.                  |
 | `prepare_dmem_addr`   | `BYTE_ADDRESS_WIDTH` | `Session Preparation`                | Dirección de la marca que se limpia.                |

@@ -323,9 +323,9 @@ Durante drenado paso a paso seguirá siendo necesario un `STEP` por ciclo. La ca
 
 Un sistema preparado para ejecutar o una espera de `STEP` podrá continuar desde el mismo estado CPU cuando el control autorice legalmente el siguiente ciclo. El tiempo físico transcurrido en `HOLD` no alterará la semántica del programa.
 
-El acuerdo 44 de `DEC-ARCH-003` fija `RESET` > `LOAD` > `STEP` > `RUN` entre comandos elegibles. `LOAD` se admite desde `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED` y `FAULT`; se rechaza en `RUNNING` y drenado AUTO sin inhibir el ciclo vigente. `RUN`/`STEP` aceptados en `FINISHED`/`FAULT` preparan una sesión nueva y limpia con la imagen confirmada mediante `PREPARING_RUN`/`STEP`; no reanudan la sesión terminal. Sin imagen no se autoriza ejecución. Respuestas, payload y framing UART siguen pendientes.
+El acuerdo 44 de `DEC-ARCH-003` fija `RESET` > `LOAD` > `STEP` > `RUN` entre comandos elegibles. `LOAD` se admite desde `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED` y `FAULT`; se rechaza en `RUNNING` y drenado AUTO sin inhibir el ciclo vigente. `RUN`/`STEP` aceptados en `FINISHED`/`FAULT` preparan una sesión nueva y limpia con la imagen confirmada mediante `PREPARING_RUN`/`STEP`; no reanudan la sesión terminal. Sin imagen no se autoriza ejecución. Las respuestas y el formato UART se definen en el [protocolo](../protocol.md); la elegibilidad interna no implica admisión UART durante el intercambio en curso.
 
-Esta semántica no introduce comandos PAUSE o RESUME ni decide si podrá solicitarse pausa o captura durante `RUN`. La reprogramación no comenzará directamente durante un contexto continuo; su respuesta de rechazo y la recuperación previa necesaria permanecen para `DEC-PROTO-002` y las restantes subdecisiones de control.
+Esta semántica no introduce comandos PAUSE o RESUME. El [protocolo UART](../protocol.md#estado-cpu-y-fase-de-transporte) admite durante `RUN` efectivo únicamente `RESET`, tras completar `ACCEPTED` y la preparación. Un byte `LOAD`, `RUN`, `STEP`, `CHECK_READY` o desconocido en esa fase inicia recuperación RX sin respuesta ni solicitud a la Global FSM; la ejecución y la imagen vigente se conservan. La reprogramación requiere recuperar primero el transporte y completar el intercambio en curso o aplicar reset.
 
 #### 6. Semántica de ciclo lógico
 
@@ -341,7 +341,7 @@ AND modo de ejecución autoriza un ciclo
 -> exactamente un ciclo lógico de CPU
 ```
 
-Una solicitud preliminar de `RUN` o `STEP` no será por sí sola un ciclo. Si coincide con `reset`, `LOAD` aceptado o una condición no ejecutable, no existirá evento final, no avanzará el CPU y no incrementará el contador. La respuesta de control o protocolo ante una solicitud suprimida, rechazada o ilegal permanece pendiente.
+Una solicitud preliminar de `RUN` o `STEP` no será por sí sola un ciclo. Si coincide con `reset`, `LOAD` aceptado o una condición no ejecutable, no existirá evento final, no avanzará el CPU y no incrementará el contador. Las respuestas a solicitudes UART admitidas y el descarte de tráfico fuera de fase se definen en el [protocolo](../protocol.md#estado-cpu-y-fase-de-transporte).
 
 La ausencia del evento final tampoco implicará siempre `HOLD`: `reset`, `LOAD` aceptado y preparación efectiva aplican sus clases superiores. Las escrituras efectivas de preparación inhiben ciclos CPU. `prepare_active` identifica el modo; en `PREPARING_RUN`/`STEP` con `prepare_done`, la preparación ya terminó antes del flanco y no hay writes de mantenimiento/Loader concurrentes: ese flanco ejecuta el primer ciclo CPU y deja `cycle_count=1`. `PREPARING_READY` con `prepare_done` publica la sesión y queda `READY` sin ciclo CPU. Solo cuando no exista una acción superior se aplicará la semántica de `HOLD` acordada.
 
@@ -410,7 +410,7 @@ Un `STEP` solo solicitará un ciclo si es válido, fue aceptado y el sistema se 
 
 Si el ciclo contiene stall, bubble, flush o invalidación, el `STEP` igualmente quedará consumido. En drenado bajo control paso a paso no existirá autorización automática: cada ciclo requerirá un nuevo `STEP`.
 
-Una solicitud `STEP` suprimida, rechazada o coincidente con `reset` o `LOAD` aceptado/preparación efectiva con writes no generará un evento CPU ni quedará diferida implícitamente para ejecutarse al retirar la prioridad. Su respuesta concreta permanecerá para control y protocolo.
+Una solicitud `STEP` suprimida, rechazada o coincidente con `reset` o `LOAD` aceptado/preparación efectiva con writes no generará un evento CPU ni quedará diferida implícitamente para ejecutarse al retirar la prioridad. La respuesta externa, cuando el transporte admite el comando, se define en el [protocolo](../protocol.md#estado-cpu-y-fase-de-transporte).
 
 ##### HOLD y condición del pipeline
 
@@ -600,13 +600,13 @@ La invalidación inmediata de la imagen anterior y la prioridad sobre el avance 
 
 Durante el contexto continuo, la CPU conservará el flujo funcional de IMEM. El loader no obtendrá grant ni write enable y no podrá comenzar una nueva imagen. `LOAD` no constituirá un mecanismo implícito para pausar, abortar o recuperar `RUN`.
 
-La recuperación mínima durante `RUN` será el `reset` global definido por el acuerdo consolidado siguiente. Protocolo podrá añadir otras intervenciones, pero `LOAD` no asumirá implícitamente esa función.
+La recuperación mínima durante `RUN` será el `reset` global definido por el acuerdo consolidado siguiente. El [protocolo UART](../protocol.md#reset-desde-pc) concreta su invocación desde PC; `LOAD` no asume implícitamente esa función.
 
 ##### Fronteras delegadas a protocolo y control
 
-La respuesta concreta de rechazo, el tratamiento del payload y el framing pertenecerán a protocolo y control. El acuerdo 44 de `DEC-ARCH-003` fija `RESET` > `LOAD` > `STEP` > `RUN` entre comandos elegibles. `LOAD` se admite desde `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED` y `FAULT`; se rechaza en `RUNNING` y drenado AUTO sin inhibir el ciclo vigente. `RUN`/`STEP` aceptados en `FINISHED`/`FAULT` preparan una sesión nueva y limpia con la imagen confirmada mediante `PREPARING_RUN`/`STEP`; no reanudan la sesión terminal. Sin imagen no se autoriza ejecución. Respuestas, payload y framing UART siguen pendientes.
+El [control global](../architecture/session/execution_control.md#tabla-de-transiciones) fija `RESET` > `LOAD` > `STEP` > `RUN` entre comandos elegibles. Una solicitud interna `LOAD` es elegible desde `NO_IMAGE`, `READY`, `STEPPING`, `HALT_DRAIN_STEP`, `FAULT_DRAIN_STEP`, `FINISHED` y `FAULT`; se rechaza en `RUNNING` y drenado AUTO sin inhibir el ciclo vigente. `RUN`/`STEP` aceptados en `FINISHED`/`FAULT` preparan una sesión nueva y limpia con la imagen confirmada mediante `PREPARING_RUN`/`STEP`; no reanudan la sesión terminal. Sin imagen no se autoriza ejecución. Esta elegibilidad interna no obliga al Controller a interpretar esos comandos UART: el [protocolo](../protocol.md#tráfico-fuera-de-fase-durante-run) define el descarte y la recuperación sin respuesta durante `RUN`.
 
-La elegibilidad interna ya está cerrada por el acuerdo 44; protocolo solo definirá su transporte y respuestas externas.
+La elegibilidad interna y la admisión UART son contratos distintos: la Global FSM decide sobre las solicitudes que recibe; el Controller decide qué bytes interpreta y cuándo presenta una solicitud.
 
 #### 12. Reset global como recuperación mínima durante RUN
 
@@ -625,7 +625,7 @@ La recuperación por `reset` constituirá un aborto externo, no `FINISHED` ni fi
 
 `LOAD` continuará rechazándose mientras exista contexto continuo y no será una vía implícita de aborto. Después del `reset` será necesaria una nueva solicitud `LOAD` válida; una solicitud rechazada durante `RUN` no quedará latente.
 
-Esta garantía satisface la recuperación mínima exigida por `REQ-EXEC-015`. `DEC-PROTO-002` podrá decidir si `reset` se expone adicionalmente mediante UART o si incorpora otros comandos de recuperación, pausa o aborto, sin reemplazar esta vía mínima.
+Esta garantía satisface la recuperación mínima exigida por `REQ-EXEC-015`. [DEC-PROTO-002](DEC-PROTO-002.md) expone `RESET` por UART. Su reconocimiento depende de la fase de transporte: si el terminal `RUN` ya es observable, prevalece y se descarta ese byte; si se reconoce `RESET` antes, se cancela la respuesta terminal pendiente, se transmite `RESET/ACCEPTED` y después de su último Stop se solicita el reset global. La CPU puede seguir ejecutando hasta que se aplique el reset. El botón físico conserva su acción directa mediante el [acondicionamiento de reset](../architecture/platform/reset_integration.md).
 
 ##### Realización RTL no prescrita
 

@@ -254,9 +254,9 @@ Esto mantiene la atomicidad observable de `SB`, `SH` y `SW`.
 
 Una imagen parcialmente recibida nunca se vuelve ejecutable.
 
-| ID    | Propiedad                                        | Criterio verificable                                                                                                                                                                                         |
-|-------|--------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `I24` | Una imagen cargada parcialmente nunca se ejecuta | `LOAD` aceptado coloca el tamaño confirmado en cero. `load_ok` conserva todavía el tamaño como información privada. La publicación ocurre solamente después de la preparación completa en `PREPARING_READY`. |
+| ID    | Propiedad                                        | Criterio verificable                                                                                                                                                                                                   |
+| ----- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `I24` | Una imagen cargada parcialmente nunca se ejecuta | `LOAD` aceptado coloca el tamaño confirmado en cero. `load_ok` certifica la última escritura IMEM, pero no publica la imagen. La publicación ocurre solamente después de la preparación completa en `PREPARING_READY`. |
 
 `PREPARING_RUN` y `PREPARING_STEP` reutilizan una imagen ya confirmada. En ambos casos, `prepare_done=1` significa que el estado inicial está listo antes del flanco y que no existe una escritura de preparación concurrente con el primer ciclo de la CPU.
 
@@ -271,6 +271,8 @@ El estado observado externamente corresponde a una única situación lógica del
 | ID    | Propiedad                                                  | Criterio verificable                                                                                                                                                                                                                                          |
 |-------|------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `I25` | La observación mantiene coherencia e aislamiento de sesión | Un snapshot no mezcla estados pertenecientes a momentos distintos ni presenta residuos de una sesión anterior como actuales. Los bytes no escritos de DMEM se observan como cero lógico y los agentes incompatibles no usan simultáneamente el mismo recurso. |
+
+Sin reset global, el Controller conserva la exclusión desde el estado posterior al ciclo observado hasta el último Stop Debug, incluida la espera por el fin de `RUN/ACCEPTED`. Su señal común `debug_read_select` selecciona las direcciones independientes del serializador para RF y DMEM; no habilita escrituras ni permite preparación concurrente.
 
 El significado y la coherencia observables se describen en [Arquitectura de Debug](debug/debug_architecture.md); la representación externa concreta está aprobada en `protocol.md`. Esta invariante fija únicamente la coherencia que esa representación conserva.
 
@@ -300,6 +302,8 @@ next_state
 
 El control conserva además estas relaciones:
 
+- Las solicitudes del Controller se generan independientemente de `command_accepted`; solicitud y aceptación se consumen en el mismo flanco.
+- El Controller presenta campos de respuesta combinacionales al serializador. `response_busy` depende del estado del serializador, sin realimentación combinacional desde `response_start`.
 - WB→ID puede depender de `cpu_cycle_fire`.
 - Los candidatos de ID dependen de la palabra de instrucción y de sus flags, no del valor después del bypass.
 - DMEM combinacional alimenta el resultado de MEM, no un consumidor EX del mismo ciclo.

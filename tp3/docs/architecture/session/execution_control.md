@@ -147,9 +147,9 @@ loaded_image_size_bytes = 0
 
 En esa situación `RUN` y `STEP` no pueden iniciar una ejecución porque todavía no hay programa válido.
 
-Una carga aceptada lleva al sistema a `LOADING`. Durante esta fase el `Loader` recibe y escribe la nueva imagen en IMEM. El progreso de esa carga pertenece al `Loader` y todavía no forma parte del estado ejecutable de la CPU.
+Una carga aceptada lleva al sistema a `LOADING`. Durante esta fase el `Loader` recibe y escribe la nueva imagen en IMEM. El Controller conserva el tamaño y el progreso de recepción; el Loader ensambla las palabras y escribe IMEM. Ese progreso todavía no forma parte del estado ejecutable de la CPU.
 
-Si la carga falla, el sistema vuelve a `NO_IMAGE`. Si termina correctamente, aparece `load_ok` y comienza una fase distinta: la imagen ya fue recibida, pero todavía falta preparar el estado inicial de la primera sesión.
+Si la carga se aborta, Loader genera `load_fail` y el sistema vuelve a `NO_IMAGE`. La última entrega válida completa la última escritura IMEM y activa `load_ok` en el mismo flanco. La Global FSM inicia entonces una fase distinta: la imagen ya fue recibida, pero todavía falta preparar el estado inicial de la primera sesión.
 
 Ese estado es `PREPARING_READY`.
 
@@ -362,14 +362,14 @@ La FSM indica ese inicio mediante `load_start=1` y comunica la aceptación del c
 
 El reset puede originarse en la orden UART `RESET` o en el botón físico, pero ambas fuentes terminan convergiendo en la misma solicitud global:
 
-- **Orden UART:** sigue el [intercambio externo aprobado](../../decisions/DEC-PROTO-002.md#acuerdo-parcial-de-dec-proto-002--intercambio-reset-con-aceptación-antes-del-reset-global). El sistema primero transmite completa la respuesta `[RESET][ACCEPTED]` y recién después genera la solicitud global, cuando finaliza físicamente el segundo byte, incluido su bit de Stop.
+- **Orden UART:** sigue el [intercambio externo aprobado](../../protocol.md#reset-desde-pc). El sistema primero transmite completa la respuesta `[RESET][ACCEPTED]` y recién después genera la solicitud global, cuando finaliza físicamente el segundo byte, incluido su bit de Stop.
 - **Botón físico:** genera la solicitud directamente, sin esperar una respuesta UART.
 
 La solicitud resultante conserva el acondicionamiento y la prioridad funcional definidos para el reset. Las fuentes se reúnen antes del `reset_sync` del TP2, que utiliza dos etapas y entrega una salida común para el consumo funcional síncrono. No se agrega un estado global de espera UART; la integración completa se describe en [Reset Integration](../platform/reset_integration.md).
 
 Durante una respuesta automática de Debug, la capa de protocolo descarta los datos recibidos y no reconoce una orden UART `RESET`. La PC debe esperar a que termine la respuesta completa antes de enviar esa orden. El botón físico, en cambio, puede solicitar reset inmediatamente y abortar la transmisión en curso.
 
-La exclusión de nuevas solicitudes UART comienza en el instante postciclo observado y se mantiene hasta que termina físicamente el último byte de la respuesta, incluido su bit de Stop. Esta exclusión no cambia la prioridad del reset funcional ni agrega estados a la FSM global. Véase el [acuerdo de envío exclusivo](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--envío-exclusivo-de-debug-con-estado-retenido).
+La exclusión de nuevas solicitudes UART comienza en el instante postciclo observado y se mantiene hasta que termina físicamente el último byte de la respuesta, incluido su bit de Stop. Esta exclusión no cambia la prioridad del reset funcional ni agrega estados a la FSM global. Véase el [acuerdo de envío exclusivo](../../protocol.md#enviar-una-observación-coherente).
 
 Desde cualquier estado lleva al sistema a:
 
@@ -444,6 +444,8 @@ Esta interfaz corresponde a `global_fsm`, no a todos los puertos de `execution_c
 | `fault_confirm`       |     1 | OR local de `act_ex_fault` y `act_id_fault` | Indicar confirmación de fault ya seleccionada por el control del pipeline. |
 | `pipeline_empty_next` |     1 | Lógica local sobre los cuatro `next.valid`  | Indicar si el ciclo deja el pipeline vacío.                                |
 
+`load_ok`, `load_fail` y `prepare_done` llegan a la Global FSM por conexiones internas de `processor_top`, mediante `execution_control`. El Controller recibe `prepare_active` y `cpu_cycle_fire` para coordinar sus continuaciones.
+
 `load_ok` y `load_fail` son excluyentes. También lo son `halt_confirm` y `fault_confirm`, porque proceden de acciones mutuamente excluyentes. Las tablas de transiciones respetan estas restricciones de los productores.
 
 ### Salidas de la FSM
@@ -474,7 +476,7 @@ Los círculos del recuadro de estados elegibles para `LOAD` son referencias a es
 
 [Abrir la versión SVG](../../diagrams/generated/fsm_global.drawio.svg) · [Fuente editable de draw.io](../../diagrams/generated/fsm_global.drawio.xml).
 
-La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla de estados de [FSM global](#fsm-global). No impone la codificación física de la FSM. Véase el [acuerdo de estados](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state).
+La representación externa de estos estados en Debug está aprobada: un byte con códigos 0x00–0x0D en el mismo orden de la tabla de estados de [FSM global](#fsm-global). No impone la codificación física de la FSM. Véase el [acuerdo de estados](../../protocol.md#global_state).
 
 La modalidad `AUTO`/`STEP` del drain forma parte de `global_state`; no existe un registro `drain_auto`. El tipo terminal también está representado por el estado; no existe un flip-flop separado `terminal_kind`.
 
@@ -532,7 +534,7 @@ La elegibilidad es:
 
 La selección se realiza en la lógica combinacional de la FSM teniendo en cuenta condiciones del estado actual. Las solicitudes que no interesan al estado se ignoran.
 
-`protocol_controller` presenta una sola solicitud por ciclo y conoce el comando que está atendiendo. La FSM responde con `command_accepted=1` si la acepta. Con una solicitud presente, cero significa rechazo; sin solicitud, cero no constituye un evento.
+`protocol_controller` genera una sola solicitud por ciclo, independientemente de `command_accepted`. La FSM decide combinacionalmente la aceptación; ambas FSM consumen solicitud y aceptación en el mismo flanco. Con una solicitud presente, cero significa rechazo; sin solicitud, cero no constituye un evento. Para LOAD, el Controller valida el tamaño completo con el quinto byte actual y presenta ese tamaño al Loader en el flanco de aceptación. La admisión de bytes UART y la coordinación de respuestas pertenecen al Controller; no agregan estados a la Global FSM.
 
 ---
 
@@ -738,7 +740,7 @@ image_publish =
 
 En `PREPARING_RUN` o `PREPARING_STEP` conserva el tamaño confirmado y autoriza el primer ciclo. `prepare_active` todavía puede valer uno en ese flanco porque refleja el estado actual; las habilitaciones efectivas de inicialización y limpieza ya valen cero cuando `prepare_done=1`.
 
-Para `LOAD` en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../../decisions/DEC-PROTO-003.md#acuerdo-parcial-de-dec-proto-003--presupuesto-máximo-de-preparación-de-sesión) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en `READY`. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
+Para `LOAD` en los perfiles `REFERENCE` y `ALT_1000`, el [presupuesto aprobado de preparación](../../protocol.md#preparación-y-commit) es como máximo 1 ms (50.000 clocks de 50 MHz), desde la entrada a `PREPARING_READY` hasta su commit en `READY`. Un perfil futuro deberá revisar su presupuesto antes de utilizarse.
 
 ---
 

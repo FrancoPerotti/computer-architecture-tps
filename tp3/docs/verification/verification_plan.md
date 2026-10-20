@@ -1,9 +1,8 @@
 # TP3 — Plan de verificación de hardware
 
 - **Tipo:** plan de verificación.
-- **Estado documental:** plan cerrado documentalmente; pruebas diseñadas, sin ejecutar.
-- **Fecha:** 2026-10-15.
-- **Revisión de interfaces de ejecución:** 2026-10-16.
+- **Estado documental:** plan vigente; ejecución RTL pendiente.
+- **Fecha:** 2026-10-20.
 
 ## Propósito y alcance
 
@@ -41,7 +40,9 @@ Cada sección identifica el motivo de sus casos mediante los requisitos y las fu
 
 Un mismo vector puede compartirse entre una prueba unitaria y una prueba de integración cuando ambas comprueban la misma semántica. La integración agrega casos propios cuando es necesario observar temporización, ownership o efectos que una prueba unitaria aislada no puede demostrar. Cambiar únicamente el registro o la dirección dentro de una misma clase no justifica, por sí solo, un caso nuevo.
 
-El [manifiesto](cases.json) enumera 1357 variantes canónicas en 56 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
+El [manifiesto](cases.json) enumera 1363 variantes canónicas en 56 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
+
+Las [reglas del protocolo y su coordinación](coverage.md#reglas-del-protocolo-y-coordinación) relacionan admisión, carga, respuestas, Debug y reset con esos casos. La política de recuperación PC complementa la verificación de hardware; su modelo no acredita una aplicación implementada.
 
 ## Convenciones comunes
 
@@ -50,6 +51,10 @@ El [manifiesto](cases.json) enumera 1357 variantes canónicas en 56 grupos. Las 
 Cada `TEST-<área>-NNN` identifica una especificación de prueba. Cuando esa especificación tiene variantes enumeradas, cada una se identifica como `TEST-<área>-NNN/Cnnn` y se ejecuta y registra por separado. El sufijo identifica la variante; la cantidad del grupo se obtiene de su enumeración en el manifiesto.
 
 «Aprobar» una especificación exige aprobar todas sus variantes; una ejecución representativa no alcanza. Los pasos y las observaciones que pertenecen a una variante no crean casos adicionales. Para ampliar una familia de casos hay que revisar el catálogo y el manifiesto.
+
+En el manifiesto, cada variante se vincula mediante `group.source` con su especificación; `origins` identifica la tabla o familia que la define. Los encabezados **Requisitos** y **Contratos** de esa especificación completan la trazabilidad. Los requisitos corresponden al conjunto de variantes: una variante aislada no acredita todos los requisitos del grupo. Las reejecuciones de placa conservan el ID y la expectativa del caso original.
+
+`kind` identifica la forma del estímulo, por ejemplo vector, programa o fixture. Su legalidad y alcance se precisan en **Tipo de estímulo** y en las condiciones de la variante. Un opcode inválido o tráfico fuera de fase puede recibirse por UART real; un fixture local que fuerza estado o entrega bytes por clock no demuestra alcanzabilidad mediante tramas 8N1.
 
 ### Estado inicial común
 
@@ -116,6 +121,7 @@ El plan identifica expresamente los casos artificiales o de frontera relacionado
 - PCs desalineados inyectados.
 - El wrap del contador.
 - Las colisiones de mantenimiento.
+- Las ventanas del Controller y las entregas RX por clock, sin exigir que una trama 8N1 quepa en esa ventana.
 
 ## Cómo leer las pruebas
 
@@ -143,10 +149,12 @@ Los niveles indican hasta dónde llega cada comprobación: comienzan en un bloqu
 
 | Nivel                | Alcance de la observación                                | Evidencia requerida al implementar                                                                                                 |
 |----------------------|----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| Modelo abstracto     | Contratos de control, recuperación PC y cotas calculadas. | Fuentes, comando, perfiles, estímulos, expectativas y eventos de interfaz inyectados.                                               |
 | Unidad               | Un bloque o una lógica local aislada.                    | Entradas, salidas y efectos registrados por variante.                                                                              |
 | Integración local    | Una etapa o una combinación de bloques.                  | Datos y señales de control en las fronteras, incluidos preflanco y postflanco.                                                     |
 | CPU                  | `processor_top`, sin el enlace físico.                   | Commits, RF/DMEM, PC y latches, acciones, faults y ciclos efectivos.                                                               |
 | Sistema              | UART, protocolo, CPU y serializador conectados.          | Bytes 8N1 reales y estado interno correlacionado. Inyectar bytes de FIFO sirve para pruebas locales, pero no reemplaza este nivel. |
+| Cliente PC           | Aplicación y transporte, incluidos buffers y deadlines.   | Recuperación con lecturas fragmentadas, datos pendientes, desconexiones y respuestas perdidas o inválidas; registro de operaciones enviadas. |
 | Elaboración/revisión | Tipos, parámetros, interfaces y dependencias del diseño. | Log de build o checklist con los archivos, objetos y versión examinada.                                                            |
 | Implementación       | Vivado y netlist del perfil `REFERENCE`.                 | Recursos, clocks, constraints, DRC/CDC y timing post-route.                                                                        |
 | Placa                | Basys 3 funcionando con un bitstream.                    | Capturas UART, programa/binario, perfil, bitstream y resultados de aceptación.                                                     |
@@ -154,7 +162,9 @@ Los niveles indican hasta dónde llega cada comprobación: comienzan en un bloqu
 Al implementar, cada registro de evidencia debe incluir:
 
 - El ID y la variante de la prueba.
+- El nivel de evidencia y el nombre del estímulo cuando se trate de un modelo fuera del catálogo RTL.
 - La revisión del código utilizado.
+- El comando y la versión de las herramientas utilizadas.
 - El perfil de memoria.
 - El estímulo aplicado.
 - El resultado esperado.
@@ -164,6 +174,12 @@ Al implementar, cada registro de evidencia debe incluir:
 Un timeout del banco de pruebas representa un fallo o una limitación de la prueba. Nunca puede interpretarse como `FINISHED` del procesador.
 
 No se exige implementar físicamente `ALT_1000` ni utilizar arrays gigantes para verificar la aritmética de `2^32`.
+
+### Evidencia disponible y pendiente
+
+Los [modelos ejecutables](../../tools/verification/README.md) comprueban recorridos de las 11 fases del Controller y las 14 Global, recuperación PC fuera de LOAD, integridad del catálogo y presupuestos de ambos perfiles. Se suministran eventos de CPU, fin de preparación y último Stop; el reloj PC es virtual. No se ejecutan instrucciones ni se produce el cuerpo Debug. El comando y los límites se documentan junto a las fuentes.
+
+La ejecución de los casos contra RTL, las tramas 8N1, el análisis de lazos y timing de la implementación, la placa y el cliente real siguen pendientes. El cliente debe comprobar también la recuperación propia de LOAD. Ningún resultado abstracto aprueba por sí solo un requisito completo ni una variante del catálogo RTL.
 
 ## Resultados esperados y criterios de comparación
 
@@ -238,7 +254,7 @@ Los testbenches se organizarán por nivel y por los IDs de este catálogo, con u
 - `tb/cpu` para `processor_top` sin enlace físico.
 - `tb/system` para la integración completa con UART, protocolo y serializador.
 
-Este documento define la organización, los vectores y los resultados que deben conservarse; no crea testbenches, scripts de regresión ni carpetas vacías. Cuando se implementen las pruebas, los vectores y sus resultados deberán ser reproducibles. La programación de la verificación y del hardware se realiza después del cierre global establecido en el [plan](../plan.md#16-fase-13--implementación-rtl-incremental).
+Los modelos abstractos tienen el comando reproducible indicado arriba. Los testbenches RTL, sus interfaces y comandos de regresión se concretarán al implementar, conservando los vectores y expectativas del catálogo. La programación de la verificación y del hardware se realiza después del cierre global establecido en el [plan](../plan.md#16-fase-13--implementación-rtl-incremental).
 
 ## Condición de entrega y cierre
 

@@ -166,7 +166,7 @@ IMEM[3] = 0x00
 
 y el fetch reconstruirá `0x00A585B3`.
 
-Esta semántica no impone bancos, byte enables ni una organización física específica. Tampoco decide el orden de bytes del protocolo UART: `DEC-PROTO-001` podrá elegir cualquier orden inequívoco, pero loader y software deberán transformarlo para preservar la representación arquitectónica little-endian.
+Esta semántica no impone bancos, byte enables ni una organización física específica. El orden de bytes del transporte se define en [DEC-PROTO-001](DEC-PROTO-001.md) y en el [protocolo UART](../protocol.md#campos-binarios-y-orden-de-bytes); Loader y software deben preservar la representación arquitectónica little-endian.
 
 #### Validez y commit de la imagen ejecutable
 
@@ -213,7 +213,7 @@ loaded_image_size_bytes = 0
 
 El loader escribirá instrucciones secuencialmente desde cero. El progreso de recepción o escritura será estado separado del tamaño confirmado y ninguna escritura parcial habilitará ejecución.
 
-Recibir y validar la imagen completa no bastará para publicarla. Solo después de preparar también DMEM y el restante estado inicial de la nueva sesión se escribirá atómicamente el tamaño recibido. En el cuadragésimo cuarto acuerdo de `DEC-ARCH-003`, `load_ok` deja el tamaño privado del Loader y `PREPARING_READY && prepare_done` realiza ese único commit, sin ejecutar CPU. Ese único write no nulo constituirá el commit completo y hará que `image_valid = 1` por derivación. Una carga vacía, truncada, inválida, sobredimensionada o fallida conservará el tamaño en cero y mantendrá `RUN` y `STEP` inhabilitados hasta una carga válida posterior.
+Recibir y validar la imagen completa no bastará para publicarla. Solo después de preparar también DMEM y el restante estado inicial de la nueva sesión se escribirá atómicamente el tamaño recibido. `load_ok` certifica la última escritura IMEM, pero no publica la imagen. El tamaño validado permanece en el Controller y llega a Execution Control mediante la conexión combinacional del [Loader](../architecture/session/loader.md#progreso-mantenido-por-el-controlador); `PREPARING_READY && prepare_done` realiza ese único commit, sin ejecutar CPU. Ese único write no nulo constituirá el commit completo y hará que `image_valid = 1` por derivación. Una carga vacía, truncada, inválida, sobredimensionada o fallida después de aceptarse conservará el tamaño en cero y mantendrá `RUN` y `STEP` inhabilitados hasta una carga válida posterior; un rechazo anterior a la aceptación conserva la imagen vigente.
 
 No se exige rollback, restaurar la imagen anterior, borrar físicamente IMEM ni utilizar doble buffer. Si un programa nuevo es más corto, el contenido residual posterior al límite confirmado será irrelevante y no ejecutable.
 
@@ -250,7 +250,7 @@ Una imagen como prefijo contiguo satisface los programas requeridos por el TP y 
 - no se soportan imágenes sparse ni se requiere bitmap de validez por instrucción;
 - no es necesario borrar físicamente el sufijo residual de IMEM;
 - pertenencia a la imagen y legalidad de la codificación ISA son conceptos distintos;
-- alineación y clock están aprobados en `DEC-ARCH-004` y `DEC-ARCH-005`; el protocolo detallado permanece pendiente; `reset` y enables se fijan semánticamente en `DEC-ARCH-008` y la implementación física de memorias en `DEC-ARCH-006`.
+- alineación y clock están aprobados en `DEC-ARCH-004` y `DEC-ARCH-005`; el transporte se define en el [protocolo UART](../protocol.md); `reset` y enables se fijan semánticamente en `DEC-ARCH-008` y la implementación física de memorias en `DEC-ARCH-006`.
 
 **Requisitos afectados:** `REQ-CPU-003`, `REQ-CPU-004`, `REQ-CPU-006`, `REQ-CPU-007`, `REQ-CPU-011`, `REQ-CPU-014`, `REQ-CPU-016` a `REQ-CPU-018`, `REQ-ISA-001` a `REQ-ISA-006`, `REQ-ISA-018` a `REQ-ISA-022`, `REQ-ISA-032`, `REQ-ISA-033`, `REQ-HAZ-001`, `REQ-MEM-001` a `REQ-MEM-024`, `REQ-EXEC-014`, `REQ-EXEC-017`, `REQ-EXEC-018`, `REQ-DBG-010`, `REQ-DBG-013`, `REQ-DBG-015`, `REQ-DBG-017`, `REQ-DOC-007`.
 

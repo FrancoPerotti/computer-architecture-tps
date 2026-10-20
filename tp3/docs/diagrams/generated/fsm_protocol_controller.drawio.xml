@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="ipwJqg0khAAX1xJ-gmZx">
+    <mxGraphModel dx="5339" dy="3470" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="7874" pageHeight="7874" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" edge="1" parent="1" source="7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="11">
+          <mxGeometry relative="1" x="-0.2468" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="1670" />
+              <mxPoint x="440" y="1444.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3" edge="1" parent="1" source="7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="23">
+          <mxGeometry relative="1" x="-0.3197" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="940" />
+              <mxPoint x="2354.5" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4" edge="1" parent="1" source="7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="0.0103" as="geometry">
+            <Array as="points">
+              <mxPoint x="2670" y="1720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5" edge="1" parent="1" source="7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="20">
+          <mxGeometry relative="1" x="-0.042" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1935.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6" edge="1" parent="1" source="7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="30">
+          <mxGeometry relative="1" x="-0.0559" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_COMMAND" vertex="1">
+          <mxGeometry height="187" width="187" x="183" y="1596" as="geometry" />
+        </mxCell>
+        <mxCell id="8" edge="1" parent="1" source="11" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="33">
+          <mxGeometry relative="1" x="0.1513" as="geometry">
+            <Array as="points">
+              <mxPoint x="613.5" y="1150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9" edge="1" parent="1" source="11" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="0.0778" as="geometry">
+            <Array as="points">
+              <mxPoint x="622.5" y="1629.9" />
+              <mxPoint x="2236" y="1629.9" />
+              <mxPoint x="2236" y="1480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" edge="1" parent="1" source="11" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="13">
+          <mxGeometry relative="1" x="-0.0039" as="geometry" />
+        </mxCell>
+        <mxCell id="11" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;points=[[0,0,1,0,0],[0,0.5,1,0,0],[0,1,1,0,0],[0.041698,0.309475,0,0,0],[0.312109,0.039064,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[1,0,1,0,0],[1,0.5,1,0,0],[1,1,1,0,0]];" value="RECEIVE_LOAD_SIZE" vertex="1">
+          <mxGeometry height="187" width="187" x="529" y="1351" as="geometry" />
+        </mxCell>
+        <mxCell id="12" edge="1" parent="1" source="13" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_LOAD&lt;span style=&quot;text-decoration-line: inherit; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;_ACCEPT_SENT&lt;/span&gt;" vertex="1">
+          <mxGeometry height="187" width="187" x="876" y="1351" as="geometry" />
+        </mxCell>
+        <mxCell id="14" edge="1" parent="1" source="16" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="33">
+          <mxGeometry relative="1" x="0.2466" as="geometry">
+            <Array as="points">
+              <mxPoint x="1315.5" y="1210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" edge="1" parent="1" source="16" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="18">
+          <mxGeometry relative="1" x="0.0453" as="geometry" />
+        </mxCell>
+        <mxCell id="16" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;points=[[0,0,1,0,0],[0,0.5,1,0,0],[0,1,1,0,0],[0.041698,0.309475,0,0,0],[0.302336,0.042322,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[1,0,1,0,0],[1,0.5,1,0,0],[1,1,1,0,0]];" value="RECEIVE_LOAD_DATA" vertex="1">
+          <mxGeometry height="187" width="187" x="1222" y="1351" as="geometry" />
+        </mxCell>
+        <mxCell id="17" edge="1" parent="1" source="18" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="0.0305" as="geometry">
+            <Array as="points">
+              <mxPoint x="2181" y="1440" />
+              <mxPoint x="2181" y="1420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_PREP_DONE" vertex="1">
+          <mxGeometry height="187" width="187" x="1568" y="1351" as="geometry" />
+        </mxCell>
+        <mxCell id="19" edge="1" parent="1" source="20" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="-0.0505" as="geometry">
+            <Array as="points">
+              <mxPoint x="2730" y="1935.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_STEP_END" vertex="1">
+          <mxGeometry height="187" width="187" x="866" y="1841.79" as="geometry" />
+        </mxCell>
+        <mxCell id="21" edge="1" parent="1" source="23" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="-0.2044" as="geometry">
+            <Array as="points">
+              <mxPoint x="2730" y="1179.3" />
+            </Array>
+            <mxPoint x="2700.5" y="1468.21" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="22" edge="1" parent="1" source="23" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="27">
+          <mxGeometry relative="1" x="0.0002" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="23" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_RUN_ACCEPT_SENT" vertex="1">
+          <mxGeometry height="187" width="187" x="2261" y="1085.79" as="geometry" />
+        </mxCell>
+        <mxCell id="24" edge="1" parent="1" source="27" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="29">
+          <mxGeometry relative="1" x="-0.2438" as="geometry">
+            <Array as="points">
+              <mxPoint x="2007.5" y="1307.8" />
+              <mxPoint x="2670" y="1307.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="25" edge="1" parent="1" source="27" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="30">
+          <mxGeometry relative="1" x="-0.0367" as="geometry">
+            <Array as="points">
+              <mxPoint x="2007.5" y="900" />
+              <mxPoint x="-116.5" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="26" edge="1" parent="1" source="27" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="33">
+          <mxGeometry relative="1" x="-0.1423" as="geometry" />
+        </mxCell>
+        <mxCell id="27" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_RUN_END" vertex="1">
+          <mxGeometry height="187" width="187" x="1914" y="1085.79" as="geometry" />
+        </mxCell>
+        <mxCell id="28" edge="1" parent="1" source="29" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="7">
+          <mxGeometry relative="1" x="-0.0174" as="geometry">
+            <Array as="points">
+              <mxPoint x="2840" y="1444.5" />
+              <mxPoint x="2840" y="2080" />
+              <mxPoint x="250" y="2080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="29" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="WAIT_RESPONSE_SENT" vertex="1">
+          <mxGeometry height="187" width="187" x="2607" y="1351" as="geometry" />
+        </mxCell>
+        <mxCell id="30" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;flipH=0;legacyAnchorPoints=0;flipV=0;direction=east;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;points=[[0,0,1,0,0],[0,0.5,1,0,0],[0,1,1,0,0],[0.041698,0.306217,0,0,0],[0.302336,0.042322,0,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[1,0,1,0,0],[1,0.5,1,0,0],[1,1,1,0,0]];" value="WAIT_RESET_ACCEPT_SENT" vertex="1">
+          <mxGeometry height="187" width="187" x="-210" y="1596" as="geometry" />
+        </mxCell>
+        <mxCell id="31" edge="1" parent="1" source="33" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="27">
+          <mxGeometry relative="1" x="0.4683" as="geometry">
+            <Array as="points">
+              <mxPoint x="1820" y="1214" />
+              <mxPoint x="1820" y="1214" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="32" edge="1" parent="1" source="33" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="7">
+          <mxGeometry relative="1" x="-0.1693" as="geometry">
+            <Array as="points">
+              <mxPoint x="1620" y="1020" />
+              <mxPoint x="337.9" y="1020" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33" fsmRole="state" parent="1" sourceDocument="docs/architecture/debug/protocol_controller.md" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=none;strokeColor=#6366F1;align=center;verticalAlign=middle;fontFamily=Inter;fontStyle=1;strokeWidth=2;fontSize=13;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;points=[[0,0,1,0,0],[0,0.5,1,0,0],[0,1,1,0,0],[0.5,0,1,0,0],[0.5,1,1,0,0],[0.693292,0.035806,0,0,0],[0.963704,0.306217,0,0,0],[1,0,1,0,0],[1,0.5,1,0,0],[1,1,1,0,0]];" value="RECOVER_RX" vertex="1">
+          <mxGeometry height="187" width="187" x="1568" y="1085.79" as="geometry" />
+        </mxCell>
+        <mxCell id="34" edge="1" parent="1" source="35" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;curved=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;entryX=0;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0;exitDx=0;exitDy=0;" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#6366F1;strokeWidth=2;dashed=1;dashPattern=8 8;fontFamily=Inter;fontSize=24;fontStyle=1;align=center;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="ALL STATES" vertex="1">
+          <mxGeometry height="140" width="220" x="-226.50499999999988" y="1940" as="geometry" />
+        </mxCell>
+        <mxCell id="36" edge="1" parent="1" source="7" style="endArrow=classic;html=1;rounded=1;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endSize=10;edgeStyle=orthogonalEdgeStyle;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" target="33" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.0894" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="980" />
+              <mxPoint x="1660" y="980" />
+            </Array>
+            <mxPoint x="1278" y="1210.79" as="sourcePoint" />
+            <mxPoint x="1328" y="1160.79" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="37" parent="1" style="triangle;whiteSpace=wrap;html=1;shapeInside=1;fillColor=#6366F1;gradientColor=none;strokeColor=#6366F1;rotation=45;strokeWidth=2;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;" value="" vertex="1">
+          <mxGeometry height="52" width="42" x="173" y="1583" as="geometry" />
+        </mxCell>
+        <mxCell id="38" edge="1" parent="1" source="11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.041698;exitY=0.309475;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.312109;entryY=0.039064;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;" target="11">
+          <mxGeometry relative="1" x="0.3184" as="geometry">
+            <Array as="points">
+              <mxPoint x="500.9" y="1408.9" />
+              <mxPoint x="500.9" y="1315.1" />
+              <mxPoint x="587.4" y="1315.1" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="39" edge="1" parent="1" source="16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.041698;exitY=0.309475;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.302336;entryY=0.042322;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;" target="16">
+          <mxGeometry relative="1" x="0.3273" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="1408.9" />
+              <mxPoint x="1190" y="1320" />
+              <mxPoint x="1278.5" y="1320" />
+            </Array>
+            <mxPoint x="1226.1" y="1413.9" as="sourcePoint" />
+            <mxPoint x="1276.1" y="1362.9" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="40" edge="1" parent="1" source="30" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.041698;exitY=0.306217;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.302336;entryY=0.042322;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;" target="30" value=" ">
+          <mxGeometry relative="1" x="0.3162" as="geometry">
+            <Array as="points">
+              <mxPoint x="-240" y="1653.3" />
+              <mxPoint x="-240" y="1560" />
+              <mxPoint x="-153.5" y="1560" />
+            </Array>
+            <mxPoint x="-203.89999999999998" y="1653.9" as="sourcePoint" />
+            <mxPoint x="-153.89999999999998" y="1602.9" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="41" edge="1" parent="1" source="33" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.963704;exitY=0.306217;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.693292;entryY=0.035806;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#6366F1;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=12;endArrow=classic;endSize=10;" target="33">
+          <mxGeometry relative="1" x="0.313" as="geometry">
+            <Array as="points">
+              <mxPoint x="1786.1" y="1143.1" />
+              <mxPoint x="1786.1" y="1050" />
+              <mxPoint x="1697.6" y="1050" />
+            </Array>
+            <mxPoint x="1750.0000000000005" y="1143.9" as="sourcePoint" />
+            <mxPoint x="1700.0000000000005" y="1092.9" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=-40;" value="RESET global" vertex="1">
+          <mxGeometry height="26" width="88" x="59" y="1851" as="geometry" />
+        </mxCell>
+        <mxCell id="43" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="LOAD&lt;div&gt;recibido&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="65" x="449.0031474388674" y="1443.0042949373808" as="geometry" />
+        </mxCell>
+        <mxCell id="44" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="RUN&lt;div&gt;aceptado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="72" x="2354" y="1027" as="geometry" />
+        </mxCell>
+        <mxCell id="45" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="STEP con&lt;br&gt;&lt;div&gt;preparación&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="87" x="762" y="1936" as="geometry" />
+        </mxCell>
+        <mxCell id="46" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Respuesta corta&amp;nbsp;&lt;div&gt;||&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;STEP Inmediato&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="111" x="2558" y="1549" as="geometry" />
+        </mxCell>
+        <mxCell id="47" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="RESET recibido" vertex="1">
+          <mxGeometry height="26" width="107" x="27" y="1689" as="geometry" />
+        </mxCell>
+        <mxCell id="48" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="Error&lt;div&gt;UART&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="52" x="1660" y="995" as="geometry" />
+        </mxCell>
+        <mxCell id="49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Byte intermedio&lt;div&gt;|| espera de byte&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="112" x="389" y="1337" as="geometry" />
+        </mxCell>
+        <mxCell id="50" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Tamaño completo&lt;div&gt;&amp;nbsp;&amp;amp;&amp;amp; LOAD admitido&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="120" x="736" y="1445" as="geometry" />
+        </mxCell>
+        <mxCell id="51" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Tamaño inválido&lt;div&gt;|| LOAD rechazado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="122" x="2475" y="1481" as="geometry" />
+        </mxCell>
+        <mxCell id="52" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Error UART || timeout" vertex="1">
+          <mxGeometry height="26" width="141" x="1416" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="53" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="ACCEPTED&lt;div&gt;enviado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="83" x="1101" y="1445" as="geometry" />
+        </mxCell>
+        <mxCell id="54" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Byte intermedio&lt;div&gt;|| espera de byte&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="112" x="1078" y="1343" as="geometry" />
+        </mxCell>
+        <mxCell id="55" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Último byte&lt;div&gt;&amp;nbsp;recibido&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="84" x="1447" y="1445" as="geometry" />
+        </mxCell>
+        <mxCell id="56" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Error UART || timeout" vertex="1">
+          <mxGeometry height="26" width="141" x="1416" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="57" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Preparación&lt;div&gt;&amp;nbsp;terminada&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="87" x="2507" y="1421" as="geometry" />
+        </mxCell>
+        <mxCell id="58" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="Ciclo STEP&lt;div&gt;realizado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="80" x="2731" y="1550" as="geometry" />
+        </mxCell>
+        <mxCell id="59" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="ACCEPTED enviado&lt;div&gt;&amp;amp;&amp;amp; RUN continúa&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="132" x="2118" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="ACCEPTED enviado&lt;div&gt;&amp;amp;&amp;amp; RUN terminó&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="132" x="2731" y="1298" as="geometry" />
+        </mxCell>
+        <mxCell id="61" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;spacingLeft=0;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;RUN terminó&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="90" x="2579" y="1314" as="geometry" />
+        </mxCell>
+        <mxCell id="62" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="RESET admitido" vertex="1">
+          <mxGeometry height="26" width="107" x="-116" y="1553" as="geometry" />
+        </mxCell>
+        <mxCell id="63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Tráfico no admitido&lt;div&gt;|| Error UART&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="129" x="1775" y="1139" as="geometry" />
+        </mxCell>
+        <mxCell id="64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="Respuesta&lt;div&gt;enviada&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="78" x="172" y="1796" as="geometry" />
+        </mxCell>
+        <mxCell id="65" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="Actividad RX&lt;div&gt;|| Silencio en curso&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="128" x="1786" y="1078" as="geometry" />
+        </mxCell>
+        <mxCell id="66" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;" value="RX recuperada&lt;div&gt;&amp;amp;&amp;amp; RUN continúa&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="129" x="1775" y="1214" as="geometry" />
+        </mxCell>
+        <mxCell id="67" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=0;spacingLeft=3;" value="RX recuperada&lt;div&gt;&amp;amp;&amp;amp; sin RUN&lt;/div&gt;&lt;div&gt;pendiente&lt;/div&gt;" vertex="1">
+          <mxGeometry height="55" width="104" x="338" y="1547" as="geometry" />
+        </mxCell>
+        <mxCell id="68" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;rotation=0;spacingRight=3;spacingLeft=0;" value="ACCEPTED&lt;div&gt;enviado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="41" width="81" x="-321" y="1586" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
