@@ -57,11 +57,11 @@ El único caso ejecuta el programa lineal indicado a continuación. Los cuatro f
 ### Datos de referencia
 
 | Ciclo completado | PC global | IF/ID.pc | ID/EX.pc | EX/MEM.pc | MEM/WB.pc |
-| ---------------: | --------: | -------: | -------: | --------: | --------: |
-| 1                | 4         | 0        | inválido | inválido  | inválido  |
-| 2                | 8         | 4        | 0        | inválido  | inválido  |
-| 3                | 12        | 8        | 4        | 0         | inválido  |
-| 4                | 16        | 12       | 8        | 4         | 0         |
+|-----------------:|----------:|---------:|---------:|----------:|----------:|
+|                1 |         4 |        0 | inválido |  inválido |  inválido |
+|                2 |         8 |        4 |        0 |  inválido |  inválido |
+|                3 |        12 |        8 |        4 |         0 |  inválido |
+|                4 |        16 |       12 |        8 |         4 |         0 |
 
 ### Programas concretos
 
@@ -552,7 +552,7 @@ Para comprobar una fila se activa únicamente su candidato y los demás permanec
 En los pares de prioridad se activan los dos candidatos indicados. Son fixtures del bloque de control; no se presentan como instrucciones que puedan llegar juntas en una CPU legal.
 
 | Acción                    | PC      | IF/ID                 | ID/EX       | EX/MEM      | MEM/WB       |
-| ------------------------- | ------- | --------------------- | ----------- | ----------- | ------------ |
+|---------------------------|---------|-----------------------|-------------|-------------|--------------|
 | EX fault                  | Retener | Invalidar ambos flags | Bubble      | Invalidar   | Capturar MEM |
 | Halt                      | Retener | Invalidar ambos flags | Bubble      | Invalidar   | Capturar MEM |
 | Redirect                  | 0x80    | Invalidar ambos flags | Bubble      | Capturar EX | Capturar MEM |
@@ -756,28 +756,28 @@ La prueba tiene 20 casos canónicos. El [manifiesto](cases.json) enumera los IDs
 
 Cada fila coloca la primera instrucción en PC=0 y la segunda en PC=4. Las cantidades son decimales; las causas conservan sus códigos arquitectónicos.
 
-| Caso RUN | Caso STEP/HOLD | Programa de ocho bytes | `word0` / RF adicional | Resultado |
-|---|---|---|---|---|
-| C001 | C010 | `lw x1,0(x0); add x2,x1,x1` | 7 | FAULT, causa 1, PC=8; x1=7, x2=14; 7 ciclos |
-| C002 | C011 | `lw x1,0(x0); beq x1,x0,-4` | 0 | Loop a PC=0 sin fault; observar 20 ciclos |
-| C003 | C012 | `lw x1,0(x0); beq x1,x0,-4` | 7 | Branch no tomado; FAULT, causa 1, PC=8; 7 ciclos |
-| C004 | C013 | `lw x1,0(x0); jalr x5,x1,0` | 0 | Loop a PC=0, enlace x5=8, sin fault; observar 20 ciclos |
-| C005 | C014 | `lw x1,0(x0); jalr x5,x1,0` | 2; x5=55 | FAULT, causa 0, PC=4; x5 conserva 55; 5 ciclos |
-| C006 | C015 | `lw x1,0(x0); sw x1,2(x0)` | 0 | FAULT, causa 6, PC=4; sin store ni cambio de marcas; 5 ciclos |
-| C007 | C016 | `lw x1,0(x0); lw x2,2(x1)` | 0; x2=55 | FAULT, causa 4, PC=4; x2 conserva 55; 5 ciclos |
-| C008 | — | `lw x1,2(x0); add x2,x1,x1` | 7; x2=55 | Gana fault del productor: causa 4, PC=0; x1=0, x2=55; 3 ciclos |
-| C009 | — | `lw x1,0(x0); halt` | 7 | Halt descarta candidato ID; FINISHED con x1=7; 5 ciclos |
+| Caso RUN | Caso STEP/HOLD | Programa de ocho bytes      | `word0` / RF adicional | Resultado                                                      |
+|----------|----------------|-----------------------------|------------------------|----------------------------------------------------------------|
+| C001     | C010           | `lw x1,0(x0); add x2,x1,x1` | 7                      | FAULT, causa 1, PC=8; x1=7, x2=14; 7 ciclos                    |
+| C002     | C011           | `lw x1,0(x0); beq x1,x0,-4` | 0                      | Loop a PC=0 sin fault; observar 20 ciclos                      |
+| C003     | C012           | `lw x1,0(x0); beq x1,x0,-4` | 7                      | Branch no tomado; FAULT, causa 1, PC=8; 7 ciclos               |
+| C004     | C013           | `lw x1,0(x0); jalr x5,x1,0` | 0                      | Loop a PC=0, enlace x5=8, sin fault; observar 20 ciclos        |
+| C005     | C014           | `lw x1,0(x0); jalr x5,x1,0` | 2; x5=55               | FAULT, causa 0, PC=4; x5 conserva 55; 5 ciclos                 |
+| C006     | C015           | `lw x1,0(x0); sw x1,2(x0)`  | 0                      | FAULT, causa 6, PC=4; sin store ni cambio de marcas; 5 ciclos  |
+| C007     | C016           | `lw x1,0(x0); lw x2,2(x1)`  | 0; x2=55               | FAULT, causa 4, PC=4; x2 conserva 55; 5 ciclos                 |
+| C008     | —              | `lw x1,2(x0); add x2,x1,x1` | 7; x2=55               | Gana fault del productor: causa 4, PC=0; x1=0, x2=55; 3 ciclos |
+| C009     | —              | `lw x1,0(x0); halt`         | 7                      | Halt descarta candidato ID; FINISHED con x1=7; 5 ciclos        |
 
 En C010–C016 se solicita un STEP por ciclo, incluidos stall y drains, y se insertan 50 clocks de HOLD después de los ciclos efectivos 2, 3 y 4 de la primera iteración. En los loops, el límite de 20 ciclos no equivale a FINISHED: al terminar la observación permanecen RUNNING o STEPPING según el modo, y se recuperan por reset externo. C009 no tiene load-use: halt no consume x1; comprueba por separado la frontera anterior exigida por la matriz.
 
 Las cuatro variantes restantes utilizan `lw x1,0(x0); add x2,x1,x1`, `word0=7`, RF cero y avance STEP:
 
-| Caso | Momento postflanco alcanzado | Intervención en el siguiente flanco | Resultado inmediato |
-|---|---|---|---|
-| C017 | Ciclo 3: stall realizado; consumidor retenido y candidato solo en IF | RESET | NO_IMAGE, contador/PC/RF cero, latches inválidos |
-| C018 | Ciclo 4: candidato registrado en IF/ID; consumidor en EX y load en WB | RESET | Mismo reset; no se confirma candidato ni compromete WB |
-| C019 | Ciclo 3 | LOAD aceptado desde STEPPING | LOADING, tamaño cero, contador 3; latches retenidos, sin ciclo ni commits |
-| C020 | Ciclo 4 | LOAD aceptado desde STEPPING | LOADING, tamaño cero, contador 4; candidato registrado retenido, sin ciclo ni commits |
+| Caso | Momento postflanco alcanzado                                          | Intervención en el siguiente flanco | Resultado inmediato                                                                   |
+|------|-----------------------------------------------------------------------|-------------------------------------|---------------------------------------------------------------------------------------|
+| C017 | Ciclo 3: stall realizado; consumidor retenido y candidato solo en IF  | RESET                               | NO_IMAGE, contador/PC/RF cero, latches inválidos                                      |
+| C018 | Ciclo 4: candidato registrado en IF/ID; consumidor en EX y load en WB | RESET                               | Mismo reset; no se confirma candidato ni compromete WB                                |
+| C019 | Ciclo 3                                                               | LOAD aceptado desde STEPPING        | LOADING, tamaño cero, contador 3; latches retenidos, sin ciclo ni commits             |
+| C020 | Ciclo 4                                                               | LOAD aceptado desde STEPPING        | LOADING, tamaño cero, contador 4; candidato registrado retenido, sin ciclo ni commits |
 
 En C019/C020 se completa después una nueva imagen de cuatro bytes que contiene halt y su preparación. La inicialización de preparación limpia PC/RF/latches/contador; completar PREPARING_READY publica la imagen en READY, contador cero y DMEM sin posiciones utilizadas. No se exige borrar el candidato físicamente en el flanco de aceptación de LOAD: queda abandonado con la sesión y se limpia antes de que la nueva imagen pueda ejecutar. Los intercambios usan el contrato existente; no se crea una orden para instalar latches.
 
@@ -785,13 +785,13 @@ En C019/C020 se completa después una nueva imagen de cuatro bytes que contiene 
 
 Los ciclos se numeran desde el primer fetch efectivo, después de preparar la sesión. Las fuentes son preflanco. Para C001–C007 y sus repeticiones STEP, la secuencia inicial es:
 
-| Ciclo efectivo | Situación preflanco | Acción y estado postflanco |
-|---|---|---|
-| 1 | PC=0, pipeline vacío | Normal: IF/ID contiene load PC0; PC=4 |
-| 2 | Load en ID, PC=4 | Normal: consumidor en IF/ID, load en ID/EX; PC=8 |
-| 3 | Load EX, consumidor ID, candidato IF en PC8 | Solo load-use: PC=8 e IF/ID conservan sus cinco campos; bubble ID/EX; load pasa a EX/MEM; no fault ni captura de candidato |
-| 4 | Bubble EX, load MEM, consumidor ID | Normal: consumidor pasa a ID/EX; candidato entra en IF/ID con valid=0, flag=1, causa=1, PC=8 e instrucción cero; load pasa a MEM/WB; PC=12 |
-| 5 | Consumidor EX, candidato ID, load WB | WB compromete x1. Redirect descarta candidato; fault EX propio lo desplaza; sin frontera EX, ID confirma fetch y conserva el avance de la EX anterior |
+| Ciclo efectivo | Situación preflanco                         | Acción y estado postflanco                                                                                                                            |
+|----------------|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1              | PC=0, pipeline vacío                        | Normal: IF/ID contiene load PC0; PC=4                                                                                                                 |
+| 2              | Load en ID, PC=4                            | Normal: consumidor en IF/ID, load en ID/EX; PC=8                                                                                                      |
+| 3              | Load EX, consumidor ID, candidato IF en PC8 | Solo load-use: PC=8 e IF/ID conservan sus cinco campos; bubble ID/EX; load pasa a EX/MEM; no fault ni captura de candidato                            |
+| 4              | Bubble EX, load MEM, consumidor ID          | Normal: consumidor pasa a ID/EX; candidato entra en IF/ID con valid=0, flag=1, causa=1, PC=8 e instrucción cero; load pasa a MEM/WB; PC=12            |
+| 5              | Consumidor EX, candidato ID, load WB        | WB compromete x1. Redirect descarta candidato; fault EX propio lo desplaza; sin frontera EX, ID confirma fetch y conserva el avance de la EX anterior |
 
 En C001/C003, ciclos 6 y 7 drenan EX/MEM y MEM/WB; ADD compromete x2 solamente en el 7. En C002/C004 se repite el patrón normal/normal/stall/normal/redirect cuatro veces: los redirects ocurren en ciclos 5/10/15/20 y dejan PC=0. El load compromete cuatro veces; JALR compromete tres enlaces antes del límite de observación, en ciclos 7/12/17. Cada instancia compromete una vez.
 

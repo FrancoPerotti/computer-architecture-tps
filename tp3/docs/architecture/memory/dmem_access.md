@@ -65,10 +65,10 @@ La correspondencia dentro de cada fila es:
 
 | Lane | Dirección de byte | Posición en la palabra de 32 bits |
 |------|-------------------|-----------------------------------|
-| 0 | `row_base + 0` | bits `[7:0]` |
-| 1 | `row_base + 1` | bits `[15:8]` |
-| 2 | `row_base + 2` | bits `[23:16]` |
-| 3 | `row_base + 3` | bits `[31:24]` |
+| 0    | `row_base + 0`    | bits `[7:0]`                      |
+| 1    | `row_base + 1`    | bits `[15:8]`                     |
+| 2    | `row_base + 2`    | bits `[23:16]`                    |
+| 3    | `row_base + 3`    | bits `[31:24]`                    |
 
 Por ejemplo, las direcciones 4, 5, 6 y 7 pertenecen a la fila 1. Sus lanes son, respectivamente, 0, 1, 2 y 3. Consultar cualquiera de esas direcciones selecciona la misma fila, pero identifica una posición diferente dentro de ella.
 
@@ -76,12 +76,12 @@ Por ejemplo, las direcciones 4, 5, 6 y 7 pertenecen a la fila 1. Sus lanes son, 
 
 La representación consta de cuatro bancos lógicos de datos y cuatro grupos correspondientes de marcas:
 
-| Estructura | Contenido por fila | Función |
-|------------|--------------------|---------|
-| `data_lane[0]` | un byte | Dato físico de `row_base + 0`. |
-| `data_lane[1]` | un byte | Dato físico de `row_base + 1`. |
-| `data_lane[2]` | un byte | Dato físico de `row_base + 2`. |
-| `data_lane[3]` | un byte | Dato físico de `row_base + 3`. |
+| Estructura         | Contenido por fila        | Función                                                          |
+|--------------------|---------------------------|------------------------------------------------------------------|
+| `data_lane[0]`     | un byte                   | Dato físico de `row_base + 0`.                                   |
+| `data_lane[1]`     | un byte                   | Dato físico de `row_base + 1`.                                   |
+| `data_lane[2]`     | un byte                   | Dato físico de `row_base + 2`.                                   |
+| `data_lane[3]`     | un byte                   | Dato físico de `row_base + 3`.                                   |
 | `valid_lane[0..3]` | una marca por lane y fila | Indica cuáles de esos bytes fueron escritos en la sesión actual. |
 
 Cada banco tiene `ROW_COUNT` filas. Los cuatro grupos `valid_lane` constituyen **un único bitmap lógico de validez**, distribuido de la misma manera que los datos. No existen cuatro copias del bitmap ni un segundo conjunto de marcas para Debug.
@@ -94,12 +94,12 @@ La memoria utiliza orden **little-endian**: el byte de la dirección menor conti
 
 Por ejemplo, si se almacena la palabra `0x12345678` comenzando en la dirección 4, la fila queda así:
 
-| Dirección | Lane | Byte |
-|-----------|------|------|
-| 4 | 0 | `0x78` |
-| 5 | 1 | `0x56` |
-| 6 | 2 | `0x34` |
-| 7 | 3 | `0x12` |
+| Dirección | Lane | Byte   |
+|-----------|------|--------|
+| 4         | 0    | `0x78` |
+| 5         | 1    | `0x56` |
+| 6         | 2    | `0x34` |
+| 7         | 3    | `0x12` |
 
 La reconstrucción de la palabra coloca el lane 3 a la izquierda y el lane 0 a la derecha:
 
@@ -127,11 +127,11 @@ logical_lane[i] =
 
 Esto implica:
 
-| Marca | Dato físico almacenado | Byte lógico leído | Interpretación |
-|-------|------------------------|-------------------|----------------|
-| `0` | cualquier valor | `0x00` | Byte no utilizado en la sesión. |
-| `1` | `0x00` | `0x00` | Byte utilizado cuyo valor es cero. |
-| `1` | distinto de cero | dato físico | Byte utilizado con ese valor. |
+| Marca | Dato físico almacenado | Byte lógico leído | Interpretación                     |
+|-------|------------------------|-------------------|------------------------------------|
+| `0`   | cualquier valor        | `0x00`            | Byte no utilizado en la sesión.    |
+| `1`   | `0x00`                 | `0x00`            | Byte utilizado cuyo valor es cero. |
+| `1`   | distinto de cero       | dato físico       | Byte utilizado con ese valor.      |
 
 **Un dato igual a cero no equivale a una marca inactiva.** Un store puede escribir `0x00` y dejar `valid=1`. En ese caso, Debug debe informar el byte como utilizado, aunque su valor observado sea cero.
 
@@ -156,7 +156,7 @@ Durante un load, `EX/MEM.ex_result` contiene la dirección efectiva que EX calcu
 flowchart LR
     EXMEM[EX/MEM.ex_result] -->|Address| RMUX[Selección CPU / Debug]
     DBG[debug_dmem_addr] --> RMUX
-    SEL[dmem_debug_select] --> RMUX
+    SEL[debug_read_select] --> RMUX
     RMUX -->|read_addr| DMEM[Data Memory: fila y marcas]
     DMEM -->|mem_read_data, 32 bits| LOAD[Load Select / Extend]
     EXMEM -->|bits bajos de dirección| LOAD
@@ -182,22 +182,22 @@ La salida contiene **siempre la palabra alineada completa** de la fila seleccion
 
 La selección del byte o conjunto de bytes solicitado se realiza **fuera de DMEM**, en `Load Select / Extend`, dentro de MEM. Este bloque recibe:
 
-| Entrada | Origen | Uso |
-|---------|--------|-----|
-| `mem_read_data[31:0]` | `Data Memory` | Los cuatro bytes lógicos de la fila alineada. |
-| `address_low_bits[1:0]` | `EX/MEM.ex_result[1:0]` | Posición del acceso dentro de la fila. |
-| `access_size[1:0]` | `MEM Decode` | Tamaño byte, halfword o word. |
-| `load_unsigned` | `MEM Decode` | Selección de extensión con cero o con signo. |
+| Entrada                 | Origen                  | Uso                                           |
+|-------------------------|-------------------------|-----------------------------------------------|
+| `mem_read_data[31:0]`   | `Data Memory`           | Los cuatro bytes lógicos de la fila alineada. |
+| `address_low_bits[1:0]` | `EX/MEM.ex_result[1:0]` | Posición del acceso dentro de la fila.        |
+| `access_size[1:0]`      | `MEM Decode`            | Tamaño byte, halfword o word.                 |
+| `load_unsigned`         | `MEM Decode`            | Selección de extensión con cero o con signo.  |
 
 Los tamaños válidos se resuelven así:
 
-| Load | Offset legal | Bytes seleccionados | Resultado |
-|------|--------------|---------------------|-----------|
-| `LB` | 0, 1, 2 o 3 | un lane | Byte extendido con signo a 32 bits. |
-| `LBU` | 0, 1, 2 o 3 | un lane | Byte extendido con ceros a 32 bits. |
-| `LH` | 0 o 2 | lanes 0–1 o 2–3 | Halfword extendido con signo a 32 bits. |
-| `LHU` | 0 o 2 | lanes 0–1 o 2–3 | Halfword extendido con ceros a 32 bits. |
-| `LW` | 0 | lanes 0–3 | Palabra completa de 32 bits. |
+| Load  | Offset legal | Bytes seleccionados | Resultado                               |
+|-------|--------------|---------------------|-----------------------------------------|
+| `LB`  | 0, 1, 2 o 3  | un lane             | Byte extendido con signo a 32 bits.     |
+| `LBU` | 0, 1, 2 o 3  | un lane             | Byte extendido con ceros a 32 bits.     |
+| `LH`  | 0 o 2        | lanes 0–1 o 2–3     | Halfword extendido con signo a 32 bits. |
+| `LHU` | 0 o 2        | lanes 0–1 o 2–3     | Halfword extendido con ceros a 32 bits. |
+| `LW`  | 0            | lanes 0–3           | Palabra completa de 32 bits.            |
 
 Una forma combinacional de entender esta selección es:
 
@@ -249,12 +249,12 @@ Esta comprobación es una protección del backend de memoria, **no una segunda d
 
 ### Selección de dirección
 
-CPU y Debug utilizan el mismo camino de lectura. `dmem_debug_select`, generado por `protocol_controller`, controla qué dirección se presenta como `read_addr`:
+CPU y Debug utilizan el mismo camino de lectura. `debug_read_select`, generado por `protocol_controller`, controla qué dirección se presenta como `read_addr`:
 
-| `dmem_debug_select` | Dirección consultada | Consumidor |
-|---------------------|----------------------|------------|
-| `0` | dirección CPU (`EX/MEM.ex_result`) | Camino de load en MEM. |
-| `1` | `debug_dmem_addr` del `response_serializer` | Observación Debug de DMEM. |
+| `debug_read_select` | Dirección consultada                        | Consumidor                 |
+| ------------------- | ------------------------------------------- | -------------------------- |
+| `0`                 | dirección CPU (`EX/MEM.ex_result`)          | Camino de load en MEM.     |
+| `1`                 | `debug_dmem_addr` del `response_serializer` | Observación Debug de DMEM. |
 
 La consulta de Debug también selecciona una fila completa, pero solo consume el byte y la marca correspondientes al lane indicado por los dos bits bajos de su dirección:
 
@@ -307,12 +307,12 @@ dmem_store_fire =
 
 `DMEM Write Control` genera `byte_enable[3:0]` en función del tipo de store. La máscara es **relativa a los bytes bajos de `Write Data`**, no a la posición final dentro de la fila:
 
-| Store | `byte_enable[3:0]` | Parte utilizada de `Write Data` |
-|-------|--------------------|--------------------------------|
-| `SB` | `0001` | `[7:0]` |
-| `SH` | `0011` | `[15:0]` |
-| `SW` | `1111` | `[31:0]` |
-| Otro `mem_op` | `0000` | Ninguna. |
+| Store         | `byte_enable[3:0]` | Parte utilizada de `Write Data` |
+|---------------|--------------------|---------------------------------|
+| `SB`          | `0001`             | `[7:0]`                         |
+| `SH`          | `0011`             | `[15:0]`                        |
+| `SW`          | `1111`             | `[31:0]`                        |
+| Otro `mem_op` | `0000`             | Ninguna.                        |
 
 Así, el bloque de control decide **cuántos bytes** escribe la operación, pero no necesita conocer la dirección. La ubicación de esos bytes dentro de la fila se resuelve en `Data Memory`, que sí recibe `Address`.
 
@@ -330,13 +330,13 @@ lane_write_data = (Write Data << (8 * offset)) // resultado de 32 bits
 
 | Store / offset | Máscara relativa | `lane_mask` | Lanes escritos |
 |----------------|------------------|-------------|----------------|
-| `SB` / 0 | `0001` | `0001` | 0 |
-| `SB` / 1 | `0001` | `0010` | 1 |
-| `SB` / 2 | `0001` | `0100` | 2 |
-| `SB` / 3 | `0001` | `1000` | 3 |
-| `SH` / 0 | `0011` | `0011` | 0 y 1 |
-| `SH` / 2 | `0011` | `1100` | 2 y 3 |
-| `SW` / 0 | `1111` | `1111` | 0, 1, 2 y 3 |
+| `SB` / 0       | `0001`           | `0001`      | 0              |
+| `SB` / 1       | `0001`           | `0010`      | 1              |
+| `SB` / 2       | `0001`           | `0100`      | 2              |
+| `SB` / 3       | `0001`           | `1000`      | 3              |
+| `SH` / 0       | `0011`           | `0011`      | 0 y 1          |
+| `SH` / 2       | `0011`           | `1100`      | 2 y 3          |
+| `SW` / 0       | `1111`           | `1111`      | 0, 1, 2 y 3    |
 
 Las combinaciones ausentes de la tabla no representan stores legales. Por ejemplo, un `SH` con offset 3 cruzaría el límite de la fila y un `SW` con offset distinto de cero estaría desalineado. EX impide que esas instrucciones lleguen como stores válidos a MEM. El truncamiento de una máscara a cuatro bits **no debe interpretarse como una escritura parcial correcta** de un acceso ilegal.
 
@@ -381,9 +381,9 @@ Mientras las marcas permanecen en cero, cada lectura lógica entrega `0x00`. Cua
 
 `Session Preparation` proporciona:
 
-| Señal | Función |
-|-------|---------|
-| `prepare_dmem_addr` | Dirección del byte cuya marca debe limpiarse. |
+| Señal                | Función                                           |
+|----------------------|---------------------------------------------------|
+| `prepare_dmem_addr`  | Dirección del byte cuya marca debe limpiarse.     |
 | `prepare_dmem_clear` | Orden de limpieza de esa marca durante el flanco. |
 
 DMEM descompone la dirección de preparación igual que cualquier otra dirección:
@@ -412,10 +412,10 @@ Las marcas pueden modificarse por dos operaciones diferentes:
 
 Ambas operaciones utilizan los mismos grupos `valid_lane`. Para cada lane, la selección combinacional determina qué fila y qué valor de marca corresponde a la operación activa:
 
-| `prepare_dmem_clear` | Dirección de marcas | Valor escrito | Habilitación |
-|----------------------|---------------------|---------------|--------------|
-| `1` | `prepare_dmem_addr` | `0` | Solo el lane de preparación, si su fila está dentro de rango. |
-| `0` | `Address` de CPU | `1` | Solo si `dmem_store_fire=1`, el lane está en `lane_mask` y la fila es válida. |
+| `prepare_dmem_clear` | Dirección de marcas | Valor escrito | Habilitación                                                                  |
+|----------------------|---------------------|---------------|-------------------------------------------------------------------------------|
+| `1`                  | `prepare_dmem_addr` | `0`           | Solo el lane de preparación, si su fila está dentro de rango.                 |
+| `0`                  | `Address` de CPU    | `1`           | Solo si `dmem_store_fire=1`, el lane está en `lane_mask` y la fila es válida. |
 
 **Elegir el camino CPU no implica escribir.** Cuando no existe un store autorizado, todas las marcas conservan su contenido.
 
@@ -439,12 +439,12 @@ reset funcional > prepare_dmem_clear > dmem_store_fire
 
 El efecto sobre los bancos es:
 
-| Situación | Datos físicos | Marcas | Resultado |
-|-----------|---------------|--------|-----------|
-| Reset funcional | Se conservan; no se escriben. | Se conservan; no hay clear masivo. | Se aborta la sesión u observación activa; otra preparación restablece el cero lógico. |
-| `prepare_dmem_clear=1` | Todos se conservan. | Se limpia únicamente la marca direccionada. | El cambio lógico se observa después del flanco. |
-| `dmem_store_fire=1` | Se escriben los lanes de `lane_mask`. | Se activan esas mismas marcas. | El dato escrito se observa después del flanco. |
-| Ninguna actualización | Se conservan. | Se conservan. | La lectura combinacional puede consultar CPU o Debug. |
+| Situación              | Datos físicos                         | Marcas                                      | Resultado                                                                             |
+|------------------------|---------------------------------------|---------------------------------------------|---------------------------------------------------------------------------------------|
+| Reset funcional        | Se conservan; no se escriben.         | Se conservan; no hay clear masivo.          | Se aborta la sesión u observación activa; otra preparación restablece el cero lógico. |
+| `prepare_dmem_clear=1` | Todos se conservan.                   | Se limpia únicamente la marca direccionada. | El cambio lógico se observa después del flanco.                                       |
+| `dmem_store_fire=1`    | Se escriben los lanes de `lane_mask`. | Se activan esas mismas marcas.              | El dato escrito se observa después del flanco.                                        |
+| Ninguna actualización  | Se conservan.                         | Se conservan.                               | La lectura combinacional puede consultar CPU o Debug.                                 |
 
 Durante el funcionamiento legal, preparación y store no se autorizan al mismo tiempo. Si se fuerza artificialmente la coincidencia de `prepare_dmem_clear=1` con `dmem_store_fire=1`, la limpieza prevalece y **se suprime el store completo**, incluidos sus datos y marcas.
 
@@ -479,22 +479,22 @@ En cambio, durante `HOLD`, no existe ciclo efectivo (`cpu_cycle_fire=0`) y no se
 
 La interfaz funcional de DMEM es:
 
-| Señal / elemento | Ancho | Origen o destino | Función |
-|------------------|-------|------------------|---------|
-| `clk` | 1 bit | Reloj común | Flanco de escritura de stores y marcas. |
-| Reset funcional | 1 bit | Control global | Inhibe actualizaciones y aborta la sesión activa. |
-| `Address` | 32 bits | `EX/MEM.ex_result` | Dirección CPU de lectura o de escritura. |
-| `Write Data` | 32 bits | `EX/MEM.store_data` | Valor que almacena un store. |
-| `write_enable` | 1 bit | `DMEM Write Control.dmem_store_fire` | Autoriza el store síncrono. |
-| `byte_enable` | 4 bits | `DMEM Write Control` | Máscara relativa a los bytes bajos de `Write Data`. |
-| `dmem_debug_select` | 1 bit | `protocol_controller` | Selecciona la dirección de lectura CPU o Debug. |
-| `debug_dmem_addr` | `BYTE_ADDRESS_WIDTH` | `response_serializer` | Dirección de byte consultada por Debug. |
-| `prepare_dmem_clear` | 1 bit | `Session Preparation` | Habilita la limpieza de una marca. |
-| `prepare_dmem_addr` | `BYTE_ADDRESS_WIDTH` | `Session Preparation` | Dirección de la marca que se limpia. |
-| `mem_read_data` | 32 bits | `Load Select / Extend` | Cuatro bytes lógicos de una fila alineada. |
-| `debug_dmem_data` | 8 bits | `response_serializer` | Byte lógico de la posición consultada. |
-| `debug_dmem_used` | 1 bit | `response_serializer` | Marca de validez de esa misma posición. |
-| `DMEM_CAPACITY_BYTES` | parámetro | Configuración común | Capacidad C, no bus dinámico. |
+| Señal / elemento      | Ancho                | Origen o destino                     | Función                                             |
+| --------------------- | -------------------- | ------------------------------------ | --------------------------------------------------- |
+| `clk`                 | 1 bit                | Reloj común                          | Flanco de escritura de stores y marcas.             |
+| Reset funcional       | 1 bit                | Control global                       | Inhibe actualizaciones y aborta la sesión activa.   |
+| `Address`             | 32 bits              | `EX/MEM.ex_result`                   | Dirección CPU de lectura o de escritura.            |
+| `Write Data`          | 32 bits              | `EX/MEM.store_data`                  | Valor que almacena un store.                        |
+| `write_enable`        | 1 bit                | `DMEM Write Control.dmem_store_fire` | Autoriza el store síncrono.                         |
+| `byte_enable`         | 4 bits               | `DMEM Write Control`                 | Máscara relativa a los bytes bajos de `Write Data`. |
+| `debug_read_select`   | 1 bit                | `protocol_controller`                | Selecciona la dirección de lectura CPU o Debug.     |
+| `debug_dmem_addr`     | `BYTE_ADDRESS_WIDTH` | `response_serializer`                | Dirección de byte consultada por Debug.             |
+| `prepare_dmem_clear`  | 1 bit                | `Session Preparation`                | Habilita la limpieza de una marca.                  |
+| `prepare_dmem_addr`   | `BYTE_ADDRESS_WIDTH` | `Session Preparation`                | Dirección de la marca que se limpia.                |
+| `mem_read_data`       | 32 bits              | `Load Select / Extend`               | Cuatro bytes lógicos de una fila alineada.          |
+| `debug_dmem_data`     | 8 bits               | `response_serializer`                | Byte lógico de la posición consultada.              |
+| `debug_dmem_used`     | 1 bit                | `response_serializer`                | Marca de validez de esa misma posición.             |
+| `DMEM_CAPACITY_BYTES` | parámetro            | Configuración común                  | Capacidad C, no bus dinámico.                       |
 
 `read_addr[31:0]`, `row`, `lane`, `lane_mask` y `lane_write_data` son valores derivados dentro del camino de memoria. No representan una segunda copia de datos ni un estado adicional que deba capturarse en un registro.
 
@@ -511,10 +511,10 @@ ROW_INDEX_WIDTH    = max(1, ceil(log2(ROW_COUNT)))
 
 Las configuraciones referenciadas tienen:
 
-| Perfil | `BYTE_ADDRESS_WIDTH` | `ROW_INDEX_WIDTH` |
-|--------|---------------------:|------------------:|
-| `REFERENCE` | 11 | 9 |
-| `ALT_1000` | 10 | 8 |
+| Perfil      | `BYTE_ADDRESS_WIDTH` | `ROW_INDEX_WIDTH` |
+|-------------|---------------------:|------------------:|
+| `REFERENCE` |                   11 |                 9 |
+| `ALT_1000`  |                   10 |                 8 |
 
 Estos son los anchos correspondientes a esas configuraciones. Los valores de ancho se derivan de la capacidad; no se fijan por el nombre del perfil. La comparación de rango se efectúa sobre la dirección o fila **completa y sin signo**, antes de extraer el índice de ancho reducido. Esto resulta especialmente importante cuando `C` no es una potencia de dos.
 
@@ -542,10 +542,10 @@ El estado lógico de la fila 1 queda:
 
 | Dirección | Lane | Byte lógico | `used` |
 |-----------|------|-------------|--------|
-| 4 | 0 | `0x00` | 0 |
-| 5 | 1 | `0xAA` | 1 |
-| 6 | 2 | `0x00` | 0 |
-| 7 | 3 | `0x00` | 0 |
+| 4         | 0    | `0x00`      | 0      |
+| 5         | 1    | `0xAA`      | 1      |
+| 6         | 2    | `0x00`      | 0      |
+| 7         | 3    | `0x00`      | 0      |
 
 La lectura de cualquiera de esas direcciones presenta la misma palabra alineada:
 

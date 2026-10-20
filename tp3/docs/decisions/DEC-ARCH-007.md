@@ -28,11 +28,11 @@ Los nueve acuerdos de este identificador forman el contrato aprobado:
 
 El banco arquitectónico contiene **32 registros de 32 bits**, `x0` a `x31`, con una interfaz funcional de **dos puertos de lectura y uno de escritura (2R1W)**. ID dispone de ambas lecturas independientes para obtener simultáneamente los dos operandos fuente cuando la instrucción los usa:
 
-| Puerto funcional | Dirección | Dato |
-|---|---|---|
-| Lectura 1 | `rs1[4:0]` | `rs1_value[31:0]` |
-| Lectura 2 | `rs2[4:0]` | `rs2_value[31:0]` |
-| Escritura | `rd[4:0]` | `wb_value[31:0]`, con condición de escritura válida |
+| Puerto funcional | Dirección  | Dato                                                |
+|------------------|------------|-----------------------------------------------------|
+| Lectura 1        | `rs1[4:0]` | `rs1_value[31:0]`                                   |
+| Lectura 2        | `rs2[4:0]` | `rs2_value[31:0]`                                   |
+| Escritura        | `rd[4:0]`  | `wb_value[31:0]`, con condición de escritura válida |
 
 Los valores leídos en ID se transportan a `ID/EX` junto con sus índices conforme a los campos aprobados en `DEC-ARCH-003`. El **único puerto funcional de escritura** recibe su dato, destino y condición de escritura válida desde **WB**, sin escritura arquitectónica anticipada desde EX o MEM, de acuerdo con `DEC-ARCH-002` y los campos de `MEM/WB` fijados en `DEC-ARCH-003`. Este acuerdo no altera la elegibilidad ya aprobada de escritura válida ni del forwarding externo.
 
@@ -137,14 +137,14 @@ Este sexto acuerdo fija la **frontera funcional**: WB→ID suministra el valor b
 
 El `Register File` aplicará la jerarquía conceptual **`reset` global > `LOAD` aceptado/preparación de sesión > ciclo CPU efectivo > `HOLD`**, ya aprobada en `DEC-ARCH-008`. La inicialización de sesión y el `reset` no se confunden con una escritura arquitectónica ordinaria de WB. `x0` conserva permanentemente cero bajo todos estos modos.
 
-| Contexto | Comportamiento del `Register File` |
-|---|---|
-| **`RUN`** | En cada ciclo CPU efectivo, la instrucción **previa al flanco** en `MEM/WB` puede comprometer como máximo una escritura si `valid`, `reg_write` y `rd != x0`; un clock físico sin ciclo efectivo no repite la escritura. |
-| **`STEP`** | Cada `STEP` aceptado autoriza exactamente **un** ciclo efectivo y cero o una escritura elegible de `MEM/WB`; otro writeback requiere un ciclo efectivo posterior autorizado por otro `STEP`. |
-| **`HOLD`** | No hay writeback CPU; el banco conserva íntegramente su estado aunque `MEM/WB` retenga `valid`, `reg_write`, `rd` y `wb_value` durante múltiples clocks físicos. El write-enable efectivo es cero. |
-| **Reset global** | Cuando el `reset` funcional toma efecto conforme a `DEC-ARCH-008`, `x0…x31` quedan **lógicamente en cero**. Reset prevalece sobre cualquier writeback CPU coincidente: ese writeback no se compromete. |
-| **`LOAD` aceptado / preparación de sesión** | No se producen writebacks normales del pipeline CPU. Antes del commit de la nueva sesión, `x0…x31` quedan **lógicamente en cero**; una carga confirmada deja el CPU preparado sin iniciar `RUN` ni `STEP`. |
-| **`HALT_DRAIN` / `FAULT_DRAIN`** | Las instrucciones anteriores válidas que sobreviven a la frontera pueden escribir al llegar a WB **solo en ciclos efectivos**; bajo contexto `RUN` el drenado progresa automáticamente y bajo paso a paso cada ciclo requiere un `STEP` nuevo. |
+| Contexto                                    | Comportamiento del `Register File`                                                                                                                                                                                                             |
+|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **`RUN`**                                   | En cada ciclo CPU efectivo, la instrucción **previa al flanco** en `MEM/WB` puede comprometer como máximo una escritura si `valid`, `reg_write` y `rd != x0`; un clock físico sin ciclo efectivo no repite la escritura.                       |
+| **`STEP`**                                  | Cada `STEP` aceptado autoriza exactamente **un** ciclo efectivo y cero o una escritura elegible de `MEM/WB`; otro writeback requiere un ciclo efectivo posterior autorizado por otro `STEP`.                                                   |
+| **`HOLD`**                                  | No hay writeback CPU; el banco conserva íntegramente su estado aunque `MEM/WB` retenga `valid`, `reg_write`, `rd` y `wb_value` durante múltiples clocks físicos. El write-enable efectivo es cero.                                             |
+| **Reset global**                            | Cuando el `reset` funcional toma efecto conforme a `DEC-ARCH-008`, `x0…x31` quedan **lógicamente en cero**. Reset prevalece sobre cualquier writeback CPU coincidente: ese writeback no se compromete.                                         |
+| **`LOAD` aceptado / preparación de sesión** | No se producen writebacks normales del pipeline CPU. Antes del commit de la nueva sesión, `x0…x31` quedan **lógicamente en cero**; una carga confirmada deja el CPU preparado sin iniciar `RUN` ni `STEP`.                                     |
+| **`HALT_DRAIN` / `FAULT_DRAIN`**            | Las instrucciones anteriores válidas que sobreviven a la frontera pueden escribir al llegar a WB **solo en ciclos efectivos**; bajo contexto `RUN` el drenado progresa automáticamente y bajo paso a paso cada ciclo requiere un `STEP` nuevo. |
 
 En un ciclo efectivo, el writeback elegible usa los campos **anteriores al flanco** de `MEM/WB` y no se duplica por retenerlos en `HOLD`; el bypass interno WB→ID solo se habilita para una escritura CPU realmente elegible. Reset o `LOAD`/preparación inhiben ese commit aunque `MEM/WB` conserve datos anteriores. Las instrucciones causantes de fault y las posteriores descartadas no escriben, mientras las anteriores supervivientes conservan su writeback una vez cuando corresponda, según `DEC-ARCH-004`. La finalización normal por `halt` tampoco detiene prematuramente las escrituras anteriores de su drenado. La validez del pipeline y los modos no habilitan por sí mismos escrituras fuera de ciclos efectivos.
 
@@ -183,31 +183,31 @@ Este octavo acuerdo fija la **neutralidad de primitiva y las restricciones de to
 
 La implementación de `DEC-ARCH-007` deberá superar como mínimo la siguiente matriz. Son **criterios de aceptación**, no resultados de pruebas ya ejecutadas:
 
-| Área | Caso mínimo | Resultado esperado |
-|---|---|---|
-| Estructura | Acceso a `x0...x31` | Existen 32 registros arquitectónicos de 32 bits. |
-| Lecturas simultáneas | `rs1 != rs2` | Ambos valores están disponibles simultáneamente en ID. |
-| Misma fuente | `rs1 = rs2` | Ambos puertos entregan el mismo valor correcto. |
-| Lectura combinacional | Cambio de `rs1`/`rs2` en ID | Las salidas reflejan el registro seleccionado dentro del mismo ciclo, sin flanco adicional. |
-| Escritura síncrona | WB válido escribe `rd` | El estado almacenado cambia únicamente en el flanco de un ciclo CPU efectivo. |
-| Entrada inválida | `MEM/WB.valid = 0` | No se modifica ningún registro. |
-| Sin escritura arquitectónica | `reg_write = 0` | No se modifica ningún registro. |
-| Protección de `x0` | Intento de escribir `x0` | `x0` permanece en cero. |
-| Lectura de `x0` | `rs1=0` o `rs2=0` | Se obtiene `0x00000000`. |
-| Bypass WB→ID en `rs1` | WB escribe el registro leído como `rs1` | ID recibe `wb_value` en ese puerto. |
-| Bypass WB→ID en `rs2` | WB escribe el registro leído como `rs2` | ID recibe `wb_value` en ese puerto. |
-| Bypass en ambos puertos | `rs1 = rs2 = wb_rd` | Ambos puertos reciben `wb_value`. |
-| WB dirigido a `x0` | `wb_rd = 0` | No se activa bypass; las lecturas de `x0` permanecen en cero. |
-| Productor más reciente | Coincidencia con WB y productor posterior en `EX/MEM` | EX utiliza el productor pendiente más reciente mediante forwarding cuando su dato esté disponible. |
-| `load-use` | Load seguido inmediatamente por consumidor | Se conserva el stall nominal ya aprobado y después se utiliza el dato cargado. |
-| Coincidencia solo con WB | Productor relevante únicamente en WB | El bypass interno evita un stall adicional. |
-| `HOLD` | Escritor válido permanece físicamente en WB durante varios clocks sin ciclo efectivo | El `Register File` conserva su estado; no se produce ni se repite writeback. |
-| `STEP` | Un `STEP` aceptado con escritor válido en WB | Se compromete exactamente el writeback elegible de ese ciclo efectivo, sin otro hasta un nuevo `STEP`. |
-| `RUN` | Ciclos efectivos sucesivos | Cada escritor válido compromete como máximo una vez por ciclo efectivo. |
-| Reset | Reset funcional coincide con WB válido | Reset prevalece y `x0...x31` quedan lógicamente en cero; no hay writeback coincidente. |
-| Nueva sesión | Finaliza correctamente la preparación de `LOAD` | El banco queda lógicamente en cero antes del commit y de ejecutar la nueva imagen. |
-| Drenado | Instrucción anterior válida alcanza WB en `HALT_DRAIN` o `FAULT_DRAIN` | Puede escribir exactamente una vez durante un ciclo efectivo autorizado por `RUN` o un `STEP` nuevo. |
-| Implementación física | Cambio de primitiva manteniendo el contrato | No cambia la semántica ni aparece latencia adicional de lectura. |
+| Área                         | Caso mínimo                                                                          | Resultado esperado                                                                                     |
+|------------------------------|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| Estructura                   | Acceso a `x0...x31`                                                                  | Existen 32 registros arquitectónicos de 32 bits.                                                       |
+| Lecturas simultáneas         | `rs1 != rs2`                                                                         | Ambos valores están disponibles simultáneamente en ID.                                                 |
+| Misma fuente                 | `rs1 = rs2`                                                                          | Ambos puertos entregan el mismo valor correcto.                                                        |
+| Lectura combinacional        | Cambio de `rs1`/`rs2` en ID                                                          | Las salidas reflejan el registro seleccionado dentro del mismo ciclo, sin flanco adicional.            |
+| Escritura síncrona           | WB válido escribe `rd`                                                               | El estado almacenado cambia únicamente en el flanco de un ciclo CPU efectivo.                          |
+| Entrada inválida             | `MEM/WB.valid = 0`                                                                   | No se modifica ningún registro.                                                                        |
+| Sin escritura arquitectónica | `reg_write = 0`                                                                      | No se modifica ningún registro.                                                                        |
+| Protección de `x0`           | Intento de escribir `x0`                                                             | `x0` permanece en cero.                                                                                |
+| Lectura de `x0`              | `rs1=0` o `rs2=0`                                                                    | Se obtiene `0x00000000`.                                                                               |
+| Bypass WB→ID en `rs1`        | WB escribe el registro leído como `rs1`                                              | ID recibe `wb_value` en ese puerto.                                                                    |
+| Bypass WB→ID en `rs2`        | WB escribe el registro leído como `rs2`                                              | ID recibe `wb_value` en ese puerto.                                                                    |
+| Bypass en ambos puertos      | `rs1 = rs2 = wb_rd`                                                                  | Ambos puertos reciben `wb_value`.                                                                      |
+| WB dirigido a `x0`           | `wb_rd = 0`                                                                          | No se activa bypass; las lecturas de `x0` permanecen en cero.                                          |
+| Productor más reciente       | Coincidencia con WB y productor posterior en `EX/MEM`                                | EX utiliza el productor pendiente más reciente mediante forwarding cuando su dato esté disponible.     |
+| `load-use`                   | Load seguido inmediatamente por consumidor                                           | Se conserva el stall nominal ya aprobado y después se utiliza el dato cargado.                         |
+| Coincidencia solo con WB     | Productor relevante únicamente en WB                                                 | El bypass interno evita un stall adicional.                                                            |
+| `HOLD`                       | Escritor válido permanece físicamente en WB durante varios clocks sin ciclo efectivo | El `Register File` conserva su estado; no se produce ni se repite writeback.                           |
+| `STEP`                       | Un `STEP` aceptado con escritor válido en WB                                         | Se compromete exactamente el writeback elegible de ese ciclo efectivo, sin otro hasta un nuevo `STEP`. |
+| `RUN`                        | Ciclos efectivos sucesivos                                                           | Cada escritor válido compromete como máximo una vez por ciclo efectivo.                                |
+| Reset                        | Reset funcional coincide con WB válido                                               | Reset prevalece y `x0...x31` quedan lógicamente en cero; no hay writeback coincidente.                 |
+| Nueva sesión                 | Finaliza correctamente la preparación de `LOAD`                                      | El banco queda lógicamente en cero antes del commit y de ejecutar la nueva imagen.                     |
+| Drenado                      | Instrucción anterior válida alcanza WB en `HALT_DRAIN` o `FAULT_DRAIN`               | Puede escribir exactamente una vez durante un ciclo efectivo autorizado por `RUN` o un `STEP` nuevo.   |
+| Implementación física        | Cambio de primitiva manteniendo el contrato                                          | No cambia la semántica ni aparece latencia adicional de lectura.                                       |
 
 En `HOLD` se verificará expresamente la conservación del estado del banco y la ausencia de **writebacks repetidos** durante clocks físicos sin ciclo efectivo, aunque `MEM/WB` retenga una instrucción escritora, conforme a `DEC-ARCH-008`. Las pruebas de productor más reciente y `load-use` comprueban la frontera de este banco con `DEC-ARCH-003`; no cierran su implementación RTL restante.
 

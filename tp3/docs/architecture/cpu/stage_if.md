@@ -26,17 +26,17 @@ El documento describe la lógica y los datos propios de la búsqueda. La selecci
 
 La etapa está compuesta por los siguientes bloques:
 
-| Módulo | Tipo | Pertenece a |
-|---|---|---|
-| `PC Update Control` | Lógica | `if_stage` |
-| `Next PC MUX` | Lógica | `if_stage` |
-| `PC` | Estado | `if_stage` |
-| `PC Adder` | Lógica | `if_stage` |
-| `Instruction Memory` | Submódulo | `if_stage` |
-| `Fetch Fault Check` | Submódulo | `if_stage` |
-| `IF/ID Input Logic` | Lógica | `if_stage` |
-| `IF/ID Update Control` | Lógica | `processor_top` |
-| Registro `IF/ID` | Estado | `processor_top` |
+| Módulo                 | Tipo      | Pertenece a     |
+|------------------------|-----------|-----------------|
+| `PC Update Control`    | Lógica    | `if_stage`      |
+| `Next PC MUX`          | Lógica    | `if_stage`      |
+| `PC`                   | Estado    | `if_stage`      |
+| `PC Adder`             | Lógica    | `if_stage`      |
+| `Instruction Memory`   | Submódulo | `if_stage`      |
+| `Fetch Fault Check`    | Submódulo | `if_stage`      |
+| `IF/ID Input Logic`    | Lógica    | `if_stage`      |
+| `IF/ID Update Control` | Lógica    | `processor_top` |
+| Registro `IF/ID`       | Estado    | `processor_top` |
 
 El siguiente diagrama muestra la organización de IF y sus conexiones con el pipeline. Los bloques locales se desarrollan en [Comportamiento](#comportamiento) y [Estado y temporización](#estado-y-temporización).
 
@@ -86,19 +86,19 @@ El diagrama muestra los dos recorridos principales de IF. El camino del PC selec
 
 #### Entradas de `Next PC MUX`
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `pc_plus_4[31:0]` | `PC Adder` | Data |
-| `redirect_target[31:0]` | resolución de flujo en EX | Data |
-| `next_pc_sel` | `PC Update Control` | Control |
+| Señal                   | Origen                    | Tipo    |
+|-------------------------|---------------------------|---------|
+| `pc_plus_4[31:0]`       | `PC Adder`                | Data    |
+| `redirect_target[31:0]` | resolución de flujo en EX | Data    |
+| `next_pc_sel`           | `PC Update Control`       | Control |
 
 <a id="salida"></a>
 
 #### Salida de `Next PC MUX`
 
-| Señal | Destino | Tipo |
-|---|---|---|
-| `next_pc[31:0]` | `PC` | Data |
+| Señal           | Destino | Tipo |
+|-----------------|---------|------|
+| `next_pc[31:0]` | `PC`    | Data |
 
 La selección es:
 
@@ -115,16 +115,16 @@ El target de redirect se calcula en EX. IF únicamente lo recibe como una altern
 
 #### Entrada
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `PC[31:0]` | `PC` | Data |
+| Señal      | Origen | Tipo |
+|------------|--------|------|
+| `PC[31:0]` | `PC`   | Data |
 
 <a id="salida-1"></a>
 
 #### Salida de `PC Adder`
 
-| Señal | Destino | Tipo |
-|---|---|---|
+| Señal             | Destino       | Tipo |
+|-------------------|---------------|------|
 | `pc_plus_4[31:0]` | `Next PC MUX` | Data |
 
 La operación utiliza aritmética de 32 bits:
@@ -143,17 +143,17 @@ IMEM almacena la imagen de instrucciones cargada por el Loader. IF utiliza el PC
 
 #### Entradas de `Instruction Memory`
 
-| Señal / interfaz | Origen | Tipo |
-|---|---|---|
-| `Read Address[31:0]` | `PC` | Data |
+| Señal / interfaz                | Origen   | Tipo    |
+|---------------------------------|----------|---------|
+| `Read Address[31:0]`            | `PC`     | Data    |
 | interfaz de escritura de imagen | `Loader` | Control |
 
 <a id="salida-2"></a>
 
 #### Salida de `Instruction Memory`
 
-| Señal | Destino | Tipo |
-|---|---|---|
+| Señal               | Destino             | Tipo |
+|---------------------|---------------------|------|
 | `instruction[31:0]` | `IF/ID Input Logic` | Data |
 
 Durante la ejecución, IF realiza una lectura combinacional de IMEM utilizando el PC como dirección de byte y recibe una palabra de 32 bits. Durante la carga de un programa, el Loader puede escribir la imagen en IMEM. La carga y la ejecución son fases mutuamente excluyentes: no se producen escrituras del Loader concurrentemente con búsquedas de instrucciones por parte de IF.
@@ -170,12 +170,12 @@ La organización, capacidad, direccionamiento y ownership de IMEM se detallan en
 
 #### Entradas de `Fetch Fault Check`
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `PC[31:0]` | `PC` | Data |
-| `image_valid` | derivado de `loaded_image_size_bytes != 0` | Estado |
-| `loaded_image_size_bytes` | estado global de la imagen | Estado |
-| `IMEM_CAPACITY_BYTES` | configuración de IMEM | Config |
+| Señal                     | Origen                                     | Tipo   |
+|---------------------------|--------------------------------------------|--------|
+| `PC[31:0]`                | `PC`                                       | Data   |
+| `image_valid`             | derivado de `loaded_image_size_bytes != 0` | Estado |
+| `loaded_image_size_bytes` | estado global de la imagen                 | Estado |
+| `IMEM_CAPACITY_BYTES`     | configuración de IMEM                      | Config |
 
 #### Condiciones de búsqueda
 
@@ -195,17 +195,17 @@ Si fallan alineación y rango en la misma búsqueda, la causa seleccionada es de
 
 #### Salidas de `Fetch Fault Check`
 
-| Señal | Destino | Tipo |
-|---|---|---|
-| `if_fetch_fault_candidate` | `IF/ID Input Logic` | Control | 
+| Señal                       | Destino             | Tipo    |
+|-----------------------------|---------------------|---------|
+| `if_fetch_fault_candidate`  | `IF/ID Input Logic` | Control |
 | `if_fetch_fault_cause[2:0]` | `IF/ID Input Logic` | Control |
 
 Las causas utilizadas por IF en `if_fetch_fault_cause[2:0]` son:
 
-| Código | Condición | Explicación |
-|---|---|---|
-| `000` | `instruction-address-misaligned` | La dirección del PC no está alineada a cuatro bytes, por lo que no puede iniciarse una búsqueda válida. |
-| `001` | `instruction-access-fault` | La región de cuatro bytes solicitada queda fuera de la capacidad física de IMEM o de la imagen ejecutable cargada. |
+| Código | Condición                        | Explicación                                                                                                        |
+|--------|----------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `000`  | `instruction-address-misaligned` | La dirección del PC no está alineada a cuatro bytes, por lo que no puede iniciarse una búsqueda válida.            |
+| `001`  | `instruction-access-fault`       | La región de cuatro bytes solicitada queda fuera de la capacidad física de IMEM o de la imagen ejecutable cargada. |
 
 `Fetch Fault Check` no tiene un camino directo hacia `Pipeline Hazard Control`. IF detecta el candidato y lo transporta mediante `IF/ID`. La decisión de confirmarlo ocurre posteriormente en ID.
 
@@ -219,12 +219,12 @@ La semántica completa de detección, descarte y confirmación se desarrolla en 
 
 #### Entradas de `IF/ID Input Logic`
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `PC[31:0]` | `PC` | Data |
-| `instruction[31:0]` | `Instruction Memory` | Data |
-| `if_fetch_fault_candidate` | `Fetch Fault Check` | Control |
-| `if_fetch_fault_cause[2:0]` | `Fetch Fault Check` | Control |
+| Señal                       | Origen               | Tipo    |
+|-----------------------------|----------------------|---------|
+| `PC[31:0]`                  | `PC`                 | Data    |
+| `instruction[31:0]`         | `Instruction Memory` | Data    |
+| `if_fetch_fault_candidate`  | `Fetch Fault Check`  | Control |
+| `if_fetch_fault_cause[2:0]` | `Fetch Fault Check`  | Control |
 
 #### Fetch válido
 
@@ -258,12 +258,12 @@ La palabra cero no representa una instrucción. El candidato queda identificado 
 
 #### Salidas de `IF/ID Input Logic`
 
-| Señal | Destino | Tipo |
-|---|---|---|
-| `ifid_in_valid` | `IF/ID.valid` | Control |
-| `ifid_in_pc[31:0]` | `IF/ID.pc` | Data |
-| `ifid_in_instruction[31:0]` | `IF/ID.instruction` | Data |
-| `ifid_in_fetch_fault_valid` | `IF/ID.fetch_fault_valid` | Control |
+| Señal                            | Destino                   | Tipo    |
+|----------------------------------|---------------------------|---------|
+| `ifid_in_valid`                  | `IF/ID.valid`             | Control |
+| `ifid_in_pc[31:0]`               | `IF/ID.pc`                | Data    |
+| `ifid_in_instruction[31:0]`      | `IF/ID.instruction`       | Data    |
+| `ifid_in_fetch_fault_valid`      | `IF/ID.fetch_fault_valid` | Control |
 | `ifid_in_fetch_fault_cause[2:0]` | `IF/ID.fetch_fault_cause` | Control |
 
 Esta lógica construye los valores de entrada de `IF/ID` para el ciclo actual. La actualización efectiva del registro —captura, retención o invalidación— la determina `IF/ID Update Control`.
@@ -332,16 +332,16 @@ IF no confirma nuevos faults ni `halt` durante el drenado. La lógica de termina
 
 ### Resumen de comportamiento
 
-| Situación | PC | `IF/ID` |
-|---|---|---|
-| Avance normal | `PC + 4` | Captura instrucción o candidato de fetch |
-| Redirect | `redirect_target` | Invalida |
-| Load-use | Retiene | Retiene |
-| Halt confirmado | Retiene | Invalida |
-| Fault EX confirmado | Retiene | Invalida |
-| Fault ID confirmado | Retiene | Invalida |
-| Drenado | Retiene | Invalida en el avance alcanzable |
-| `HOLD` sin ciclo de la CPU | Retiene | Retiene |
+| Situación                  | PC                | `IF/ID`                                  |
+|----------------------------|-------------------|------------------------------------------|
+| Avance normal              | `PC + 4`          | Captura instrucción o candidato de fetch |
+| Redirect                   | `redirect_target` | Invalida                                 |
+| Load-use                   | Retiene           | Retiene                                  |
+| Halt confirmado            | Retiene           | Invalida                                 |
+| Fault EX confirmado        | Retiene           | Invalida                                 |
+| Fault ID confirmado        | Retiene           | Invalida                                 |
+| Drenado                    | Retiene           | Invalida en el avance alcanzable         |
+| `HOLD` sin ciclo de la CPU | Retiene           | Retiene                                  |
 
 La tabla resume únicamente el comportamiento visible de IF. La selección exacta entre las ocho acciones del pipeline pertenece a [Control del pipeline y hazards](control_and_hazards.md).
 
@@ -355,19 +355,19 @@ La tabla resume únicamente el comportamiento visible de IF. La selección exact
 
 #### Entradas de `PC Update Control`
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `act_normal` | `Pipeline Hazard Control` | Control |
-| `act_redirect` | `Pipeline Hazard Control` | Control | 
+| Señal          | Origen                    | Tipo    |
+|----------------|---------------------------|---------|
+| `act_normal`   | `Pipeline Hazard Control` | Control |
+| `act_redirect` | `Pipeline Hazard Control` | Control |
 
 <a id="salidas"></a>
 
 #### Salidas de `PC Update Control`
 
-| Señal | Destino | Tipo | Significado |
-|---|---|---|---|
-| `pc_write_enable` | `PC.write_enable` | Control | Autoriza la actualización del PC. |
-| `next_pc_sel` | `Next PC MUX.sel` | Control | Selecciona entre avance secuencial y redirect. |
+| Señal             | Destino           | Tipo    | Significado                                    |
+|-------------------|-------------------|---------|------------------------------------------------|
+| `pc_write_enable` | `PC.write_enable` | Control | Autoriza la actualización del PC.              |
+| `next_pc_sel`     | `Next PC MUX.sel` | Control | Selecciona entre avance secuencial y redirect. |
 
 Durante avance normal, el PC recibe `PC + 4`; durante redirect, recibe `redirect_target`. Las otras acciones lo retienen. Las ecuaciones de `pc_write_enable` y `next_pc_sel` están en [los controles locales del PC](control_and_hazards.md#pc).
 
@@ -381,23 +381,23 @@ El PC es un registro de 32 bits que representa la dirección del frente actual d
 
 #### Entradas de `PC`
 
-| Señal / acción | Origen | Tipo |
-|---|---|---|
-| `next_pc[31:0]` | `Next PC MUX` | Data |
-| `write_enable` | `PC Update Control.pc_write_enable` | Control |
-| inicialización de sesión | `Session Preparation` | Estado |
-| `reset` | control global | Estado |
+| Señal / acción           | Origen                              | Tipo    |
+|--------------------------|-------------------------------------|---------|
+| `next_pc[31:0]`          | `Next PC MUX`                       | Data    |
+| `write_enable`           | `PC Update Control.pc_write_enable` | Control |
+| inicialización de sesión | `Session Preparation`               | Estado  |
+| `reset`                  | control global                      | Estado  |
 
 <a id="salidas-1"></a>
 
 #### Salidas de `PC`
 
-| Señal | Destino | Tipo |
-|---|---|---|
-| `PC[31:0]` | `PC Adder` | Data |
-| `PC[31:0]` | `Instruction Memory` | Data |
-| `PC[31:0]` | `Fetch Fault Check` | Data |
-| `PC[31:0]` | `IF/ID Input Logic` | Data |
+| Señal      | Destino                                | Tipo |
+|------------|----------------------------------------|------|
+| `PC[31:0]` | `PC Adder`                             | Data |
+| `PC[31:0]` | `Instruction Memory`                   | Data |
+| `PC[31:0]` | `Fetch Fault Check`                    | Data |
+| `PC[31:0]` | `IF/ID Input Logic`                    | Data |
 | `PC[31:0]` | Debug, cuando forma parte del snapshot | Data |
 
 #### Características de `PC`
@@ -422,25 +422,25 @@ La preparación de sesión, el reset y la autorización de ciclos se desarrollan
 
 Todas las entradas provienen de `Pipeline Hazard Control`:
 
-| Señal | Origen | Tipo |
-|---|---|---|
-| `act_ex_fault` | `Pipeline Hazard Control` | Control |
-| `act_halt` | `Pipeline Hazard Control` | Control |
-| `act_redirect` | `Pipeline Hazard Control` | Control |
-| `act_id_fault` | `Pipeline Hazard Control` | Control |
-| `act_load_use` | `Pipeline Hazard Control` | Control |
-| `act_normal` | `Pipeline Hazard Control` | Control |
+| Señal                | Origen                    | Tipo    |
+|----------------------|---------------------------|---------|
+| `act_ex_fault`       | `Pipeline Hazard Control` | Control |
+| `act_halt`           | `Pipeline Hazard Control` | Control |
+| `act_redirect`       | `Pipeline Hazard Control` | Control |
+| `act_id_fault`       | `Pipeline Hazard Control` | Control |
+| `act_load_use`       | `Pipeline Hazard Control` | Control |
+| `act_normal`         | `Pipeline Hazard Control` | Control |
 | `act_drain_load_use` | `Pipeline Hazard Control` | Control |
-| `act_drain_advance` | `Pipeline Hazard Control` | Control |
+| `act_drain_advance`  | `Pipeline Hazard Control` | Control |
 
 <a id="salidas-4"></a>
 
 #### Salidas de `IF/ID Update Control`
 
-| Señal | Destino | Tipo |
-|---|---|---|
-| `capture` | `IF/ID.capture` | Control |
-| `hold` | `IF/ID.hold` | Control |
+| Señal        | Destino            | Tipo    |
+|--------------|--------------------|---------|
+| `capture`    | `IF/ID.capture`    | Control |
+| `hold`       | `IF/ID.hold`       | Control |
 | `invalidate` | `IF/ID.invalidate` | Control |
 
 La captura, retención e invalidación se derivan de las ocho acciones según [los controles locales de IF/ID](control_and_hazards.md#ifid). En ausencia de una acción de pipeline y de una prioridad global superior, el registro conserva su estado.
@@ -457,22 +457,22 @@ El [contrato de IF/ID](cpu_pipeline.md#registro-ifid) define sus cinco campos y 
 
 #### Entradas de datos
 
-| Campo | Origen | Tipo |
-|---|---|---|
-| `valid` | `IF/ID Input Logic.ifid_in_valid` | Control |
-| `pc` | `IF/ID Input Logic.ifid_in_pc` | Data |
-| `instruction` | `IF/ID Input Logic.ifid_in_instruction` | Data |
+| Campo               | Origen                                        | Tipo    |
+|---------------------|-----------------------------------------------|---------|
+| `valid`             | `IF/ID Input Logic.ifid_in_valid`             | Control |
+| `pc`                | `IF/ID Input Logic.ifid_in_pc`                | Data    |
+| `instruction`       | `IF/ID Input Logic.ifid_in_instruction`       | Data    |
 | `fetch_fault_valid` | `IF/ID Input Logic.ifid_in_fetch_fault_valid` | Control |
 | `fetch_fault_cause` | `IF/ID Input Logic.ifid_in_fetch_fault_cause` | Control |
 
 #### Entradas de control
 
-| Señal / acción | Origen | Tipo |
-|---|---|---|
-| `capture` | `IF/ID Update Control` | Control |
-| `hold` | `IF/ID Update Control` | Control |
-| `invalidate` | `IF/ID Update Control` | Control |
-| clear de sesión | `Session Preparation` | Control |
+| Señal / acción  | Origen                 | Tipo    |
+|-----------------|------------------------|---------|
+| `capture`       | `IF/ID Update Control` | Control |
+| `hold`          | `IF/ID Update Control` | Control |
+| `invalidate`    | `IF/ID Update Control` | Control |
+| clear de sesión | `Session Preparation`  | Control |
 
 #### Salidas hacia ID
 

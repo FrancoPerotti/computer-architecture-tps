@@ -11,7 +11,7 @@ El transmisor UART convierte un byte de ocho bits en una trama serie 8N1. Envía
 
 El byte procede de la FIFO TX. El control del protocolo forma las respuestas y solicita su envío mediante la integración UART; `uart_tx` realiza la transmisión de cada byte. Por ello, terminar de encolar una respuesta y terminar de transmitirla físicamente son hitos diferentes.
 
-El diseño toma como referencia [uart_tx del TP2](../../../../tp2/rtl/uart_tx.sv) y aplica el [criterio de separación entre control y acciones](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--correcciones-de-diseño-de-fsm-del-tp2). La [organización interna](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--organización-del-transmisor-uart), los [cuatro estados y su comportamiento](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-del-transmisor-uart), la [codificación one-hot](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-transmisor-uart), el [selector de salida](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selector-de-salida-del-transmisor-uart) y los [puertos del módulo](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--puertos-del-transmisor-uart) están aprobados. La descripción concreta las transiciones, acciones y eventos a partir del TP2; el recorrido de señales y la coordinación están concretados en [uart_core](uart_core.md), con DEC-SYS-007 cerrada en diseño documental.
+El diseño toma como referencia [uart_tx del TP2](../../../../tp2/rtl/uart_tx.sv) y aplica el [criterio de separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). La [organización interna](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), los [cuatro estados y su comportamiento](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), la [codificación one-hot](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico), el [selector de salida](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico) y los [puertos del módulo](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico) están aprobados. La descripción concreta las transiciones, acciones y eventos a partir del TP2; el recorrido de señales y la coordinación se definen en [uart_core](uart_core.md).
 
 ## Organización
 
@@ -56,16 +56,16 @@ El control recibe `tx_start`, `s_tick`, `sample_count[3:0]` y `bit_count[2:0]`. 
 
 #### Controles de acción
 
-| Señal | Destino | Acción que autoriza |
-|---|---|---|
-| `sample_count_clear` | `Sample Counter` | Poner la cuenta de duración en cero. |
-| `sample_count_inc` | `Sample Counter` | Incrementar la cuenta de duración una vez. |
-| `bit_count_clear` | `Bit Counter` | Poner el índice de datos en cero. |
-| `bit_count_inc` | `Bit Counter` | Avanzar al siguiente índice de datos. |
-| `data_load_enable` | `TX Shift Register` | Capturar el byte de `data_in`. |
-| `data_shift_enable` | `TX Shift Register` | Desplazar el contenido un bit hacia la derecha, incorporando cero por el extremo superior. |
-| `tx_write_enable` | `TX Output Register` | Registrar el nivel seleccionado para la salida serie. |
-| `tx_output_select` | `TX Output Selection` | Seleccionar nivel alto, nivel bajo, bit actual o bit siguiente. |
+| Señal                | Destino               | Acción que autoriza                                                                        |
+|----------------------|-----------------------|--------------------------------------------------------------------------------------------|
+| `sample_count_clear` | `Sample Counter`      | Poner la cuenta de duración en cero.                                                       |
+| `sample_count_inc`   | `Sample Counter`      | Incrementar la cuenta de duración una vez.                                                 |
+| `bit_count_clear`    | `Bit Counter`         | Poner el índice de datos en cero.                                                          |
+| `bit_count_inc`      | `Bit Counter`         | Avanzar al siguiente índice de datos.                                                      |
+| `data_load_enable`   | `TX Shift Register`   | Capturar el byte de `data_in`.                                                             |
+| `data_shift_enable`  | `TX Shift Register`   | Desplazar el contenido un bit hacia la derecha, incorporando cero por el extremo superior. |
+| `tx_write_enable`    | `TX Output Register`  | Registrar el nivel seleccionado para la salida serie.                                      |
+| `tx_output_select`   | `TX Output Selection` | Seleccionar nivel alto, nivel bajo, bit actual o bit siguiente.                            |
 
 Los enables son de un bit. `tx_output_select` tiene dos bits y utiliza la codificación aprobada en la tabla de selección de salida. Los controles de un mismo recurso evitan órdenes simultáneas incompatibles, como carga y desplazamiento del registro del byte o limpieza e incremento de un contador. Sin una orden de actualización, los recursos conservan su valor.
 
@@ -99,18 +99,18 @@ El protocolo requiere conocer el fin físico del byte, incluido todo el Stop. Es
 
 ### Frontera de uart_tx
 
-Se conservan los puertos del transmisor del TP2 para la configuración de ocho bits, conforme al [acuerdo de puertos](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--puertos-del-transmisor-uart). Las señales de acción entre la FSM y los recursos permanecen internas, mientras la integración UART aporta el byte y la solicitud de envío y consume las salidas de estado.
+Se conservan los puertos del transmisor del TP2 para la configuración de ocho bits, conforme al [acuerdo de puertos](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). Las señales de acción entre la FSM y los recursos permanecen internas, mientras la integración UART aporta el byte y la solicitud de envío y consume las salidas de estado.
 
-| Dirección | Señal | Ancho | Origen o destino |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Entrada | `tx_start` | 1 | Solicitud de comienzo desde la integración UART. |
-| Entrada | `s_tick` | 1 | Pulso de un ciclo desde el generador de baud. |
-| Entrada | `data_in` | 8 | Primer byte presentado por la FIFO TX. |
-| Salida | `tx` | 1 | Nivel registrado hacia `serial_tx`. |
-| Salida | `tx_done_tick` | 1 | Evento de fin físico hacia la integración UART y, a través de ella, al control del protocolo. |
-| Salida | `tx_busy` | 1 | Ocupación hacia la integración UART para coordinar otro envío. |
+| Dirección | Señal          | Ancho | Origen o destino                                                                              |
+|-----------|----------------|-------|-----------------------------------------------------------------------------------------------|
+| Entrada   | `clk`          | 1     | Clock funcional común.                                                                        |
+| Entrada   | `reset`        | 1     | Reset funcional común, activo alto.                                                           |
+| Entrada   | `tx_start`     | 1     | Solicitud de comienzo desde la integración UART.                                              |
+| Entrada   | `s_tick`       | 1     | Pulso de un ciclo desde el generador de baud.                                                 |
+| Entrada   | `data_in`      | 8     | Primer byte presentado por la FIFO TX.                                                        |
+| Salida    | `tx`           | 1     | Nivel registrado hacia `serial_tx`.                                                           |
+| Salida    | `tx_done_tick` | 1     | Evento de fin físico hacia la integración UART y, a través de ella, al control del protocolo. |
+| Salida    | `tx_busy`      | 1     | Ocupación hacia la integración UART para coordinar otro envío.                                |
 
 La integración debe presentar `data_in` estable en el flanco que acepta `tx_start` en `IDLE`. Ese flanco captura el byte, comienza el Start y deja el transmisor ocupado después del flanco. La entrada puede cambiar posteriormente sin modificar el envío en curso. `tx_done_tick` se consume en el flanco final del Stop, con la relación temporal ya definida en los estados.
 
@@ -130,14 +130,14 @@ La configuración aprobada es 19200 baud nominales, ocho bits de datos, sin pari
 
 ### Estados y transiciones
 
-Se conservan los cuatro estados del TP2, conforme al [acuerdo de estados](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--estados-del-transmisor-uart). Cada uno identifica la parte de la trama que se está transmitiendo.
+Se conservan los cuatro estados del TP2, conforme al [acuerdo de estados](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). Cada uno identifica la parte de la trama que se está transmitiendo.
 
-| Estado | Función |
-|---|---|
-| `IDLE` | Conservar el reposo alto y esperar una solicitud de transmisión. |
-| `START` | Conservar el nivel bajo durante la cuenta de Start. |
-| `DATA` | Conservar cada bit de datos durante su intervalo y preparar el siguiente. |
-| `STOP` | Conservar el nivel alto durante un Stop completo y anunciar el fin del byte. |
+| Estado  | Función                                                                      |
+|---------|------------------------------------------------------------------------------|
+| `IDLE`  | Conservar el reposo alto y esperar una solicitud de transmisión.             |
+| `START` | Conservar el nivel bajo durante la cuenta de Start.                          |
+| `DATA`  | Conservar cada bit de datos durante su intervalo y preparar el siguiente.    |
+| `STOP`  | Conservar el nivel alto durante un Stop completo y anunciar el fin del byte. |
 
 ```mermaid
 stateDiagram-v2
@@ -153,14 +153,14 @@ Mientras no se cumple una transición, se conserva el estado actual. El reset ll
 
 #### Codificación del estado
 
-Se conserva la codificación one-hot del TP2, conforme al [acuerdo de codificación](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--codificación-one-hot-del-transmisor-uart). El registro `state[3:0]` utiliza cuatro bits y cada estado legal activa exactamente uno.
+Se conserva la codificación one-hot del TP2, conforme al [acuerdo de codificación](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico). El registro `state[3:0]` utiliza cuatro bits y cada estado legal activa exactamente uno.
 
-| Estado | Valor de `state[3:0]` |
-|---|---|
-| `IDLE` | `0001` |
-| `START` | `0010` |
-| `DATA` | `0100` |
-| `STOP` | `1000` |
+| Estado  | Valor de `state[3:0]` |
+|---------|-----------------------|
+| `IDLE`  | `0001`                |
+| `START` | `0010`                |
+| `DATA`  | `0100`                |
+| `STOP`  | `1000`                |
 
 El reset escribe 0001, correspondiente a `IDLE`. La lógica combinacional calcula el siguiente estado utilizando esos valores y el registro lo adopta al flanco ascendente del clock funcional. Esta codificación permite identificar directamente la fase de transmisión al observar el registro en simulación.
 
@@ -204,14 +204,14 @@ Fuera de reset, `tx_busy` vale uno en `START`, `DATA` y `STOP` y cero en `IDLE`.
 
 #### Selección del nivel de salida
 
-La tabla de acciones utiliza las siguientes alternativas de `tx_output_select[1:0]`, conforme al [acuerdo del selector](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selector-de-salida-del-transmisor-uart):
+La tabla de acciones utiliza las siguientes alternativas de `tx_output_select[1:0]`, conforme al [acuerdo del selector](../../decisions/DEC-SYS-007.md#transmisión-y-fin-físico):
 
-| Código | Selección | Valor que prepara la lógica de salida |
-|---|---|---|
-| `00` | `HIGH` | Uno, para reposo y Stop. |
-| `01` | `LOW` | Cero, para Start. |
-| `10` | `CURRENT_BIT` | `data_reg[0]`, para comenzar D0. |
-| `11` | `NEXT_BIT` | `data_reg[1]`, para comenzar D1 a D7 mientras se desplaza el registro. |
+| Código | Selección     | Valor que prepara la lógica de salida                                  |
+|--------|---------------|------------------------------------------------------------------------|
+| `00`   | `HIGH`        | Uno, para reposo y Stop.                                               |
+| `01`   | `LOW`         | Cero, para Start.                                                      |
+| `10`   | `CURRENT_BIT` | `data_reg[0]`, para comenzar D0.                                       |
+| `11`   | `NEXT_BIT`    | `data_reg[1]`, para comenzar D1 a D7 mientras se desplaza el registro. |
 
 La selección es combinacional y solo tiene efecto sobre TX si `tx_write_enable` está activo. Cuando no hay orden de escritura, el selector toma `HIGH` como valor por defecto y el registro de salida conserva el nivel anterior. El selector y el enable son controles internos de `uart_tx`; no se exponen como puertos del módulo.
 
@@ -219,37 +219,28 @@ La selección es combinacional y solo tiene efecto sobre TX si `tx_write_enable`
 
 Los contadores y datos de entrada a las decisiones corresponden al instante previo al flanco. Los controles que no aparecen en una fila permanecen en cero; la columna de selección solo resulta significativa si está activo `tx_write_enable`. Las condiciones de cada estado son excluyentes.
 
-| Estado actual | Condición | Estado siguiente | Controles activos | Selección TX |
-|---|---|---|---|---|
-| `IDLE` | `tx_start = 0` | `IDLE` | `sample_count_clear`, `tx_write_enable` | `HIGH` |
-| `IDLE` | `tx_start = 1` | `START` | `sample_count_clear`, `bit_count_clear`, `data_load_enable`, `tx_write_enable` | `LOW` |
-| `START` | `s_tick = 0` | `START` | Ninguno | — |
-| `START` | `s_tick = 1`, `sample_count != 15` | `START` | `sample_count_inc` | — |
-| `START` | `s_tick = 1`, `sample_count = 15` | `DATA` | `sample_count_clear`, `tx_write_enable` | `CURRENT_BIT` |
-| `DATA` | `s_tick = 0` | `DATA` | Ninguno | — |
-| `DATA` | `s_tick = 1`, `sample_count != 15` | `DATA` | `sample_count_inc` | — |
-| `DATA` | `s_tick = 1`, `sample_count = 15`, `bit_count != 7` | `DATA` | `sample_count_clear`, `bit_count_inc`, `data_shift_enable`, `tx_write_enable` | `NEXT_BIT` |
-| `DATA` | `s_tick = 1`, `sample_count = 15`, `bit_count = 7` | `STOP` | `sample_count_clear`, `tx_write_enable` | `HIGH` |
-| `STOP` | `s_tick = 0` | `STOP` | `tx_write_enable` | `HIGH` |
-| `STOP` | `s_tick = 1`, `sample_count != 15` | `STOP` | `sample_count_inc`, `tx_write_enable` | `HIGH` |
-| `STOP` | `s_tick = 1`, `sample_count = 15` | `IDLE` | `sample_count_clear`, `tx_write_enable`, `tx_done_tick` | `HIGH` |
+| Estado actual | Condición                                           | Estado siguiente | Controles activos                                                              | Selección TX  |
+|---------------|-----------------------------------------------------|------------------|--------------------------------------------------------------------------------|---------------|
+| `IDLE`        | `tx_start = 0`                                      | `IDLE`           | `sample_count_clear`, `tx_write_enable`                                        | `HIGH`        |
+| `IDLE`        | `tx_start = 1`                                      | `START`          | `sample_count_clear`, `bit_count_clear`, `data_load_enable`, `tx_write_enable` | `LOW`         |
+| `START`       | `s_tick = 0`                                        | `START`          | Ninguno                                                                        | —             |
+| `START`       | `s_tick = 1`, `sample_count != 15`                  | `START`          | `sample_count_inc`                                                             | —             |
+| `START`       | `s_tick = 1`, `sample_count = 15`                   | `DATA`           | `sample_count_clear`, `tx_write_enable`                                        | `CURRENT_BIT` |
+| `DATA`        | `s_tick = 0`                                        | `DATA`           | Ninguno                                                                        | —             |
+| `DATA`        | `s_tick = 1`, `sample_count != 15`                  | `DATA`           | `sample_count_inc`                                                             | —             |
+| `DATA`        | `s_tick = 1`, `sample_count = 15`, `bit_count != 7` | `DATA`           | `sample_count_clear`, `bit_count_inc`, `data_shift_enable`, `tx_write_enable`  | `NEXT_BIT`    |
+| `DATA`        | `s_tick = 1`, `sample_count = 15`, `bit_count = 7`  | `STOP`           | `sample_count_clear`, `tx_write_enable`                                        | `HIGH`        |
+| `STOP`        | `s_tick = 0`                                        | `STOP`           | `tx_write_enable`                                                              | `HIGH`        |
+| `STOP`        | `s_tick = 1`, `sample_count != 15`                  | `STOP`           | `sample_count_inc`, `tx_write_enable`                                          | `HIGH`        |
+| `STOP`        | `s_tick = 1`, `sample_count = 15`                   | `IDLE`           | `sample_count_clear`, `tx_write_enable`, `tx_done_tick`                        | `HIGH`        |
 
 ## Invariantes y condiciones de borde
 
 Las condiciones de finalización física y conservación de la salida se describen en [Stop completo y evento de finalización](#stop-completo-y-evento-de-finalización) y [Selección del nivel de salida](#selección-del-nivel-de-salida).
 
-## Verificación y evidencia
-
-### Alcance del siguiente paso
-
-La organización, los cuatro estados, su codificación one-hot, las transiciones, los controles, el selector, los eventos y los puertos del transmisor quedan definidos.
-
-El [generador de ticks compartido](uart_baud_tick_gen.md) y las [FIFO RX y TX](uart_fifo.md) tienen definidos sus diseños. [uart_core](uart_core.md) conecta el byte y la solicitud de envío, retira el byte de FIFO al terminar Stop y expone `tx_done_tick` al control del protocolo sin registro adicional.
-
-El control del protocolo, sus servicios, seguimiento y presupuesto quedaron comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración). DEC-SYS-007 está aprobada; se continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc), sin implementación todavía.
-
 ## Referencias y trazabilidad
 
+- [Integración UART](uart_core.md#presupuesto-de-integración): conexiones entre módulos y cotas de recepción y transmisión.
 - [Mapa de autoridad documental](../system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../../requirements.md): obligaciones y criterios de aceptación.
 - [Decisiones pendientes](../../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.

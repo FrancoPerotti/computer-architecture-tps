@@ -68,13 +68,13 @@ El recorrido de los datos depende del tipo de instrucción.
 
 En una operación aritmética, lógica, de desplazamiento, `LUI`, `JAL` o `JALR`, el recorrido es el siguiente:
 
-| Etapa | Qué ocurre |
-|---|---|
-| `EX` | Utiliza los operandos efectivos y ejecuta la operación. |
-| `EX/MEM` | Guarda el resultado producido por EX en `ex_result`. |
-| `MEM` | Transporta ese resultado sin acceder a DMEM. |
-| `MEM/WB` | Guarda el valor que utilizará la etapa WB. |
-| `WB` | Escribe el resultado en el banco de registros si `reg_write` está activo. |
+| Etapa    | Qué ocurre                                                                |
+|----------|---------------------------------------------------------------------------|
+| `EX`     | Utiliza los operandos efectivos y ejecuta la operación.                   |
+| `EX/MEM` | Guarda el resultado producido por EX en `ex_result`.                      |
+| `MEM`    | Transporta ese resultado sin acceder a DMEM.                              |
+| `MEM/WB` | Guarda el valor que utilizará la etapa WB.                                |
+| `WB`     | Escribe el resultado en el banco de registros si `reg_write` está activo. |
 
 En forma resumida:
 
@@ -95,13 +95,13 @@ En `JAL` y `JALR`, el resultado producido por EX es `PC + 4`, que se escribe en 
 
 En un `load`, EX no produce todavía el valor que se escribirá en el banco de registros. Produce la dirección efectiva y la conserva en `EX/MEM.ex_result`. MEM utiliza esa dirección para leer DMEM. El valor leído se convierte en `load_value` y continúa hacia WB:
 
-| Etapa | Qué ocurre |
-|---|---|
-| `EX` | Calcula la dirección efectiva sumando el operando base y el inmediato. |
-| `EX/MEM` | Guarda la dirección efectiva en `ex_result`. |
-| `MEM` | Lee DMEM usando `ex_result` y produce `load_value`. |
-| `MEM/WB` | Guarda el valor leído para la etapa WB. |
-| `WB` | Escribe `wb_value` en el banco de registros si `reg_write` está activo. |
+| Etapa    | Qué ocurre                                                              |
+|----------|-------------------------------------------------------------------------|
+| `EX`     | Calcula la dirección efectiva sumando el operando base y el inmediato.  |
+| `EX/MEM` | Guarda la dirección efectiva en `ex_result`.                            |
+| `MEM`    | Lee DMEM usando `ex_result` y produce `load_value`.                     |
+| `MEM/WB` | Guarda el valor leído para la etapa WB.                                 |
+| `WB`     | Escribe `wb_value` en el banco de registros si `reg_write` está activo. |
 
 En forma resumida:
 
@@ -117,13 +117,13 @@ flowchart LR
 
 En un `store`, EX calcula la dirección efectiva y conserva además el dato que debe escribirse. Ambos valores viajan por campos separados de `EX/MEM`:
 
-| Etapa | Qué ocurre |
-|---|---|
-| `EX` | Calcula la dirección efectiva y prepara el dato que debe escribirse. |
+| Etapa    | Qué ocurre                                                             |
+|----------|------------------------------------------------------------------------|
+| `EX`     | Calcula la dirección efectiva y prepara el dato que debe escribirse.   |
 | `EX/MEM` | Guarda la dirección efectiva en `ex_result` y el dato en `store_data`. |
-| `MEM` | Escribe `store_data` en DMEM usando `ex_result` como dirección. |
+| `MEM`    | Escribe `store_data` en DMEM usando `ex_result` como dirección.        |
 | `MEM/WB` | Conserva `reg_write=0`; el campo `wb_value` no habilita una escritura. |
-| `WB` | No escribe ningún valor en el banco de registros. |
+| `WB`     | No escribe ningún valor en el banco de registros.                      |
 
 En forma resumida:
 
@@ -233,13 +233,13 @@ El `Immediate Generator` reconstruye un valor de 32 bits a partir de los campos 
 
 Las reconstrucciones son:
 
-| Formato | Inmediato de 32 bits |
-|---|---|
-| I | `sext_12(instruction[31:20])` |
-| S | `sext_12({instruction[31:25], instruction[11:7]})` |
-| B | `sext_13({instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0})` |
-| U | `{instruction[31:12], 12'b0}` |
-| J | `sext_21({instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0})` |
+| Formato | Inmediato de 32 bits                                                                        |
+|---------|---------------------------------------------------------------------------------------------|
+| I       | `sext_12(instruction[31:20])`                                                               |
+| S       | `sext_12({instruction[31:25], instruction[11:7]})`                                          |
+| B       | `sext_13({instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0})`   |
+| U       | `{instruction[31:12], 12'b0}`                                                               |
+| J       | `sext_21({instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0})` |
 
 Este valor inmediato es un dato más del datapath. Más adelante puede convertirse en operando de la ALU, en desplazamiento de un target o incluso en el resultado que se escribirá en `rd`, según la clase de instrucción.
 
@@ -312,11 +312,11 @@ Despues de atravesar el multiplexor de forwarding, los operandos que EX utiliza 
 
 Cada uno de estos valores puede provenir de tres lugares:
 
-| Selector | Fuente |
-|---|---|
-| `00` | valor base almacenado en `ID/EX` |
-| `01` | `EX/MEM.ex_result` |
-| `10` | `MEM/WB.wb_value` |
+| Selector | Fuente                           |
+|----------|----------------------------------|
+| `00`     | valor base almacenado en `ID/EX` |
+| `01`     | `EX/MEM.ex_result`               |
+| `10`     | `MEM/WB.wb_value`                |
 
 De esta manera, EX no opera directamente sobre los valores almacenados en `ID/EX`, sino sobre una versión potencialmente actualizada de ellos.
 
@@ -345,11 +345,11 @@ De este modo, el datapath puede reutilizar la misma ALU para operaciones muy dis
 
 Las clases de instrucción reutilizan la ALU de esta manera:
 
-| Clase | Operandos y significado del resultado |
-|---|---|
-| Registro-registro | Dos operandos provenientes, en última instancia, del `Register File`. |
-| Inmediatas | El inmediato sustituye al segundo operando. |
-| Loads y stores | También utilizan el inmediato; el resultado de la ALU representa una dirección efectiva, en lugar de un valor aritmético final. |
+| Clase             | Operandos y significado del resultado                                                                                           |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Registro-registro | Dos operandos provenientes, en última instancia, del `Register File`.                                                           |
+| Inmediatas        | El inmediato sustituye al segundo operando.                                                                                     |
+| Loads y stores    | También utilizan el inmediato; el resultado de la ALU representa una dirección efectiva, en lugar de un valor aritmético final. |
 
 ---
 
@@ -361,18 +361,18 @@ La ALU es la unidad funcional principal de EX. Produce un resultado de 32 bits y
 
 Las operaciones implementadas son:
 
-| Operación | Resultado |
-|---|---|
-| ADD | `A+B` módulo `2^32` |
-| SUB | `A-B` módulo `2^32` |
-| SLL | shift lógico izquierdo por `B[4:0]` |
-| SRL | shift lógico derecho por `B[4:0]` |
-| SRA | shift aritmético derecho por `B[4:0]` |
-| AND | `A AND B` |
-| OR | `A OR B` |
-| XOR | `A XOR B` |
-| SLT | `1` si `A signed < B signed`, en otro caso `0` |
-| SLTU | `1` si `A unsigned < B unsigned`, en otro caso `0` |
+| Operación | Resultado                                          |
+|-----------|----------------------------------------------------|
+| ADD       | `A+B` módulo `2^32`                                |
+| SUB       | `A-B` módulo `2^32`                                |
+| SLL       | shift lógico izquierdo por `B[4:0]`                |
+| SRL       | shift lógico derecho por `B[4:0]`                  |
+| SRA       | shift aritmético derecho por `B[4:0]`              |
+| AND       | `A AND B`                                          |
+| OR        | `A OR B`                                           |
+| XOR       | `A XOR B`                                          |
+| SLT       | `1` si `A signed < B signed`, en otro caso `0`     |
+| SLTU      | `1` si `A unsigned < B unsigned`, en otro caso `0` |
 
 La ALU reutiliza el mismo hardware tanto para resultados aritméticos como para comparaciones y cálculo de direcciones.
 
@@ -709,28 +709,28 @@ La unificación es posible porque todas ellas hicieron coincidir previamente su 
 
 La siguiente tabla resume únicamente los bloques que pertenecen al datapath o al almacenamiento funcional de la CPU.
 
-| Bloque | Naturaleza | Función de datos |
-|---|---|---|
-| PC | registro de 32 bits | conserva la dirección actual de fetch |
-| IMEM | memoria | entrega la palabra de instrucción almacenada |
-| `IF/ID` | registro interetapa | conserva instrucción, PC y contexto de fetch |
-| `Register File` | 32×32, 2R1W | entrega registros fuente y recibe writeback |
-| `Immediate Generator` | combinacional | reconstruye inmediatos I/S/B/U/J |
-| WB→ID Bypass path | camino combinacional | sustituye lecturas del RF por `wb_value` cuando coincide el destino |
-| `ID/EX` | registro interetapa | conserva operandos base, inmediato, identidad y contexto |
-| `Forward MUX A` | mux 3:1 | produce `rs1_effective` |
-| `Forward MUX B` | mux 3:1 | produce `rs2_effective` |
-| `ALU Source MUX` | mux 2:1 | selecciona `rs2_effective` o inmediato como operando B |
-| ALU | unidad funcional | realiza operación aritmética, lógica, comparación o dirección |
-| `Target Adder` | combinacional | calcula `pc_relative_target` |
-| JALR path | combinacional | calcula `jalr_target` con bit 0 limpio |
-| `Link Adder` | combinacional | calcula `PC+4` para JAL/JALR |
-| Result path / `Result MUX` | camino combinacional | produce `ex_result` a partir de ALU, inmediato o link |
-| `EX/MEM` | registro interetapa | conserva `ex_result`, `store_data` e identidad |
-| DMEM | memoria | recibe dirección y dato de store; produce dato de load |
-| Load Select / Extend | combinacional | selecciona bytes por dirección y tamaño, ensambla y extiende la lectura lógica para producir `load_value` |
-| `WB Value MUX` | mux 2:1 | produce `wb_value` a partir de `ex_result` o `load_value` |
-| `MEM/WB` | registro interetapa | conserva `wb_value` e identidad hasta WB |
+| Bloque                     | Naturaleza           | Función de datos                                                                                          |
+|----------------------------|----------------------|-----------------------------------------------------------------------------------------------------------|
+| PC                         | registro de 32 bits  | conserva la dirección actual de fetch                                                                     |
+| IMEM                       | memoria              | entrega la palabra de instrucción almacenada                                                              |
+| `IF/ID`                    | registro interetapa  | conserva instrucción, PC y contexto de fetch                                                              |
+| `Register File`            | 32×32, 2R1W          | entrega registros fuente y recibe writeback                                                               |
+| `Immediate Generator`      | combinacional        | reconstruye inmediatos I/S/B/U/J                                                                          |
+| WB→ID Bypass path          | camino combinacional | sustituye lecturas del RF por `wb_value` cuando coincide el destino                                       |
+| `ID/EX`                    | registro interetapa  | conserva operandos base, inmediato, identidad y contexto                                                  |
+| `Forward MUX A`            | mux 3:1              | produce `rs1_effective`                                                                                   |
+| `Forward MUX B`            | mux 3:1              | produce `rs2_effective`                                                                                   |
+| `ALU Source MUX`           | mux 2:1              | selecciona `rs2_effective` o inmediato como operando B                                                    |
+| ALU                        | unidad funcional     | realiza operación aritmética, lógica, comparación o dirección                                             |
+| `Target Adder`             | combinacional        | calcula `pc_relative_target`                                                                              |
+| JALR path                  | combinacional        | calcula `jalr_target` con bit 0 limpio                                                                    |
+| `Link Adder`               | combinacional        | calcula `PC+4` para JAL/JALR                                                                              |
+| Result path / `Result MUX` | camino combinacional | produce `ex_result` a partir de ALU, inmediato o link                                                     |
+| `EX/MEM`                   | registro interetapa  | conserva `ex_result`, `store_data` e identidad                                                            |
+| DMEM                       | memoria              | recibe dirección y dato de store; produce dato de load                                                    |
+| Load Select / Extend       | combinacional        | selecciona bytes por dirección y tamaño, ensambla y extiende la lectura lógica para producir `load_value` |
+| `WB Value MUX`             | mux 2:1              | produce `wb_value` a partir de `ex_result` o `load_value`                                                 |
+| `MEM/WB`                   | registro interetapa  | conserva `wb_value` e identidad hasta WB                                                                  |
 
 No se incluyen en esta tabla bloques cuyo rol principal sea decidir acciones, detectar hazards, arbitrar comandos o confirmar faults, porque pertenecen al plano de control.
 

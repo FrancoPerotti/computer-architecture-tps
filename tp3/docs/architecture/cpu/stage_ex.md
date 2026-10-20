@@ -108,12 +108,12 @@ La [codificación de los selectores de forwarding](control_and_hazards.md#select
 
 `Forward MUX A` produce `rs1_effective`.
 
-| Entrada            | Origen              | Tipo    |
-|--------------------|---------------------|---------|
-| valor base         | `ID/EX.rs1_value`   | Data    |
-| productor reciente | `EX/MEM.ex_result`  | Data    |
-| productor en WB    | `MEM/WB.wb_value`   | Data    |
-| selección          | `forward_a_sel`     | Control |
+| Entrada            | Origen             | Tipo    |
+|--------------------|--------------------|---------|
+| valor base         | `ID/EX.rs1_value`  | Data    |
+| productor reciente | `EX/MEM.ex_result` | Data    |
+| productor en WB    | `MEM/WB.wb_value`  | Data    |
+| selección          | `forward_a_sel`    | Control |
 
 Su salida alimenta:
 
@@ -127,12 +127,12 @@ De esta forma, una dependencia sobre `rs1` se resuelve de la misma manera tanto 
 
 `Forward MUX B` produce `rs2_effective`.
 
-| Entrada            | Origen              | Tipo    |
-|--------------------|---------------------|---------|
-| valor base         | `ID/EX.rs2_value`   | Data    |
-| productor reciente | `EX/MEM.ex_result`  | Data    |
-| productor en WB    | `MEM/WB.wb_value`   | Data    |
-| selección          | `forward_b_sel`     | Control |
+| Entrada            | Origen             | Tipo    |
+|--------------------|--------------------|---------|
+| valor base         | `ID/EX.rs2_value`  | Data    |
+| productor reciente | `EX/MEM.ex_result` | Data    |
+| productor en WB    | `MEM/WB.wb_value`  | Data    |
+| selección          | `forward_b_sel`    | Control |
 
 Su salida alimenta:
 
@@ -170,10 +170,10 @@ Las entradas de la ALU son:
 
 Las salidas de la ALU son:
 
-| Señal               | Destino                         | Tipo    |
-|---------------------|---------------------------------|---------|
-| `alu_result[31:0]`  | `Result MUX`                    | Data    |
-| `zero`              | `Flow Control` para `BEQ`/`BNE` | Control |
+| Señal              | Destino                         | Tipo    |
+|--------------------|---------------------------------|---------|
+| `alu_result[31:0]` | `Result MUX`                    | Data    |
+| `zero`             | `Flow Control` para `BEQ`/`BNE` | Control |
 
 El significado de `alu_result` depende de la instrucción:
 
@@ -193,10 +193,10 @@ link_value =
 
 Las entradas del `Link Adder` son:
 
-| Entrada    | Fuente      | Tipo |
-|------------|-------------|------|
-| `pc`       | `ID/EX.pc`  | Data |
-| constante  | `32'd4`     | Data |
+| Entrada   | Fuente     | Tipo |
+|-----------|------------|------|
+| `pc`      | `ID/EX.pc` | Data |
+| constante | `32'd4`    | Data |
 
 La salida del `Link Adder` es:
 
@@ -208,12 +208,12 @@ La salida del `Link Adder` es:
 
 EX puede producir varios valores candidatos en paralelo. El `Result MUX` selecciona cuál de esos valores corresponde a la instrucción actual mediante `result_sel` y lo normaliza en un único campo de salida, `ex_result`.
 
-| `result_sel` | Fuente              |
-|--------------|---------------------|
-| `00`         | `alu_result`        |
-| `01`         | `ID/EX.immediate`   |
-| `10`         | `link_value`        |
-| `11`         | reservado           |
+| `result_sel` | Fuente            |
+|--------------|-------------------|
+| `00`         | `alu_result`      |
+| `01`         | `ID/EX.immediate` |
+| `10`         | `link_value`      |
+| `11`         | reservado         |
 
 El `Result MUX` permite representar con un solo campo (`ex_result`) resultados conceptualmente diferentes:
 
@@ -254,9 +254,9 @@ Las entradas del `Target Adder` son:
 
 Las salidas del `Target Adder` son:
 
-| Señal                         | Destino      | Tipo |
-|-------------------------------|--------------|------|
-| `pc_relative_target[31:0]`    | `Target MUX` | Data |
+| Señal                      | Destino      | Tipo |
+|----------------------------|--------------|------|
+| `pc_relative_target[31:0]` | `Target MUX` | Data |
 
 El cálculo es:
 
@@ -324,16 +324,16 @@ El `Target MUX` selecciona el destino que puede presentarse como redirect.
 
 Las entradas de `Target MUX` son:
 
-| Señal                        | Origen        | Tipo    |
-|------------------------------|---------------|---------|
-| `pc_relative_target[31:0]`   | `Target Adder`| Data    |
-| `jalr_target[31:0]`          | `Clear bit 0` | Data    |
-| `target_sel`                 | Lógica local  | Control |
+| Señal                      | Origen         | Tipo    |
+|----------------------------|----------------|---------|
+| `pc_relative_target[31:0]` | `Target Adder` | Data    |
+| `jalr_target[31:0]`        | `Clear bit 0`  | Data    |
+| `target_sel`               | Lógica local   | Control |
 
 Las salidas de `Target MUX` son:
 
-| Señal                   | Destino                        | Tipo |
-|-------------------------|--------------------------------|------|
+| Señal                   | Destino                         | Tipo |
+|-------------------------|---------------------------------|------|
 | `redirect_target[31:0]` | `EX Fault Check`, `Next PC MUX` | Data |
 
 La selección es:
@@ -358,11 +358,11 @@ El `Flow Control` utiliza `ID/EX.flow_op` para identificar la clase de control d
 
 Las entradas de `Flow Control` son:
 
-| Señal            | Origen  | Tipo    |
-|------------------|---------|---------|
-| `ID/EX.valid`    | `ID/EX` | Control |
-| `ID/EX.flow_op`  | `ID/EX` | Control |
-| `ALU.zero`       | `ALU`   | Control |
+| Señal           | Origen  | Tipo    |
+|-----------------|---------|---------|
+| `ID/EX.valid`   | `ID/EX` | Control |
+| `ID/EX.flow_op` | `ID/EX` | Control |
+| `ALU.zero`      | `ALU`   | Control |
 
 Las reglas son:
 
@@ -409,11 +409,11 @@ ex_halt_candidate =
 
 Las salidas del `Flow Control` son:
 
-| Señal                | Destino                                    | Tipo    |
-|----------------------|--------------------------------------------|---------|
-| `target_sel`         | `Target MUX`                               | Control |
+| Señal                | Destino                                     | Tipo    |
+|----------------------|---------------------------------------------|---------|
+| `target_sel`         | `Target MUX`                                | Control |
 | `redirect_requested` | `EX Fault Check`, `Pipeline Hazard Control` | Control |
-| `ex_halt_candidate`  | `Pipeline Hazard Control`                  | Control |
+| `ex_halt_candidate`  | `Pipeline Hazard Control`                   | Control |
 
 `redirect_requested` no cambia por sí sola el PC. El redirect se aplica únicamente cuando la acción seleccionada por el control del pipeline es `act_redirect`.
 
@@ -676,15 +676,15 @@ Cuando el control selecciona `act_halt`, la instrucción se consume en EX y no e
 
 Las entradas de `EX Fault Check` son:
 
-| Señal                    | Origen              | Tipo      |
-|--------------------------|---------------------|-----------|
-| `ID/EX.valid`            | `ID/EX`             | Control   |
-| `ID/EX.mem_op`           | `ID/EX`             | Control   |
-| `rs1_effective[31:0]`    | `Forward MUX A`     | Data      |
-| `ID/EX.immediate[31:0]`  | `ID/EX`             | Data      |
-| `redirect_requested`     | `Flow Control`      | Control   |
-| `redirect_target[31:0]`  | `Target MUX`        | Data      |
-| `DMEM_CAPACITY_BYTES`    | Configuración común | Parámetro |
+| Señal                   | Origen              | Tipo      |
+|-------------------------|---------------------|-----------|
+| `ID/EX.valid`           | `ID/EX`             | Control   |
+| `ID/EX.mem_op`          | `ID/EX`             | Control   |
+| `rs1_effective[31:0]`   | `Forward MUX A`     | Data      |
+| `ID/EX.immediate[31:0]` | `ID/EX`             | Data      |
+| `redirect_requested`    | `Flow Control`      | Control   |
+| `redirect_target[31:0]` | `Target MUX`        | Data      |
+| `DMEM_CAPACITY_BYTES`   | Configuración común | Parámetro |
 
 #### Accesos a DMEM
 

@@ -111,22 +111,22 @@ La detección y la confirmación de los faults de fetch se describen en [Faults,
 
 `IF/ID` conserva una instrucción obtenida correctamente o la información asociada a un candidato de fault de fetch. Ambas situaciones utilizan el mismo PC de origen, pero se distinguen mediante indicadores de validez separados.
 
-| Campo | Ancho | Tipo | Función |
-|---|---:|---|---|
-| `valid` | 1 | Control | Indica una instrucción obtenida y activa en ID. |
-| `pc` | 32 | Data | PC propio de la instrucción o del fetch candidato. |
-| `instruction` | 32 | Data | Palabra obtenida de IMEM; carece de significado como instrucción cuando el fetch falló. |
-| `fetch_fault_valid` | 1 | Control | Indica un candidato de fault de fetch transportado hacia ID. |
-| `fetch_fault_cause` | 3 | Data | Conserva la causa del candidato de fetch. |
+| Campo               | Ancho | Tipo    | Función                                                                                 |
+|---------------------|------:|---------|-----------------------------------------------------------------------------------------|
+| `valid`             |     1 | Control | Indica una instrucción obtenida y activa en ID.                                         |
+| `pc`                |    32 | Data    | PC propio de la instrucción o del fetch candidato.                                      |
+| `instruction`       |    32 | Data    | Palabra obtenida de IMEM; carece de significado como instrucción cuando el fetch falló. |
+| `fetch_fault_valid` |     1 | Control | Indica un candidato de fault de fetch transportado hacia ID.                            |
+| `fetch_fault_cause` |     3 | Data    | Conserva la causa del candidato de fetch.                                               |
 
 En un estado legal, `valid` y `fetch_fault_valid` no se encuentran activos simultáneamente.
 
 Las entradas de `IF/ID` distinguen estos casos:
 
-| Búsqueda | `valid` | `fetch_fault_valid` | Interpretación |
-|---|---:|---:|---|
-| Fetch normal | 1 | 0 | Instrucción activa. |
-| Búsqueda que falla | 0 | 1 | Candidato que conserva el PC de esa búsqueda; no representa una instrucción activa. |
+| Búsqueda           | `valid` | `fetch_fault_valid` | Interpretación                                                                      |
+|--------------------|--------:|--------------------:|-------------------------------------------------------------------------------------|
+| Fetch normal       |       1 |                   0 | Instrucción activa.                                                                 |
+| Búsqueda que falla |       0 |                   1 | Candidato que conserva el PC de esa búsqueda; no representa una instrucción activa. |
 
 Cuando `IF/ID` se invalida, ambos indicadores dejan de representar trabajo activo. Cuando se retiene, sus cinco campos permanecen sin cambios.
 
@@ -151,23 +151,23 @@ En `ID` puede confirmarse un fault por una instrucción ilegal o por un candidat
 
 `ID/EX` conserva el contexto completo que `EX` utiliza para ejecutar la instrucción. Además de la identidad de la instrucción, transporta los índices y valores base de los operandos, el inmediato y las señales de control necesarias para determinar el comportamiento de la etapa.
 
-| Campo | Ancho | Tipo | Función |
-|---|---:|---|---|
-| `valid` | 1 | Control | Instrucción activa en EX. |
-| `pc` | 32 | Data | PC propio de la instrucción. |
-| `instruction` | 32 | Data | Palabra de instrucción. |
-| `rs1` | 5 | Data | Índice del primer registro fuente. |
-| `rs2` | 5 | Data | Índice del segundo registro fuente. |
-| `rd` | 5 | Data | Índice del registro destino. |
-| `rs1_value` | 32 | Data | Valor base de la primera fuente después del bypass WB→ID. |
-| `rs2_value` | 32 | Data | Valor base de la segunda fuente después del bypass WB→ID. |
-| `immediate` | 32 | Data | Inmediato generado y extendido a 32 bits. |
-| `alu_op` | 6 | Control | Operación seleccionada para la ALU. |
-| `alu_src` | 1 | Control | Selección entre segundo operando de registro e inmediato. |
-| `result_sel` | 2 | Control | Selección del resultado producido por EX. |
-| `flow_op` | 3 | Control | Tipo de operación de flujo: `NONE`, `BEQ`, `BNE`, `JAL`, `JALR` o `HALT`. |
-| `mem_op` | 4 | Control | Tipo de operación de memoria o `NONE`. |
-| `reg_write` | 1 | Control | Indica que la instrucción produce un resultado destinado al banco de registros. |
+| Campo         | Ancho | Tipo    | Función                                                                         |
+|---------------|------:|---------|---------------------------------------------------------------------------------|
+| `valid`       |     1 | Control | Instrucción activa en EX.                                                       |
+| `pc`          |    32 | Data    | PC propio de la instrucción.                                                    |
+| `instruction` |    32 | Data    | Palabra de instrucción.                                                         |
+| `rs1`         |     5 | Data    | Índice del primer registro fuente.                                              |
+| `rs2`         |     5 | Data    | Índice del segundo registro fuente.                                             |
+| `rd`          |     5 | Data    | Índice del registro destino.                                                    |
+| `rs1_value`   |    32 | Data    | Valor base de la primera fuente después del bypass WB→ID.                       |
+| `rs2_value`   |    32 | Data    | Valor base de la segunda fuente después del bypass WB→ID.                       |
+| `immediate`   |    32 | Data    | Inmediato generado y extendido a 32 bits.                                       |
+| `alu_op`      |     6 | Control | Operación seleccionada para la ALU.                                             |
+| `alu_src`     |     1 | Control | Selección entre segundo operando de registro e inmediato.                       |
+| `result_sel`  |     2 | Control | Selección del resultado producido por EX.                                       |
+| `flow_op`     |     3 | Control | Tipo de operación de flujo: `NONE`, `BEQ`, `BNE`, `JAL`, `JALR` o `HALT`.       |
+| `mem_op`      |     4 | Control | Tipo de operación de memoria o `NONE`.                                          |
+| `reg_write`   |     1 | Control | Indica que la instrucción produce un resultado destinado al banco de registros. |
 
 ## EX — Execute
 
@@ -192,16 +192,16 @@ Los bloques concretos que forman estos caminos —ALU, muxes, sumadores, generac
 
 Después de `EX`, la instrucción ya no necesita conservar sus operandos base ni el inmediato. El registro `EX/MEM` transporta el resultado consolidado de la etapa `EX` y la información que `MEM` va a utilizar.
 
-| Campo | Ancho | Tipo | Función |
-|---|---:|---|---|
-| `valid` | 1 | Control | Instrucción activa en MEM. |
-| `pc` | 32 | Data | PC propio de la instrucción. |
-| `instruction` | 32 | Data | Palabra de instrucción. |
-| `rd` | 5 | Data | Destino utilizado por writeback y forwarding. |
-| `reg_write` | 1 | Control | Indica que la instrucción produce un resultado para el banco de registros. |
-| `mem_op` | 4 | Control | Describe la operación de load, store o ausencia de acceso a DMEM. |
-| `ex_result` | 32 | Data | Dirección efectiva para memoria o resultado producido en EX. |
-| `store_data` | 32 | Data | Dato ya resuelto que utiliza un store en MEM. |
+| Campo         | Ancho | Tipo    | Función                                                                    |
+|---------------|------:|---------|----------------------------------------------------------------------------|
+| `valid`       |     1 | Control | Instrucción activa en MEM.                                                 |
+| `pc`          |    32 | Data    | PC propio de la instrucción.                                               |
+| `instruction` |    32 | Data    | Palabra de instrucción.                                                    |
+| `rd`          |     5 | Data    | Destino utilizado por writeback y forwarding.                              |
+| `reg_write`   |     1 | Control | Indica que la instrucción produce un resultado para el banco de registros. |
+| `mem_op`      |     4 | Control | Describe la operación de load, store o ausencia de acceso a DMEM.          |
+| `ex_result`   |    32 | Data    | Dirección efectiva para memoria o resultado producido en EX.               |
+| `store_data`  |    32 | Data    | Dato ya resuelto que utiliza un store en MEM.                              |
 
 Cuando se toma un branch, o cuando `JAL` o `JALR` cambian el PC, se aplica un **redirect**: el próximo fetch comienza en la nueva dirección de destino. La instrucción que detectó y produjo ese cambio de flujo continúa válidamente hacia `EX/MEM`; en cambio, las instrucciones más jóvenes que ya habían sido traídas por el camino anterior y todavía están en `IF/ID` o `ID/EX` se descartan e invalidan.
 
@@ -227,14 +227,14 @@ La organización de los bytes, los tamaños de acceso, la extensión de loads y 
 
 `MEM/WB` conserva el valor final que WB utiliza como resultado arquitectónico. Para un load, ese valor proviene de DMEM; para las restantes instrucciones que escriben un registro, proviene del resultado que llegó desde EX.
 
-| Campo | Ancho | Tipo | Función |
-|---|---:|---|---|
-| `valid` | 1 | Control | Instrucción activa en WB. |
-| `pc` | 32 | Data | PC propio de la instrucción. |
-| `instruction` | 32 | Data | Palabra de instrucción. |
-| `rd` | 5 | Data | Registro destino. |
-| `reg_write` | 1 | Control | Indica que la instrucción escribe el banco de registros. |
-| `wb_value` | 32 | Data | Valor final seleccionado para writeback. |
+| Campo         | Ancho | Tipo    | Función                                                  |
+|---------------|------:|---------|----------------------------------------------------------|
+| `valid`       |     1 | Control | Instrucción activa en WB.                                |
+| `pc`          |    32 | Data    | PC propio de la instrucción.                             |
+| `instruction` |    32 | Data    | Palabra de instrucción.                                  |
+| `rd`          |     5 | Data    | Registro destino.                                        |
+| `reg_write`   |     1 | Control | Indica que la instrucción escribe el banco de registros. |
+| `wb_value`    |    32 | Data    | Valor final seleccionado para writeback.                 |
 
 En `MEM/WB` ya no se transportan `mem_op`, `store_data` ni resultados alternativos. WB recibe directamente el valor que corresponde escribir en el banco de registros.
 
@@ -252,14 +252,14 @@ El contenido de los cuatro registros no siempre avanza de forma uniforme. La acc
 
 A nivel del pipeline, las situaciones principales se resumen así:
 
-| Situación | Comportamiento general |
-|---|---|
-| Avance normal | Las instrucciones activas progresan hacia la etapa siguiente y IF incorpora nuevo trabajo. |
-| Dependencia load-use | El consumidor permanece en `IF/ID`, `ID/EX` recibe una bubble y las instrucciones anteriores continúan. |
-| Redirect | El PC adopta el destino resuelto y se invalidan las instrucciones posteriores de ese camino. |
-| Fault confirmado | Se descartan la instrucción que provoca el fault y las posteriores; las anteriores conservan sus efectos válidos. |
-| `halt` confirmado | Se dejan de admitir instrucciones nuevas, se descartan las posteriores a `halt` y solo continúan las anteriores. |
-| `HOLD` | No ocurre un ciclo efectivo de la CPU y el pipeline conserva su estado. |
+| Situación            | Comportamiento general                                                                                            |
+|----------------------|-------------------------------------------------------------------------------------------------------------------|
+| Avance normal        | Las instrucciones activas progresan hacia la etapa siguiente y IF incorpora nuevo trabajo.                        |
+| Dependencia load-use | El consumidor permanece en `IF/ID`, `ID/EX` recibe una bubble y las instrucciones anteriores continúan.           |
+| Redirect             | El PC adopta el destino resuelto y se invalidan las instrucciones posteriores de ese camino.                      |
+| Fault confirmado     | Se descartan la instrucción que provoca el fault y las posteriores; las anteriores conservan sus efectos válidos. |
+| `halt` confirmado    | Se dejan de admitir instrucciones nuevas, se descartan las posteriores a `halt` y solo continúan las anteriores.  |
+| `HOLD`               | No ocurre un ciclo efectivo de la CPU y el pipeline conserva su estado.                                           |
 
 Las prioridades y la tabla exacta de actualización de PC, `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` se encuentran en [Control del pipeline y hazards](control_and_hazards.md).
 

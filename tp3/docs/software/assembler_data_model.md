@@ -37,13 +37,13 @@ Todos los campos se proporcionan explícitamente al crear un registro, incluidos
 
 ## Datos entre etapas
 
-| Productor | Datos de salida correcta | Consumidor |
-|---|---|---|
-| Lectura | `list[SourceRecord]` | Asignación de direcciones. |
-| Asignación de direcciones | `list[LocatedInstruction]` y `dict[str, LabelDefinition]` | Interpretación y resolución. |
-| Interpretación y resolución | `list[InterpretedInstruction]` | Codificación. |
-| Codificación | `list[EncodedInstruction]` | Empaquetado. |
-| Empaquetado | `AssemblyResult` completo | Aplicación. |
+| Productor                   | Datos de salida correcta                                  | Consumidor                   |
+|-----------------------------|-----------------------------------------------------------|------------------------------|
+| Lectura                     | `list[SourceRecord]`                                      | Asignación de direcciones.   |
+| Asignación de direcciones   | `list[LocatedInstruction]` y `dict[str, LabelDefinition]` | Interpretación y resolución. |
+| Interpretación y resolución | `list[InterpretedInstruction]`                            | Codificación.                |
+| Codificación                | `list[EncodedInstruction]`                                | Empaquetado.                 |
+| Empaquetado                 | `AssemblyResult` completo                                 | Aplicación.                  |
 
 La salida de direcciones comprende la lista y la tabla de etiquetas, conforme a [Direcciones y tabla de etiquetas](assembler_addresses.md). Las dos colecciones forman la salida conjunta de esa etapa.
 
@@ -53,12 +53,12 @@ Las etapas que detectan errores de código fuente producen la información de `A
 
 `SourceRecord` representa una línea reconocida por la [lectura](assembler_source_reader.md):
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `line` | `int` | Número de línea original, desde uno. |
-| `label` | `str` o `None` | Nombre de la etiqueta definida, cuando existe. |
-| `mnemonic` | `str` o `None` | Mnemónico de la instrucción, cuando existe. |
-| `operands` | `list[str]` | Operandos reconocidos en su orden. |
+| Campo      | Tipo           | Contenido                                      |
+|------------|----------------|------------------------------------------------|
+| `line`     | `int`          | Número de línea original, desde uno.           |
+| `label`    | `str` o `None` | Nombre de la etiqueta definida, cuando existe. |
+| `mnemonic` | `str` o `None` | Mnemónico de la instrucción, cuando existe.    |
+| `operands` | `list[str]`    | Operandos reconocidos en su orden.             |
 
 Una etiqueta aislada tiene `label` presente, `mnemonic=None` y `operands=[]`. Una instrucción sin etiqueta tiene `label=None`. `halt` tiene `mnemonic="halt"` y `operands=[]`; su lista vacía no representa ausencia de instrucción.
 
@@ -68,19 +68,19 @@ Las líneas vacías o de comentarios no producen registros. Los operandos todav�
 
 `LocatedInstruction` representa una instrucción después de asignar su dirección:
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `line` | `int` | Línea original. |
-| `pc` | `int` | Dirección en bytes desde cero. |
-| `mnemonic` | `str` | Mnemónico reconocido. |
+| Campo      | Tipo        | Contenido                        |
+|------------|-------------|----------------------------------|
+| `line`     | `int`       | Línea original.                  |
+| `pc`       | `int`       | Dirección en bytes desde cero.   |
+| `mnemonic` | `str`       | Mnemónico reconocido.            |
 | `operands` | `list[str]` | Operandos textuales en su orden. |
 
 La lista contiene únicamente instrucciones; `mnemonic` siempre está presente. Las etiquetas se conservan en una tabla de tipo `dict[str, LabelDefinition]`. Cada nombre exacto es una clave y su valor contiene:
 
-| Campo de `LabelDefinition` | Tipo | Contenido |
-|---|---|---|
-| `address` | `int` | Dirección en bytes asociada a la definición. |
-| `line` | `int` | Línea de definición, para los diagnósticos. |
+| Campo de `LabelDefinition` | Tipo  | Contenido                                    |
+|----------------------------|-------|----------------------------------------------|
+| `address`                  | `int` | Dirección en bytes asociada a la definición. |
+| `line`                     | `int` | Línea de definición, para los diagnósticos.  |
 
 El nombre se conserva en la clave del diccionario. La dirección y la línea permanecen juntas en `LabelDefinition`, conforme al contrato aprobado. La definición duplicada se detecta antes de incorporar otra entrada con el mismo nombre.
 
@@ -88,15 +88,15 @@ El nombre se conserva en la clave del diccionario. La dirección y la línea per
 
 `InterpretedInstruction` representa los valores comprobados por la [interpretación de operandos](assembler_operands.md):
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `line` | `int` | Línea original. |
-| `pc` | `int` | Dirección asignada. |
-| `mnemonic` | `str` | Operación que determina los campos presentes. |
-| `rd` | `int` o `None` | Registro destino, cuando se utiliza. |
-| `rs1` | `int` o `None` | Primer registro fuente o base, cuando se utiliza. |
-| `rs2` | `int` o `None` | Segundo registro fuente o dato del store, cuando se utiliza. |
-| `imm` | `int` o `None` | Inmediato o desplazamiento comprobado, cuando se utiliza. |
+| Campo      | Tipo           | Contenido                                                    |
+|------------|----------------|--------------------------------------------------------------|
+| `line`     | `int`          | Línea original.                                              |
+| `pc`       | `int`          | Dirección asignada.                                          |
+| `mnemonic` | `str`          | Operación que determina los campos presentes.                |
+| `rd`       | `int` o `None` | Registro destino, cuando se utiliza.                         |
+| `rs1`      | `int` o `None` | Primer registro fuente o base, cuando se utiliza.            |
+| `rs2`      | `int` o `None` | Segundo registro fuente o dato del store, cuando se utiliza. |
+| `imm`      | `int` o `None` | Inmediato o desplazamiento comprobado, cuando se utiliza.    |
 
 Los campos presentes son los definidos para cada familia en el contrato de operandos. Los campos restantes reciben `None`. `rd=0`, `rs1=0`, `rs2=0` e `imm=0` son valores presentes; su ausencia se comprueba mediante `is None`.
 
@@ -106,10 +106,10 @@ Los negativos permanecen como enteros con signo. Las etiquetas ya están resuelt
 
 `EncodedInstruction` representa la salida de [codificación](assembler_encoding.md):
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `line` | `int` | Línea original. |
-| `pc` | `int` | Dirección asignada. |
+| Campo  | Tipo  | Contenido                                             |
+|--------|-------|-------------------------------------------------------|
+| `line` | `int` | Línea original.                                       |
+| `pc`   | `int` | Dirección asignada.                                   |
 | `word` | `int` | Patrón de 32 bits como entero de cero a `0xffffffff`. |
 
 El empaquetado utiliza `word` para formar los cuatro bytes y `line` con `pc` para el mapa. El resultado público contiene los bytes completos y el mapa; la lista codificada pertenece a los datos internos.
@@ -118,20 +118,20 @@ El empaquetado utiliza `word` para formar los cuatro bytes y `line` con `pc` par
 
 `AssemblyDiagnostic` reúne la información de un error del código fuente:
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `line` | `int` | Línea original del error, desde uno. |
-| `message` | `str` | Motivo del rechazo. |
+| Campo     | Tipo  | Contenido                            |
+|-----------|-------|--------------------------------------|
+| `line`    | `int` | Línea original del error, desde uno. |
+| `message` | `str` | Motivo del rechazo.                  |
 
 El diagnóstico se consulta mediante atributos, como `result.error.line`, cuando `error` está presente. La aplicación agrega el nombre del archivo y decide su presentación. Los defectos internos del software y los errores de carga o comunicación conservan las responsabilidades de [Interfaz del assembler](assembler_interface.md#diagnósticos).
 
 `AssemblyResult` conserva los campos y condiciones de entrega aprobados en [Empaquetado y resultado](assembler_packing.md):
 
-| Campo | Tipo | Contenido |
-|---|---|---|
-| `image` | `bytes` o `None` | Traducción completa, o ausencia ante error. |
-| `pc_to_line` | `dict[int, int]` | PC de cada instrucción y su línea original. |
-| `error` | `AssemblyDiagnostic` o `None` | Diagnóstico, o ausencia ante éxito. |
+| Campo        | Tipo                          | Contenido                                   |
+|--------------|-------------------------------|---------------------------------------------|
+| `image`      | `bytes` o `None`              | Traducción completa, o ausencia ante error. |
+| `pc_to_line` | `dict[int, int]`              | PC de cada instrucción y su línea original. |
+| `error`      | `AssemblyDiagnostic` o `None` | Diagnóstico, o ausencia ante éxito.         |
 
 Una traducción exitosa tiene `error=None` e `image` de tipo `bytes`, incluido `b""` cuando no hay instrucciones. Un error tiene `image=None`, `pc_to_line={}` y un diagnóstico. La aplicación distingue estos casos consultando `error`; una imagen vacía sigue siendo un resultado exitoso de traducción.
 
@@ -147,14 +147,14 @@ inicio: addi x1, x0, -1
 
 Los valores de cada representación son:
 
-| Representación | Campos |
-|---|---|
-| `SourceRecord` | `line=3`, `label="inicio"`, `mnemonic="addi"`, `operands=["x1", "x0", "-1"]`. |
-| `LocatedInstruction` | `line=3`, `pc=0`, `mnemonic="addi"`, `operands=["x1", "x0", "-1"]`. |
-| `LabelDefinition`, bajo la clave `"inicio"` | `address=0`, `line=3`. |
-| `InterpretedInstruction` | `line=3`, `pc=0`, `mnemonic="addi"`, `rd=1`, `rs1=0`, `rs2=None`, `imm=-1`. |
-| `EncodedInstruction` | `line=3`, `pc=0`, `word=0xfff00093`. |
-| `AssemblyResult` | `image=bytes 93 00 F0 FF`, `pc_to_line={0: 3}`, `error=None`. |
+| Representación                              | Campos                                                                        |
+|---------------------------------------------|-------------------------------------------------------------------------------|
+| `SourceRecord`                              | `line=3`, `label="inicio"`, `mnemonic="addi"`, `operands=["x1", "x0", "-1"]`. |
+| `LocatedInstruction`                        | `line=3`, `pc=0`, `mnemonic="addi"`, `operands=["x1", "x0", "-1"]`.           |
+| `LabelDefinition`, bajo la clave `"inicio"` | `address=0`, `line=3`.                                                        |
+| `InterpretedInstruction`                    | `line=3`, `pc=0`, `mnemonic="addi"`, `rd=1`, `rs1=0`, `rs2=None`, `imm=-1`.   |
+| `EncodedInstruction`                        | `line=3`, `pc=0`, `word=0xfff00093`.                                          |
+| `AssemblyResult`                            | `image=bytes 93 00 F0 FF`, `pc_to_line={0: 3}`, `error=None`.                 |
 
 La tabla supone que es la primera instrucción del programa. El registro fuente conserva la definición; la tabla de etiquetas conserva su dirección y línea; los registros posteriores mantienen la ubicación de la instrucción hasta producir sus bytes y mapa.
 

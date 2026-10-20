@@ -9,22 +9,24 @@ Este documento reúne las pruebas del enlace UART, las FIFO, el protocolo y el s
 
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
 
+Los [modelos abstractos ejecutables](../../tools/verification/README.md) comprueban coordinación y recuperación; su ejecución no sustituye las pruebas RTL y de enlace descritas aquí.
+
 ## Índice
 
 - [TEST-UART-001 — Tick, sincronización RX y tramas 8N1](#test-uart-001)
 - [TEST-UART-002 — FIFO de cuatro bytes y flags preflanco](#test-uart-002)
 - [TEST-UART-003 — Comandos binarios, disponibilidad y rechazos](#test-uart-003)
-- [TEST-UART-004 — LOAD mínimo, completo y tamaño de40 bits](#test-uart-004)
+- [TEST-UART-004 — LOAD mínimo, completo y tamaño de 40 bits](#test-uart-004)
 - [TEST-UART-005 — Timeout LOAD y prioridad error/byte/vencimiento](#test-uart-005)
 - [TEST-UART-006 — Recuperación por silencio y error de opcode](#test-uart-006)
-- [TEST-UART-007 — Snapshot fijo, RF y34 campos de latches](#test-uart-007)
+- [TEST-UART-007 — Snapshot fijo, RF y 34 campos de latches](#test-uart-007)
 - [TEST-UART-008 — Lista de memoria usada y cantidad inclusiva](#test-uart-008)
 - [TEST-UART-009 — TX llena, byte retenido y fin físico](#test-uart-009)
 - [TEST-UART-010 — RUN/STEP completos y rechazo sin alterar sesión](#test-uart-010)
 - [TEST-UART-011 — Exclusión Debug hasta el último Stop](#test-uart-011)
-- [TEST-UART-012 — Orden de respuestas y terminal RUN durante LOAD](#test-uart-012)
+- [TEST-UART-012 — Orden de respuestas, terminal RUN y RESET](#test-uart-012)
 - [TEST-UART-013 — RESET UART después de aceptación y botón](#test-uart-013)
-- [TEST-UART-014 — Presupuestos medidos del enlace integrado](#test-uart-014)
+- [TEST-UART-014 — Presupuestos del enlace integrado](#test-uart-014)
 
 <a id="test-uart-001"></a>
 
@@ -163,7 +165,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 ## TEST-UART-003 — Comandos binarios, disponibilidad y rechazos
 
 - **Nivel:** unidad protocolo con stubCPU; sistema por UART-004/010.
-- **Tipo de estímulo:** legal y solicitudes no elegibles.
+- **Tipo de estímulo:** legal, tráfico fuera de fase y fixtures locales.
 - **Estado:** diseñada, sin ejecutar.
 
 **Requisitos:** [REQ-UART-003](../requirements.md#7-uart-y-debug-unit), [REQ-UART-004](../requirements.md#7-uart-y-debug-unit), [REQ-UART-007](../requirements.md#7-uart-y-debug-unit), [REQ-UART-008](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-001](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-003](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
@@ -172,57 +174,53 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Qué comprueba y por qué
 
-Esta prueba comprueba la interpretación de comandos, la disponibilidad de LOAD y los rechazos del protocolo según el estado de CPU.
+Esta prueba comprueba la admisión de bytes según la fase de transporte, las solicitudes directas hacia Execution Control y las respuestas de los comandos admitidos. La elegibilidad interna de la Global FSM se comprueba por separado en TEST-EXEC-001: un byte descartado no llega a esa interfaz.
 
-Busca detectar un byte de programa tratado como comando, una disponibilidad confundida con la validez de imagen o una orden rechazada que produzca un ciclo de ejecución.
-
-CHECK_READY informa disponibilidad actual. No reserva ni garantiza la aceptación de una LOAD posterior.
+CHECK_READY consulta `load_available`, independientemente de `image_valid`; no reserva una LOAD posterior. Un byte de tamaño o programa pertenece a LOAD aunque coincida con un opcode.
 
 ### Condiciones iniciales
 
-La unidad de protocolo se conecta a FIFO RX, a un sustituto controlado de CPU y a un serializador libre. El sustituto presenta `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire`, `prepare_done` e `image_valid`, conforme al contexto de la variante y a la solicitud recibida.
+La unidad conecta FIFO RX, Controller, un sustituto de Execution Control y el serializador. El sustituto presenta `command_accepted`, `load_available`, `prepare_active`, `program_finished`, `fault_terminal`, `cpu_cycle_fire` e `image_valid`. `prepare_done` y `load_ok` son eventos internos del procesador y no entradas del Controller.
 
-El estado de la variante identifica el fixture. Los indicadores se calculan con un modelo de referencia independiente, según los contratos de `Execution Control` y `Session Preparation`. El código de ocho bits se utiliza en la observación de `Response Serializer`.
+En `WAIT_COMMAND`, el serializador está libre, no hay preparación activa, resultado RUN pendiente ni observación retenida. READY, STEPPING, drains STEP y terminales conservan imagen válida; NO_IMAGE no. Los terminales de ese fixture ya completaron su intercambio Debug.
 
-En el manifiesto, `cpu_context` contiene los valores iniciales del sustituto y `cpu_reply_on_request` fija su respuesta cuando aparece la solicitud de la fase indicada. `command_accepted` permanece en cero mientras esa solicitud no esté activa. Después de una aceptación, el sustituto sigue el nuevo contexto y los eventos de finalización del recorrido.
+RUNNING y los drains AUTO se preparan en `WAIT_RUN_END`, con ACCEPTED completo, `prepare_active=0`, `run_result_required=1` y sin terminal observable. Los drains se sostienen mediante un fixture local; no se afirma que duren una trama real.
 
-READY y los terminales tienen una imagen válida; NO_IMAGE no la tiene. El sustituto mantiene un estado de drain AUTO durante la observación local, sin afirmar que ese estado dure una trama UART en CPU real.
-
-Los intercambios físicos de sistema se comprueban en TEST-UART-004 y TEST-UART-010. En esta unidad se observan la respuesta y las solicitudes de CPU o Loader, sin modificar la imagen por una orden rechazada.
-
-Al aceptar RUN o STEP, el sustituto actualiza el contexto en ese mismo flanco. Desde FINISHED o FAULT entra primero en preparación, baja los indicadores terminales y presenta `prepare_done` con el primer ciclo posterior. En los fixtures de drain STEP queda únicamente WB; el ciclo aceptado alcanza FINISHED o FAULT según la clase de drain.
+`cpu_reply_on_request` determina la aceptación de la única solicitud presentada. El sustituto calcula su respuesta desde la solicitud y la elegibilidad, sin que el Controller espere esa aceptación para generar la solicitud. Desde FINISHED o FAULT, RUN/STEP aceptados bajan los indicadores terminales e inician preparación; el Controller observa `prepare_active` y el primer `cpu_cycle_fire` posterior.
 
 ### Variantes cerradas
 
-La prueba tiene 44 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-003/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+La prueba comprende 44 casos canónicos, enumerados en el [manifiesto](cases.json):
 
-Los 30 casos de estado y comando combinan CHECK_READY, RUN y STEP con NO_IMAGE, READY, RUNNING, STEPPING, los cuatro drains, FINISHED y FAULT. Sus códigos son 0 y 3 a 11.
-
-Tres casos reciben una cabecera LOAD completa y válida de tamaño 4 en los tres estados AUTO. Tres casos utilizan los opcodes desconocidos `06`, `00` y `FF`.
-
-Los ocho casos restantes entregan cuatro valores de byte en las fases de tamaño o contenido de LOAD. Esos valores pertenecen a la fase activa y no crean nuevas órdenes.
+- C001–C030 combinan CHECK_READY, RUN y STEP con diez contextos CPU. Los 21 casos sin contexto AUTO comienzan en `WAIT_COMMAND`; los nueve AUTO comienzan en `WAIT_RUN_END` y comprueban tráfico fuera de fase sin respuesta.
+- C031–C033 entregan `01 04 00 00 00 00` durante AUTO: el primer byte inicia recuperación y el resto se descarta, incluido el `04` que no debe convertirse en RESET.
+- C034–C036 entregan los opcodes desconocidos `06`, `00` y `FF` con transporte disponible.
+- C037–C044 entregan cuatro valores en tamaño o contenido LOAD; no son solicitudes de comando.
 
 ### Procedimiento
 
-1. **Preparar el contexto y el transporte.** Presentar los indicadores del fixture, la imagen válida o inválida y la fase de protocolo del caso. CHECK_READY utiliza `load_available`; la admisión de comandos utiliza también `prepare_active` y las condiciones locales de transporte.
+1. **Preparar fase y contexto coherentes.** Configurar los recursos anteriores al flanco y el serializador según la fase. No utilizar `WAIT_COMMAND` como fixture de un RUN en curso.
 
-2. **Entregar la solicitud.** Aplicar el opcode o la cabecera LOAD completa de tamaño 4. La decisión debe usar el estado actual, no el que resultaría de aceptar la orden.
+2. **Presentar el byte.** En `WAIT_COMMAND`, RUN/STEP generan su solicitud y consumen `command_accepted` en el mismo flanco. En `RECEIVE_LOAD_SIZE`, solo el quinto byte de un tamaño válido genera `load_request`. Observar los campos combinacionales con `response_start`, sin descriptor pendiente en el Controller.
 
-3. **Comparar la respuesta y la aceptación.** Verificar los dos bytes binarios y las solicitudes dirigidas a CPU o Loader. En CHECK_SIZE, EXEC_RUN y EXEC_STEP, asociar `command_accepted` con la solicitud activa de esa fase. Observar solicitud, aceptación y `cpu_cycle_fire` antes del flanco que los consume. Una STEP aceptada ejecuta el ciclo en ese flanco o espera la preparación de una sesión nueva. No interpretar ASCII como una codificación alternativa.
+3. **Comprobar comandos admitidos.** CHECK_READY responde según disponibilidad. RUN/STEP sin imagen presentan su solicitud, reciben rechazo y responden NO_IMAGE. Un STEP aceptado ejecuta en ese flanco o entra en `WAIT_STEP_END`; después produce DONE con Debug exactamente en el flanco de `cpu_cycle_fire`, aunque `prepare_active` todavía sea uno antes del flanco.
 
-4. **Comprobar los datos de LOAD.** En READ_SIZE y LOAD_DATA, entregar el byte y observar el avance de la fase, sin ejecutar RUN, STEP o RESET por su valor.
+4. **Comprobar descarte durante RUN.** En los contextos AUTO, exigir ausencia de `load_request`, `run_request`, `step_request` y respuesta por el byte recibido. Comprobar `RECOVER_RX`, continuidad CPU y conservación de imagen. Los bytes restantes no quedan guardados.
 
-5. **Revisar los rechazos.** Comprobar ausencia de ciclo o Debug asociado y conservación de la sesión. Una consulta previa no debe convertirse en una reserva.
+5. **Comprobar datos y eco.** En `RECEIVE_LOAD_SIZE`, capturar en la posición correcta. En `RECEIVE_LOAD_DATA`, entregar y descontar exactamente una vez. Un opcode desconocido en `WAIT_COMMAND` captura su eco y UNKNOWN_COMMAND en el serializador en ese mismo flanco.
 
 ### Resultados y criterio de aprobación
 
-CHECK_READY devuelve `05 03` si LOAD está disponible o `05 04` durante AUTO. No conserva una consulta ni una reserva.
+| Fase y entrada                            | Resultado esperado                                                                                                   |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `WAIT_COMMAND`, CHECK_READY               | `05 03` cuando `load_available=1`; ninguna reserva. En los contextos legales de esta selección LOAD está disponible. |
+| `WAIT_COMMAND`, RUN/STEP sin imagen       | `02 05` / `03 05`, solicitud presentada pero sin ciclo ni Debug.                                                     |
+| `WAIT_COMMAND`, RUN/STEP elegibles        | RUN: `02 01` y resultado posterior; STEP: un ciclo y `03 02` con Debug, sin aceptación separada.                     |
+| `WAIT_RUN_END`, CHECK_READY/RUN/STEP/LOAD | Sin respuesta ni solicitud de operación; entrada en `RECOVER_RX`; CPU continúa.                                      |
+| `WAIT_COMMAND`, opcode desconocido        | Eco seguido de `0C`, respuesta corta y sin cambios de CPU o imagen.                                                  |
+| Tamaño o contenido LOAD                   | Byte tratado como dato de su fase, sin interpretar comandos.                                                         |
 
-Desde NO_IMAGE, RUN y STEP devuelven `02 05` y `03 05`, sin ciclo ni Debug. Las solicitudes incompatibles devuelven `02 04` o `03 04`. Una LOAD incompatible devuelve `01 04` después de recibir la cabecera completa y conserva la ejecución.
-
-Un opcode desconocido devuelve su eco seguido de `0C`, sin modificar CPU ni imagen. Los bytes de LOAD se procesan como tamaño o contenido.
-
-La aprobación exige códigos, longitudes y efectos correctos. Toda respuesta utiliza opcode y resultado binarios, y cada LOAD se valida independientemente de CHECK_READY.
+Las respuestas de rechazo BUSY se seleccionan con imagen válida cuando una solicitud presentada es rechazada; no se espera BUSY como contestación al tráfico descartado durante RUN. Toda captura exige `response_busy=0`, campos correctos y un único productor de `response_start`. Las comprobaciones de prioridad interna permanecen en TEST-EXEC-001.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -268,11 +266,11 @@ La selección no agrega otras combinaciones de instrucciones ni filtros de ISA d
 
 1. **Consultar disponibilidad y enviar la cabecera.** Enviar CHECK_READY y después opcode `01` con N sin signo, codificado en cinco bytes little-endian.
 
-2. **Observar rechazo o aceptación.** Si el tamaño se rechaza, esperar `01 06` y no enviar contenido. Si se acepta, esperar los dos bytes `01 01` hasta el último Stop.
+2. **Observar el quinto byte y la aceptación.** Antes de ese flanco, comparar el candidato de 40 bits formado por el byte actual y los cuatro registrados. Validar antes de reducir ancho. Si se acepta, `load_request`, `command_accepted`, `remaining_load` y la captura de `01 01` coinciden; tamaño y restantes reciben N. Si se rechaza, esperar `01 06`, sin solicitud ni contenido. Esperar el último Stop de ACCEPTED antes de transmitir programa.
 
-3. **Enviar y reconstruir la imagen.** Transmitir los N bytes seguidos y comparar las N/4 palabras de IMEM desde dirección cero, incluida la última.
+3. **Enviar y reconstruir la imagen.** Transmitir N bytes y comparar las N/4 palabras IMEM. Cada `load_byte_valid` entrega y decrementa una vez; el offset usa N menos restantes preflanco. La última entrega activa `load_last_byte`, escribe la última palabra y certifica `load_ok` en ese mismo flanco, sin una palabra extra.
 
-4. **Observar la preparación.** Comprobar `load_ok` con el último byte y `image_publish` al consumir `prepare_done` en PREPARING_READY. Ese flanco publica el tamaño y alcanza READY con `cpu_cycle_fire=0`. DONE debe llegar después, con Register File preparado y estado lógico de DMEM en cero.
+4. **Observar preparación y respuesta.** Tras la última entrega, exigir `WAIT_PREP_DONE` y `prepare_active=1`. En el flanco P de `PREPARING_READY && prepare_done`, Execution Control publica tamaño y alcanza READY sin ciclo CPU; el Controller todavía ve preparación activa y no captura DONE. En P+1, 20 ns después, captura `01 02` con `prepare_active=0`, RF preparado y DMEM lógicamente en cero. El reset durante preparación se define en TEST-UART-013/C009; debe impedir publicar una imagen parcial.
 
 5. **Ejecutar la imagen ilegal cargada.** Después de DONE completa, comprobar que la ejecución produzca causa 2 en PC cero. Ese resultado pertenece al decoder, no a un rechazo de LOAD.
 
@@ -280,7 +278,7 @@ La selección no agrega otras combinaciones de instrucciones ni filtros de ISA d
 
 Una carga aceptada invalida el tamaño anterior y reconstruye las N/4 palabras, sin confirmaciones intermedias ni bloqueo de RX por TX.
 
-`01 02` se envía solo después del commit de preparación a READY, sin un ciclo CPU. La preparación cumple el presupuesto de 1 ms; no se escribe una palabra extra ni se omite la última.
+`01 02` se captura en el serializador un clock después del commit de preparación a READY, sin un ciclo CPU. La preparación cumple el presupuesto de 1 ms; no se escribe una palabra extra ni se omite la última.
 
 Los tamaños inválidos devuelven `01 06` y conservan la sesión. Los bits altos no pueden truncarse para obtener 4 u otro tamaño admitido.
 
@@ -344,7 +342,7 @@ Un tamaño incompleto devuelve `01 07` y conserva imagen y sesión. Un contenido
 
 T comienza después del opcode para tamaño y después del Stop de ACCEPTED para contenido. Cada byte válido reinicia T mientras falten bytes; al completar la fase termina esa supervisión.
 
-Error UART prevalece sobre byte válido, y byte válido prevalece sobre timeout. El error devuelve `01 09`, aborta la carga e impide una escritura coincidente del cuarto byte.
+Error UART prevalece sobre byte válido, y byte válido prevalece sobre timeout. El error devuelve `01 09`; durante contenido activa `load_abort` e impide entrega, decremento y escritura coincidentes. En tamaño no activa aborto del Loader y conserva la imagen anterior. Un último byte válido en el límite completa la fase: el quinto byte puede aceptar LOAD y el último de contenido escribe IMEM en ese flanco. Cambios de línea, línea baja o una trama sin byte válido no reinician T; los escenarios incompletos comienzan una trama 10.000 clocks antes de T, sin byte completo ni error hasta T. Esa actividad no prolonga el plazo; los bytes posteriores ya pertenecen a recuperación.
 
 No se agrega un timeout total de transferencia ni campos extra a los comandos de un byte. La aprobación exige respuesta, temporizador, imagen y escrituras correctos en cada fase, sin publicar una imagen parcial.
 
@@ -364,55 +362,48 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Qué comprueba y por qué
 
-Esta prueba comprueba que la recuperación de RX requiera silencio continuo y conserve TX y la sesión de CPU según la fase donde ocurre el error.
+Esta prueba comprueba silencio continuo de recuperación, actividad RX y continuidad de TX y CPU. También comprueba que recuperar el transporte durante RUN no habilite comandos normales.
 
-Busca detectar una reapertura mientras la línea sigue activa, un reset accidental de TX o el abandono de una respuesta terminal pendiente al terminar la recuperación.
-
-Start falso, Stop inválido y overflow deben llegar al controlador como error UART. Sus rutas de entrada se comprueban en READY; las diferencias entre opcode, tamaño y contenido se comprueban con Stop inválido. La secuencia completa de actividad durante RECOVER utiliza un solo recorrido.
+Start falso, Stop inválido y overflow llegan como error UART. Las variantes LOAD distinguen un error anterior a la aceptación de otro durante contenido.
 
 ### Condiciones iniciales
 
-Los errores de Start y Stop se aplican a RX físico. El overflow se provoca localmente mediante una FIFO RX llena y una recepción adicional; no se fuerza un contador incompatible con sus bytes almacenados.
+Los errores de Start y Stop utilizan RX físico. El overflow se provoca localmente con FIFO llena y otra recepción, conservando bytes y ocupación coherentes. Un byte centinela `A5` en uart_core local permite comprobar que no se resetea TX.
 
-La imagen anterior tiene 16 bytes y está confirmada antes del error. En tamaño LOAD todavía no se aceptó una imagen nueva. En contenido LOAD ya se aceptó tamaño 8, por lo que el tamaño confirmado es cero.
+La imagen anterior tiene 16 bytes. En tamaño LOAD todavía es válida; en contenido de tamaño 8 ya fue invalidada al aceptar. Durante RUN, ACCEPTED terminó, la preparación está inactiva y el Controller está en `WAIT_RUN_END` con `run_result_required=1`.
 
-Para observar la conservación de TX se utiliza el byte centinela `A5` en uart_core local. El caso de opcode en RUNNING mantiene una ejecución continua que permite comprobar que RECOVER no la detenga.
-
-R representa 100 ms de silencio real. En C013 y C014, el fixture de integración entrega una terminación FINISHED de RUN durante RECOVER y sitúa el fin de R antes o después del último Stop de Debug.
+R son 5.000.000 clocks, 100 ms a 50 MHz. `rx_activity` incluye transiciones, línea baja y trama en curso; el Controller no recibe `rx_receiving`. Los eventos físicos y los valores observados en su interfaz deben concordar.
 
 ### Variantes cerradas
 
-La prueba tiene 8 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-006/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+La prueba comprende ocho casos canónicos del [manifiesto](cases.json):
 
-C001, C002 y C003 comprueban Start falso, Stop inválido y overflow al interpretar un opcode en READY. C002 también ejecuta la secuencia completa de comandos descartados, residuos, actividad próxima a R, línea baja y trama en curso.
+- C001–C003: Start falso, Stop inválido y overflow en `WAIT_COMMAND`/READY. C002 incluye comandos descartados, residuos, actividad cerca del límite, línea baja y trama en curso.
+- C005: Stop inválido durante RUN; al recuperar, la CPU sigue ejecutando y se vuelve a `WAIT_RUN_END`.
+- C008 y C011: Stop inválido en tamaño y contenido LOAD, respectivamente.
+- C013 y C014: terminal FINISHED durante `RECOVER_RX`, con R completo antes o después del último Stop Debug.
 
-C005 aplica Stop inválido al opcode durante RUNNING. C008 lo aplica al tamaño LOAD y C011 al contenido LOAD. Estos tres casos comprueban la respuesta y la conservación o invalidez de la sesión; después verifican la reapertura mediante silencio continuo.
-
-C013 y C014 comprueban los dos órdenes entre recuperación y fin de Debug. Completar R antes del Stop debe conservar la exclusión; completar el Stop antes de R debe conservar RECOVER.
+El tráfico válido fuera de fase durante RUN y su recuperación sin respuesta se reutilizan de TEST-UART-003, sin duplicar sus IDs.
 
 ### Procedimiento
 
-1. **Preparar el contexto y provocar el error.** Conservar el estado de CPU y de la imagen. Aplicar el error del caso y comprobar la entrada a RECOVER, la ausencia de respuesta para un opcode no confiable o `01 09` durante LOAD.
+1. **Provocar el error.** Exigir `RECOVER_RX` y reinicio del contador. Un error sin LOAD interpretada no produce respuesta; un error en tamaño/contenido produce `01 09`, con `load_abort` solo durante contenido.
 
-2. **Comprobar la actividad de recuperación en C002.** Enviar `05`, `04` y residuos, y verificar que se consuman sin respuesta ni comandos guardados. Producir actividad cerca de R, mantener la línea baja y dejar una trama en curso en los pasos previstos. Cada condición debe impedir la reapertura; después de la última actividad, la cuenta de silencio debe comenzar nuevamente.
+2. **Comprobar actividad en C002.** Consumir y descartar `05`, `04` y residuos. Aplicar cambios, línea baja y trama en curso cerca del límite. Cada `rx_activity` reinicia R, incluso cuando el contador ya estaba saturado; no se guardan comandos ni se aplica reset global.
 
-3. **Completar el silencio del caso.** En los recorridos de entrada, dejar la línea en reposo y exigir R completo, `rx_receiving=0`, FIFO RX vacía y respuestas terminadas antes de admitir una orden nueva. C002 completa este paso después de su secuencia de actividad; los otros cinco recorridos lo hacen después de resolver el error.
+3. **Completar R.** Exigir silencio continuo, FIFO vacía, serializador libre y Debug liberado. La actividad domina el vencimiento; sin actividad, el contador satura mientras falte otra condición. La actividad sin byte válido no reinicia el timeout LOAD, comprobado en TEST-UART-005.
 
-4. **Comprobar los dos órdenes con Debug.** En C013, terminar R mientras Debug continúa y exigir que la admisión permanezca inhibida hasta su Stop final. En C014, presentar actividad RX un flanco antes del Stop de Debug y comprobar que reinicie R; después del Stop, RECOVER debe continuar hasta completar los 100 ms contados desde la última actividad. Mantener RX en reposo entre los dos eventos finales para conservar el orden de cada variante.
+4. **Cruzar R con Debug.** En C013, R se completa primero y la recuperación permanece hasta el Stop Debug. En C014, una actividad un flanco antes del Stop reinicia R y `RECOVER_RX` continúa después de liberar Debug. El terminal se entrega una vez y no interrumpe la cuenta.
 
-5. **Enviar una consulta nueva.** Una vez cumplidas todas las condiciones de salida, enviar CHECK_READY. Debe responder la disponibilidad del contexto sin ejecutar ninguno de los bytes descartados. Comprobar que TX se haya conservado y que RUN no se haya detenido por la recuperación.
+5. **Comprobar el destino.** C005 vuelve a `WAIT_RUN_END`, conserva la obligación RUN y solo admite RESET en su ventana; no se envía una consulta normal. Los otros casos vuelven a `WAIT_COMMAND` después de terminar sus respuestas y pueden recibir un CHECK_READY nuevo. Los comandos descartados no se reproducen.
 
 ### Resultados y criterio de aprobación
 
-Los tres errores deben activar la recuperación. Un error de opcode no produce un eco confiable ni una respuesta; conserva la imagen y, durante RUNNING, permite que CPU continúe.
+Los errores de opcode conservan imagen y sesión sin respuesta; durante RUN la CPU continúa. Un error de tamaño devuelve UART_ERROR conservando la imagen anterior; uno de contenido aborta y mantiene el tamaño confirmado en cero.
 
-Un error de tamaño LOAD devuelve `01 09` y conserva la imagen anterior. Un error de contenido devuelve el mismo código, pero mantiene el tamaño confirmado en cero.
+TX no se resetea. Un terminal RUN durante recuperación conserva el orden respecto de su ACCEPTED, activa retención y se entrega exactamente una vez; `run_result_required` se limpia al capturarlo en el serializador, y `debug_hold` al último Stop.
 
-En C002, los comandos y residuos se consumen sin producir efectos. La actividad reinicia R y ninguna línea baja, trama en curso o FIFO no vacía permite reabrir la recepción. TX se conserva sin reset global.
-
-Una terminación RUN durante RECOVER se transmite una sola vez, después de cualquier respuesta breve pendiente. El último Stop libera la exclusión Debug, pero la admisión también requiere completar la recuperación.
-
-La aprobación exige las tres rutas de error, los efectos propios de cada contexto, el silencio continuo y ambos órdenes de salida. La secuencia de actividad completa y las mediciones de R deben concordar con esas mismas reglas.
+R completo no basta si quedan bytes, respuesta o Debug. Si RUN sigue activo se recupera su fase de espera, no la admisión general. La aprobación exige destinos correctos, ausencia de comandos diferidos y ambos órdenes entre silencio y fin físico.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -560,7 +551,7 @@ Esta prueba comprueba que el serializador conserve el byte preparado cuando TX n
 
 Busca detectar la pérdida o recaptura del byte pendiente, el avance de un cursor por una escritura rechazada o una finalización anunciada al encolar el último byte.
 
-La atención RX se comprueba en el controlador con TX llena. La retención del serializador y el procesamiento de RX tienen estímulos separados; un caso de integración comprueba su coexistencia durante RECOVER y un Debug terminal de RUN.
+La atención RX se comprueba en el controlador con TX llena. La retención del serializador y el procesamiento de RX tienen estímulos separados; un caso de integración comprueba su coexistencia durante RECOVER_RX y un Debug terminal de RUN.
 
 ### Condiciones iniciales
 
@@ -568,19 +559,19 @@ En unidad de serializador se prepara un byte disponible y un cursor estable. FIX
 
 La FIFO TX llena contiene cuatro bytes pendientes y `tx_full=1` en preflanco. El byte preparado no debe incorporarse mientras ese flag permanezca activo. Los valores de sus fuentes pueden cambiar durante la espera para comprobar que no se recapturen.
 
-En unidad de controlador se prepara RX con el byte `55` y TX llena y ocupada. READ_SIZE comienza con índice cero y tamaño parcial cero. RECOVER debe consumir ese mismo byte y descartarlo; estos fixtures no necesitan activar un envío Debug.
+C002 es un fixture artificial del Controller: `RECEIVE_LOAD_SIZE`, índice cero y tamaño parcial cero, con TX forzada llena y ocupada por el banco. Esa combinación no demuestra alcanzabilidad normal, pues la fase mantiene libre el serializador. Aísla la independencia de `rd_uart` respecto de TX. C004 prepara `RECOVER_RX` con el mismo byte `55` y TX ocupada; allí se descarta.
 
-C006 integra el controlador y el serializador durante RECOVER con un Debug terminal RUN/FINISHED ya aceptado por el serializador. La exclusión está activa y ENTRY conserva el byte `A5` en dirección 5 mientras TX está llena. El byte RX `55` debe descartarse sin modificar el estado observado.
+C006 integra el controlador y el serializador durante RECOVER_RX con un Debug terminal RUN/FINISHED ya aceptado por el serializador. La exclusión está activa y ENTRY conserva el byte `A5` en dirección 5 mientras TX está llena. El byte RX `55` debe descartarse sin modificar el estado observado.
 
 ### Variantes cerradas
 
 La prueba tiene 9 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-009/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
 
-C001, C003 y C005 comprueban la retención en FIXED, COUNT y ENTRY. C002 comprueba el procesamiento de tamaño en READ_SIZE y C004 el descarte en RECOVER, con TX llena y ocupada en ambos casos.
+C001, C003 y C005 comprueban la retención en FIXED, COUNT y ENTRY. C002 comprueba el procesamiento de tamaño en RECEIVE_LOAD_SIZE y C004 el descarte en RECOVER_RX, con TX llena y ocupada en ambos casos.
 
-C006 comprueba la integración de RECOVER con el envío Debug terminal. Ese envío no implica que se reciba una LOAD durante la exclusión.
+C006 comprueba la integración de RECOVER_RX con el envío Debug terminal. Ese envío no implica que se reciba una LOAD durante la exclusión.
 
-C007 aplica enqueue y fin físico simultáneos con dos bytes pendientes; la cuenta siguiente debe seguir siendo dos. C008 y C009 siguen el fin físico de LOAD/ACCEPTED y STEP/DONE con K=0.
+C007 aplica enqueue y fin físico simultáneos con dos bytes pendientes; la cuenta siguiente sigue siendo dos. C008 y C009 siguen LOAD/ACCEPTED y STEP/DONE con K=0. C008 incluye el cierre de LOAD/DONE en `WAIT_RESPONSE_SENT` sin retención Debug, como segundo intercambio de esa misma carga.
 
 ### Procedimiento
 
@@ -588,21 +579,21 @@ C007 aplica enqueue y fin físico simultáneos con dos bytes pendientes; la cuen
 
 2. **Comprobar la liberación de espacio.** Producir el Stop que retira un byte de FIFO. Si full era uno en preflanco, el serializador no puede escribir en ese mismo flanco. Debe aceptar una sola escritura en el clock siguiente, con el byte conservado y el avance de cursor correspondiente.
 
-3. **Observar RX en el controlador.** En C002 y C004, escribir `55` en FIFO RX en E y observar su consumo en E+1. READ_SIZE debe guardar el byte bajo y pasar su índice de cero a uno. RECOVER debe descartarlo sin admitir una orden nueva. TX llena u ocupada no debe retrasar esas acciones.
+3. **Observar RX en el controlador.** En C002 y C004, escribir `55` en FIFO RX en E y observar su consumo en E+1. RECEIVE_LOAD_SIZE debe guardar el byte bajo y pasar su índice de cero a uno. RECOVER_RX debe descartarlo sin admitir una orden nueva. TX llena u ocupada no debe retrasar esas acciones.
 
 4. **Comprobar la integración durante recuperación.** En C006, observar simultáneamente el descarte de RX y la retención de ENTRY. Después de liberar espacio, el byte TX debe enviarse una sola vez. CPU y el estado de Debug permanecen retenidos; el tráfico recibido no produce respuesta ni una orden nueva.
 
-5. **Comprobar los pendientes y el último byte.** En C007, aplicar enqueue y `tx_done_tick` juntos y exigir dos pendientes después del flanco. En C008 y C009, seguir la respuesta desde el encolado de su último byte hasta su Stop. La finalización debe ocurrir en ese Stop, nunca antes.
+5. **Comprobar pendientes y cierre.** En C007, enqueue y `tx_done_tick` simultáneos conservan dos pendientes. En C008, el Stop de ACCEPTED inicia contenido con contador cero; al completar esa carga y preparación, LOAD/DONE cierra `WAIT_RESPONSE_SENT` sin `debug_hold`. En C009, STEP/DONE limpia `debug_hold` en el Stop final. En ambos cierres, `response_busy` era uno antes del flanco y pasa a cero después; no se captura otra respuesta en el mismo flanco del Stop.
 
 ### Resultados y criterio de aprobación
 
 El byte preparado, su disponibilidad y el cursor se conservan mientras no haya una escritura aceptada. Liberar espacio no permite utilizar un flag full futuro: la primera escritura ocurre en el flanco siguiente y no pierde ni duplica el byte.
 
-Con TX llena y ocupada, RX se consume en E+1. READ_SIZE guarda `55` como primer byte del tamaño; RECOVER lo descarta sin alterar el tamaño ni admitir una orden nueva. La integración de RECOVER con Debug conserva estas reglas y la exclusión de CPU.
+Con TX llena y ocupada, RX se consume en E+1. RECEIVE_LOAD_SIZE guarda `55` como primer byte del tamaño; RECOVER_RX lo descarta sin alterar el tamaño ni admitir una orden nueva. La integración de RECOVER_RX con Debug conserva estas reglas y la exclusión de CPU.
 
 Los incrementos y decrementos simultáneos de pendientes se compensan. `response_done_tick` se produce en WAIT_TX_DONE, con producción completa, un pendiente y `tx_done_tick`; coincide con el último Stop sin un registro extra de evento.
 
-La aprobación exige las tres políticas de retención, las dos acciones RX, la integración durante RECOVER y el fin físico de ambas clases de respuesta. Ninguna liberación de exclusión, inicio de timeout o petición de reset puede adelantarse al Stop que le corresponde.
+La aprobación exige las tres políticas de retención, las dos acciones RX, la integración durante RECOVER_RX y el fin físico de ambas clases de respuesta. Ninguna liberación de exclusión, inicio de timeout o petición de reset puede adelantarse al Stop que le corresponde.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -682,9 +673,9 @@ halt
 
 2. **Ejecutar RUN.** Enviar `02`, recibir ACCEPTED completa y esperar el terminal, sin un timeout de duración del programa.
 
-3. **Ejecutar STEP.** Enviar `03`, recibir DONE con Debug y repetir hasta que el estado sea terminal.
+3. **Ejecutar STEP.** Enviar `03`, recibir DONE con Debug y repetir hasta terminal. En C002 y C004, después del último Stop terminal enviar un STEP adicional: debe preparar una sesión nueva con la misma imagen y ejecutar un único primer ciclo. Comparar ese snapshot con el primer STEP desde READY. Esta segunda fase no reanuda el pipeline terminal ni cambia los programas enumerados.
 
-4. **Observar el postflanco.** Comparar Register File, estado lógico de DMEM, contexto y latches registrados del mismo ciclo, incluidos los commits de ese flanco.
+4. **Observar el postflanco.** Comparar RF, DMEM, contexto y latches con los commits del mismo ciclo. En STEP inmediato, captura de `03 02` y `debug_hold_set` coinciden con aceptación y `cpu_cycle_fire`. Tras preparación, `WAIT_STEP_END` produce esas acciones en el primer `cpu_cycle_fire`, aunque `prepare_active` todavía sea uno en preflanco. No debe ejecutar otro ciclo por esperar el serializador. [TEST-EXEC-002/C021](execution.md#test-exec-002) comprueba reset durante esa preparación, incluida la salida del Controller de su espera, sin ciclo ni respuesta STEP.
 
 5. **Comparar cabeceras y estado final.** Todo STEP utiliza `03 02`, incluso con fault o drain. RUN utiliza ACCEPTED y después FINISHED o FAULT. Comparar los efectos con CPU sin UART y el mismo programa.
 
@@ -694,7 +685,7 @@ RUN debe enviar `02 01` antes de `02 0A` o `02 0B` con el snapshot posterior al 
 
 STEP envía únicamente `03 02` con snapshot, sin aceptación separada, incluso para `halt`, fault y drain. El último paso ya muestra el terminal.
 
-Una orden rechazada no genera un ciclo o Debug asociado ni cancela el terminal de un RUN previo. El Register File y el estado lógico de DMEM coinciden con la ejecución sin observación.
+Una orden rechazada con transporte disponible no genera ciclo ni Debug asociado. El tráfico fuera de fase durante RUN se descarta según TEST-UART-003, sin contestar un rechazo ni cancelar su terminal. RF y DMEM coinciden con la ejecución sin observación. Los STEP adicionales de C002/C004 se comparan desde una sesión nueva equivalente.
 
 La aprobación exige cantidad y orden de respuestas correctos, un ciclo por STEP aceptado y datos postflanco coherentes. La cabecera de respuesta y el estado observado se interpretan por separado.
 
@@ -704,8 +695,8 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-UART-011 — Exclusión Debug hasta el último Stop
 
-- **Nivel:** integración protocolo/CPU y sistema.
-- **Tipo de estímulo:** tráfico durante descarte y reset físico.
+- **Nivel:** integración local protocolo/CPU/serializador; reset de sistema.
+- **Tipo de estímulo:** fixtures locales con tráfico durante descarte y reset físico.
 - **Estado:** diseñada, sin ejecutar.
 
 **Requisitos:** [REQ-DBG-004](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-013](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit), [REQ-UART-005](../requirements.md#7-uart-y-debug-unit), [REQ-UART-006](../requirements.md#7-uart-y-debug-unit), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas).
@@ -726,7 +717,7 @@ Se utiliza REFERENCE y se conserva una copia del estado postflanco de CPU: Regis
 
 Los casos ordinarios tienen K=1, con dirección 5 utilizada y dato `A5`. C021 tiene las 2048 marcas activas y dato físico `a mod 256` en cada dirección. Ese caso observa la retención hasta terminar la lista completa.
 
-En el contexto RUN, una respuesta breve anterior sigue ocupando TX cuando se alcanza el terminal. En STEP, la exclusión comienza después del ciclo observado. Las comprobaciones locales conectan protocolo, CPU y serializador y entregan los bytes mediante FIFO RX; las tramas 8N1 reales se comprueban en TEST-UART-014 y TEST-PLAT-005.
+En el contexto RUN, su propia respuesta ACCEPTED sigue ocupando TX cuando se alcanza el terminal. En STEP, la exclusión comienza después del ciclo observado. Las comprobaciones locales conectan protocolo, CPU y serializador y entregan los bytes mediante FIFO RX; las tramas 8N1 reales se comprueban en TEST-UART-014 y TEST-PLAT-005.
 
 Para la espera previa, los bytes se consumen antes de comenzar la cabecera Debug. Para el cuerpo, se consumen durante la parte fija, lejos del último byte. LOAD utiliza la cabecera `01 04 00 00 00 00`, con un byte por flanco de consumo; los otros comandos utilizan únicamente su opcode.
 
@@ -744,7 +735,7 @@ C031 aplica el botón durante el cuerpo del snapshot posterior a STEP, con K=1. 
 
 ### Procedimiento
 
-1. **Preparar y conservar la observación.** Alcanzar el ciclo STEP o terminal RUN y guardar el estado postflanco. En RUN, comprobar `terminal_due = run_terminal_owed && (program_finished || fault_terminal)` y la exclusión inmediatamente después del flanco terminal, antes de registrar `debug_hold`. Mantener la respuesta breve anterior para comprobar que la exclusión comience aunque Debug todavía no pueda enviarse.
+1. **Preparar y conservar la observación.** Alcanzar el ciclo STEP o terminal RUN y guardar el estado postflanco. En RUN, comprobar `run_result_required && (program_finished || fault_terminal)` y `debug_read_select` inmediatamente después del flanco terminal, antes de registrar `debug_hold`. Mantener RUN/ACCEPTED ocupando el serializador: la selección común RF/DMEM ya debe estar activa aunque Debug todavía no pueda capturarse.
 
 2. **Entregar los bytes del caso.** Escribirlos en FIFO RX y observar su consumo en los flancos indicados. Para la espera y el cuerpo, exigir exclusión activa durante todo el mensaje. En la frontera E, comprobar su valor preflanco y observar simultáneamente el descarte del último byte RX y el fin físico de Debug.
 
@@ -756,7 +747,7 @@ C031 aplica el botón durante el cuerpo del snapshot posterior a STEP, con K=1. 
 
 ### Resultados y criterio de aprobación
 
-La exclusión comienza después del ciclo y de sus commits. La selección de lectura Debug representa ese estado postflanco y permanece activa durante la espera y el envío.
+La exclusión comienza después del ciclo y sus commits. `debug_read_select = !reset && (debug_hold || (run_result_required && (program_finished || fault_terminal)))` selecciona simultáneamente las fuentes Debug de RF y DMEM, cada una con su dirección propia, durante espera y envío. No habilita escrituras. Reset fuerza esa selección a cero.
 
 Hasta E, UART continúa funcionando y los bytes RX se consumen y descartan sin producir respuestas ni comandos guardados. El estado observado y las marcas de DMEM se conservan, incluida la lista completa de C021.
 
@@ -770,7 +761,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 <a id="test-uart-012"></a>
 
-## TEST-UART-012 — Orden de respuestas y terminal RUN durante LOAD
+## TEST-UART-012 — Orden de respuestas, terminal RUN y RESET
 
 - **Nivel:** integración controlador/serializador y sistema.
 - **Tipo de estímulo:** cruces dirigidos.
@@ -782,66 +773,55 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Qué comprueba y por qué
 
-Esta prueba comprueba el orden de las respuestas cuando RUN termina durante otro intercambio del protocolo.
+Esta prueba comprueba el orden ACCEPTED/terminal RUN, la entrega única del resultado durante recuperación y la prioridad temporal entre terminal y RESET. Las decisiones utilizan valores anteriores al flanco.
 
-Busca detectar bytes de respuestas intercalados, la pérdida del terminal por una cabecera LOAD incompleta o un Debug enviado para un RUN abandonado por RESET.
-
-La decisión depende de los flags y del estado registrados en preflanco. Los cruces distinguen una respuesta ya determinada de una solicitud todavía sin resolver.
+Busca detectar una captura con el serializador ocupado, la pérdida o duplicación del terminal y un resultado del RUN cancelado por RESET. Durante RUN no se abre recepción de cabeceras LOAD ni de CHECK_READY.
 
 ### Condiciones iniciales
 
-El controlador y el serializador se preparan en un fixture de integración con `run_terminal_owed` activo. FINISHED se presenta mediante `program_finished=1` y FAULT mediante `fault_terminal=1`; el otro indicador permanece en cero. El fixture respeta el valor preflanco o postflanco del terminal según el cruce.
+El fixture conecta Controller y serializador, con `run_result_required=1`. Los indicadores terminales son excluyentes: FINISHED utiliza `program_finished=1`; FAULT, `fault_terminal=1`. Execution Control mantiene el estado terminal y los datos observados.
 
-En los casos D, el descriptor de rechazo o error breve ya estaba guardado en preflanco. En C y E, la cabecera LOAD todavía no tiene una aceptación ni un rechazo.
+E es el flanco del último Stop de RUN/ACCEPTED. `response_busy` vale uno antes de E y cero después; `response_done_tick` se consume en E. Las variantes con evento terminal controlan cuándo su indicador se vuelve observable; no cambian la duración física de un ciclo CPU.
 
-En F-reconocido, la exclusión era cero antes del flanco que reconoce RESET y alcanza el terminal. En F-exclusión, ya era uno. Estos valores permiten comprobar la decisión temporal sin cambiar la FSM.
+En recuperación, ACCEPTED ya terminó. En RESET reconocido, no hay terminal observable ni preparación activa antes del flanco; en RESET descartado, el indicador terminal ya vale uno antes del flanco.
 
 ### Variantes cerradas
 
-La prueba tiene 14 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-012/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
-
-Los 14 casos propios combinan FINISHED o FAULT con los siete cruces A, C, D-rechazo, D-error, E, F-reconocido y F-exclusión.
-
-La subsección siguiente define cada situación. B utiliza el `halt` único ya enumerado como TEST-UART-010/C005 y no agrega un caso propio. No se inventa una variante en la que ese `halt` único produzca FAULT.
-
-También se ejecutan las comprobaciones reutilizadas de [TEST-UART-010](#test-uart-010). Se conservan sus IDs originales y no se suman otra vez como casos propios.
+Los 14 casos propios del [manifiesto](cases.json) combinan FINISHED o FAULT con estos siete cruces. El programa `halt` único de TEST-UART-010/C005 se reutiliza como recorrido físico rápido, sin contarlo otra vez ni atribuirle un FAULT.
 
 ### Qué significa cada cruce
 
-| Cruce          | Situación que se prepara                                                  | Resultado que distingue la prueba                                                                      |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| A              | RUN termina mientras se transmite CHECK_READY/BUSY (`05 04`).             | Completar esa respuesta breve y luego enviar el terminal con Debug.                                    |
-| B, reutilizado | Halt único termina antes del último Stop de RUN/ACCEPTED.                 | Conservar la obligación terminal hasta completar ACCEPTED; se observa en UART-010/C005.                |
-| C              | RUN termina mientras se recibe una cabecera LOAD todavía incompleta.      | Abandonar esa cabecera, descartar su resto y dar prioridad al terminal.                                |
-| D-rechazo      | El rechazo LOAD ya estaba determinado antes de que RUN termine.           | Transmitir primero el rechazo ya guardado, luego el terminal.                                          |
-| D-error        | El error LOAD ya estaba determinado antes de que RUN termine.             | Transmitir primero el error ya guardado, luego el terminal.                                            |
-| E              | El último byte de tamaño LOAD llega en el mismo flanco del terminal.      | El terminal gana sobre la solicitud todavía sin resolver; no aceptar LOAD ni guardar una orden futura. |
-| F-reconocido   | RESET se reconoce en IDLE en el mismo flanco en que RUN alcanza terminal. | Guardar `04 01`, cancelar la obligación terminal anterior y aplicar reset después del Stop.            |
-| F-exclusión    | RESET llega con exclusión Debug ya activa antes del flanco.               | Descartarlo y completar el terminal debido, sin otra respuesta.                                        |
+| Cruce                              | Situación antes del flanco                                                                                 | Resultado esperado                                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| A — terminal anterior al Stop      | Terminal observable antes de E, con ACCEPTED en curso.                                                     | Retener y conservar obligación; capturar terminal en E+1, después de liberar el serializador.      |
+| B — terminal en el flanco del Stop | El último ciclo CPU y el Stop ocurren en E; terminal observable después de E.                              | Pasar por `WAIT_RUN_END`; capturar terminal en E+1 y continuar en `WAIT_RESPONSE_SENT`.            |
+| C — terminal posterior al Stop     | CPU continúa después de E; el terminal se observa más tarde en `WAIT_RUN_END`.                             | Capturar resultado con serializador libre y transmitirlo una vez.                                  |
+| D — R antes de Debug               | `RECOVER_RX`, terminal pendiente y R cumplido mientras Debug sigue ocupado.                                | Completar Debug antes de volver a `WAIT_COMMAND`; conservar recuperación hasta reunir condiciones. |
+| E — Debug antes de R               | `RECOVER_RX`, terminal enviado y silencio todavía incompleto.                                              | Liberar Debug sin omitir la recuperación ni admitir nuevos comandos.                               |
+| F — RESET con último ciclo         | `WAIT_RUN_END`, indicadores terminales en cero; RESET se reconoce en el mismo flanco del último ciclo CPU. | Capturar `04 01`, cancelar obligación y aplicar reset después del Stop; no enviar terminal RUN.    |
+| G — terminal ya observable         | `WAIT_RUN_END`, terminal indicado y RESET disponible antes del flanco.                                     | Descartar RESET y enviar únicamente el terminal con Debug; no solicitar reset global.              |
 
-Cada cruce propio se aplica una vez con FINISHED y otra con FAULT. B tiene una sola ejecución FINISHED reutilizada; no se inventa un halt único que produzca FAULT.
+C001–C007 corresponden a A–G con FINISHED; C008–C014, a A–G con FAULT. D y E concretan los dos órdenes de recuperación reutilizados por TEST-UART-006.
 
 ### Procedimiento
 
-1. **Preparar el cruce.** Situar la solicitud y el terminal en el flanco del caso y conservar los descriptores hasta que el serializador los acepte.
+1. **Preparar el cruce coherente.** Obtener las fases desde aceptación, ejecución y recuperación, o inicializar un fixture equivalente y clasificarlo como integración local. No combinar una cabecera LOAD en recepción con un RUN pendiente.
 
-2. **Observar A y D.** Exigir que la respuesta breve ya determinada termine antes del terminal.
+2. **Seguir A, B y C.** Observar `run_result_required`, `debug_hold`, `response_busy`, `response_start` y campos. En E no puede capturarse el terminal mientras `response_busy` siga uno en preflanco. En B, el indicador terminal aparece después de E; la decisión de E no utiliza el estado futuro.
 
-3. **Observar C y E.** Comprobar que la cabecera LOAD se abandone sin respuesta ni timeout tardío y que sus restos no sincronicen una nueva carga.
+3. **Seguir D y E.** Entregar el resultado en `RECOVER_RX`, sin reiniciar ni detener el contador por la transmisión. Exigir FIFO vacía, silencio, serializador libre y Debug liberado para salir.
 
-4. **Observar F.** Si RESET se reconoce en el flanco coincidente, cancelar la obligación terminal y guardar ACCEPTED. Si la exclusión ya estaba activa, descartar RESET y conservar el terminal debido.
+4. **Seguir F y G.** En F, limpiar la obligación al reconocer RESET aunque el terminal aparezca después del flanco. En G, prevalece el terminal ya observable: RESET no genera respuesta ni solicitud registrada.
 
-5. **Comparar cada mensaje completo.** Revisar cabecera, cuerpo y fin físico, sin intercalar bytes y cumpliendo una sola vez cada obligación terminal.
+5. **Comparar mensajes completos.** Contar capturas y bytes. FINISHED usa `02 0A` y FAULT `02 0B`, ambos con Debug; cada mensaje termina físicamente antes del siguiente.
 
 ### Resultados y criterio de aprobación
 
-A y B completan la respuesta breve antes del terminal con Debug. La obligación terminal se conserva hasta disponer del descriptor, sin sobrescribir una respuesta ocupada.
+ACCEPTED precede al resultado final en A–E y G. La obligación permanece hasta capturar el resultado, se limpia en ese flanco y no vuelve a producir otra captura. `debug_hold` cubre la espera y todo Debug hasta el último Stop.
 
-C y E abandonan la cabecera y descartan su resto, sin aceptación, rechazo ni timeout tardío. La imagen se conserva. D transmite primero el rechazo o error ya determinado y después el terminal.
+F produce RESET/ACCEPTED y ningún terminal del RUN cancelado; G produce terminal RUN y ningún RESET/ACCEPTED. Los bytes fuera de fase no crean LOAD ni una respuesta corta concurrente.
 
-RESET reconocido en F cancela `run_terminal_owed` y guarda `04 01`, sin crear Debug del RUN abandonado. Si la exclusión ya estaba activa, RESET se descarta y el terminal pendiente se completa.
-
-La aprobación exige una secuencia completa por respuesta, resolución conforme al preflanco y ausencia de una LOAD abandonada encolada para después.
+La aprobación exige un único productor de `response_start`, capturas solo con serializador libre y cierre de `WAIT_RESPONSE_SENT` con retención liberada únicamente al fin físico. Un cierre de respuesta corta sin `debug_hold` se comprueba en TEST-UART-003 y TEST-UART-009.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -850,7 +830,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 ## TEST-UART-013 — RESET UART después de aceptación y botón
 
 - **Nivel:** sistema e integración reset.
-- **Tipo de estímulo:** legal.
+- **Tipo de estímulo:** legal y fixtures artificiales de descarte.
 - **Estado:** diseñada, sin ejecutar.
 
 **Requisitos:** [REQ-UART-006](../requirements.md#7-uart-y-debug-unit), [REQ-UART-007](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit).
@@ -875,11 +855,13 @@ E identifica el fin físico del segundo byte, incluido su Stop. La secuencia E+1
 
 ### Variantes cerradas
 
-La prueba tiene 10 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-013/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+La prueba tiene 16 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-013/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
 
-Los seis contextos UART son RUNNING, FAULT y los cuatro drains. Los drains breves utilizan un fixture local con un evento UART reconocido, sin cambiar el clock físico.
+Los seis contextos UART son RUNNING, FAULT y los cuatro drains. RUNNING y drains AUTO utilizan `WAIT_RUN_END`; FAULT y drains STEP, `WAIT_COMMAND` después de terminar su Debug. Los drains breves utilizan un fixture local coherente con esas fases, sin cambiar el clock físico.
 
-Los cuatro casos de botón se aplican durante RUN, LOAD, PREPARING_READY y Debug.
+C007–C010 aplican el botón durante RUN, LOAD, PREPARING_READY y Debug. La comprobación de reset durante `WAIT_STEP_END`/PREPARING_STEP se define en [TEST-EXEC-002/C021](execution.md#test-exec-002), incluida la cancelación de la espera del Controller sin respuesta STEP.
+
+C011–C016 son fixtures artificiales de un flanco con byte RESET válido. Preparan, respectivamente, `WAIT_RUN_ACCEPT_SENT`, `WAIT_RUN_END` con preparación activa, `WAIT_LOAD_ACCEPT_SENT`, `WAIT_PREP_DONE`, `WAIT_STEP_END` y `WAIT_RESPONSE_SENT` con respuesta corta. Se comprueba retiro y descarte, sin respuesta adicional, petición de reset ni comando guardado. No se afirma que cada ventana dure una trama UART física; los indicadores y recursos preflanco se enumeran en el manifiesto.
 
 El descarte de RESET UART durante Debug o RECOVER se comprueba mediante las reutilizaciones, sin agregar otras fases propias.
 
@@ -887,19 +869,19 @@ También se ejecutan las comprobaciones reutilizadas de [TEST-UART-006](#test-ua
 
 ### Procedimiento
 
-1. **Reconocer RESET y preparar ACCEPTED.** Guardar `04 01` sin afirmar reset ni detener CPU únicamente por el reconocimiento.
+1. **Reconocer RESET en C001–C006.** Utilizar `WAIT_COMMAND` sin intercambio pendiente o `WAIT_RUN_END` con ACCEPTED completo, preparación inactiva e indicadores terminales en cero. Capturar `04 01` directamente en el serializador y limpiar `run_result_required`, sin reset ni pausa CPU anticipados. En FAULT, el Debug previo ya terminó y el transporte está en `WAIT_COMMAND`; no preparar ese caso con un terminal RUN todavía debido. Las prioridades coincidentes se reutilizan de los cruces F y G de TEST-UART-012.
 
-2. **Seguir el fin físico.** En E, registrar `uart_reset_request=1`. Observar reset en los consumidores en E+1, la liberación en E+2 y E+3 y el primer flanco libre en E+4.
+2. **Seguir el fin físico en C001–C006.** En E, registrar `uart_reset_request=1`. Observar reset en los consumidores en E+1, la liberación en E+2 y E+3 y el primer flanco libre en E+4.
 
-3. **Comparar el estado reiniciado.** Exigir imagen inválida, PC, Register File y contador en cero y latches inválidos.
+3. **Comparar el estado después de reset UART o botón.** Exigir imagen inválida, PC, Register File y contador en cero y latches inválidos.
 
-4. **Consultar disponibilidad nueva.** Enviar `05` después de liberar reset y comprobar `05 03`.
+4. **Consultar disponibilidad después de reset.** En C001–C010, enviar `05` después de liberar reset y comprobar `05 03`. C011–C016 solo comprueban descarte y no abren una consulta durante el intercambio activo.
 
-5. **Aplicar el botón.** Solicitarlo directamente en la fase del caso. Un Debug parcial no debe considerarse una observación nueva; las comprobaciones reutilizadas cubren el descarte de UART.
+5. **Comprobar descarte y botón.** En C011–C016, consumir el byte y conservar fase y obligación, sin `response_start` ni `uart_reset_request`; la CPU solo responde a su autorización propia. En C007–C010 aplicar el botón: un Debug parcial no es una observación nueva. TEST-EXEC-002/C021 comprueba que un STEP todavía en preparación no ejecute su ciclo ni quede pendiente. Las comprobaciones reutilizadas cubren descarte UART durante Debug y recuperación.
 
 ### Resultados y criterio de aprobación
 
-La respuesta `04 01` termina antes del reset. La CPU puede continuar hasta la petición registrada en E; reconocer RESET cancela la obligación terminal del RUN anterior.
+La respuesta `04 01` termina antes del reset. La CPU puede ejecutar hasta el flanco E que registra la petición; en E+1 ya consume reset. Reconocer RESET cancela `run_result_required` del RUN anterior. En las fases de aceptación, preparación, Debug y recuperación el byte RESET se descarta; C011–C016 y las variantes reutilizadas comprueban esas ventanas, sin extender el reconocimiento a ellas.
 
 En E+1 los consumidores ven reset. E+2 y E+3 completan su liberación, y E+4 es el primer flanco libre si no hay otra fuente activa.
 
@@ -911,11 +893,11 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 <a id="test-uart-014"></a>
 
-## TEST-UART-014 — Presupuestos medidos del enlace integrado
+## TEST-UART-014 — Presupuestos del enlace integrado
 
 - **Nivel:** sistema UART y revisión de cotas.
 - **Tipo de estímulo:** legal sin ralentización artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** cotas comprobadas por cálculo; medición RTL pendiente.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-UART-009](../requirements.md#7-uart-y-debug-unit), [REQ-UART-010](../requirements.md#7-uart-y-debug-unit), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit).
 
@@ -986,11 +968,13 @@ halt
 
 2. **Medir preparación y DONE.** Comprobar Cd+1 clocks de preparación y el Stop final de DONE dentro de `N*10*1000/19200+201` ms desde el inicio del contenido.
 
-3. **Preparar y ejecutar los programas de Debug.** Generar las tres ocupaciones y ejecutar RUN hasta su terminal. Las ventanas de Debug comienzan en la cabecera o el snapshot según el protocolo, sin limitar la duración previa del programa.
+3. **Preparar y ejecutar los programas de Debug.** Generar las tres ocupaciones y ejecutar RUN hasta su terminal. Medir la parte fija desde la cabecera completa y la lista desde `used_count` completo, sin limitar la duración previa del programa.
 
 4. **Comparar las cotas.** Contrastar los clocks de cada respuesta y las ventanas de 319 ms para la parte fija y `ceil(5*K*10*1000/19200+200)` ms para la lista.
 
-5. **Observar el fin físico.** Todas las mediciones terminan en el Stop correspondiente, no en el encolado del byte.
+5. **Observar fin físico y caminos combinacionales.** Todas las mediciones terminan en su Stop. Correlacionar solicitud, aceptación, `cpu_cycle_fire` y captura de respuesta en un mismo flanco, así como el candidato de tamaño del quinto byte. La revisión RTL y el análisis estático deben comprobar ausencia de lazos y cumplimiento del período funcional de 20 ns; los modelos abstractos y las cotas UART no acreditan ese timing.
+
+Las cotas se recalculan con el [comando reproducible](../../tools/verification/README.md), sin ejecutar el DUT. Para los estímulos de recuperación PC se reutiliza `RecoveryChecks`: consulta válida, segundo silencio, fragmentación, bytes pendientes, RESET único y cruces con RUN. Su ejecución con reloj virtual no certifica el enlace ni un cliente implementado.
 
 ### Resultados y criterio de aprobación
 
@@ -998,12 +982,14 @@ RX procesa cada byte en un clock. Desde FIFO vacía, la ocupación normal máxim
 
 A 50 MHz, las cotas conservadoras en clocks son:
 
-- Respuesta breve: `2*26083+16`.
+- Respuesta corta: `2*26083+16`.
 - Parte fija con cabecera: `230*26083+C+16`.
 - Lista con K mayor que cero: `(5*K+1)*26083+C+16`.
 - Respuesta Debug completa: `(230+5*K)*26083+2*C+16`.
 
-LOAD termina dentro de `N*10*1000/19200+201` ms desde el inicio de contenido. Las respuestas breves y aceptaciones cumplen 200 ms; la parte fija de Debug cumple 319 ms; la lista cumple `ceil(5*K*10*1000/19200+200)` ms.
+`26083` incluye la trama de `160*163` clocks, uno de separación y dos de producción. La cota fija incluye la cabecera conservadoramente; la lista reserva un byte por el comienzo de su ventana. Con K=0 no se transmite lista. Para comparar una respuesta corta con los 200 ms desde la solicitud también se cuenta la recepción y el procesamiento de esa solicitud.
+
+LOAD termina dentro de `N*10*1000/19200+201` ms desde el inicio de contenido. Las respuestas cortas y aceptaciones cumplen 200 ms; la parte fija de Debug cumple 319 ms; la lista cumple `ceil(5*K*10*1000/19200+200)` ms.
 
 RUN no tiene timeout de duración. Las ventanas del host comprueban el fixture del enlace, sin certificar la aplicación final.
 

@@ -145,10 +145,10 @@ Los metadatos podrán ser un insumo para Debug, pero no determinan por sí mismo
 
 Se utilizarán los siguientes perfiles:
 
-| Perfil | IMEM bytes | DMEM bytes | Compromiso |
-|---|---:|---:|---|
-| `REFERENCE` | 1024 | 2048 | Elaboración, simulación, síntesis, implementación y validación en hardware obligatorias |
-| `ALT_1000` | 1000 | 1000 | Elaboración, simulación y smoke tests de parametrización no potencia de dos |
+| Perfil      | IMEM bytes | DMEM bytes | Compromiso                                                                              |
+|-------------|-----------:|-----------:|-----------------------------------------------------------------------------------------|
+| `REFERENCE` |       1024 |       2048 | Elaboración, simulación, síntesis, implementación y validación en hardware obligatorias |
+| `ALT_1000`  |       1000 |       1000 | Elaboración, simulación y smoke tests de parametrización no potencia de dos             |
 
 `REFERENCE` es el único perfil con compromiso físico completo en esta decisión. `ALT_1000` demuestra que índices, límites, metadatos y validaciones no dependen de capacidades potencia de dos; no se exige todavía implementación física ni timing closure para este perfil.
 
@@ -313,13 +313,13 @@ Derivar `image_valid` del tamaño elimina estado redundante. `ALT_1000` proporci
 
 **Decisión:** `Execution Control` se realiza en `execution_control.sv` y contiene el submódulo `global_fsm.sv`. Las funciones se ubican así:
 
-| Función | Archivo / ubicación |
-|---|---|
-| Fase de sesión, selección de comandos, autorización de ciclos y decodificación de salidas | `global_fsm.sv`, hijo de `execution_control` |
-| Selección de metadatos y evento de captura de fault | Lógica combinacional local en `execution_control.sv` |
-| Registros de causa/PC de fault, tamaño confirmado y contador de ciclos | Estado local en `execution_control.sv` |
-| Reducción de los cuatro próximos `valid` para `pipeline_empty_next` | Lógica combinacional local en `execution_control.sv` |
-| Loader y preparación de sesión | `loader.sv` y `session_preparation.sv`, hijos de `processor_top` |
+| Función                                                                                   | Archivo / ubicación                                              |
+|-------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| Fase de sesión, selección de comandos, autorización de ciclos y decodificación de salidas | `global_fsm.sv`, hijo de `execution_control`                     |
+| Selección de metadatos y evento de captura de fault                                       | Lógica combinacional local en `execution_control.sv`             |
+| Registros de causa/PC de fault, tamaño confirmado y contador de ciclos                    | Estado local en `execution_control.sv`                           |
+| Reducción de los cuatro próximos `valid` para `pipeline_empty_next`                       | Lógica combinacional local en `execution_control.sv`             |
+| Loader y preparación de sesión                                                            | `loader.sv` y `session_preparation.sv`, hijos de `processor_top` |
 
 **Totales revisados:** Los 51 bloques vigentes de Interfaces se distribuyen en 23 módulos específicos y 28 bloques de lógica/estado local. `Execution Control` reúne siete bloques: un submódulo y seis bloques locales. Los 19 tipos de integración, transporte y placa completan un catálogo de 42 tipos, incluido el IP de clock. Corresponden 41 archivos `.sv` de módulos propios, más `system_pkg.sv` como paquete compartido; `fifo` conserva dos instancias.
 

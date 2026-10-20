@@ -44,13 +44,13 @@ La aplicación conserva su propio trabajo de diseño: elegir el formato de inter
 
 Ambos desarrolladores deben participar directamente en la construcción del procesador. El reparto inicial utiliza dos frentes que pueden probarse mediante sus interfaces y reunirse después en `processor_top`. Se los identifica como A y B para describir responsabilidades; cualquiera de los integrantes puede tomar cada recorrido.
 
-| Tramo del desarrollo | Desarrollador A | Desarrollador B |
-|---|---|---|
-| Etapas del CPU | IF e ID, con sus memorias, registros, decodificación y operandos. | EX, MEM y WB, con ejecución, forwarding, memoria de datos y escritura de resultados. |
+| Tramo del desarrollo      | Desarrollador A                                                                         | Desarrollador B                                                                         |
+|---------------------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| Etapas del CPU            | IF e ID, con sus memorias, registros, decodificación y operandos.                       | EX, MEM y WB, con ejecución, forwarding, memoria de datos y escritura de resultados.    |
 | Coordinación del pipeline | Registros interetapa, arbitraje de hazards y control de ejecución, carga y preparación. | Revisión de las fronteras con EX/MEM/WB y de los efectos de las decisiones del control. |
-| Primera integración | Coordina `processor_top` y la regresión de CPU. | Revisa y depura la integración junto a A; avanza UART y Debug. |
-| Sistema y software | Implementa el assembler y coordina el cierre de plataforma y timing. | Integra `system_top` e implementa la aplicación de PC. |
-| Aceptación y entrega | Participa en las sesiones de placa y comprueba la ejecución. | Participa en las mismas sesiones y comprueba comunicación y presentación. |
+| Primera integración       | Coordina `processor_top` y la regresión de CPU.                                         | Revisa y depura la integración junto a A; avanza UART y Debug.                          |
+| Sistema y software        | Implementa el assembler y coordina el cierre de plataforma y timing.                    | Integra `system_top` e implementa la aplicación de PC.                                  |
+| Aceptación y entrega      | Participa en las sesiones de placa y comprueba la ejecución.                            | Participa en las mismas sesiones y comprueba comunicación y presentación.               |
 
 El responsable de una parte implementa sus módulos y las pruebas que demuestran su comportamiento. El compañero revisa el cambio y sus resultados. Ambos necesitan entender el recorrido completo del CPU, por lo que la revisión también debe permitir explicar cómo se relaciona cada entrega con las etapas anteriores y posteriores.
 
@@ -176,14 +176,14 @@ El [plan de verificación](verification/verification_plan.md) y sus catálogos d
 
 La distribución siguiente indica dónde se consolida la evidencia. Los responsables de las entregas anteriores ya aportan sus comprobaciones unitarias y locales; la integración añade los resultados que solo se pueden observar con módulos reales.
 
-| Entrega que consolida la evidencia | Comprobaciones que debe completar |
-|---|---|
-| CPU integrada | Catálogos de ISA, pipeline, memoria y ejecución, en sus niveles unitarios, locales y CPU. |
-| UART | Tramas, referencia temporal, sincronización y FIFO; grupos TEST-UART-001 y TEST-UART-002. |
-| Sistema UART/Debug/CPU | Grupos TEST-UART-003 a TEST-UART-014 y revisión de composición TEST-PLAT-003. |
-| Plataforma y realización física | Perfiles, clock/reset y recursos/timing; TEST-PLAT-001, TEST-PLAT-002 y TEST-PLAT-004. |
-| Sesiones conjuntas en placa | Las 151 reejecuciones seleccionadas en TEST-PLAT-005. |
-| Software y entrega | Catálogos de assembler y aplicación, aceptación del flujo completo y correspondencia documental TEST-PLAT-006. |
+| Entrega que consolida la evidencia | Comprobaciones que debe completar                                                                              |
+|------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| CPU integrada                      | Catálogos de ISA, pipeline, memoria y ejecución, en sus niveles unitarios, locales y CPU.                      |
+| UART                               | Tramas, referencia temporal, sincronización y FIFO; grupos TEST-UART-001 y TEST-UART-002.                      |
+| Sistema UART/Debug/CPU             | Grupos TEST-UART-003 a TEST-UART-014 y revisión de composición TEST-PLAT-003.                                  |
+| Plataforma y realización física    | Perfiles, clock/reset y recursos/timing; TEST-PLAT-001, TEST-PLAT-002 y TEST-PLAT-004.                         |
+| Sesiones conjuntas en placa        | Las 151 reejecuciones seleccionadas en TEST-PLAT-005.                                                          |
+| Software y entrega                 | Catálogos de assembler y aplicación, aceptación del flujo completo y correspondencia documental TEST-PLAT-006. |
 
 Una entrega queda terminada cuando compila, pasan todas sus variantes aplicables, se ejecuta la regresión afectada y el compañero revisa el cambio y su evidencia. Durante el desarrollo pueden usarse casos breves para localizar un defecto, pero esos resultados parciales no sustituyen la suite necesaria para cerrar la entrega. Las waveforms ayudan a investigar; las comprobaciones deben determinar automáticamente qué expectativa se cumplió o falló.
 
@@ -213,14 +213,14 @@ También se comprueba el flujo completo desde el código fuente hasta la present
 
 El objetivo es disponer de un sistema funcional antes de los últimos días del plazo, de modo que haya tiempo para aceptación, correcciones y preparación de la entrega. Las ventanas siguientes organizan la coordinación. Son objetivos de avance y se ajustan con la dedicación disponible y el esfuerzo observado en las primeras entregas.
 
-| Ventana de referencia | Resultado que se busca alcanzar |
-|---|---|
-| 14–20 de octubre | Entorno compartido funcionando, desarrollo paralelo de IF/ID y EX, y cierre del diseño del assembler y de la aplicación. Se confirma acceso a herramientas y placa y se prepara plataforma. |
-| 21–27 de octubre | Etapas y coordinación del CPU disponibles para conectar una primera sesión en `processor_top`; UART adaptada al TP3. |
-| 28 de octubre–3 de noviembre | Regresiones de CPU y sistema completas, assembler y aplicación implementados, y sistema completo disponible para síntesis. |
-| 4–9 de noviembre | Flujo desde la aplicación funcionando, timing cerrado y primeras sesiones conjuntas con el bitstream completo. |
-| 10–12 de noviembre | Aceptación seleccionada completa, defectos corregidos y evidencia reunida. |
-| Últimos días antes de la entrega | Margen para correcciones, reproducción final y demostración. |
+| Ventana de referencia            | Resultado que se busca alcanzar                                                                                                                                                             |
+|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 14–20 de octubre                 | Entorno compartido funcionando, desarrollo paralelo de IF/ID y EX, y cierre del diseño del assembler y de la aplicación. Se confirma acceso a herramientas y placa y se prepara plataforma. |
+| 21–27 de octubre                 | Etapas y coordinación del CPU disponibles para conectar una primera sesión en `processor_top`; UART adaptada al TP3.                                                                        |
+| 28 de octubre–3 de noviembre     | Regresiones de CPU y sistema completas, assembler y aplicación implementados, y sistema completo disponible para síntesis.                                                                  |
+| 4–9 de noviembre                 | Flujo desde la aplicación funcionando, timing cerrado y primeras sesiones conjuntas con el bitstream completo.                                                                              |
+| 10–12 de noviembre               | Aceptación seleccionada completa, defectos corregidos y evidencia reunida.                                                                                                                  |
+| Últimos días antes de la entrega | Margen para correcciones, reproducción final y demostración.                                                                                                                                |
 
 El cierre del assembler se espera el 14 de octubre; su presencia en la primera ventana no significa que deba esperar al resto del software. La preparación física tampoco espera a la ventana de bitstream completo. Se adelantan esas comprobaciones en cuanto sus recursos están disponibles.
 

@@ -2,7 +2,7 @@
   "$schema": "./cases.schema.json",
   "schema": "tp3-verification-cases",
   "status": "designed-not-executed",
-  "date": "2026-10-16",
+  "date": "2026-10-20",
   "scope": "finite logical cases; replays listed separately",
   "latch_fixture": {
     "ifid": [
@@ -15777,7 +15777,7 @@
           "id": "TEST-PIPE-002/C021",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 0,
             "rs2": 2
           },
@@ -15795,7 +15795,7 @@
           "id": "TEST-PIPE-002/C022",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 1,
             "rs2": 2
           },
@@ -15813,7 +15813,7 @@
           "id": "TEST-PIPE-002/C023",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 2,
             "rs2": 2
           },
@@ -15831,7 +15831,7 @@
           "id": "TEST-PIPE-002/C024",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 3,
             "rs2": 2
           },
@@ -15849,7 +15849,7 @@
           "id": "TEST-PIPE-002/C025",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 4,
             "rs2": 2
           },
@@ -15867,7 +15867,7 @@
           "id": "TEST-PIPE-002/C026",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 5,
             "rs2": 2
           },
@@ -15885,7 +15885,7 @@
           "id": "TEST-PIPE-002/C027",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 6,
             "rs2": 2
           },
@@ -15903,7 +15903,7 @@
           "id": "TEST-PIPE-002/C028",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 7,
             "rs2": 2
           },
@@ -15921,7 +15921,7 @@
           "id": "TEST-PIPE-002/C029",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 8,
             "rs2": 2
           },
@@ -15939,7 +15939,7 @@
           "id": "TEST-PIPE-002/C030",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 9,
             "rs2": 2
           },
@@ -15957,7 +15957,7 @@
           "id": "TEST-PIPE-002/C031",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 10,
             "rs2": 2
           },
@@ -15975,7 +15975,7 @@
           "id": "TEST-PIPE-002/C032",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 11,
             "rs2": 2
           },
@@ -15993,7 +15993,7 @@
           "id": "TEST-PIPE-002/C033",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 12,
             "rs2": 2
           },
@@ -16011,7 +16011,7 @@
           "id": "TEST-PIPE-002/C034",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 13,
             "rs2": 2
           },
@@ -16029,7 +16029,7 @@
           "id": "TEST-PIPE-002/C035",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 14,
             "rs2": 2
           },
@@ -16047,7 +16047,7 @@
           "id": "TEST-PIPE-002/C036",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 15,
             "rs2": 2
           },
@@ -16065,7 +16065,7 @@
           "id": "TEST-PIPE-002/C037",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 16,
             "rs2": 2
           },
@@ -16083,7 +16083,7 @@
           "id": "TEST-PIPE-002/C038",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 17,
             "rs2": 2
           },
@@ -16101,7 +16101,7 @@
           "id": "TEST-PIPE-002/C039",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 18,
             "rs2": 2
           },
@@ -16119,7 +16119,7 @@
           "id": "TEST-PIPE-002/C040",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 19,
             "rs2": 2
           },
@@ -16137,7 +16137,7 @@
           "id": "TEST-PIPE-002/C041",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 20,
             "rs2": 2
           },
@@ -16155,7 +16155,7 @@
           "id": "TEST-PIPE-002/C042",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 21,
             "rs2": 2
           },
@@ -16173,7 +16173,7 @@
           "id": "TEST-PIPE-002/C043",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 22,
             "rs2": 2
           },
@@ -16191,7 +16191,7 @@
           "id": "TEST-PIPE-002/C044",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 23,
             "rs2": 2
           },
@@ -16209,7 +16209,7 @@
           "id": "TEST-PIPE-002/C045",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 24,
             "rs2": 2
           },
@@ -16227,7 +16227,7 @@
           "id": "TEST-PIPE-002/C046",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 25,
             "rs2": 2
           },
@@ -16245,7 +16245,7 @@
           "id": "TEST-PIPE-002/C047",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 26,
             "rs2": 2
           },
@@ -16263,7 +16263,7 @@
           "id": "TEST-PIPE-002/C048",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 27,
             "rs2": 2
           },
@@ -16281,7 +16281,7 @@
           "id": "TEST-PIPE-002/C049",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 28,
             "rs2": 2
           },
@@ -16299,7 +16299,7 @@
           "id": "TEST-PIPE-002/C050",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 29,
             "rs2": 2
           },
@@ -16317,7 +16317,7 @@
           "id": "TEST-PIPE-002/C051",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 30,
             "rs2": 2
           },
@@ -16335,7 +16335,7 @@
           "id": "TEST-PIPE-002/C052",
           "inputs": {
             "rf_pattern": "xi=0x01010101*i",
-            "rf_debug_select": 1,
+            "debug_read_select": 1,
             "debug_rf_addr": 31,
             "rs2": 2
           },
@@ -29083,6 +29083,13 @@
             "reset_after_clears": 2,
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "controller_integration": {
+              "transport_phase": "WAIT_STEP_END",
+              "response_busy_before": false,
+              "image_valid_before": true,
+              "run_result_required": false,
+              "reset_source": "button"
             }
           },
           "expected": {
@@ -29094,6 +29101,13 @@
               "load_start": false,
               "cpu_cycle_fire": false,
               "image_publish": false
+            },
+            "controller_reset": {
+              "protocol_phase_after": "WAIT_COMMAND",
+              "response_start": false,
+              "uart_reset_request": false,
+              "debug_read_select": false,
+              "STEP_queued_for_later": false
             }
           },
           "kind": "scenario",
@@ -29855,12 +29869,19 @@
           "id": "TEST-EXEC-008/C001",
           "inputs": {
             "program": "jal x0,0",
-            "cycles_before_reset": 20,
-            "reset_source": "UART"
+            "reset_source": "UART",
+            "observe_CPU_cycles": 20,
+            "CHECK_READY_during_RUN": false,
+            "send_RESET_after_RUN_ACCEPTED_last_Stop": true,
+            "prepare_active_at_RESET": false
           },
           "expected": {
             "no_FINISHED_before_reset": true,
-            "after_reset": "NO_IMAGE"
+            "after_reset": "NO_IMAGE",
+            "RESET_ACCEPTED": "04 01",
+            "global_reset_after_RESET_ACCEPTED_last_Stop": true,
+            "CPU_not_paused_for_RESET_ACCEPTED": true,
+            "RUN_terminal_response": null
           },
           "kind": "scenario",
           "origins": [
@@ -29872,12 +29893,14 @@
           "id": "TEST-EXEC-008/C002",
           "inputs": {
             "program": "jal x0,0",
-            "cycles_before_reset": 20,
-            "reset_source": "button"
+            "reset_source": "button",
+            "observe_CPU_cycles": 20,
+            "CHECK_READY_during_RUN": false
           },
           "expected": {
             "no_FINISHED_before_reset": true,
-            "after_reset": "NO_IMAGE"
+            "after_reset": "NO_IMAGE",
+            "button_requires_UART_acceptance": false
           },
           "kind": "scenario",
           "origins": [
@@ -31306,7 +31329,7 @@
         {
           "id": "TEST-UART-003/C001",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "NO_IMAGE",
             "cpu_context": {
@@ -31316,9 +31339,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31333,7 +31357,7 @@
         {
           "id": "TEST-UART-003/C002",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "NO_IMAGE",
             "cpu_context": {
@@ -31343,20 +31367,23 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": false,
               "cpu_cycle_fire": false,
               "state_after_reply": "NO_IMAGE"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 05",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31367,7 +31394,7 @@
         {
           "id": "TEST-UART-003/C003",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "NO_IMAGE",
             "cpu_context": {
@@ -31377,20 +31404,23 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": false,
               "cpu_cycle_fire": false,
               "state_after_reply": "NO_IMAGE"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "03 05",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31401,7 +31431,7 @@
         {
           "id": "TEST-UART-003/C004",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "READY",
             "cpu_context": {
@@ -31411,9 +31441,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31428,7 +31459,7 @@
         {
           "id": "TEST-UART-003/C005",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "READY",
             "cpu_context": {
@@ -31438,20 +31469,24 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "RUNNING"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31462,7 +31497,7 @@
         {
           "id": "TEST-UART-003/C006",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "READY",
             "cpu_context": {
@@ -31472,20 +31507,26 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "STEPPING"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire"
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31496,7 +31537,7 @@
         {
           "id": "TEST-UART-003/C007",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "STEPPING",
             "cpu_context": {
@@ -31506,9 +31547,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31523,7 +31565,7 @@
         {
           "id": "TEST-UART-003/C008",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "STEPPING",
             "cpu_context": {
@@ -31533,20 +31575,24 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "RUNNING"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31557,7 +31603,7 @@
         {
           "id": "TEST-UART-003/C009",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "STEPPING",
             "cpu_context": {
@@ -31567,20 +31613,26 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "STEPPING"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire"
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31591,7 +31643,7 @@
         {
           "id": "TEST-UART-003/C010",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "HALT_DRAIN_STEP",
             "cpu_context": {
@@ -31601,9 +31653,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31618,7 +31671,7 @@
         {
           "id": "TEST-UART-003/C011",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "HALT_DRAIN_STEP",
             "cpu_context": {
@@ -31628,20 +31681,24 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "FINISHED"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31652,7 +31709,7 @@
         {
           "id": "TEST-UART-003/C012",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "HALT_DRAIN_STEP",
             "cpu_context": {
@@ -31662,20 +31719,26 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "FINISHED"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire"
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31686,7 +31749,7 @@
         {
           "id": "TEST-UART-003/C013",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "FAULT_DRAIN_STEP",
             "cpu_context": {
@@ -31696,9 +31759,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31713,7 +31777,7 @@
         {
           "id": "TEST-UART-003/C014",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "FAULT_DRAIN_STEP",
             "cpu_context": {
@@ -31723,20 +31787,24 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "FAULT"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31747,7 +31815,7 @@
         {
           "id": "TEST-UART-003/C015",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "FAULT_DRAIN_STEP",
             "cpu_context": {
@@ -31757,20 +31825,26 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": true,
               "state_after_reply": "FAULT"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire"
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31781,7 +31855,7 @@
         {
           "id": "TEST-UART-003/C016",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "FINISHED",
             "cpu_context": {
@@ -31791,9 +31865,10 @@
               "program_finished": true,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31808,7 +31883,7 @@
         {
           "id": "TEST-UART-003/C017",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "FINISHED",
             "cpu_context": {
@@ -31818,20 +31893,24 @@
               "program_finished": true,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": false,
               "state_after_reply": "PREPARING_RUN"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31842,7 +31921,7 @@
         {
           "id": "TEST-UART-003/C018",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "FINISHED",
             "cpu_context": {
@@ -31852,20 +31931,32 @@
               "program_finished": true,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": false,
               "state_after_reply": "PREPARING_STEP"
+            },
+            "response_busy_before": false,
+            "run_result_required": false,
+            "preparation_completion": {
+              "protocol_phase": "WAIT_STEP_END",
+              "prepare_active_before": true,
+              "cpu_cycle_fire": true
             }
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire",
+            "one_CPU_cycle_after_preparation": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31876,7 +31967,7 @@
         {
           "id": "TEST-UART-003/C019",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 5,
             "state": "FAULT",
             "cpu_context": {
@@ -31886,9 +31977,10 @@
               "program_finished": false,
               "fault_terminal": true,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "05 03",
@@ -31903,7 +31995,7 @@
         {
           "id": "TEST-UART-003/C020",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 2,
             "state": "FAULT",
             "cpu_context": {
@@ -31913,20 +32005,24 @@
               "program_finished": false,
               "fault_terminal": true,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
+              "phase": "WAIT_COMMAND",
               "request": "run_request",
               "command_accepted": true,
               "cpu_cycle_fire": false,
               "state_after_reply": "PREPARING_RUN"
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": "02 01,terminal+Debug posterior",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31937,7 +32033,7 @@
         {
           "id": "TEST-UART-003/C021",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 3,
             "state": "FAULT",
             "cpu_context": {
@@ -31947,20 +32043,32 @@
               "program_finished": false,
               "fault_terminal": true,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
             },
             "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
+              "phase": "WAIT_COMMAND",
               "request": "step_request",
               "command_accepted": true,
               "cpu_cycle_fire": false,
               "state_after_reply": "PREPARING_STEP"
+            },
+            "response_busy_before": false,
+            "run_result_required": false,
+            "preparation_completion": {
+              "protocol_phase": "WAIT_STEP_END",
+              "prepare_active_before": true,
+              "cpu_cycle_fire": true
             }
           },
           "expected": {
             "response": "03 02+Debug postciclo",
-            "unrelated_session_changed": false
+            "unrelated_session_changed": false,
+            "request_and_acceptance_same_edge": true,
+            "request_independent_command_accepted": true,
+            "response_start_with_serializer_free": true,
+            "response_capture_edge": "cpu_cycle_fire",
+            "debug_hold_set_edge": "cpu_cycle_fire",
+            "one_CPU_cycle_after_preparation": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -31971,7 +32079,7 @@
         {
           "id": "TEST-UART-003/C022",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 5,
             "state": "RUNNING",
             "cpu_context": {
@@ -31981,24 +32089,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "05 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C023",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 2,
             "state": "RUNNING",
             "cpu_context": {
@@ -32008,31 +32127,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
-              "request": "run_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "RUNNING"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "02 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C024",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 3,
             "state": "RUNNING",
             "cpu_context": {
@@ -32042,31 +32165,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
-              "request": "step_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "RUNNING"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "03 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C025",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 5,
             "state": "HALT_DRAIN_AUTO",
             "cpu_context": {
@@ -32076,24 +32203,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "05 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C026",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 2,
             "state": "HALT_DRAIN_AUTO",
             "cpu_context": {
@@ -32103,31 +32241,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
-              "request": "run_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "HALT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "02 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C027",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 3,
             "state": "HALT_DRAIN_AUTO",
             "cpu_context": {
@@ -32137,31 +32279,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
-              "request": "step_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "HALT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "03 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C028",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 5,
             "state": "FAULT_DRAIN_AUTO",
             "cpu_context": {
@@ -32171,24 +32317,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "05 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C029",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 2,
             "state": "FAULT_DRAIN_AUTO",
             "cpu_context": {
@@ -32198,31 +32355,35 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_RUN",
-              "request": "run_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "FAULT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "02 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
         {
           "id": "TEST-UART-003/C030",
           "inputs": {
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "opcode": 3,
             "state": "FAULT_DRAIN_AUTO",
             "cpu_context": {
@@ -32232,24 +32393,28 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "EXEC_STEP",
-              "request": "step_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "FAULT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "03 04",
-            "unrelated_session_changed": false
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END"
           },
           "kind": "protocol_fixture",
           "origins": [
-            "Estado ycomando"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
@@ -32257,7 +32422,7 @@
           "id": "TEST-UART-003/C031",
           "inputs": {
             "LOAD_header": "01 04 00 00 00 00",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "state": "FAULT_DRAIN_AUTO",
             "cpu_context": {
               "command_accepted": false,
@@ -32266,24 +32431,30 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "CHECK_SIZE",
-              "request": "load_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "FAULT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "01 04",
-            "CPU_AUTO_continues": true
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+            "LOAD_header_interpreted": false,
+            "RESET_from_size_byte": false
           },
           "kind": "protocol_fixture",
           "origins": [
-            "LOADrechazada enAUTO"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
@@ -32291,7 +32462,7 @@
           "id": "TEST-UART-003/C032",
           "inputs": {
             "LOAD_header": "01 04 00 00 00 00",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "state": "HALT_DRAIN_AUTO",
             "cpu_context": {
               "command_accepted": false,
@@ -32300,24 +32471,30 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "CHECK_SIZE",
-              "request": "load_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "HALT_DRAIN_AUTO"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "01 04",
-            "CPU_AUTO_continues": true
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+            "LOAD_header_interpreted": false,
+            "RESET_from_size_byte": false
           },
           "kind": "protocol_fixture",
           "origins": [
-            "LOADrechazada enAUTO"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
@@ -32325,7 +32502,7 @@
           "id": "TEST-UART-003/C033",
           "inputs": {
             "LOAD_header": "01 04 00 00 00 00",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_RUN_END",
             "state": "RUNNING",
             "cpu_context": {
               "command_accepted": false,
@@ -32334,24 +32511,30 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": true,
-              "prepare_done": false,
               "image_valid": true
             },
-            "cpu_reply_on_request": {
-              "phase": "CHECK_SIZE",
-              "request": "load_request",
-              "command_accepted": false,
-              "cpu_cycle_fire": true,
-              "state_after_reply": "RUNNING"
-            }
+            "response_busy_before": false,
+            "run_result_required": true,
+            "RUN_ACCEPTED_complete": true
           },
           "expected": {
-            "response": "01 04",
-            "CPU_AUTO_continues": true
+            "response": null,
+            "requests": {
+              "load_request": false,
+              "run_request": false,
+              "step_request": false
+            },
+            "next_protocol_state": "RECOVER_RX",
+            "CPU_AUTO_continues": true,
+            "old_image_preserved": true,
+            "discarded_commands_replayed": false,
+            "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+            "LOAD_header_interpreted": false,
+            "RESET_from_size_byte": false
           },
           "kind": "protocol_fixture",
           "origins": [
-            "LOADrechazada enAUTO"
+            "Tráfico fuera de fase durante RUN"
           ],
           "status": "pending"
         },
@@ -32359,7 +32542,7 @@
           "id": "TEST-UART-003/C034",
           "inputs": {
             "state": "READY",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 6,
             "cpu_context": {
               "command_accepted": false,
@@ -32368,16 +32551,20 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": [
               6,
               12
             ],
-            "CPU_image_unchanged": true
+            "CPU_image_unchanged": true,
+            "response_start_with_serializer_free": true,
+            "echo_capture_edge": "opcode_consume",
+            "response_with_debug": false
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32389,7 +32576,7 @@
           "id": "TEST-UART-003/C035",
           "inputs": {
             "state": "READY",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 0,
             "cpu_context": {
               "command_accepted": false,
@@ -32398,16 +32585,20 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": [
               0,
               12
             ],
-            "CPU_image_unchanged": true
+            "CPU_image_unchanged": true,
+            "response_start_with_serializer_free": true,
+            "echo_capture_edge": "opcode_consume",
+            "response_with_debug": false
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32419,7 +32610,7 @@
           "id": "TEST-UART-003/C036",
           "inputs": {
             "state": "READY",
-            "transport_phase": "IDLE",
+            "transport_phase": "WAIT_COMMAND",
             "opcode": 255,
             "cpu_context": {
               "command_accepted": false,
@@ -32428,16 +32619,20 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "response": [
               255,
               12
             ],
-            "CPU_image_unchanged": true
+            "CPU_image_unchanged": true,
+            "response_start_with_serializer_free": true,
+            "echo_capture_edge": "opcode_consume",
+            "response_with_debug": false
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32448,7 +32643,7 @@
         {
           "id": "TEST-UART-003/C037",
           "inputs": {
-            "transport_phase": "READ_SIZE",
+            "transport_phase": "RECEIVE_LOAD_SIZE",
             "byte": 2,
             "remaining_bytes": 4,
             "state": "READY",
@@ -32459,9 +32654,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
@@ -32476,7 +32672,7 @@
         {
           "id": "TEST-UART-003/C038",
           "inputs": {
-            "transport_phase": "READ_SIZE",
+            "transport_phase": "RECEIVE_LOAD_SIZE",
             "byte": 3,
             "remaining_bytes": 4,
             "state": "READY",
@@ -32487,9 +32683,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
@@ -32504,7 +32701,7 @@
         {
           "id": "TEST-UART-003/C039",
           "inputs": {
-            "transport_phase": "READ_SIZE",
+            "transport_phase": "RECEIVE_LOAD_SIZE",
             "byte": 4,
             "remaining_bytes": 4,
             "state": "READY",
@@ -32515,9 +32712,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
@@ -32532,7 +32730,7 @@
         {
           "id": "TEST-UART-003/C040",
           "inputs": {
-            "transport_phase": "READ_SIZE",
+            "transport_phase": "RECEIVE_LOAD_SIZE",
             "byte": 5,
             "remaining_bytes": 4,
             "state": "READY",
@@ -32543,9 +32741,10 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": true
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
@@ -32560,7 +32759,7 @@
         {
           "id": "TEST-UART-003/C041",
           "inputs": {
-            "transport_phase": "LOAD_DATA",
+            "transport_phase": "RECEIVE_LOAD_DATA",
             "byte": 2,
             "remaining_bytes": 4,
             "state": "LOADING",
@@ -32571,13 +32770,17 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
-            "action": "loader_byte"
+            "action": "loader_byte",
+            "load_byte_valid": true,
+            "remaining_decrement": 1,
+            "offset_from_preedge_remaining": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32588,7 +32791,7 @@
         {
           "id": "TEST-UART-003/C042",
           "inputs": {
-            "transport_phase": "LOAD_DATA",
+            "transport_phase": "RECEIVE_LOAD_DATA",
             "byte": 3,
             "remaining_bytes": 4,
             "state": "LOADING",
@@ -32599,13 +32802,17 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
-            "action": "loader_byte"
+            "action": "loader_byte",
+            "load_byte_valid": true,
+            "remaining_decrement": 1,
+            "offset_from_preedge_remaining": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32616,7 +32823,7 @@
         {
           "id": "TEST-UART-003/C043",
           "inputs": {
-            "transport_phase": "LOAD_DATA",
+            "transport_phase": "RECEIVE_LOAD_DATA",
             "byte": 4,
             "remaining_bytes": 4,
             "state": "LOADING",
@@ -32627,13 +32834,17 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
-            "action": "loader_byte"
+            "action": "loader_byte",
+            "load_byte_valid": true,
+            "remaining_decrement": 1,
+            "offset_from_preedge_remaining": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32644,7 +32855,7 @@
         {
           "id": "TEST-UART-003/C044",
           "inputs": {
-            "transport_phase": "LOAD_DATA",
+            "transport_phase": "RECEIVE_LOAD_DATA",
             "byte": 5,
             "remaining_bytes": 4,
             "state": "LOADING",
@@ -32655,13 +32866,17 @@
               "program_finished": false,
               "fault_terminal": false,
               "cpu_cycle_fire": false,
-              "prepare_done": false,
               "image_valid": false
-            }
+            },
+            "response_busy_before": false,
+            "run_result_required": false
           },
           "expected": {
             "decoded_as_command": false,
-            "action": "loader_byte"
+            "action": "loader_byte",
+            "load_byte_valid": true,
+            "remaining_decrement": 1,
+            "offset_from_preedge_remaining": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -32683,13 +32898,23 @@
           "inputs": {
             "profile": "REFERENCE",
             "N": 4,
-            "content": "halt"
+            "content": "halt",
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "accept": "01 01",
             "done": "01 02",
             "confirmed_size": 4,
-            "ready_without_CPU": true
+            "ready_without_CPU": true,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -32702,13 +32927,23 @@
           "inputs": {
             "profile": "REFERENCE",
             "N": 1024,
-            "content": "ADDI x1,x0,i para i=0..N/4-2;halt"
+            "content": "ADDI x1,x0,i para i=0..N/4-2;halt",
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "accept": "01 01",
             "done": "01 02",
             "confirmed_size": 1024,
-            "ready_without_CPU": true
+            "ready_without_CPU": true,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -32721,14 +32956,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 0,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32741,14 +32980,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 6,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32761,14 +33004,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 1028,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32781,14 +33028,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 4294967296,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32801,14 +33052,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 4294967300,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32821,14 +33076,18 @@
           "inputs": {
             "profile": "REFERENCE",
             "N40": 549755813888,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32841,13 +33100,23 @@
           "inputs": {
             "profile": "REFERENCE",
             "N": 4,
-            "content_word": 0
+            "content_word": 0,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "LOAD_result": "DONE",
             "execute_result": "FAULT",
             "cause": 2,
-            "fault_pc": 0
+            "fault_pc": 0,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -32860,13 +33129,23 @@
           "inputs": {
             "profile": "ALT_1000",
             "N": 4,
-            "content": "halt"
+            "content": "halt",
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "accept": "01 01",
             "done": "01 02",
             "confirmed_size": 4,
-            "ready_without_CPU": true
+            "ready_without_CPU": true,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -32879,13 +33158,23 @@
           "inputs": {
             "profile": "ALT_1000",
             "N": 1000,
-            "content": "ADDI x1,x0,i para i=0..N/4-2;halt"
+            "content": "ADDI x1,x0,i para i=0..N/4-2;halt",
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "accept": "01 01",
             "done": "01 02",
             "confirmed_size": 1000,
-            "ready_without_CPU": true
+            "ready_without_CPU": true,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -32898,14 +33187,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 0,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32918,14 +33211,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 6,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32938,14 +33235,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 1004,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32958,14 +33259,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 4294967296,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32978,14 +33283,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 4294967300,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -32998,14 +33307,18 @@
           "inputs": {
             "profile": "ALT_1000",
             "N40": 549755813888,
-            "old_size": 16
+            "old_size": 16,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "response": "01 06",
             "old_size_after": 16,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "validate_40_bits_before_narrowing": true,
+            "fifth_byte_in_candidate": true
           },
           "kind": "transaction",
           "origins": [
@@ -33018,13 +33331,23 @@
           "inputs": {
             "profile": "ALT_1000",
             "N": 4,
-            "content_word": 0
+            "content_word": 0,
+            "size_decision_edge": "fifth_byte_consume",
+            "response_busy_before": false
           },
           "expected": {
             "LOAD_result": "DONE",
             "execute_result": "FAULT",
             "cause": 2,
-            "fault_pc": 0
+            "fault_pc": 0,
+            "validate_40_bits_before_narrowing": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "one_decrement_per_delivery": true,
+            "protocol_after_last_delivery": "WAIT_PREP_DONE",
+            "prepare_active_after_last_delivery": true,
+            "DONE_capture_edge_relative_image_publish": 1,
+            "CPU_cycle_at_publish": false
           },
           "kind": "transaction",
           "origins": [
@@ -33044,14 +33367,22 @@
         {
           "id": "TEST-UART-005/C001",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "received_bytes": 2,
             "N": 8,
-            "T_clocks": 5000000
+            "T_clocks": 5000000,
+            "activity_without_valid_byte_before_timeout": [
+              "line-transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "activity_frame_start_clocks_before_T": 10000,
+            "valid_byte_or_error_before_T": false
           },
           "expected": {
             "response": "01 07",
-            "old_image_preserved": true
+            "old_image_preserved": true,
+            "LOAD_timer_restarted_by_activity_only": false
           },
           "kind": "timer_scenario",
           "origins": [
@@ -33062,7 +33393,7 @@
         {
           "id": "TEST-UART-005/C002",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "received_bytes": 2,
             "N": 8,
             "valid_byte_event": "T-1",
@@ -33082,7 +33413,7 @@
         {
           "id": "TEST-UART-005/C003",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "received_bytes": 2,
             "N": 8,
             "valid_byte_event": "T",
@@ -33102,14 +33433,22 @@
         {
           "id": "TEST-UART-005/C004",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 1,
             "N": 8,
-            "T_clocks": 5000000
+            "T_clocks": 5000000,
+            "activity_without_valid_byte_before_timeout": [
+              "line-transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "activity_frame_start_clocks_before_T": 10000,
+            "valid_byte_or_error_before_T": false
           },
           "expected": {
             "response": "01 08",
-            "old_image_preserved": false
+            "old_image_preserved": false,
+            "LOAD_timer_restarted_by_activity_only": false
           },
           "kind": "timer_scenario",
           "origins": [
@@ -33120,7 +33459,7 @@
         {
           "id": "TEST-UART-005/C005",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 1,
             "N": 8,
             "valid_byte_event": "T-1",
@@ -33140,7 +33479,7 @@
         {
           "id": "TEST-UART-005/C006",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 1,
             "N": 8,
             "valid_byte_event": "T",
@@ -33160,14 +33499,22 @@
         {
           "id": "TEST-UART-005/C007",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 3,
             "N": 8,
-            "T_clocks": 5000000
+            "T_clocks": 5000000,
+            "activity_without_valid_byte_before_timeout": [
+              "line-transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "activity_frame_start_clocks_before_T": 10000,
+            "valid_byte_or_error_before_T": false
           },
           "expected": {
             "response": "01 08",
-            "old_image_preserved": false
+            "old_image_preserved": false,
+            "LOAD_timer_restarted_by_activity_only": false
           },
           "kind": "timer_scenario",
           "origins": [
@@ -33178,7 +33525,7 @@
         {
           "id": "TEST-UART-005/C008",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 3,
             "N": 8,
             "valid_byte_event": "T-1",
@@ -33198,7 +33545,7 @@
         {
           "id": "TEST-UART-005/C009",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 3,
             "N": 8,
             "valid_byte_event": "T",
@@ -33218,14 +33565,22 @@
         {
           "id": "TEST-UART-005/C010",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 4,
             "N": 8,
-            "T_clocks": 5000000
+            "T_clocks": 5000000,
+            "activity_without_valid_byte_before_timeout": [
+              "line-transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "activity_frame_start_clocks_before_T": 10000,
+            "valid_byte_or_error_before_T": false
           },
           "expected": {
             "response": "01 08",
-            "old_image_preserved": false
+            "old_image_preserved": false,
+            "LOAD_timer_restarted_by_activity_only": false
           },
           "kind": "timer_scenario",
           "origins": [
@@ -33236,7 +33591,7 @@
         {
           "id": "TEST-UART-005/C011",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 4,
             "N": 8,
             "valid_byte_event": "T-1",
@@ -33256,7 +33611,7 @@
         {
           "id": "TEST-UART-005/C012",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "received_bytes": 4,
             "N": 8,
             "valid_byte_event": "T",
@@ -33276,7 +33631,7 @@
         {
           "id": "TEST-UART-005/C013",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": false,
             "events": "error+byte+timeout",
             "N": 8,
@@ -33286,7 +33641,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": false,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33297,7 +33656,7 @@
         {
           "id": "TEST-UART-005/C014",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": false,
             "events": "error+byte",
             "N": 8,
@@ -33307,7 +33666,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": false,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33318,7 +33681,7 @@
         {
           "id": "TEST-UART-005/C015",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": false,
             "events": "byte+timeout",
             "N": 8,
@@ -33339,7 +33702,7 @@
         {
           "id": "TEST-UART-005/C016",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": true,
             "events": "error+byte+timeout",
             "N": 8,
@@ -33349,7 +33712,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": false,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33360,7 +33727,7 @@
         {
           "id": "TEST-UART-005/C017",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": true,
             "events": "error+byte",
             "N": 8,
@@ -33370,7 +33737,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": false,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33381,7 +33752,7 @@
         {
           "id": "TEST-UART-005/C018",
           "inputs": {
-            "phase": "READ_SIZE",
+            "phase": "RECEIVE_LOAD_SIZE",
             "byte_completes_phase": true,
             "events": "byte+timeout",
             "N": 8,
@@ -33390,8 +33761,11 @@
           },
           "expected": {
             "winner": "byte",
-            "response": "continuarvalidación/preparación",
-            "coincident_word_write": false
+            "response": "01 01",
+            "coincident_word_write": false,
+            "decision_uses_current_fifth_byte": true,
+            "request_and_ACCEPTED_capture_same_edge": true,
+            "next_protocol_state": "WAIT_LOAD_ACCEPT_SENT"
           },
           "kind": "artificial",
           "origins": [
@@ -33402,7 +33776,7 @@
         {
           "id": "TEST-UART-005/C019",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": false,
             "events": "error+byte+timeout",
             "N": 8,
@@ -33412,7 +33786,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": true,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33423,7 +33801,7 @@
         {
           "id": "TEST-UART-005/C020",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": false,
             "events": "error+byte",
             "N": 8,
@@ -33433,7 +33811,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": true,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33444,7 +33826,7 @@
         {
           "id": "TEST-UART-005/C021",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": false,
             "events": "byte+timeout",
             "N": 8,
@@ -33465,7 +33847,7 @@
         {
           "id": "TEST-UART-005/C022",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": true,
             "events": "error+byte+timeout",
             "N": 8,
@@ -33475,7 +33857,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": true,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33486,7 +33872,7 @@
         {
           "id": "TEST-UART-005/C023",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": true,
             "events": "error+byte",
             "N": 8,
@@ -33496,7 +33882,11 @@
           "expected": {
             "winner": "error",
             "response": "01 09",
-            "coincident_word_write": false
+            "coincident_word_write": false,
+            "load_abort": true,
+            "load_byte_valid": false,
+            "remaining_decrement": 0,
+            "next_protocol_state": "RECOVER_RX"
           },
           "kind": "artificial",
           "origins": [
@@ -33507,7 +33897,7 @@
         {
           "id": "TEST-UART-005/C024",
           "inputs": {
-            "phase": "LOAD_DATA",
+            "phase": "RECEIVE_LOAD_DATA",
             "byte_completes_phase": true,
             "events": "byte+timeout",
             "N": 8,
@@ -33516,8 +33906,13 @@
           },
           "expected": {
             "winner": "byte",
-            "response": "continuarvalidación/preparación",
-            "coincident_word_write": true
+            "response": null,
+            "coincident_word_write": true,
+            "next_protocol_state": "WAIT_PREP_DONE",
+            "last_delivery_IMEM_write_load_ok_same_edge": true,
+            "remaining_decrement": 1,
+            "next_response": "01 02 after preparation and publication",
+            "DONE_capture_edge_relative_image_publish": 1
           },
           "kind": "artificial",
           "origins": [
@@ -33531,7 +33926,9 @@
       "id": "TEST-UART-006",
       "source": "uart_debug.md#test-uart-006",
       "case_count": 8,
-      "reuse_groups": [],
+      "reuse_groups": [
+        "TEST-UART-003"
+      ],
       "executions": [],
       "cases": [
         {
@@ -33542,7 +33939,13 @@
             "recovery_sequence": [
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_COMMAND"
           },
           "expected": {
             "response": "ninguna",
@@ -33550,7 +33953,10 @@
             "TX_preserved": true,
             "RUN_continues": false,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true
           },
           "kind": "scenario",
           "origins": [
@@ -33572,7 +33978,13 @@
               "frame-in-progress",
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_COMMAND"
           },
           "expected": {
             "response": "ninguna",
@@ -33580,7 +33992,10 @@
             "TX_preserved": true,
             "RUN_continues": false,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true
           },
           "kind": "scenario",
           "origins": [
@@ -33596,7 +34011,13 @@
             "recovery_sequence": [
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_COMMAND"
           },
           "expected": {
             "response": "ninguna",
@@ -33604,7 +34025,10 @@
             "TX_preserved": true,
             "RUN_continues": false,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true
           },
           "kind": "scenario",
           "origins": [
@@ -33620,7 +34044,16 @@
             "recovery_sequence": [
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true
           },
           "expected": {
             "response": "ninguna",
@@ -33628,7 +34061,10 @@
             "TX_preserved": true,
             "RUN_continues": true,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_RUN_END",
+            "normal_query_after_recovery": false
           },
           "kind": "scenario",
           "origins": [
@@ -33644,7 +34080,13 @@
             "recovery_sequence": [
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "RECEIVE_LOAD_SIZE"
           },
           "expected": {
             "response": "01 09",
@@ -33652,7 +34094,10 @@
             "TX_preserved": true,
             "RUN_continues": false,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true
           },
           "kind": "scenario",
           "origins": [
@@ -33668,7 +34113,13 @@
             "recovery_sequence": [
               "R-silent"
             ],
-            "R_clocks": 5000000
+            "R_clocks": 5000000,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "RECEIVE_LOAD_DATA"
           },
           "expected": {
             "response": "01 09",
@@ -33676,7 +34127,10 @@
             "TX_preserved": true,
             "RUN_continues": false,
             "reopened_after_continuous_silence": true,
-            "discarded_commands_replayed": false
+            "discarded_commands_replayed": false,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true
           },
           "kind": "scenario",
           "origins": [
@@ -33692,12 +34146,26 @@
             "terminal": "FINISHED",
             "reopen_order": "R-before-Debug-Stop",
             "R_clocks": 5000000,
-            "RX_activity_between_R_and_Debug_Stop": false
+            "RX_activity_between_R_and_Debug_Stop": false,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true
           },
           "expected": {
             "terminal_delivered_once": true,
-            "accept_RX_only_when": "Debug doneANDrecover_done",
-            "RECOVER_not_skipped": true
+            "accept_RX_only_when": "continuous_silence && RX_empty && !response_busy && !debug_hold",
+            "RECOVER_not_skipped": true,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop"
           },
           "kind": "scenario",
           "origins": [
@@ -33713,13 +34181,27 @@
             "terminal": "FINISHED",
             "reopen_order": "R-after-Debug-Stop",
             "R_clocks": 5000000,
-            "RX_activity_edge_relative_Debug_Stop": -1
+            "RX_activity_edge_relative_Debug_Stop": -1,
+            "rx_activity_includes": [
+              "transition",
+              "line-low",
+              "frame-in-progress"
+            ],
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true
           },
           "expected": {
             "terminal_delivered_once": true,
-            "accept_RX_only_when": "Debug doneANDrecover_done",
+            "accept_RX_only_when": "continuous_silence && RX_empty && !response_busy && !debug_hold",
             "RECOVER_not_skipped": true,
-            "R_restarted_by_RX_activity": true
+            "R_restarted_by_RX_activity": true,
+            "recovery_state": "RECOVER_RX",
+            "return_protocol_state": "WAIT_COMMAND",
+            "normal_query_after_recovery": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop"
           },
           "kind": "scenario",
           "origins": [
@@ -35841,7 +36323,7 @@
           "id": "TEST-UART-009/C002",
           "inputs": {
             "target": "protocol_controller+uart_core",
-            "rx_phase_local": "READ_SIZE",
+            "rx_phase_local": "RECEIVE_LOAD_SIZE",
             "tx_full": 1,
             "tx_busy": 1,
             "RX_bytes": [
@@ -35850,7 +36332,8 @@
             "RX_fifo_write_edge": "E",
             "RX_consume_edge": "E+1",
             "size_index_before": 0,
-            "size_before": "0x0000000000"
+            "size_before": "0x0000000000",
+            "reachability": "isolated_RX_independence; serializer-free phase with externally forced TX flags"
           },
           "expected": {
             "rd_uart_independent_TX": true,
@@ -35860,7 +36343,7 @@
             "size_index_next": 1,
             "size_next": "0x0000000055"
           },
-          "kind": "vector",
+          "kind": "artificial",
           "origins": [
             "Atención RX con TX llena"
           ],
@@ -35892,7 +36375,7 @@
           "id": "TEST-UART-009/C004",
           "inputs": {
             "target": "protocol_controller+uart_core",
-            "rx_phase_local": "RECOVER",
+            "rx_phase_local": "RECOVER_RX",
             "tx_full": 1,
             "tx_busy": 1,
             "RX_bytes": [
@@ -35946,16 +36429,16 @@
             "byte_available": 1,
             "tx_full": 1,
             "clocks_held": 3,
-            "rx_phase_local": "RECOVER",
+            "rx_phase_local": "RECOVER_RX",
             "RX_bytes": [
               85
             ],
             "target": "protocol_controller+response_serializer+uart_core",
-            "context": "RUN-terminal-in-RECOVER",
+            "context": "RUN-terminal-in-RECOVER_RX",
             "response": "02 0A+Debug",
-            "debug_exclusive": 1,
             "RX_fifo_write_edge": "E",
-            "RX_consume_edge": "E+1"
+            "RX_consume_edge": "E+1",
+            "debug_read_select": 1
           },
           "expected": {
             "prepared_byte_preserved": 165,
@@ -35968,7 +36451,7 @@
           },
           "kind": "integration_fixture",
           "origins": [
-            "RECOVER durante Debug terminal"
+            "RECOVER_RX durante Debug terminal"
           ],
           "status": "pending"
         },
@@ -35997,11 +36480,17 @@
           "inputs": {
             "response": "01 01",
             "with_debug": false,
-            "last_byte_enqueued": true
+            "last_byte_enqueued": true,
+            "followup": "complete_LOAD_and_preparation_then_LOAD_DONE"
           },
           "expected": {
             "response_done_only_with": "production_completeANDtx_pending==1ANDtx_done_tick inWAIT_TX_DONE",
-            "not_done_at_enqueue": true
+            "not_done_at_enqueue": true,
+            "LOAD_data_timer_start": "ACCEPTED_last_Stop",
+            "LOAD_DONE_close_phase": "WAIT_RESPONSE_SENT",
+            "LOAD_DONE_debug_hold": false,
+            "response_busy_before_done": true,
+            "capture_next_response_at_same_Stop": false
           },
           "kind": "scenario",
           "origins": [
@@ -36018,7 +36507,11 @@
           },
           "expected": {
             "response_done_only_with": "production_completeANDtx_pending==1ANDtx_done_tick inWAIT_TX_DONE",
-            "not_done_at_enqueue": true
+            "not_done_at_enqueue": true,
+            "STEP_DONE_close_phase": "WAIT_RESPONSE_SENT",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_busy_before_done": true,
+            "capture_next_response_at_same_Stop": false
           },
           "kind": "scenario",
           "origins": [
@@ -36064,13 +36557,20 @@
             "mode": "STEP",
             "result": "FINISHED",
             "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); halt",
-            "initial_RF_zero": true
+            "initial_RF_zero": true,
+            "after_terminal_Debug": "send_one_STEP_with_same_image_after_last_Stop"
           },
           "expected": {
             "RUN_accept": null,
             "last_header": "03 02",
             "snapshot_state": "FINISHED",
-            "older_word4": 3
+            "older_word4": 3,
+            "new_session_first_STEP": {
+              "one_cycle": true,
+              "snapshot_equals_first_STEP_from_READY": true,
+              "DONE_and_debug_hold_on_cpu_cycle_fire": true,
+              "prepare_active_may_be_one_before_cycle": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -36106,7 +36606,8 @@
             "mode": "STEP",
             "result": "FAULT",
             "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); word0",
-            "initial_RF_zero": true
+            "initial_RF_zero": true,
+            "after_terminal_Debug": "send_one_STEP_with_same_image_after_last_Stop"
           },
           "expected": {
             "RUN_accept": null,
@@ -36114,7 +36615,13 @@
             "snapshot_state": "FAULT",
             "older_word4": 3,
             "fault_pc": 16,
-            "cause": 2
+            "cause": 2,
+            "new_session_first_STEP": {
+              "one_cycle": true,
+              "snapshot_equals_first_STEP_from_READY": true,
+              "DONE_and_debug_hold_on_cpu_cycle_fire": true,
+              "prepare_active_may_be_one_before_cycle": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -36168,7 +36675,11 @@
               0,
               0
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36177,12 +36688,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36200,7 +36711,11 @@
             "RX_bytes": [
               2
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36209,12 +36724,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36232,7 +36747,11 @@
             "RX_bytes": [
               3
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36241,12 +36760,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36264,7 +36783,11 @@
             "RX_bytes": [
               4
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36273,12 +36796,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36296,7 +36819,11 @@
             "RX_bytes": [
               5
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36305,12 +36832,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36333,7 +36860,11 @@
               0,
               0
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36342,12 +36873,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36365,7 +36896,11 @@
             "RX_bytes": [
               2
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36374,12 +36909,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36397,7 +36932,11 @@
             "RX_bytes": [
               3
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36406,12 +36945,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36429,7 +36968,11 @@
             "RX_bytes": [
               4
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36438,12 +36981,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36461,7 +37004,11 @@
             "RX_bytes": [
               5
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36470,12 +37017,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36513,7 +37060,11 @@
               -3,
               -2,
               -1
-            ]
+            ],
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36522,12 +37073,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36550,7 +37101,11 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36559,12 +37114,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36587,7 +37142,11 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36596,12 +37155,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36624,7 +37183,11 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36633,12 +37196,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36661,7 +37224,11 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36670,12 +37237,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36684,7 +37251,7 @@
         {
           "id": "TEST-UART-011/C016",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "preheader-wait",
             "opcode": 1,
             "K": 1,
@@ -36698,7 +37265,12 @@
               0,
               0
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "response_busy_before": true,
+            "run_result_required": true,
+            "debug_hold_before": false
           },
           "expected": {
             "command_effect": false,
@@ -36707,12 +37279,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36721,7 +37293,7 @@
         {
           "id": "TEST-UART-011/C017",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "preheader-wait",
             "opcode": 2,
             "K": 1,
@@ -36730,7 +37302,12 @@
             "RX_bytes": [
               2
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "response_busy_before": true,
+            "run_result_required": true,
+            "debug_hold_before": false
           },
           "expected": {
             "command_effect": false,
@@ -36739,12 +37316,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36753,7 +37330,7 @@
         {
           "id": "TEST-UART-011/C018",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "preheader-wait",
             "opcode": 3,
             "K": 1,
@@ -36762,7 +37339,12 @@
             "RX_bytes": [
               3
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "response_busy_before": true,
+            "run_result_required": true,
+            "debug_hold_before": false
           },
           "expected": {
             "command_effect": false,
@@ -36771,12 +37353,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36785,7 +37367,7 @@
         {
           "id": "TEST-UART-011/C019",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "preheader-wait",
             "opcode": 4,
             "K": 1,
@@ -36794,7 +37376,12 @@
             "RX_bytes": [
               4
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "response_busy_before": true,
+            "run_result_required": true,
+            "debug_hold_before": false
           },
           "expected": {
             "command_effect": false,
@@ -36803,12 +37390,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36817,7 +37404,7 @@
         {
           "id": "TEST-UART-011/C020",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "preheader-wait",
             "opcode": 5,
             "K": 1,
@@ -36826,7 +37413,12 @@
             "RX_bytes": [
               5
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "response_busy_before": true,
+            "run_result_required": true,
+            "debug_hold_before": false
           },
           "expected": {
             "command_effect": false,
@@ -36835,12 +37427,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36849,7 +37441,7 @@
         {
           "id": "TEST-UART-011/C021",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "body",
             "opcode": 1,
             "K": 2048,
@@ -36862,7 +37454,12 @@
               0,
               0
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36871,12 +37468,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36885,7 +37482,7 @@
         {
           "id": "TEST-UART-011/C022",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "body",
             "opcode": 2,
             "K": 1,
@@ -36894,7 +37491,12 @@
             "RX_bytes": [
               2
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36903,12 +37505,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36917,7 +37519,7 @@
         {
           "id": "TEST-UART-011/C023",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "body",
             "opcode": 3,
             "K": 1,
@@ -36926,7 +37528,12 @@
             "RX_bytes": [
               3
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36935,12 +37542,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36949,7 +37556,7 @@
         {
           "id": "TEST-UART-011/C024",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "body",
             "opcode": 4,
             "K": 1,
@@ -36958,7 +37565,12 @@
             "RX_bytes": [
               4
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36967,12 +37579,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -36981,7 +37593,7 @@
         {
           "id": "TEST-UART-011/C025",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "body",
             "opcode": 5,
             "K": 1,
@@ -36990,7 +37602,12 @@
             "RX_bytes": [
               5
             ],
-            "RX_delivery": "un byte por flanco de consumo durante exclusión"
+            "RX_delivery": "un byte por flanco de consumo durante exclusión",
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -36999,12 +37616,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37013,7 +37630,7 @@
         {
           "id": "TEST-UART-011/C026",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "last-Stop",
             "opcode": 1,
             "K": 1,
@@ -37042,7 +37659,12 @@
               -3,
               -2,
               -1
-            ]
+            ],
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -37051,12 +37673,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37065,7 +37687,7 @@
         {
           "id": "TEST-UART-011/C027",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "last-Stop",
             "opcode": 2,
             "K": 1,
@@ -37079,7 +37701,12 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -37088,12 +37715,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37102,7 +37729,7 @@
         {
           "id": "TEST-UART-011/C028",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "last-Stop",
             "opcode": 3,
             "K": 1,
@@ -37116,7 +37743,12 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -37125,12 +37757,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37139,7 +37771,7 @@
         {
           "id": "TEST-UART-011/C029",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "last-Stop",
             "opcode": 4,
             "K": 1,
@@ -37153,7 +37785,12 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -37162,12 +37799,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37176,7 +37813,7 @@
         {
           "id": "TEST-UART-011/C030",
           "inputs": {
-            "context": "RUN-terminal-with-brief-pending",
+            "context": "RUN-terminal-with-ACCEPTED-in-flight",
             "point": "last-Stop",
             "opcode": 5,
             "K": 1,
@@ -37190,7 +37827,12 @@
             ],
             "RX_fifo_write_edges_relative_last_Stop": [
               -1
-            ]
+            ],
+            "prior_response": "02 01",
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "response_busy_before": true,
+            "run_result_required": false,
+            "debug_hold_before": true
           },
           "expected": {
             "command_effect": false,
@@ -37199,12 +37841,12 @@
             "CPU_state_stable": true,
             "new_commands_admitted_after_Debug_Stop": true,
             "observation_controls": {
-              "debug_exclusive": true,
-              "rf_debug_select": true,
-              "dmem_debug_select": true
+              "debug_read_select": true,
+              "RF_and_DMEM_select_same_signal": true,
+              "select_does_not_enable_writes": true
             }
           },
-          "kind": "scenario",
+          "kind": "integration_fixture",
           "origins": [
             "Comandoduranteexclusión"
           ],
@@ -37223,7 +37865,8 @@
           "expected": {
             "reset_to_NO_IMAGE": true,
             "response_partial_invalid": true,
-            "normal_done": false
+            "normal_done": false,
+            "debug_read_select_during_reset": false
           },
           "kind": "scenario",
           "origins": [
@@ -37246,20 +37889,35 @@
           "id": "TEST-UART-012/C001",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "A-brief-running",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "A-terminal-before-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "terminal_observable_before_ACCEPTED_Stop": true,
+            "response_busy_before_ACCEPTED_Stop": true
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 01",
+              "02 0A+Debug"
+            ],
+            "capture_terminal_relative_ACCEPTED_Stop": 1,
+            "state_after_ACCEPTED_Stop": "WAIT_RESPONSE_SENT"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37267,20 +37925,36 @@
           "id": "TEST-UART-012/C002",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "C-size-unresolved",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "B-last-CPU-cycle-at-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "terminal_observable_before_ACCEPTED_Stop": false,
+            "last_CPU_cycle_at_ACCEPTED_Stop": true,
+            "response_busy_before_ACCEPTED_Stop": true
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 01",
+              "02 0A+Debug"
+            ],
+            "capture_terminal_relative_ACCEPTED_Stop": 1,
+            "state_after_ACCEPTED_Stop": "WAIT_RUN_END"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37288,20 +37962,35 @@
           "id": "TEST-UART-012/C003",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "D-size-reject-ready",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "C-terminal-after-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "response_busy_before_terminal_capture": false
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "terminal_capture_edge": "first_edge_with_terminal_observable",
+            "state_after_terminal_capture": "WAIT_RESPONSE_SENT",
+            "response_order": [
+              "02 01",
+              "02 0A+Debug"
+            ]
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37309,20 +37998,35 @@
           "id": "TEST-UART-012/C004",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "D-error-ready",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "D-R-before-Debug-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "RECOVER_RX",
+            "RUN_ACCEPTED_complete": true,
+            "reopen_order": "R-before-Debug-Stop",
+            "R_clocks": 5000000,
+            "response_busy_before_terminal_capture": false,
+            "inactivity_count_before_terminal_capture": 4999990
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "return_protocol_state": "WAIT_COMMAND",
+            "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+            "timer_continues_during_Debug": true
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37330,20 +38034,36 @@
           "id": "TEST-UART-012/C005",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "E-last-size-byte",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "E-Debug-Stop-before-R",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "RECOVER_RX",
+            "RUN_ACCEPTED_complete": true,
+            "reopen_order": "R-after-Debug-Stop",
+            "R_clocks": 5000000,
+            "RX_activity_edge_relative_Debug_Stop": -1,
+            "response_busy_before_terminal_capture": false,
+            "inactivity_count_before_terminal_capture": 0
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "return_protocol_state": "WAIT_COMMAND",
+            "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+            "timer_continues_during_Debug": true
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37351,21 +38071,38 @@
           "id": "TEST-UART-012/C006",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "F-reset-same-terminal-edge",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "F-RESET-and-last-CPU-cycle",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "WAIT_RUN_END",
+            "RX_opcode": 4,
+            "prepare_active": false,
+            "RUN_ACCEPTED_complete": true,
+            "terminal_observable_before_RESET_edge": false,
+            "last_CPU_cycle_at_RESET_edge": true,
+            "response_busy_before": false
           },
           "expected": {
-            "order": "reset_ACCEPTED_without_RUNterminal",
-            "LOAD_queued_for_later": false,
+            "terminal_captures": 0,
+            "response_with_debug": false,
             "old_image_preserved_before_global_reset": true,
-            "image_size_after_global_reset": 0
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "RESET_recognition",
+            "debug_hold_clear_edge": null,
+            "response_order": [
+              "04 01"
+            ],
+            "global_reset_after_RESET_ACCEPTED_Stop": true,
+            "confirmed_size_after_reset": 0
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37373,20 +38110,39 @@
           "id": "TEST-UART-012/C007",
           "inputs": {
             "terminal": "FINISHED",
-            "crossing": "F-reset-after-exclusive",
-            "terminal_signals": {
-              "program_finished": true,
-              "fault_terminal": false
-            }
+            "crossing": "G-RESET-with-terminal-already-observable",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "program_finished",
+            "response_opcode": 2,
+            "terminal_result": 10,
+            "transport_phase": "WAIT_RUN_END",
+            "RX_opcode": 4,
+            "prepare_active": false,
+            "RUN_ACCEPTED_complete": true,
+            "terminal_observable_before_RESET_edge": true,
+            "last_CPU_cycle_at_RESET_edge": false,
+            "response_busy_before": false
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 0A+Debug"
+            ],
+            "RESET_response": null,
+            "uart_reset_request": false,
+            "state_after_terminal_capture": "WAIT_RESPONSE_SENT"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37394,20 +38150,35 @@
           "id": "TEST-UART-012/C008",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "A-brief-running",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "A-terminal-before-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "terminal_observable_before_ACCEPTED_Stop": true,
+            "response_busy_before_ACCEPTED_Stop": true
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 01",
+              "02 0B+Debug"
+            ],
+            "capture_terminal_relative_ACCEPTED_Stop": 1,
+            "state_after_ACCEPTED_Stop": "WAIT_RESPONSE_SENT"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37415,20 +38186,36 @@
           "id": "TEST-UART-012/C009",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "C-size-unresolved",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "B-last-CPU-cycle-at-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "terminal_observable_before_ACCEPTED_Stop": false,
+            "last_CPU_cycle_at_ACCEPTED_Stop": true,
+            "response_busy_before_ACCEPTED_Stop": true
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 01",
+              "02 0B+Debug"
+            ],
+            "capture_terminal_relative_ACCEPTED_Stop": 1,
+            "state_after_ACCEPTED_Stop": "WAIT_RUN_END"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37436,20 +38223,35 @@
           "id": "TEST-UART-012/C010",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "D-size-reject-ready",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "C-terminal-after-ACCEPTED-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "response_busy_before_terminal_capture": false
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "terminal_capture_edge": "first_edge_with_terminal_observable",
+            "state_after_terminal_capture": "WAIT_RESPONSE_SENT",
+            "response_order": [
+              "02 01",
+              "02 0B+Debug"
+            ]
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37457,20 +38259,35 @@
           "id": "TEST-UART-012/C011",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "D-error-ready",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "D-R-before-Debug-Stop",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "RECOVER_RX",
+            "RUN_ACCEPTED_complete": true,
+            "reopen_order": "R-before-Debug-Stop",
+            "R_clocks": 5000000,
+            "response_busy_before_terminal_capture": false,
+            "inactivity_count_before_terminal_capture": 4999990
           },
           "expected": {
-            "order": "brief_then_terminal_Debug",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "return_protocol_state": "WAIT_COMMAND",
+            "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+            "timer_continues_during_Debug": true
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37478,20 +38295,36 @@
           "id": "TEST-UART-012/C012",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "E-last-size-byte",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "E-Debug-Stop-before-R",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "RECOVER_RX",
+            "RUN_ACCEPTED_complete": true,
+            "reopen_order": "R-after-Debug-Stop",
+            "R_clocks": 5000000,
+            "RX_activity_edge_relative_Debug_Stop": -1,
+            "response_busy_before_terminal_capture": false,
+            "inactivity_count_before_terminal_capture": 0
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "return_protocol_state": "WAIT_COMMAND",
+            "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+            "timer_continues_during_Debug": true
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37499,21 +38332,38 @@
           "id": "TEST-UART-012/C013",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "F-reset-same-terminal-edge",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "F-RESET-and-last-CPU-cycle",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "WAIT_RUN_END",
+            "RX_opcode": 4,
+            "prepare_active": false,
+            "RUN_ACCEPTED_complete": true,
+            "terminal_observable_before_RESET_edge": false,
+            "last_CPU_cycle_at_RESET_edge": true,
+            "response_busy_before": false
           },
           "expected": {
-            "order": "reset_ACCEPTED_without_RUNterminal",
-            "LOAD_queued_for_later": false,
+            "terminal_captures": 0,
+            "response_with_debug": false,
             "old_image_preserved_before_global_reset": true,
-            "image_size_after_global_reset": 0
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "RESET_recognition",
+            "debug_hold_clear_edge": null,
+            "response_order": [
+              "04 01"
+            ],
+            "global_reset_after_RESET_ACCEPTED_Stop": true,
+            "confirmed_size_after_reset": 0
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         },
@@ -37521,20 +38371,39 @@
           "id": "TEST-UART-012/C014",
           "inputs": {
             "terminal": "FAULT",
-            "crossing": "F-reset-after-exclusive",
-            "terminal_signals": {
-              "program_finished": false,
-              "fault_terminal": true
-            }
+            "crossing": "G-RESET-with-terminal-already-observable",
+            "run_result_required_before": true,
+            "kind_of_fixture": "local_interface_events",
+            "terminal_indicator": "fault_terminal",
+            "response_opcode": 2,
+            "terminal_result": 11,
+            "transport_phase": "WAIT_RUN_END",
+            "RX_opcode": 4,
+            "prepare_active": false,
+            "RUN_ACCEPTED_complete": true,
+            "terminal_observable_before_RESET_edge": true,
+            "last_CPU_cycle_at_RESET_edge": false,
+            "response_busy_before": false
           },
           "expected": {
-            "order": "RUNterminal_Debug_only",
-            "LOAD_queued_for_later": false,
-            "old_image_preserved_before_global_reset": true
+            "terminal_captures": 1,
+            "response_with_debug": true,
+            "old_image_preserved_before_global_reset": true,
+            "requests_for_discarded_bytes": false,
+            "capture_only_if_response_busy_zero": true,
+            "single_response_producer": true,
+            "run_result_required_clear_edge": "terminal_descriptor_capture",
+            "debug_hold_clear_edge": "Debug_last_Stop",
+            "response_order": [
+              "02 0B+Debug"
+            ],
+            "RESET_response": null,
+            "uart_reset_request": false,
+            "state_after_terminal_capture": "WAIT_RESPONSE_SENT"
           },
-          "kind": "protocol_fixture",
+          "kind": "integration_fixture",
           "origins": [
-            "Cruces cerrados"
+            "Orden de respuesta y prioridad preflanco"
           ],
           "status": "pending"
         }
@@ -37543,7 +38412,7 @@
     {
       "id": "TEST-UART-013",
       "source": "uart_debug.md#test-uart-013",
-      "case_count": 10,
+      "case_count": 16,
       "reuse_groups": [
         "TEST-UART-006",
         "TEST-UART-011"
@@ -37556,13 +38425,21 @@
             "state": "RUNNING",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true,
+            "response_busy_before": false,
+            "prior_Debug_complete": false
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37576,13 +38453,21 @@
             "state": "FAULT",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_COMMAND",
+            "RUN_ACCEPTED_complete": false,
+            "prepare_active": false,
+            "run_result_required": false,
+            "response_busy_before": false,
+            "prior_Debug_complete": true
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37596,13 +38481,21 @@
             "state": "HALT_DRAIN_AUTO",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true,
+            "response_busy_before": false,
+            "prior_Debug_complete": false
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37616,13 +38509,21 @@
             "state": "FAULT_DRAIN_AUTO",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_RUN_END",
+            "RUN_ACCEPTED_complete": true,
+            "prepare_active": false,
+            "run_result_required": true,
+            "response_busy_before": false,
+            "prior_Debug_complete": false
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37636,13 +38537,21 @@
             "state": "HALT_DRAIN_STEP",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_COMMAND",
+            "RUN_ACCEPTED_complete": false,
+            "prepare_active": false,
+            "run_result_required": false,
+            "response_busy_before": false,
+            "prior_Debug_complete": true
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37656,13 +38565,21 @@
             "state": "FAULT_DRAIN_STEP",
             "reset_request_opcode": 4,
             "locked": 1,
-            "button": 0
+            "button": 0,
+            "transport_phase": "WAIT_COMMAND",
+            "RUN_ACCEPTED_complete": false,
+            "prepare_active": false,
+            "run_result_required": false,
+            "response_busy_before": false,
+            "prior_Debug_complete": true
           },
           "expected": {
             "accept": "04 01",
             "reset_after_second_Stop": true,
-            "RUN_owed_canceled_on_recognition": true,
-            "first_free_edge_relative_Stop": 4
+            "first_free_edge_relative_Stop": 4,
+            "run_result_required_after_recognition": false,
+            "response_capture_on_recognition": true,
+            "CPU_not_paused_for_ACCEPTED": true
           },
           "kind": "protocol_fixture",
           "origins": [
@@ -37737,6 +38654,210 @@
             "Botónporfase"
           ],
           "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C011",
+          "inputs": {
+            "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+            "state": "RUNNING",
+            "response_busy_before": true,
+            "prepare_active": false,
+            "run_result_required": true,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": true
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_RUN_ACCEPT_SENT",
+            "run_result_required_after": true,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C012",
+          "inputs": {
+            "transport_phase": "WAIT_RUN_END",
+            "state": "PREPARING_RUN",
+            "response_busy_before": false,
+            "prepare_active": true,
+            "run_result_required": true,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": false
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_RUN_END",
+            "run_result_required_after": true,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C013",
+          "inputs": {
+            "transport_phase": "WAIT_LOAD_ACCEPT_SENT",
+            "state": "LOADING",
+            "response_busy_before": true,
+            "prepare_active": false,
+            "run_result_required": false,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": false
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_LOAD_ACCEPT_SENT",
+            "run_result_required_after": false,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C014",
+          "inputs": {
+            "transport_phase": "WAIT_PREP_DONE",
+            "state": "PREPARING_READY",
+            "response_busy_before": false,
+            "prepare_active": true,
+            "run_result_required": false,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": false
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_PREP_DONE",
+            "run_result_required_after": false,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C015",
+          "inputs": {
+            "transport_phase": "WAIT_STEP_END",
+            "state": "PREPARING_STEP",
+            "response_busy_before": false,
+            "prepare_active": true,
+            "run_result_required": false,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": false
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_STEP_END",
+            "run_result_required_after": false,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "TEST-UART-013/C016",
+          "inputs": {
+            "transport_phase": "WAIT_RESPONSE_SENT",
+            "state": "READY",
+            "response_busy_before": true,
+            "prepare_active": false,
+            "run_result_required": false,
+            "debug_hold": false,
+            "RX_opcode": 4,
+            "rx_empty": false,
+            "rx_error_tick": false,
+            "reset": false,
+            "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+            "program_finished": false,
+            "fault_terminal": false,
+            "response_done_tick": false,
+            "cpu_cycle_fire": false
+          },
+          "expected": {
+            "rd_uart": true,
+            "response_start": false,
+            "uart_reset_request": false,
+            "protocol_phase_after": "WAIT_RESPONSE_SENT",
+            "run_result_required_after": false,
+            "CPU_not_paused_by_RX": true,
+            "request_queued_for_later": false
+          },
+          "kind": "artificial",
+          "origins": [
+            "Ventanas de descarte de RESET UART"
+          ],
+          "status": "pending"
         }
       ]
     },
@@ -37760,7 +38881,12 @@
             "RX_processing_latency_clocks": 1,
             "RX_peak_occupancy": 1,
             "prepare_clocks": 2049,
-            "LOAD_done_deadline_ms": 734.3333333333334
+            "LOAD_done_deadline_ms": 734.3333333333334,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37777,7 +38903,12 @@
           },
           "expected": {
             "response": "05 03",
-            "bound_clocks": 52182
+            "bound_clocks": 52182,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37797,7 +38928,12 @@
             "response_length": 230,
             "fixed_bound_clocks": 6001154,
             "list_bound_clocks": 0,
-            "total_bound_clocks": 6003202
+            "total_bound_clocks": 6003202,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37817,7 +38953,12 @@
             "response_length": 235,
             "fixed_bound_clocks": 6001154,
             "list_bound_clocks": 158562,
-            "total_bound_clocks": 6133617
+            "total_bound_clocks": 6133617,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37837,7 +38978,12 @@
             "response_length": 10470,
             "fixed_bound_clocks": 6001154,
             "list_bound_clocks": 267118067,
-            "total_bound_clocks": 273093122
+            "total_bound_clocks": 273093122,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37858,7 +39004,12 @@
             "RX_processing_latency_clocks": 1,
             "RX_peak_occupancy": 1,
             "prepare_clocks": 1001,
-            "LOAD_done_deadline_ms": 721.8333333333334
+            "LOAD_done_deadline_ms": 721.8333333333334,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37875,7 +39026,12 @@
           },
           "expected": {
             "response": "05 03",
-            "bound_clocks": 52182
+            "bound_clocks": 52182,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37895,7 +39051,12 @@
             "response_length": 230,
             "fixed_bound_clocks": 6000106,
             "list_bound_clocks": 0,
-            "total_bound_clocks": 6001106
+            "total_bound_clocks": 6001106,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37915,7 +39076,12 @@
             "response_length": 235,
             "fixed_bound_clocks": 6000106,
             "list_bound_clocks": 157514,
-            "total_bound_clocks": 6131521
+            "total_bound_clocks": 6131521,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [
@@ -37935,7 +39101,12 @@
             "response_length": 5230,
             "fixed_bound_clocks": 6000106,
             "list_bound_clocks": 130442099,
-            "total_bound_clocks": 136416106
+            "total_bound_clocks": 136416106,
+            "same_edge_combinational_paths": {
+              "functional_period_ns": 20,
+              "evidence_required": "RTL simulation and static timing; not established by this manifest",
+              "acyclic": true
+            }
           },
           "kind": "transaction",
           "origins": [

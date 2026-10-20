@@ -24,7 +24,6 @@
 - [Información que no forma parte obligatoria del snapshot](#información-que-no-forma-parte-obligatoria-del-snapshot)
 - [Separación entre estado interno y representación externa](#separación-entre-estado-interno-y-representación-externa)
 - [Invariantes y condiciones de borde](#invariantes-y-condiciones-de-borde)
-- [Verificación y evidencia](#verificación-y-evidencia)
 - [Referencias y trazabilidad](#referencias-y-trazabilidad)
 
 <a id="para-qué-existe-debug"></a>
@@ -80,7 +79,7 @@ Antes de interpretar una instrucción o un registro, el software necesita conoce
 
 ### `global_state`
 
-La [codificación externa de `global_state`](../../protocol.md#global_state) identifica los estados de sesión en UART mediante un byte en offset cero del cuerpo del snapshot. Ese transporte no impone codificación interna ni amplía los momentos de observación. El [acuerdo de estados](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--códigos-externos-de-global_state) conserva su aprobación; aquí se interpreta la fase observada.
+La [codificación externa de `global_state`](../../protocol.md#global_state) identifica los estados de sesión en UART mediante un byte en offset cero del cuerpo del snapshot. Ese transporte no impone codificación interna ni amplía los momentos de observación. Aquí se interpreta la fase observada.
 
 `global_state` identifica la fase actual de la sesión.
 
@@ -231,11 +230,11 @@ Estos tres campos permiten identificar qué instrucción ocupa una etapa y dónd
 El [acuerdo de exposición completa](../../decisions/DEC-ARCH-009.md#acuerdo-parcial-de-dec-arch-009--exposición-completa-de-campos-registrados-del-pipeline) incluye todos los campos funcionales registrados existentes:
 
 | Registro | Cantidad de campos |
-|---|---:|
-| `IF/ID` | 5 |
-| `ID/EX` | 15 |
-| `EX/MEM` | 8 |
-| `MEM/WB` | 6 |
+|----------|-------------------:|
+| `IF/ID`  |                  5 |
+| `ID/EX`  |                 15 |
+| `EX/MEM` |                  8 |
+| `MEM/WB` |                  6 |
 
 Debug transmite los campos registrados e indicadores sin filtrarlos por valid. Interpretarlos corresponde al lector. 
 
@@ -312,9 +311,9 @@ Cada snapshot reporta la lista completa en dirección creciente, con dirección 
 
 El conjunto comienza vacío en cada sesión nueva. Los metadatos de validez por byte de referencia pueden reutilizarse para seleccionarlo. Este criterio externo no obliga a otro bitmap ni altera la semántica lógica de DMEM.
 
-El [layout](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--orden-y-delimitación-del-snapshot) aprueba la cantidad, la longitud y la lista vacía: cinco bytes little-endian para cantidad y cinco por entrada (dirección cuatro, valor uno), sin entradas si cantidad cero. DEC-SYS-005/D04 quedan cerrados; la lectura directa retenida y la exclusión están aprobadas en D06.
+El [layout](../../protocol.md#distribución-general) define cinco bytes little-endian para cantidad y cinco por entrada (dirección cuatro, valor uno), sin entradas si cantidad cero. La lista se obtiene del estado retenido bajo exclusión de CPU y mantenimiento.
 
-El [serializador](response_serializer.md#recorrido-de-dmem-y-orden-de-producción) tiene aprobados dos recorridos:
+El [serializador](response_serializer.md#recorrido-de-dmem-y-orden-de-producción) realiza dos recorridos:
 
 1. Contar por metadatos antes de producir la parte fija.
 2. Recorrer nuevamente para producir la lista creciente. Cantidad cero omite este segundo recorrido.
@@ -365,7 +364,7 @@ Por eso la arquitectura fija el **resultado observable**:
 
 > un snapshot representa un único estado lógico, independientemente del tiempo requerido para serializarlo.
 
-El [acuerdo de envío exclusivo](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--envío-exclusivo-de-debug-con-estado-retenido) selecciona lectura directa del estado retenido. El instante corresponde al estado posterior al `STEP` efectivo o al último ciclo `RUN` que alcanza `FINISHED`/`FAULT`.
+El [envío de una observación coherente](../../protocol.md#enviar-una-observación-coherente) utiliza lectura directa del estado retenido. El instante corresponde al estado posterior al `STEP` efectivo o al último ciclo `RUN` que alcanza `FINISHED`/`FAULT`. El Controller conserva esa retención mediante `debug_hold` hasta el fin físico de Debug; la detección del terminal RUN cubre también el intervalo anterior al registro de esa marca.
 
 Desde ese instante hasta el Stop físico del último byte, la CPU no ejecuta otro ciclo y no comienza `LOAD`/preparación. RF, registros interetapa, PC, contador, estado, imagen y DMEM permanecen estables.
 
@@ -373,36 +372,38 @@ UART y recorrido/lectura Debug continúan funcionando, respetando ownership. No 
 
 Durante ese intercambio se aplican estas reglas:
 
-| Caso | Comportamiento |
-|---|---|
-| Nueva solicitud desde la PC | La PC espera la respuesta completa antes de enviarla. |
-| RX recibido durante la exclusión | La FPGA lo consume y descarta, sin respuesta ni comandos encolados. |
-| Consultas y `RESET` UART | También quedan incluidos en el descarte. `RESET` UART se envía después del intercambio. |
-| Botón físico | Conserva reset inmediato y puede abortar el envío. La PC descarta la observación incompleta. |
-| Fin de la exclusión | La admisión vuelve al terminar físicamente el último byte, incluido Stop. |
-| Orden de `RUN` | La aceptación completa precede a su resultado final con Debug. |
+| Caso                               | Comportamiento                                                                                          |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Nueva solicitud desde la PC        | La PC espera la respuesta completa antes de enviarla.                                                   |
+| RX recibido durante la exclusión   | La FPGA lo consume y descarta, sin respuesta ni comandos encolados.                                     |
+| Consultas y `RESET` UART           | También quedan incluidos en el descarte. `RESET` UART se envía después del intercambio.                 |
+| Botón físico                       | Conserva reset inmediato y puede abortar el envío. La PC descarta la observación incompleta.            |
+| Fin de la exclusión                | La retención se libera al último Stop; si RX está en recuperación, la admisión espera además su cierre. |
+| Orden de `RUN`                     | La aceptación completa precede a su resultado final con Debug.                                          |
 
-D06 queda completo en el nivel de contrato; la [secuencia de dos recorridos de DMEM](response_serializer.md#recorrido-de-dmem-y-orden-de-producción) está aprobada. Puertos, recursos de conteo/posición, índices, anchos y control privado están concretados en [response_serializer](response_serializer.md) y [protocol_controller](protocol_controller.md), con [comprobación UART](../uart/uart_core.md#presupuesto-de-integración).
+El [serializador](response_serializer.md) realiza la lectura y transmisión del estado retenido; el [Controller](protocol_controller.md) mantiene la exclusión y coordina su finalización.
 
-[C06](../../decisions/DEC-PROTO-003.md#acuerdo-parcial-de-dec-proto-003--plazos-de-reset-step-y-recepción-de-debug) aprueba los siguientes plazos PC:
+Los [plazos de recepción desde PC](../../protocol.md#esperas-y-recuperación-desde-pc) son:
 
-| Tramo | Plazo |
-|---|---|
-| Cabecera `STEP` | 200 ms |
-| Parte fija de 228 bytes | 319 ms tras cabecera |
-| Lista de 5*K bytes | Transmisión nominal +200 ms desde `used_count`; sin espera para K=0 |
+| Tramo                   | Plazo                                                               |
+|-------------------------|---------------------------------------------------------------------|
+| Cabecera `STEP`         | 200 ms                                                              |
+| Parte fija de 228 bytes | 319 ms tras cabecera                                                |
+| Lista de 5*K bytes      | Transmisión nominal +200 ms desde `used_count`; sin espera para K=0 |
 
-La recuperación aprobada en C06 informa fallo y descarta el parcial. Fuera de `LOAD`, lee y descarta RX hasta completar `W_debug` de 6100/3400 ms de silencio continuo: cada recepción reinicia la cuenta. Después consulta `CHECK_READY` sin limpiar RX y valida únicamente los primeros dos bytes (`05 03` o `05 04`) dentro de 200 ms. Si empieza un terminal RUN u otra secuencia, vuelve al descarte; no busca esos pares dentro del payload. Conserva los bytes posteriores a una consulta válida y no repite `STEP`/`RUN`/`RESET`. El [contrato de recuperación PC](../../protocol.md#perder-una-respuesta-o-conexión) concreta buffers, vencimientos y supuestos del transporte.
+Una respuesta incompleta se descarta y no se presenta como snapshot válido. Una observación completa anterior puede conservarse identificada como anterior. Los descartes, consultas, intento automático de RESET y confirmación se rigen por el [procedimiento de recuperación PC](../../protocol.md#perder-una-respuesta-o-conexión), separado del procedimiento de recuperación de LOAD.
 
 ---
 
 ## Momentos de observación del protocolo
 
-El [orden de intercambios](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--orden-de-intercambios-y-respuestas) permite una operación normal por vez, con `CHECK_READY`/`RESET` durante `RUN`. Cada respuesta se transmite completa antes de otra; si `RUN` termina durante una respuesta breve iniciada, se conserva el estado terminal y se termina esa respuesta antes del resultado `RUN`/Debug. La exclusión D06 abarca el resultado Debug pendiente y transmitido; `RESET` UART reconocido durante ejecución abandona el `RUN` previo.
+El [orden de intercambios](../../protocol.md#orden-de-los-intercambios) permite una operación normal por vez. El intercambio RUN permanece abierto hasta completar su resultado con Debug o reconocer RESET. Después del fin físico de RUN/ACCEPTED, durante RUN efectivo se admite únicamente RESET cuando la preparación está inactiva. Otro byte o un error UART inicia recuperación RX sin respuesta; CPU y TX pueden continuar. Durante aceptaciones, preparación, exclusión Debug y recuperación, RX se consume y descarta.
 
-Las operaciones definitivas son `LOAD`, `RUN`, `STEP`, `RESET` y `CHECK_READY`, según el [acuerdo de lista final](../../decisions/DEC-PROTO-002.md#acuerdo-parcial-de-dec-proto-002--lista-final-y-nombres-de-operaciones). `CHECK_READY` es la consulta de disponibilidad para `LOAD`; Debug se entrega en `STEP` y final `RUN`.
+Un terminal RUN ya observado tiene prioridad sobre un nuevo RESET UART. Si RESET se reconoció antes de esa observación, cancela el resultado pendiente de RUN y sigue su aceptación hasta solicitar reset global.
 
-El [acuerdo de servicios de Debug](../../decisions/DEC-PROTO-002.md#acuerdo-parcial-de-dec-proto-002--debug-automático-sin-consultas-adicionales) fija exclusivamente snapshots automáticos posteriores a cada `STEP` realizado y al final de `RUN`. No se agrega una consulta explícita de Debug ni capturas durante `RUNNING`/drains `AUTO` u otros momentos adicionales. PC puede conservar el snapshot recibido, asociado a su sesión; entre pasos sin otra operación de sesión el estado permanece retenido. Los contratos de reset/preparación descritos aquí siguen definiendo el estado lógico y la coherencia de sesión, sin exigir transmitir snapshots en esas fases.
+Las [operaciones](../../protocol.md#códigos-de-operación) son `LOAD`, `RUN`, `STEP`, `RESET` y `CHECK_READY`. `CHECK_READY` consulta disponibilidad para LOAD en el contexto que admite comandos; Debug se entrega después de STEP y al finalizar RUN.
+
+Los [servicios de Debug](../../protocol.md#enviar-una-observación-coherente) generan snapshots automáticos después de cada STEP realizado y al final de RUN. PC puede conservar el snapshot recibido, asociado a su sesión; entre pasos sin otra operación de sesión el estado permanece retenido. Reset y preparación definen el estado lógico de sesión, sin transmitir snapshots en esas fases.
 
 ---
 
@@ -412,11 +413,11 @@ El [acuerdo de servicios de Debug](../../decisions/DEC-PROTO-002.md#acuerdo-parc
 
 La información observada corresponde al estado **posterior** al ciclo autorizado.
 
-El [acuerdo de respuesta STEP con Debug](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--solicitud-step-y-respuesta-con-debug-de-cada-ciclo) fija la entrega automática de ese estado en la única respuesta `[STEP][DONE][estado de Debug]`. La entrega ocurre después del ciclo efectivo, sin aceptación previa separada ni consulta adicional.
+La [respuesta STEP](../../protocol.md#avanzar-con-step) entrega ese estado en el único mensaje `[STEP][DONE][estado de Debug]`, sin aceptación previa separada. El flanco de `cpu_cycle_fire` realiza el ciclo, activa la retención Debug y permite que el serializador capture la descripción de STEP/DONE. El cuerpo se lee del estado posterior a ese flanco. Si STEP requiere preparación previa, se espera ese mismo evento para observar el único ciclo solicitado.
 
-El [acuerdo de halt/fault y drenado STEP](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--halt-fault-y-drenado-en-respuestas-step) conserva esa misma respuesta. `global_state` distingue `HALT_DRAIN_STEP`/`FINISHED` y `FAULT_DRAIN_STEP`/`FAULT`; los de fault incluyen causa y PC vigentes. El paso que vacía el pipeline ya muestra el terminal, sin ciclo ni respuesta adicionales.
+El [acuerdo de halt/fault y drenado STEP](../../protocol.md#halt-fault-y-drain-por-pasos) conserva esa misma respuesta. `global_state` distingue `HALT_DRAIN_STEP`/`FINISHED` y `FAULT_DRAIN_STEP`/`FAULT`; los de fault incluyen causa y PC vigentes. El paso que vacía el pipeline ya muestra el terminal, sin ciclo ni respuesta adicionales.
 
-El layout está aprobado, la coherencia y el envío exclusivo están definidos en D06, y los códigos de `global_state` están aprobados. La realización documental de bloques está concretada en [Serializador](response_serializer.md) y [Controlador](protocol_controller.md), con implementación RTL pendiente.
+La [distribución del snapshot](../../protocol.md#distribución-general) define los campos y códigos. El [Serializador](response_serializer.md) transmite el mensaje y el [Controller](protocol_controller.md) mantiene la retención hasta su último Stop.
 
 Esto permite ver simultáneamente:
 
@@ -461,9 +462,11 @@ En ese momento el pipeline está vacío, pero siguen siendo relevantes:
 - Estado terminal.
 - Y, para `FAULT`, `fault_cause` y `fault_pc`.
 
-El [acuerdo de entrega final de RUN](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--resultado-automático-de-run-con-estado-de-debug) fija el envío automático de ese snapshot junto con el resultado: `[RUN][FINISHED][estado de Debug]` o `[RUN][FAULT][estado de Debug]`, después de la aceptación completa. Se observa el estado terminal posterior al último commit, sin exigir otra consulta. Layout y longitud quedan aprobados en D05; lectura directa de estado retenido y exclusión de solicitudes en D06. Puertos y secuencia de lectura/serialización concretados en [response_serializer](response_serializer.md), con [comprobación UART](../uart/uart_core.md#presupuesto-de-integración).
+La [respuesta final RUN](../../protocol.md#ejecutar-con-run) transmite el snapshot junto con el resultado: `[RUN][FINISHED][estado de Debug]` o `[RUN][FAULT][estado de Debug]`, después de la aceptación completa. Se observa el estado terminal posterior al último commit.
 
-La existencia de esta obligación no implica que una consulta arbitraria tenga que aceptarse mientras `RUNNING` continúa. El protocolo aprobado en D02 no ofrece capturas durante ejecución continua.
+`run_result_required` conserva que el RUN aceptado debe entregar su resultado final al serializador. Si la CPU termina mientras sale RUN/ACCEPTED, el estado terminal y la observación permanecen retenidos; primero termina físicamente ACCEPTED y después se captura el resultado con el serializador libre. Esa captura consume la obligación, mientras `debug_hold` conserva la observación hasta el último Stop de Debug. La misma retención se mantiene si el terminal ocurre durante recuperación RX.
+
+El resultado terminal es automático. La CPU continúa su ejecución hasta FINISHED o FAULT, salvo el reset definido por el protocolo; Debug no agrega capturas intermedias durante RUN.
 
 ---
 
@@ -475,11 +478,13 @@ Leer directamente la DMEM del procesador, en lugar de una copia capturada, requi
 
 Si Debug accede directamente a DMEM, la CPU no está ejecutando ciclos y ningún otro agente realiza un acceso incompatible a la misma memoria.
 
-La [consulta del serializador](response_serializer.md#señales-de-consulta-de-dmem) tiene tres señales aprobadas: dirección de byte hacia DMEM, valor de ocho bits de retorno y marca de utilizado de un bit de retorno. El conteo utiliza únicamente la marca. El listado toma el dato cuando esa marca vale uno y omite las posiciones restantes.
+La [consulta del serializador](response_serializer.md#señales-de-consulta-de-dmem) utiliza tres señales: dirección de byte hacia DMEM, valor de ocho bits de retorno y marca de utilizado de un bit de retorno. El conteo utiliza únicamente la marca. El listado toma el dato cuando esa marca vale uno y omite las posiciones restantes.
 
-La [lectura entre flancos](response_serializer.md#lectura-de-dmem-entre-flancos) está aprobada: las salidas son combinacionales desde la dirección registrada y la posición previa se consume al flanco siguiente.
+En la [lectura entre flancos](response_serializer.md#lectura-de-dmem-entre-flancos), las salidas son combinacionales desde la dirección registrada y la posición previa se consume al flanco siguiente.
 
-El [selector CPU/Debug](../memory/memory_architecture.md#selector-de-dirección-de-lectura-cpudebug) está aprobado. `dmem_debug_select`, desde `protocol_controller`, selecciona la dirección del serializador durante la ventana exclusiva. Controles y selectores están definidos en [protocol_controller](protocol_controller.md), y mantenimiento en [session_preparation](../session/session_preparation.md). El cableado del backend DMEM/top está definido en la [composición aprobada](../system_composition.md).
+El Controller distribuye `debug_read_select` al [selector CPU/Debug de DMEM](../memory/memory_architecture.md#selector-de-dirección-de-lectura-cpudebug) y al [mux de primera lectura RF](response_serializer.md#lectura-rf-compartida-con-debug). Ambos seleccionan las direcciones del serializador durante la misma ventana; cada uno conserva su dirección independiente y los datos pueden recorrerse en etapas diferentes. La señal selecciona lecturas y no habilita escrituras.
+
+La selección comienza con el estado posterior al ciclo observado, cubre la espera de RUN/ACCEPTED y toda la transmisión Debug y se inhibe durante reset. Su generación está definida en [Protocol Controller](protocol_controller.md#terminal-run-y-exclusión-debug); el mantenimiento corresponde a [Session Preparation](../session/session_preparation.md) y el cableado a [Composición](../system_composition.md).
 
 En ambos casos el resultado observable conserva:
 
@@ -512,19 +517,19 @@ La coherencia de Debug sigue la semántica de sesión, no la mera permanencia f�
 
 Con las decisiones actuales, la arquitectura fija como contenido observable necesario:
 
-| Información | Interpretación |
-|---|---|
-| `cycle_count[63:0]` | Ciclo lógico de la sesión. |
-| PC global | Frente actual de fetch. |
-| Estado global | Fase actual de la sesión y tipo de terminación. |
-| Imagen válida | Distinción entre imagen ejecutable y ausencia de programa. |
-| `x0...x31` | Banco de registros completo. |
-| `IF/ID` | Todos sus 5 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `ID/EX` | Todos sus 15 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `EX/MEM` | Todos sus 8 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| `MEM/WB` | Todos sus 6 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05. |
-| DMEM utilizada | Lista ordenada de bytes escritos en la sesión, incluidos ceros; cantidad de cinco bytes little-endian y entradas dirección cuatro bytes/valor uno aprobadas. |
-| `fault_cause`, `fault_pc` | Válidos cuando el estado global representa fault confirmado. |
+| Información               | Interpretación                                                                                                                                               |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cycle_count[63:0]`       | Ciclo lógico de la sesión.                                                                                                                                   |
+| PC global                 | Frente actual de fetch.                                                                                                                                      |
+| Estado global             | Fase actual de la sesión y tipo de terminación.                                                                                                              |
+| Imagen válida             | Distinción entre imagen ejecutable y ausencia de programa.                                                                                                   |
+| `x0...x31`                | Banco de registros completo.                                                                                                                                 |
+| `IF/ID`                   | Todos sus 5 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| `ID/EX`                   | Todos sus 15 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                   |
+| `EX/MEM`                  | Todos sus 8 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| `MEM/WB`                  | Todos sus 6 campos funcionales registrados, con semántica de validez; layout externo aprobado en D03/D05.                                                    |
+| DMEM utilizada            | Lista ordenada de bytes escritos en la sesión, incluidos ceros; cantidad de cinco bytes little-endian y entradas dirección cuatro bytes/valor uno aprobadas. |
+| `fault_cause`, `fault_pc` | Válidos cuando el estado global representa fault confirmado.                                                                                                 |
 
 Internamente existen otros campos que pueden contribuir a la implementación o a diagnósticos particulares, pero su existencia no los convierte automáticamente en parte obligatoria del snapshot externo.
 
@@ -585,7 +590,7 @@ Little-endian arquitectónico y orden UART son decisiones independientes; el acu
 
 ### Layout externo aprobado
 
-Para ubicar los campos observados, usar la [distribución general del snapshot](../../protocol.md#distribución-general), fuente canónica de offsets y longitudes. Los offsets son relativos al cuerpo, después de la cabecera común de dos bytes; no se confunden con las posiciones de recorrido del serializador. La aprobación y el orden se conservan en el [acuerdo de delimitación de DEC-PROTO-001](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--orden-y-delimitación-del-snapshot).
+Para ubicar los campos observados, usar la [distribución general del snapshot](../../protocol.md#distribución-general), fuente canónica de offsets y longitudes. Los offsets son relativos al cuerpo, después de la cabecera común de dos bytes; no se confunden con las posiciones de recorrido del serializador. La aprobación y el orden se conservan en el [acuerdo de delimitación de DEC-PROTO-001](../../protocol.md#distribución-general).
 
 RF y registros interetapa se identifican por posición, sin bytes de ID. Los campos de cada registro interetapa conservan el orden de su esquema en `interfaces.md`. Causa/PC globales siempre están presentes, y solo se interpretan como fault vigente cuando `global_state` lo valida.
 
@@ -613,18 +618,6 @@ La observación conserva las siguientes propiedades:
 - No se presupone que una captura arbitraria durante `RUNNING` esté habilitada.
 
 Estas propiedades corresponden a `I25` y a las invariantes relacionadas de [Invariantes arquitectónicas](../architectural_invariants.md).
-
-## Verificación y evidencia
-
-### Estado de cierre y trabajo restante
-
-Observación, representación externa, recursos/conexiones y control de serialización están aprobados y contrastados en el [cierre UART](../uart/uart_core.md#presupuesto-de-integración). DEC-SYS-007 está consolidada; no se reabre para implementar o probar estos acuerdos.
-
-El diseño FPGA, incluidos los lanes/metadatos de DMEM, la plataforma, la composición, el plan de verificación y su correspondencia integral, está cerrado documentalmente en FPGA-01–09. Selectores CPU/Debug, preparación de metadatos y codificador global tienen contratos concretos; la implementación debe respetarlos. No se ha implementado ni verificado RTL.
-
-El diseño del assembler está aprobado en [DEC-SYS-009](../../decisions/DEC-SYS-009.md); la aplicación PC conserva su decisión pendiente DEC-SYS-008. Estos diseños no afectan el significado de los snapshots ni los comandos ya aprobados.
-
----
 
 <a id="trazabilidad"></a>
 

@@ -1,9 +1,9 @@
 # TP3 — Decisiones aprobadas
 
 - **Tipo:** registro de decisiones.
-- **Estado documental:** registro de acuerdos y revisiones.
+- **Estado documental:** decisiones vigentes.
 
-> **Rol: registro de acuerdos y sus revisiones.** Conserva la evolución y los límites de cada aprobación. Para entender el diseño actual comience por [Diseño FPGA consolidado](../architecture/system_overview.md); este registro sirve para consultar el origen de una decisión.
+Este índice reúne las decisiones del diseño vigente. Sus contratos se consultan en [Diseño FPGA consolidado](../architecture/system_overview.md).
 
 **Índice**
 
@@ -19,26 +19,23 @@
 
 ## Propósito y alcance
 
-Este documento conserva únicamente las decisiones aprobadas por el equipo y las decisiones reemplazadas que deben mantenerse por trazabilidad.
+Este documento reúne las decisiones aprobadas que definen el sistema y enlaza sus contratos y justificaciones.
 
 Las decisiones todavía no resueltas se registran en `pending_decisions.md`. Cuando una decisión pendiente se aprueba, conserva su identificador y se traslada a este documento.
 
-El [mapa de autoridad por tema](../architecture/system_overview.md#autoridad-documental-por-tema) distingue la especificación vigente de su aprobación/origen. Los detalles y límites fechados de este registro se conservan como evidencia, incluidas las realizaciones sustituidas.
+El [mapa de autoridad por tema](../architecture/system_overview.md#autoridad-documental-por-tema) identifica la especificación y las decisiones de cada tema.
 
 ## 2. Convenciones
 
 Cada decisión aprobada contiene:
 
-- **Estado:** `Aprobada` o `Reemplazada`.
+- **Estado:** `Aprobada`.
 - **Dominio:** área principal afectada.
-- **Fecha de aprobación:** fecha en que el equipo aceptó la decisión.
-- **Contexto:** problema que originó la decisión.
-- **Opciones consideradas:** alternativas evaluadas.
-- **Decisión:** alternativa seleccionada.
+- **Contexto:** problema que resuelve el diseño.
+- **Decisión:** comportamiento y condiciones del sistema.
 - **Justificación:** razones de la selección.
-- **Consecuencias:** restricciones y efectos introducidos.
+- **Consecuencias:** restricciones y efectos sobre los demás componentes.
 - **Requisitos afectados:** trazabilidad hacia `requirements.md`.
-- **Reemplaza / Reemplazada por:** relación histórica, cuando corresponda.
 
 ---
 

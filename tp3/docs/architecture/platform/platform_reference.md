@@ -48,17 +48,17 @@ El diseño emplea el Clocking Wizard de Vivado, configurado con una primitiva MM
 
 **Acuerdo:** Configuración aprobada el 2026-10-05. [Registro](../../decisions/DEC-ARCH-005.md#acuerdo-de-concreción-de-dec-arch-005--configuración-del-generador-de-clock).
 
-| Parámetro | Configuración |
-|---|---|
-| Dispositivo | XC7A35T-1CPG236C, Basys 3 aprobada |
-| Entrada primaria | 100 MHz, single-ended clock-capable pin |
-| Primitiva | MMCM, síntesis de frecuencia |
-| Salida única | 50 MHz, fase 0 grados, duty cycle 50 % |
-| Distribución de salida | Buffer global BUFG |
-| Feedback | Conexión automática del Wizard |
-| Indicador de estabilidad | `locked` habilitado |
-| Reconfiguración dinámica / fase dinámica / spread spectrum | deshabilitados |
-| Reset del generador | Puerto activo alto; fuente aprobada: botón normalizado; duración aprobada en [especificación de placa](#condiciones-de-reset-en-la-placa) |
+| Parámetro                                                  | Configuración                                                                                                                             |
+|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| Dispositivo                                                | XC7A35T-1CPG236C, Basys 3 aprobada                                                                                                        |
+| Entrada primaria                                           | 100 MHz, single-ended clock-capable pin                                                                                                   |
+| Primitiva                                                  | MMCM, síntesis de frecuencia                                                                                                              |
+| Salida única                                               | 50 MHz, fase 0 grados, duty cycle 50 %                                                                                                    |
+| Distribución de salida                                     | Buffer global BUFG                                                                                                                        |
+| Feedback                                                   | Conexión automática del Wizard                                                                                                            |
+| Indicador de estabilidad                                   | `locked` habilitado                                                                                                                       |
+| Reconfiguración dinámica / fase dinámica / spread spectrum | deshabilitados                                                                                                                            |
+| Reset del generador                                        | Puerto activo alto; fuente aprobada: botón normalizado; duración aprobada en [especificación de placa](#condiciones-de-reset-en-la-placa) |
 
 El siguiente diagrama resume la relación entre el generador, su indicador de estabilidad y el reset funcional común:
 
@@ -91,20 +91,20 @@ El clock y los dos caminos de reset se conectan de la siguiente manera:
 
 ### Clock
 
-| Origen | Señal | Destino | Función |
-|---|---|---|---|
-| Clocking Wizard | salida de 50 MHz | BUFG | Distribuye el clock funcional. |
-| BUFG | `clk` | `reset_sync` y consumidores funcionales | Proporciona el único clock del sistema. |
+| Origen          | Señal            | Destino                                 | Función                                 |
+|-----------------|------------------|-----------------------------------------|-----------------------------------------|
+| Clocking Wizard | salida de 50 MHz | BUFG                                    | Distribuye el clock funcional.          |
+| BUFG            | `clk`            | `reset_sync` y consumidores funcionales | Proporciona el único clock del sistema. |
 
 ### Reset
 
-| Origen | Señal | Destino | Función |
-|---|---|---|---|
-| Botón de placa | `physical_reset_request` | Reset del generador | Reinicia el MMCM cuando se solicita un reset físico. |
-| Botón de placa | `physical_reset_request` | `reset_sync.async_reset_request` | Mantiene activo el reset funcional. |
-| Controlador UART | `uart_reset_request` | `reset_sync.async_reset_request` | Solicita un reset funcional después de completar la secuencia `RESET`. |
-| Clocking Wizard | `!locked` | `reset_sync.async_reset_request` | Mantiene el sistema en reset mientras el clock no sea estable. No reinicia el MMCM. |
-| `reset_sync` | `reset` | CPU, memorias, control, UART y periféricos | Distribuye el reset funcional común, con aserción asíncrona y liberación sincronizada. |
+| Origen           | Señal                    | Destino                                    | Función                                                                                |
+|------------------|--------------------------|--------------------------------------------|----------------------------------------------------------------------------------------|
+| Botón de placa   | `physical_reset_request` | Reset del generador                        | Reinicia el MMCM cuando se solicita un reset físico.                                   |
+| Botón de placa   | `physical_reset_request` | `reset_sync.async_reset_request`           | Mantiene activo el reset funcional.                                                    |
+| Controlador UART | `uart_reset_request`     | `reset_sync.async_reset_request`           | Solicita un reset funcional después de completar la secuencia `RESET`.                 |
+| Clocking Wizard  | `!locked`                | `reset_sync.async_reset_request`           | Mantiene el sistema en reset mientras el clock no sea estable. No reinicia el MMCM.    |
+| `reset_sync`     | `reset`                  | CPU, memorias, control, UART y periféricos | Distribuye el reset funcional común, con aserción asíncrona y liberación sincronizada. |
 
 El botón alimenta ambos caminos. Mientras está pulsado, el MMCM permanece en reset y el acondicionador mantiene el reset funcional asertado, incluso si no hay flancos. Después de soltarlo, el sistema espera a que `locked` indique estabilidad; solo entonces comienza la liberación mediante las dos etapas aprobadas. Los registros funcionales aplican sus efectos de reset al observarlo en un flanco válido.
 
@@ -114,10 +114,10 @@ Cuando el generador deja de indicar estabilidad, `!locked` mantiene el sistema e
 
 El arranque y la pérdida de estabilidad tienen estas respuestas:
 
-| Situación | Respuesta |
-|---|---|
-| Arranque | `locked` mantiene el sistema en reset hasta estabilizar el generador; `reset_sync` conserva su inicialización aprobada. |
-| Pérdida de estabilidad | Abortar la sesión al consumir reset, sin reanudar la ejecución previa. |
+| Situación              | Respuesta                                                                                                               |
+|------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Arranque               | `locked` mantiene el sistema en reset hasta estabilizar el generador; `reset_sync` conserva su inicialización aprobada. |
+| Pérdida de estabilidad | Abortar la sesión al consumir reset, sin reanudar la ejecución previa.                                                  |
 
 Si se pierde el clock de entrada y el MMCM necesita reset para recuperarse, el botón proporciona ese reset. No se promete recuperación automática ni se agrega un supervisor o FSM. Esta condición de uso sigue la recomendación de [AMD PG065 sobre resets](https://docs.amd.com/r/en-US/pg065-clk-wiz/Resets).
 
@@ -131,12 +131,12 @@ Si se pierde el clock de entrada y el MMCM necesita reset para recuperarse, el b
 
 La siguiente tabla resume los puertos físicos expuestos por el wrapper de la plataforma, su dirección, pin y conexión/polaridad: 
 
-| Puerto del wrapper | Dirección | Pin | Conexión y polaridad |
-|---|---|---|---|
-| `clk_100mhz_i` | entrada | W5 | oscilador de placa de 100 MHz → entrada del Wizard |
-| `reset_btn_i` | entrada | U18 | botón central BTNC; uno pulsado/cero libre → `physical_reset_request`, sin inversión |
-| `uart_rx_i` | entrada | B18 | PC transmite → FPGA recibe; reposo uno → sincronizador RX de dos etapas existente |
-| `uart_tx_o` | salida | A18 | FPGA transmite → PC recibe; salida registrada UART, reposo uno |
+| Puerto del wrapper | Dirección | Pin | Conexión y polaridad                                                                 |
+|--------------------|-----------|-----|--------------------------------------------------------------------------------------|
+| `clk_100mhz_i`     | entrada   | W5  | oscilador de placa de 100 MHz → entrada del Wizard                                   |
+| `reset_btn_i`      | entrada   | U18 | botón central BTNC; uno pulsado/cero libre → `physical_reset_request`, sin inversión |
+| `uart_rx_i`        | entrada   | B18 | PC transmite → FPGA recibe; reposo uno → sincronizador RX de dos etapas existente    |
+| `uart_tx_o`        | salida    | A18 | FPGA transmite → PC recibe; salida registrada UART, reposo uno                       |
 
 Los cuatro puertos utilizar el estándar eléctrico **LVCMOS33**, según el [Master XDC oficial de Digilent](https://github.com/Digilent/digilent-xdc/blob/master/Basys-3-Master.xdc).
 
@@ -180,19 +180,19 @@ Las restricciones se organizan en cuatro grupos:
 
 Los nombres exactos de los objetos jerárquicos y de los endpoints se confirmarán contra la netlist generada. Por eso, esta sección define los caminos y las condiciones que deben cumplirse, pero no constituye todavía un archivo XDC ejecutable.
 
-| Camino o recurso | Restricción prevista / justificación |
-|---|---|
-| Puertos físicos | `PACKAGE_PIN` e `IOSTANDARD` según tabla; cuatro puertos, sin asignaciones de pines vacías |
-| Reloj primario | `create_clock` sobre `clk_100mhz_i`: período 10 ns, waveform 0/5 ns, nombre `clk_board_100` |
-| Reloj funcional | derivación de MMCM por Vivado/IP, relación exacta 100→50 y período 20 ns; comprobar con `report_clocks` |
-| Duplicación de clocks | una definición primaria autoritativa en XDC de placa; revisar constraints del IP generado y evitar duplicar/redefinir clocks en los mismos puntos |
-| Relación 100/50 MHz | clocks relacionados; no declararlos asíncronos entre sí ni introducir un clock de baud/STEP |
-| RX de pin a D de la primera etapa | `set_max_delay` -`datapath_only` de 20 ns, desde `uart_rx_i` al único primer registro del sincronizador; cota de ruta sin asumir fase externa |
-| Entre etapas RX y hacia receptor | timing síncrono normal de 20 ns; `ASYNC_REG` en ambas etapas y comprobación de reconocimiento/ubicación con `report_cdc` |
-| Registro TX a puerto | `set_max_delay` -`datapath_only` de 20 ns desde Q del registro de salida TX hasta `uart_tx_o`; sin inventar un clock de captura del puente USB |
-| Reset asíncrono de plataforma | excepciones limitadas a entradas asíncronas PRE/CLR de las dos etapas `reset_sync` y RST del MMCM; botón/`locked`/solicitud UART no tienen relación de fase de liberación exigible allí |
-| Etapas `reset_sync` y reset funcional distribuido | `ASYNC_REG` conservado; timing normal entre etapas y desde salida acondicionada hasta consumidores síncronos. Ninguna excepción global sobre reset funcional |
-| Datos/control CPU, memorias y transporte interno | setup/hold normales del dominio de 50 MHz; no multicycle ni `false_path` para evitar caminos lentos |
+| Camino o recurso                                  | Restricción prevista / justificación                                                                                                                                                    |
+|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Puertos físicos                                   | `PACKAGE_PIN` e `IOSTANDARD` según tabla; cuatro puertos, sin asignaciones de pines vacías                                                                                              |
+| Reloj primario                                    | `create_clock` sobre `clk_100mhz_i`: período 10 ns, waveform 0/5 ns, nombre `clk_board_100`                                                                                             |
+| Reloj funcional                                   | derivación de MMCM por Vivado/IP, relación exacta 100→50 y período 20 ns; comprobar con `report_clocks`                                                                                 |
+| Duplicación de clocks                             | una definición primaria autoritativa en XDC de placa; revisar constraints del IP generado y evitar duplicar/redefinir clocks en los mismos puntos                                       |
+| Relación 100/50 MHz                               | clocks relacionados; no declararlos asíncronos entre sí ni introducir un clock de baud/STEP                                                                                             |
+| RX de pin a D de la primera etapa                 | `set_max_delay` -`datapath_only` de 20 ns, desde `uart_rx_i` al único primer registro del sincronizador; cota de ruta sin asumir fase externa                                           |
+| Entre etapas RX y hacia receptor                  | timing síncrono normal de 20 ns; `ASYNC_REG` en ambas etapas y comprobación de reconocimiento/ubicación con `report_cdc`                                                                |
+| Registro TX a puerto                              | `set_max_delay` -`datapath_only` de 20 ns desde Q del registro de salida TX hasta `uart_tx_o`; sin inventar un clock de captura del puente USB                                          |
+| Reset asíncrono de plataforma                     | excepciones limitadas a entradas asíncronas PRE/CLR de las dos etapas `reset_sync` y RST del MMCM; botón/`locked`/solicitud UART no tienen relación de fase de liberación exigible allí |
+| Etapas `reset_sync` y reset funcional distribuido | `ASYNC_REG` conservado; timing normal entre etapas y desde salida acondicionada hasta consumidores síncronos. Ninguna excepción global sobre reset funcional                            |
+| Datos/control CPU, memorias y transporte interno  | setup/hold normales del dominio de 50 MHz; no multicycle ni `false_path` para evitar caminos lentos                                                                                     |
 
 Las cotas de ruta UART de 20 ns son presupuestos conservadores de integración, independientes de la fase del enlace; los bits UART mantienen su timing definido por la lógica y el protocolo. No se superpone `false_path` a esos caminos, pues anularía sus cotas. Tampoco se inventan input/output delays síncronos de la PC. Las excepciones de reset se documentan como aserción/desaserción asíncrona en el acondicionador/recurso, nunca como permiso para liberar directamente registros funcionales.
 

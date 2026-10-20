@@ -18,15 +18,15 @@ Cada snapshot contiene la lista completa de direcciones utilizadas, únicas y cr
 
 La lista se coloca al final del cuerpo con este formato:
 
-| Elemento | Representación |
-|---|---|
+| Elemento                            | Representación                                                                     |
+|-------------------------------------|------------------------------------------------------------------------------------|
 | `used_count`, antes de las entradas | Unsigned de cinco bytes little-endian, entre cero y la capacidad de DMEM inclusive |
-| Dirección de cada entrada | Cuatro bytes little-endian |
-| Valor de cada entrada | Un byte |
+| Dirección de cada entrada           | Cuatro bytes little-endian                                                         |
+| Valor de cada entrada               | Un byte                                                                            |
 
 Cantidad cero se representa con cinco bytes cero y ninguna entrada. La cantidad determina exactamente la longitud y el final.
 
-El [acuerdo de criterio](#acuerdo-parcial-de-dec-sys-005--memoria-utilizada-como-bytes-escritos-en-la-sesión) y el [acuerdo de layout](DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--orden-y-delimitación-del-snapshot) detallan selección, ejemplos, offsets y longitudes.
+El [acuerdo de criterio](#acuerdo-parcial-de-dec-sys-005--memoria-utilizada-como-bytes-escritos-en-la-sesión) y el [acuerdo de layout](../protocol.md#distribución-general) detallan selección, ejemplos, offsets y longitudes.
 
 **Justificación:** La unidad byte representa stores parciales y conserva escrituras de cero. Dirección/valor actual evita confundir el contenido observable con historial; la cantidad de cinco bytes cubre capacidades hasta 2^32 sin un caso especial para la lista vacía.
 

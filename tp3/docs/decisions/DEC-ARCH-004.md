@@ -64,11 +64,11 @@ Los acuerdos segundo, tercero y cuarto fijan por separado la alineación de acce
 
 Todos los accesos CPU a `Data Memory` requerirán **alineación natural estricta** según el ancho solicitado por una instrucción de memoria válida:
 
-| Instrucción | Ancho | Condición de alineación de la dirección efectiva |
-|---|---:|---|
-| `lb`, `lbu`, `sb` | 1 byte | Cualquier dirección cumple por alineación (`address mod 1 = 0`) |
-| `lh`, `lhu`, `sh` | 2 bytes | `address[0] = 0` (`address mod 2 = 0`) |
-| `lw`, `sw` | 4 bytes | `address[1:0] = 00` (`address mod 4 = 0`) |
+| Instrucción       |   Ancho | Condición de alineación de la dirección efectiva                |
+|-------------------|--------:|-----------------------------------------------------------------|
+| `lb`, `lbu`, `sb` |  1 byte | Cualquier dirección cumple por alineación (`address mod 1 = 0`) |
+| `lh`, `lhu`, `sh` | 2 bytes | `address[0] = 0` (`address mod 2 = 0`)                          |
+| `lw`, `sw`        | 4 bytes | `address[1:0] = 00` (`address mod 4 = 0`)                       |
 
 Si la dirección efectiva de una instrucción de memoria válida no satisface su condición, se obtiene un **candidato de fault por acceso desalineado**. No se soportarán accesos multibyte desalineados: no se dividirá una operación entre dos palabras, no se combinarán posteriormente datos de dos palabras, no se efectuarán múltiples accesos internos para completarla y no se corregirá ni truncará la dirección para forzar alineación. En particular, un store desalineado **no podrá modificar parcialmente DMEM ni los metadatos de validez por byte**; el cálculo de direcciones candidatas no habilita escrituras. Un load desalineado no obtiene un dato arquitectónico válido mediante el ensamblado de bytes candidatos.
 
@@ -89,7 +89,7 @@ La concreción posterior comprende estos acuerdos y límites:
 - El cuadragésimo acuerdo de `DEC-ARCH-003` fija después la detección y confirmación RTL de estos eventos.
 - El cuadragésimo segundo acuerdo fija después los enables/flush de PC y registros interetapa para las ocho acciones.
 - Las coincidencias están cerradas por los acuerdos 44–47.
-- Las vías UART adicionales de recuperación permanecen diferidas, respetando la invalidez del trabajo `wrong-path` aprobada en `DEC-ARCH-002`.
+- La recuperación UART se rige por [DEC-PROTO-002](DEC-PROTO-002.md) y por el [contrato de RESET](../protocol.md#reset-desde-pc), respetando la invalidez del trabajo `wrong-path` aprobada en `DEC-ARCH-002`.
 
 Los acuerdos tercero y cuarto definen separadamente la alineación de Instruction Fetch y de destinos de control; ninguna de estas reglas sustituye a las demás.
 
@@ -135,12 +135,12 @@ target[1:0] = 2'b00   ⇔   target mod 4 = 0
 
 Se conservarán las fórmulas de `DEC-ARCH-002` y los caminos de cálculo en EX de `DEC-ARCH-003`: `beq`/`bne` usan `ID/EX.pc + immediate_B`, `jal` usa `ID/EX.pc + immediate_J` y `jalr` usa `(rs1_effective + immediate_I) & 0xFFFFFFFE`. La **comprobación de alineación del destino** depende de que se pretenda utilizarlo:
 
-| Instrucción válida | Condición para comprobar el target | Resultado por alineación |
-|---|---|---|
-| `beq`, `bne` no tomados | Ninguna: el target no se utiliza | No hay candidato por alineación de ese target, aunque sus bits combinacionales estén desalineados |
-| `beq`, `bne` tomados | Condición del branch verdadera con operandos efectivos | `target[1:0] = 00` es legal por alineación; otro valor genera candidato |
-| `jal` | Siempre, como salto incondicional válido | `target[1:0] = 00` es legal por alineación; otro valor genera candidato |
-| `jalr` | Siempre, **después** de forzar `jalr_sum[0]` a cero | `target[1] = 0` es legal por alineación; `target[1] = 1` genera candidato |
+| Instrucción válida      | Condición para comprobar el target                     | Resultado por alineación                                                                          |
+|-------------------------|--------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `beq`, `bne` no tomados | Ninguna: el target no se utiliza                       | No hay candidato por alineación de ese target, aunque sus bits combinacionales estén desalineados |
+| `beq`, `bne` tomados    | Condición del branch verdadera con operandos efectivos | `target[1:0] = 00` es legal por alineación; otro valor genera candidato                           |
+| `jal`                   | Siempre, como salto incondicional válido               | `target[1:0] = 00` es legal por alineación; otro valor genera candidato                           |
+| `jalr`                  | Siempre, **después** de forzar `jalr_sum[0]` a cero    | `target[1] = 0` es legal por alineación; `target[1] = 1` genera candidato                         |
 
 El destino desalineado de un branch tomado, `jal` o `jalr` válidos genera un **candidato de fault por `instruction-address-misaligned`**. Para `jalr`, `jalr_sum[0] = 1` **no** es por sí solo un error: el bit 0 se borra conforme al ISA y se comprueba el target resultante, sin borrar adicionalmente `target[1]`. Tampoco se redondeará el destino a múltiplo de cuatro, se ejecutará desde una dirección desalineada ni se reconstruirán instrucciones desde dos palabras. Una entrada inválida en EX no puede generar un candidato arquitectónicamente confirmable por sus bits residuales; un branch no tomado no lo produce por un destino que no usa.
 
@@ -161,14 +161,14 @@ La concreción posterior y su límite son los siguientes:
 
 Cada condición candidata se detectará en la **primera etapa que disponga de todos los datos necesarios** para evaluarla correctamente:
 
-| Condición candidata | Etapa de detección |
-|---|---|
-| Instruction Fetch fuera de capacidad IMEM o del prefijo de imagen confirmada | **IF** |
-| Instruction Fetch desalineado | **IF** |
-| Codificación de instrucción inválida frente a la whitelist completa | **ID** |
-| Load/store fuera de rango DMEM | **EX** |
-| Load/store desalineado | **EX** |
-| Destino desalineado de `beq`/`bne` tomados o `jal`/`jalr` válidos | **EX** |
+| Condición candidata                                                          | Etapa de detección |
+|------------------------------------------------------------------------------|--------------------|
+| Instruction Fetch fuera de capacidad IMEM o del prefijo de imagen confirmada | **IF**             |
+| Instruction Fetch desalineado                                                | **IF**             |
+| Codificación de instrucción inválida frente a la whitelist completa          | **ID**             |
+| Load/store fuera de rango DMEM                                               | **EX**             |
+| Load/store desalineado                                                       | **EX**             |
+| Destino desalineado de `beq`/`bne` tomados o `jal`/`jalr` válidos            | **EX**             |
 
 IF evaluará sobre el PC tanto la pertenencia de **los cuatro bytes** a IMEM y a la imagen confirmada como `PC[1:0] = 00`. Son condiciones independientes: un fetch puede presentar ambas causas candidatas simultáneamente y el séptimo acuerdo fija cuál prevalece. ID validará la **palabra completa** de `IF/ID` obtenida mediante fetch válido según el subconjunto aprobado y distinguirá el contenido ilegal de un fetch fuera de imagen o de bits residuales de una entrada inválida. Esta asignación de etapas no decide si el loader inspeccionará también la imagen ni asigna aquí etapa alguna al reconocimiento de `halt`.
 
@@ -216,11 +216,11 @@ Una vez **confirmado** un fault, la operación causante y todas las instruccione
 
 Cuando una **misma operación** presente simultáneamente desalineación y violación de rango o acceso inválido, prevalecerá arquitectónicamente **`misalignment > access fault`**. Ambas condiciones se comprueban de forma independiente y pueden detectarse en paralelo en la misma etapa; la prioridad determina una causa única y estable, no el orden temporal ni físico de evaluación:
 
-| Operación | Condiciones concurrentes | Causa prevaleciente |
-|---|---|---|
-| Instruction Fetch en IF | PC desalineado y fetch fuera de IMEM o imagen confirmada | `instruction-address-misaligned` en lugar de `instruction-access-fault` |
-| Load en EX | Dirección efectiva desalineada para su ancho y acceso fuera de DMEM | `load-address-misaligned` en lugar de `load-access-fault` |
-| Store en EX | Dirección efectiva desalineada para su ancho y acceso fuera de DMEM | `store-address-misaligned` en lugar de `store-access-fault` |
+| Operación               | Condiciones concurrentes                                            | Causa prevaleciente                                                     |
+|-------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------|
+| Instruction Fetch en IF | PC desalineado y fetch fuera de IMEM o imagen confirmada            | `instruction-address-misaligned` en lugar de `instruction-access-fault` |
+| Load en EX              | Dirección efectiva desalineada para su ancho y acceso fuera de DMEM | `load-address-misaligned` en lugar de `load-access-fault`               |
+| Store en EX             | Dirección efectiva desalineada para su ancho y acceso fuera de DMEM | `store-address-misaligned` en lugar de `store-access-fault`             |
 
 Por convención se prioriza primero la legalidad de **forma** del acceso según su alineación natural y luego la pertenencia de la región completa al rango implementado, sin derivar de ello una necesidad física de evaluar secuencialmente ambas condiciones. Si solo se presenta una causa, esta conserva su clasificación. Esta prioridad **entre causas de una operación** no sustituye la prioridad **por antigüedad entre instrucciones distintas** del sexto acuerdo ni confirma por sí sola un fault de trabajo `wrong-path`.
 
@@ -285,11 +285,11 @@ Para una operación causante confirmada, las acciones en el **ciclo efectivo de 
 
 La fila de fetch siguiente incorpora la revisión del [acuerdo 47 de `DEC-ARCH-003`](DEC-ARCH-003.md#acuerdo-47-aprobado--confirmación-de-todo-fetch-fault-en-id-y-revisión-de-aud-001): su causante se confirma en ID. La [secuencia previa con load-use](../architecture/session/faults_and_termination.md#coincidencia-con-load-use) conserva al consumidor antes de esa confirmación.
 
-| Causante | Instrucciones anteriores | Causante y trabajo más joven | PC / admisión |
-|---|---|---|---|
-| Fetch detectado en **IF** y confirmado en **ID** desde `IF/ID` | Las entradas previas de `ID/EX`, `EX/MEM` y `MEM/WB` siguen drenando, si son válidas | No se propaga el candidato de `IF/ID` a `ID/EX`: `ID/EX.next.valid=0`; `IF/ID` deja `valid=0` y limpia `fetch_fault_valid` | PC retenido; no se admiten fetches posteriores |
-| Instrucción en **`IF/ID` (ID)** | `ID/EX`, `EX/MEM` y `MEM/WB` previos continúan drenando | La causante no entra válida en `ID/EX` (`ID/EX.next.valid=0`); `IF/ID.next.valid=0`, `IF/ID.next.fetch_fault_valid=0` y el fetch joven de IF se descarta | PC retenido; no hay admisión nueva |
-| Instrucción en **`ID/EX` (EX)** | `EX/MEM` y `MEM/WB` previos continúan drenando | La causante no entra válida en `EX/MEM` (`EX/MEM.next.valid=0`); `ID/EX.next.valid=0`, `IF/ID.next.valid=0`, `IF/ID.next.fetch_fault_valid=0` y se descarta IF | PC retenido; no hay admisión nueva |
+| Causante                                                       | Instrucciones anteriores                                                             | Causante y trabajo más joven                                                                                                                                   | PC / admisión                                  |
+|----------------------------------------------------------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| Fetch detectado en **IF** y confirmado en **ID** desde `IF/ID` | Las entradas previas de `ID/EX`, `EX/MEM` y `MEM/WB` siguen drenando, si son válidas | No se propaga el candidato de `IF/ID` a `ID/EX`: `ID/EX.next.valid=0`; `IF/ID` deja `valid=0` y limpia `fetch_fault_valid`                                     | PC retenido; no se admiten fetches posteriores |
+| Instrucción en **`IF/ID` (ID)**                                | `ID/EX`, `EX/MEM` y `MEM/WB` previos continúan drenando                              | La causante no entra válida en `ID/EX` (`ID/EX.next.valid=0`); `IF/ID.next.valid=0`, `IF/ID.next.fetch_fault_valid=0` y el fetch joven de IF se descarta       | PC retenido; no hay admisión nueva             |
+| Instrucción en **`ID/EX` (EX)**                                | `EX/MEM` y `MEM/WB` previos continúan drenando                                       | La causante no entra válida en `EX/MEM` (`EX/MEM.next.valid=0`); `ID/EX.next.valid=0`, `IF/ID.next.valid=0`, `IF/ID.next.fetch_fault_valid=0` y se descarta IF | PC retenido; no hay admisión nueva             |
 
 En particular, ante fault confirmado por destino desalineado de `jal` o `jalr` en EX, no se realiza redirect, no se escribe el enlace y la instrucción no avanza **válidamente** a `EX/MEM`. Las entradas inválidas pueden conservar bits residuales sin decodificarse ni producir efectos; `IF/ID.valid=0` con `fetch_fault_valid=1` es únicamente un candidato de fetch, mientras `valid=0` y el flag limpiado no confirma nada por residuos. Una instrucción anterior que ocupaba `EX/MEM` antes del flanco puede avanzar a `MEM/WB` aunque `EX/MEM.next.valid=0` para la causante. No se equiparará una salida combinacional de IF, una instrucción previa en `IF/ID` o una instrucción de `EX/MEM` a la nueva entrada de otro registro interetapa en ese mismo flanco. El décimo acuerdo, revisado por el 47 de `DEC-ARCH-003`, preserva al consumidor durante `load-use` sin confirmar el candidato IF. Este nunca ingresa como instrucción válida: se captura después con `valid=0, fetch_fault_valid=1` y solo puede confirmarse en ID.
 
@@ -307,12 +307,12 @@ El acuerdo fija solo estas acciones **tras confirmarse** el fault, sin convertir
 
 No se adopta una prioridad universal `fault > redirect > halt > stall`. Primero se determina qué instrucciones permanecen válidas y en el camino correcto. Entre eventos de **instrucciones distintas** prevalece la instrucción más antigua en orden de programa:
 
-| Frontera más antigua | Evento en instrucción más joven | Resultado arquitectónico |
-|---|---|---|
-| Redirect aplicable | Candidato de fault | El trabajo joven queda `wrong-path` y se descarta; el candidato no se confirma |
-| Fault confirmado | Redirect | El redirect joven se descarta sin efecto; se drenan anteriores y se llega a `FAULT` |
-| `halt` válido del camino correcto | Candidato de fault | Se descarta el candidato posterior; drenado normal hasta `FINISHED` |
-| Fault confirmado | `halt` | Se descarta el `halt` posterior; se llega a `FAULT`, nunca a `FINISHED` por ese `halt` |
+| Frontera más antigua              | Evento en instrucción más joven | Resultado arquitectónico                                                               |
+|-----------------------------------|---------------------------------|----------------------------------------------------------------------------------------|
+| Redirect aplicable                | Candidato de fault              | El trabajo joven queda `wrong-path` y se descarta; el candidato no se confirma         |
+| Fault confirmado                  | Redirect                        | El redirect joven se descarta sin efecto; se drenan anteriores y se llega a `FAULT`    |
+| `halt` válido del camino correcto | Candidato de fault              | Se descarta el candidato posterior; drenado normal hasta `FINISHED`                    |
+| Fault confirmado                  | `halt`                          | Se descarta el `halt` posterior; se llega a `FAULT`, nunca a `FINISHED` por ese `halt` |
 
 Un candidato de fault de una instrucción **no** confirma nada por su sola detección: debe satisfacer validez, camino correcto y ausencia de una frontera anterior prevaleciente. Si **la misma** instrucción de control, branch tomado, `jal` o `jalr`, tiene destino desalineado, su propio fault suprime sus efectos normales: **no hay redirect**, ni escritura de enlace en `jal`/`jalr`, ni efectos arquitectónicos de la causante. No es una comparación de antigüedad entre dos instrucciones; la señal combinacional nominal de redirect puede existir sin aplicar el destino. Un `halt` válido del camino correcto establece igualmente una frontera: ninguna instrucción posterior confirma un fault o produce efectos. No se asigna aquí etapa física al reconocimiento de `halt`.
 
@@ -343,14 +343,14 @@ Un fault **arquitectónicamente confirmado** será observable como condición de
 
 Al **confirmarse** el fault se capturará y mantendrá, como mínimo, información conceptual **`fault_cause`** y **`fault_pc`** asociada a la operación causante:
 
-| Información | Semántica mínima |
-|---|---|
-| `fault_cause` | Una causa arquitectónica inequívoca entre `instruction-address-misaligned`, `instruction-access-fault`, `illegal-instruction`, `load-address-misaligned`, `load-access-fault`, `store-address-misaligned` y `store-access-fault`. Se respetan la prioridad por antigüedad entre instrucciones y `misalignment > access fault` dentro de un mismo fetch, load o store. |
-| `fault_pc` | PC de la instrucción causante ya obtenida, incluido el PC propio transportado hasta `ID/EX` para loads, stores y destinos de control en EX; para fetch detectado en IF y confirmado en ID, dirección del fetch causante preservada en `IF/ID.pc` conforme al acuerdo 47 de `DEC-ARCH-003`. No se sustituye por la dirección efectiva, el target problemático ni automáticamente por el PC global de IF, que puede corresponder a otra operación. |
+| Información   | Semántica mínima                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fault_cause` | Una causa arquitectónica inequívoca entre `instruction-address-misaligned`, `instruction-access-fault`, `illegal-instruction`, `load-address-misaligned`, `load-access-fault`, `store-address-misaligned` y `store-access-fault`. Se respetan la prioridad por antigüedad entre instrucciones y `misalignment > access fault` dentro de un mismo fetch, load o store.                                                                            |
+| `fault_pc`    | PC de la instrucción causante ya obtenida, incluido el PC propio transportado hasta `ID/EX` para loads, stores y destinos de control en EX; para fetch detectado en IF y confirmado en ID, dirección del fetch causante preservada en `IF/ID.pc` conforme al acuerdo 47 de `DEC-ARCH-003`. No se sustituye por la dirección efectiva, el target problemático ni automáticamente por el PC global de IF, que puede corresponder a otra operación. |
 
 La captura lógica está vinculada a la **confirmación arquitectónica**, no a la mera detección combinacional del candidato: un candidato `wrong-path`, invalidado o posterior a una frontera anterior no publica causa/PC como fault actual. Una vez confirmados, `fault_cause` y `fault_pc` permanecen **estables durante todo `FAULT_DRAIN` y en `FAULT`**; las instrucciones anteriores que drenan, las posteriores descartadas y nuevos candidatos no los sobrescriben. `HOLD` tampoco los modifica. Los datos forman parte del estado persistente observable de fault para snapshots coherentes cuando Debug pueda capturarlos, sin imponer snapshot arbitrario durante `RUN`, puertos o formato UART ni almacenamiento dentro de los cuatro registros interetapa. El trigésimo quinto acuerdo parcial de `DEC-ARCH-003` fija después `fault_cause[2:0]` y su codificación común con el candidato de `IF/ID`, sin cambiar esta persistencia. No se exige un `fault_address` independiente; otra decisión podrá agregarlo para Debug.
 
-La **recuperación mínima obligatoria desde `FAULT` es el `reset` global** de `DEC-ARCH-008`. Cuando el `reset` funcional tome efecto en el flanco válido, se invalida la condición de fault y dejan de interpretarse `fault_cause` y `fault_pc` como datos de la sesión actual; el PC queda en `0x00000000`, `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` con `valid=0`, sin sesión ni imagen ejecutable activa (`loaded_image_size_bytes=0`, `image_valid=0`). Reset no produce `FINISHED`/`DONE`; después requiere preparación y commit normales de una nueva sesión antes de `RUN` o `STEP`. No se exige poner a cero los bits físicos de los metadatos invalidados, borrar memorias ni actualizar registros funcionales asíncronamente. El cuadragésimo cuarto acuerdo de `DEC-ARCH-003` aprueba después `RUN`/`STEP` desde `FAULT` para preparar una **sesión nueva y limpia** con la imagen confirmada; no reanuda la sesión fallada ni suprime `reset` global como vía mínima. La representación externa de causa/PC y el comando UART permanecen para Debug y protocolo.
+La **recuperación mínima obligatoria desde `FAULT` es el `reset` global** de `DEC-ARCH-008`. Cuando el `reset` funcional tome efecto en el flanco válido, se invalida la condición de fault y dejan de interpretarse `fault_cause` y `fault_pc` como datos de la sesión actual; el PC queda en `0x00000000`, `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB` con `valid=0`, sin sesión ni imagen ejecutable activa (`loaded_image_size_bytes=0`, `image_valid=0`). Reset no produce `FINISHED`/`DONE`; después requiere preparación y commit normales de una nueva sesión antes de `RUN` o `STEP`. No se exige poner a cero los bits físicos de los metadatos invalidados, borrar memorias ni actualizar registros funcionales asíncronamente. El cuadragésimo cuarto acuerdo de `DEC-ARCH-003` aprueba después `RUN`/`STEP` desde `FAULT` para preparar una **sesión nueva y limpia** con la imagen confirmada; no reanuda la sesión fallada ni suprime `reset` global como vía mínima. La representación externa de causa/PC y el comando UART se definen en la [arquitectura de Debug](../architecture/debug/debug_architecture.md) y el [protocolo UART](../protocol.md#reset-desde-pc).
 
 Este acuerdo fija la persistencia observable, información mínima y recuperación por `reset`. El vigésimo noveno acuerdo de `DEC-ARCH-003` fija posteriormente el transporte/etapas mínimas de candidatos sin cambiar esa semántica; el trigésimo quinto fija el ancho y código de causa. El trigésimo sexto acuerdo introdujo `terminal_kind[1:0]` y `drain_auto` registrados, sustituidos **expresamente** por `global_state` en el cuadragésimo cuarto: clase terminal y modalidad de drenado se derivan de los 14 estados. Los acuerdos cuadragésimo primero y segundo fijan el arbitraje y los enables de PC/registros interetapa, y el cuadragésimo tercero el gating de efectos CPU. El cuadragésimo quinto acuerdo audita y resuelve después las coincidencias funcionales; la representación externa del estado global sigue en `DEC-ARCH-009`.
 
@@ -358,13 +358,13 @@ Este acuerdo fija la persistencia observable, información mínima y recuperaci�
 
 **Regla general:** Toda operación causante de un **fault arquitectónicamente confirmado** tendrá **cero efectos arquitectónicos propios**. No se aplica esta supresión a las instrucciones anteriores supervivientes: completan exactamente una vez; las posteriores quedan descartadas. Un candidato no confirmado no inicia por sí mismo el drenado ni publica un fault.
 
-| Operación causante | Efectos propios prohibidos |
-|---|---|
-| Load con fault | No escribe `rd` ni aporta un valor arquitectónico de la carga |
-| Store con fault | No modifica **ningún byte** de DMEM ni sus metadatos de validez; no se habilita **ningún byte para escritura**, aun si algunos bytes candidatos están dentro de la capacidad |
-| `jal`/`jalr` con target desalineado | No aplica redirect ni escribe el enlace |
-| Branch tomado con target desalineado | No aplica redirect ni produce otros efectos arquitectónicos de esa instrucción |
-| Instrucción inválida | No escribe RegFile ni DMEM, no aplica redirect y no inicia `halt` |
+| Operación causante                   | Efectos propios prohibidos                                                                                                                                                   |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Load con fault                       | No escribe `rd` ni aporta un valor arquitectónico de la carga                                                                                                                |
+| Store con fault                      | No modifica **ningún byte** de DMEM ni sus metadatos de validez; no se habilita **ningún byte para escritura**, aun si algunos bytes candidatos están dentro de la capacidad |
+| `jal`/`jalr` con target desalineado  | No aplica redirect ni escribe el enlace                                                                                                                                      |
+| Branch tomado con target desalineado | No aplica redirect ni produce otros efectos arquitectónicos de esa instrucción                                                                                               |
+| Instrucción inválida                 | No escribe RegFile ni DMEM, no aplica redirect y no inicia `halt`                                                                                                            |
 
 Un store defectuoso es atómico respecto de toda su región: se comprueban alineación y rango de **todos** sus bytes candidatos antes de habilitar DMEM; una región parcialmente dentro de rango no permite una escritura parcial, ni un byte enable parcialmente activo, ni una modificación de metadatos. Se extiende a desalineación y demás faults la prohibición de efectos parciales de `DEC-ARCH-001`. Para loads tampoco se permite writeback de un valor residual; para saltos no se aplica un target desalineado aunque existan resultados combinacionales del datapath.
 
@@ -372,24 +372,24 @@ El drenado usa la disciplina de `DEC-ARCH-008`: en `RUN` las anteriores avanzan 
 
 **Matriz mínima obligatoria de verificación:**
 
-| Área | Cobertura mínima |
-|---|---|
-| Legalidad ISA | Las 32 RV32I soportadas y `halt = 0x0000000B` completos se aceptan; se rechazan no soportadas, reservadas, matches parciales y `0x00000000` |
-| Alineación DMEM | Byte en cualquier dirección; halfword y word alineados y desalineados, con la región completa validada |
-| Fetch | `PC[1:0]=00` es legal por alineación; `01`, `10` y `11` generan candidato de misalignment |
-| Branches | Target desalineado solo causa fault propio de branch válido y **tomado**, nunca de branch no tomado |
-| `jal` | Target desalineado causa fault propio, sin redirect ni link |
-| `jalr` | Borrar primero solo `target[0]`; comprobar después alineación a cuatro bytes, sin redirect/link si falla |
-| Causas simultáneas | En el mismo fetch, load o store, misalignment y acceso fuera de rango eligen causa de misalignment |
-| `wrong-path` | Candidato joven invalidado por evento anterior no confirma fault ni reemplaza causa/PC válidos |
-| Antigüedad | Entre eventos de instrucciones distintas prevalece la anterior en orden de programa |
-| Fault preciso | Todas las anteriores completan; la causante y posteriores carecen de efectos; registros interetapa vacíos antes de `FAULT` |
-| Load defectuoso | `rd` no se escribe por el load causante |
-| Store defectuoso | Ningún byte o metadato DMEM cambia ni se habilita un byte de escritura, incluso con acceso parcialmente dentro de rango |
-| Control defectuoso | Fault propio de branch tomado o salto no aplica redirect; `jal`/`jalr` tampoco escriben link |
-| Terminación | Fault llega a `FAULT`, no `FINISHED`/`DONE`; `RUN`/`STEP` drenan solo en ciclos efectivos, `HOLD` no progresa |
-| Observabilidad | `fault_cause` y `fault_pc` capturados al confirmar persisten durante `FAULT_DRAIN` y `FAULT` |
-| Recuperación | Reset global invalida fault y metadatos, PC vuelve a cero y pipeline/sesión quedan inválidos conforme a `DEC-ARCH-008`; el acuerdo 44 de `DEC-ARCH-003` permite después una nueva sesión limpia por `RUN`/`STEP` desde `FAULT` reutilizando la imagen confirmada |
+| Área               | Cobertura mínima                                                                                                                                                                                                                                                 |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Legalidad ISA      | Las 32 RV32I soportadas y `halt = 0x0000000B` completos se aceptan; se rechazan no soportadas, reservadas, matches parciales y `0x00000000`                                                                                                                      |
+| Alineación DMEM    | Byte en cualquier dirección; halfword y word alineados y desalineados, con la región completa validada                                                                                                                                                           |
+| Fetch              | `PC[1:0]=00` es legal por alineación; `01`, `10` y `11` generan candidato de misalignment                                                                                                                                                                        |
+| Branches           | Target desalineado solo causa fault propio de branch válido y **tomado**, nunca de branch no tomado                                                                                                                                                              |
+| `jal`              | Target desalineado causa fault propio, sin redirect ni link                                                                                                                                                                                                      |
+| `jalr`             | Borrar primero solo `target[0]`; comprobar después alineación a cuatro bytes, sin redirect/link si falla                                                                                                                                                         |
+| Causas simultáneas | En el mismo fetch, load o store, misalignment y acceso fuera de rango eligen causa de misalignment                                                                                                                                                               |
+| `wrong-path`       | Candidato joven invalidado por evento anterior no confirma fault ni reemplaza causa/PC válidos                                                                                                                                                                   |
+| Antigüedad         | Entre eventos de instrucciones distintas prevalece la anterior en orden de programa                                                                                                                                                                              |
+| Fault preciso      | Todas las anteriores completan; la causante y posteriores carecen de efectos; registros interetapa vacíos antes de `FAULT`                                                                                                                                       |
+| Load defectuoso    | `rd` no se escribe por el load causante                                                                                                                                                                                                                          |
+| Store defectuoso   | Ningún byte o metadato DMEM cambia ni se habilita un byte de escritura, incluso con acceso parcialmente dentro de rango                                                                                                                                          |
+| Control defectuoso | Fault propio de branch tomado o salto no aplica redirect; `jal`/`jalr` tampoco escriben link                                                                                                                                                                     |
+| Terminación        | Fault llega a `FAULT`, no `FINISHED`/`DONE`; `RUN`/`STEP` drenan solo en ciclos efectivos, `HOLD` no progresa                                                                                                                                                    |
+| Observabilidad     | `fault_cause` y `fault_pc` capturados al confirmar persisten durante `FAULT_DRAIN` y `FAULT`                                                                                                                                                                     |
+| Recuperación       | Reset global invalida fault y metadatos, PC vuelve a cero y pipeline/sesión quedan inválidos conforme a `DEC-ARCH-008`; el acuerdo 44 de `DEC-ARCH-003` permite después una nueva sesión limpia por `RUN`/`STEP` desde `FAULT` reutilizando la imagen confirmada |
 
 **Justificación:** La validación estricta, la alineación natural y la confirmación por validez y antigüedad impiden tratar bits residuales, trabajo `wrong-path` o bytes parciales como operaciones arquitectónicas. Una frontera precisa permite completar las anteriores sin comprometer efectos de la causante; causa y PC persistentes distinguen error de terminación normal y permiten diagnosticarlo sin imponer un protocolo concreto.
 
@@ -407,7 +407,7 @@ La representación terminal y el control evolucionan de este modo:
 - El cuadragésimo quinto audita y resuelve las coincidencias funcionales, conservando las fronteras arquitectónicas aquí fijadas.
 - El cuadragésimo sexto acuerdo completa la matriz final y cierra `DEC-ARCH-003`, con revisión explícita por el acuerdo 47.
 
-La recuperación por `RUN`/`STEP` desde `FAULT` mediante nueva sesión con imagen confirmada y la elegibilidad de `LOAD` en modos `STEP` se fijan en el cuadragésimo cuarto acuerdo; la representación externa de fault, campos opcionales de Debug, framing UART y otras vías adicionales de recuperación corresponden a `DEC-ARCH-009` y las decisiones de Debug/protocolo.
+La recuperación por `RUN`/`STEP` desde `FAULT` mediante nueva sesión con imagen confirmada y la elegibilidad de `LOAD` en modos `STEP` se fijan en el cuadragésimo cuarto acuerdo; los campos de fault y pipeline expuestos se definen en [DEC-ARCH-009](DEC-ARCH-009.md), y los formatos UART y las condiciones de admisión y recuperación en el [protocolo](../protocol.md#estado-cpu-y-fase-de-transporte).
 
 Una inspección preventiva opcional de palabras por el loader no cambia la legalidad ni puede sustituir la confirmación durante ejecución. No se incorporan condiciones semánticas pendientes al identificador `DEC-ARCH-004`.
 

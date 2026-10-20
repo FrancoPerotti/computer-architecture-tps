@@ -28,33 +28,35 @@ Después de esa lectura, los documentos de consulta permiten profundizar en un t
 
 ## Documentos de consulta
 
-| Consulta | Documento | Propósito |
-|---|---|---|
-| Alcance docente | [Consigna](consigna.md) | Define el trabajo práctico y sus obligaciones originales. |
-| Compilación y simulación | [Entorno de desarrollo](development_environment.md) | Describe la imagen Docker compartida, sus entradas fijadas, su construcción y su uso. |
-| Definiciones compartidas del RTL | [Configuración común](architecture/common_configuration.md) | Define la configuración compartida y documenta la API implementada del paquete y sus comprobaciones locales. |
-| Obligaciones y aceptación | [Requisitos](requirements.md) | Relaciona cada requisito con su fuente, aceptación y decisión de origen. |
-| Arquitectura del sistema | [Diseño FPGA consolidado](architecture/system_overview.md) | Presenta el funcionamiento e identifica los contratos especializados de etapas, control, memoria, sesión, UART, Debug y plataforma. |
-| Bloques y agrupación RTL | [Inventario de módulos](architecture/module_inventory.md) | Relaciona los bloques funcionales con módulos, archivos y ubicación en la jerarquía. |
-| Integración del sistema | [Composición del sistema](architecture/system_composition.md) | Define la topología, los puertos de los tops y los aliases de integración. |
-| Conexiones entre bloques | [Interfaces](interfaces.md) | Fija entradas, salidas, anchos, productores, consumidores y temporización. |
-| Comunicación PC–FPGA | [Protocolo UART](protocol.md) | Define mensajes, bytes, códigos, secuencias, plazos y recuperación. |
-| Lenguaje de los programas | [Lenguaje assembler](software/assembler_language.md) | Define el alcance y la sintaxis aprobados en `DEC-SYS-009`. |
-| Implementación del assembler | [Costo y beneficio](software/assembler_cost_benefit.md) | Compara el esfuerzo total de un assembler propio, GNU y bibliotecas, y recomienda una estrategia para el alcance actual. |
-| Entradas y salidas del assembler | [Interfaz del assembler](software/assembler_interface.md) | Define los datos de entrada, la imagen y relación PC–línea de salida, y los diagnósticos de traducción. |
-| Lectura del código assembler | [Lectura del código fuente](software/assembler_source_reader.md) | Define el reconocimiento de líneas, etiquetas, mnemónicos y operandos y los datos entregados a las etapas posteriores. |
-| Direcciones y etiquetas del assembler | [Direcciones y tabla de etiquetas](software/assembler_addresses.md) | Define la asignación de PCs, el registro de definiciones y el diagnóstico de etiquetas duplicadas. |
-| Operandos y destinos del assembler | [Interpretación de operandos](software/assembler_operands.md) | Define la conversión de registros y literales, resolución de etiquetas y comprobaciones de rango. |
-| Código máquina de las instrucciones | [Codificación del assembler](software/assembler_encoding.md) | Define la tabla de campos fijos, distribución de bits y fórmulas para producir palabras de 32 bits. |
-| Bytes y mapa de líneas del assembler | [Empaquetado y resultado](software/assembler_packing.md) | Define la formación de la imagen little-endian y la relación PC–línea a partir de las instrucciones codificadas. |
-| Representaciones Python del assembler | [Estructuras de datos](software/assembler_data_model.md) | Define clases, campos y contenedores para las etapas, el resultado público y los diagnósticos. |
-| Coordinación de las etapas del assembler | [Organización y operación](software/assembler_organization.md) | Define el módulo, las funciones internas, el recorrido de assemble y la propagación de diagnósticos. |
-| Verificación del assembler | [Pruebas del assembler](software/assembler_tests.md) | Define casos aprobados con bytes y mapas independientes, límites y diagnósticos de traducción. |
-| Python e importación del assembler | [Entorno e importación](software/assembler_environment.md) | Define la versión mínima, dependencias, ruta de importación y ejecución del catálogo aprobadas. |
-| Propiedades compartidas | [Invariantes arquitectónicas](architecture/architectural_invariants.md) | Reúne las propiedades que deben conservarse entre los contratos del sistema. |
-| Diseño de las pruebas | [Plan de verificación de hardware](verification/verification_plan.md) | Define convenciones, niveles, evidencia requerida y reglas de comparación; enlaza los catálogos por área. |
-| Trazabilidad de la verificación | [Matriz de cobertura](verification/coverage.md) | Relaciona requisitos, bloques e invariantes con sus contratos y comprobaciones. |
-| Variantes de prueba | [Manifiesto de casos](verification/cases.json) | Enumera las variantes de la batería definida; los catálogos desarrollan sus estímulos y expectativas. |
+| Consulta                                 | Documento                                                               | Propósito                                                                                                                           |
+| ---------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Alcance docente                          | [Consigna](consigna.md)                                                 | Define el trabajo práctico y sus obligaciones originales.                                                                           |
+| Compilación y simulación                 | [Entorno de desarrollo](development_environment.md)                     | Describe la imagen Docker compartida, sus entradas fijadas, su construcción y su uso.                                               |
+| Definiciones compartidas del RTL         | [Configuración común](architecture/common_configuration.md)             | Define la configuración compartida y documenta la API implementada del paquete y sus comprobaciones locales.                        |
+| Obligaciones y aceptación                | [Requisitos](requirements.md)                                           | Relaciona cada requisito con su fuente, aceptación y decisión de origen.                                                            |
+| Arquitectura del sistema                 | [Diseño FPGA consolidado](architecture/system_overview.md)              | Presenta el funcionamiento e identifica los contratos especializados de etapas, control, memoria, sesión, UART, Debug y plataforma. |
+| Bloques y agrupación RTL                 | [Inventario de módulos](architecture/module_inventory.md)               | Relaciona los bloques funcionales con módulos, archivos y ubicación en la jerarquía.                                                |
+| Integración del sistema                  | [Composición del sistema](architecture/system_composition.md)           | Define la topología, los puertos de los tops y los aliases de integración.                                                          |
+| Conexiones entre bloques                 | [Interfaces](interfaces.md)                                             | Fija entradas, salidas, anchos, productores, consumidores y temporización.                                                          |
+| Comunicación PC–FPGA                     | [Protocolo UART](protocol.md)                                           | Define mensajes, bytes, códigos, secuencias, plazos y recuperación.                                                                 |
+| Control del protocolo                    | [Protocol Controller](architecture/debug/protocol_controller.md)        | Define los 11 estados, interfaces, condiciones y salidas; incluye el diagrama de recorridos.                                        |
+| Lenguaje de los programas                | [Lenguaje assembler](software/assembler_language.md)                    | Define el alcance y la sintaxis aprobados en `DEC-SYS-009`.                                                                         |
+| Implementación del assembler             | [Costo y beneficio](software/assembler_cost_benefit.md)                 | Compara el esfuerzo total de un assembler propio, GNU y bibliotecas, y recomienda una estrategia para el alcance actual.            |
+| Entradas y salidas del assembler         | [Interfaz del assembler](software/assembler_interface.md)               | Define los datos de entrada, la imagen y relación PC–línea de salida, y los diagnósticos de traducción.                             |
+| Lectura del código assembler             | [Lectura del código fuente](software/assembler_source_reader.md)        | Define el reconocimiento de líneas, etiquetas, mnemónicos y operandos y los datos entregados a las etapas posteriores.              |
+| Direcciones y etiquetas del assembler    | [Direcciones y tabla de etiquetas](software/assembler_addresses.md)     | Define la asignación de PCs, el registro de definiciones y el diagnóstico de etiquetas duplicadas.                                  |
+| Operandos y destinos del assembler       | [Interpretación de operandos](software/assembler_operands.md)           | Define la conversión de registros y literales, resolución de etiquetas y comprobaciones de rango.                                   |
+| Código máquina de las instrucciones      | [Codificación del assembler](software/assembler_encoding.md)            | Define la tabla de campos fijos, distribución de bits y fórmulas para producir palabras de 32 bits.                                 |
+| Bytes y mapa de líneas del assembler     | [Empaquetado y resultado](software/assembler_packing.md)                | Define la formación de la imagen little-endian y la relación PC–línea a partir de las instrucciones codificadas.                    |
+| Representaciones Python del assembler    | [Estructuras de datos](software/assembler_data_model.md)                | Define clases, campos y contenedores para las etapas, el resultado público y los diagnósticos.                                      |
+| Coordinación de las etapas del assembler | [Organización y operación](software/assembler_organization.md)          | Define el módulo, las funciones internas, el recorrido de assemble y la propagación de diagnósticos.                                |
+| Verificación del assembler               | [Pruebas del assembler](software/assembler_tests.md)                    | Define casos aprobados con bytes y mapas independientes, límites y diagnósticos de traducción.                                      |
+| Python e importación del assembler       | [Entorno e importación](software/assembler_environment.md)              | Define la versión mínima, dependencias, ruta de importación y ejecución del catálogo aprobadas.                                     |
+| Propiedades compartidas                  | [Invariantes arquitectónicas](architecture/architectural_invariants.md) | Reúne las propiedades que deben conservarse entre los contratos del sistema.                                                        |
+| Diseño de las pruebas                    | [Plan de verificación de hardware](verification/verification_plan.md)   | Define convenciones, niveles, evidencia requerida y reglas de comparación; enlaza los catálogos por área.                           |
+| Trazabilidad de la verificación          | [Matriz de cobertura](verification/coverage.md)                         | Relaciona requisitos, bloques e invariantes con sus contratos y comprobaciones.                                                     |
+| Variantes de prueba                      | [Manifiesto de casos](verification/cases.json)                          | Enumera las variantes de la batería definida; los catálogos desarrollan sus estímulos y expectativas.                               |
+| Comprobaciones abstractas                | [Modelos reproducibles](../tools/verification/README.md)                | Documenta cómo comprobar control, recuperación PC y cotas calculadas, con sus límites de evidencia.                                 |
 
 La selección del contrato técnico correspondiente se realiza mediante el [mapa de autoridad por tema](architecture/system_overview.md#autoridad-documental-por-tema). Los documentos de arquitectura desarrollan el comportamiento interno, Interfaces fija las conexiones y Protocolo define la representación y los intercambios externos.
 
@@ -68,7 +70,7 @@ Las [decisiones pendientes](decisions/pending_decisions.md) identifican las elec
 
 ### Consulta del protocolo
 
-Comience por [Protocolo UART](protocol.md) para conocer solicitudes, respuestas, representación de los datos y recuperación. Consulte [Control de ejecución y sesión](architecture/session/execution_control.md) para la semántica de ejecución, [Arquitectura de Debug](architecture/debug/debug_architecture.md) para el significado y la coherencia de la observación, y [Serializador de respuestas](architecture/debug/response_serializer.md) para la producción de bytes. [UART y Debug](verification/uart_debug.md) reúne las pruebas de esa interacción.
+Comience por [Protocolo UART](protocol.md) para conocer solicitudes, respuestas, representación de los datos y recuperación. El [Protocol Controller](architecture/debug/protocol_controller.md) define la admisión y coordinación por ciclo e incluye su [diagrama de estados](architecture/debug/protocol_controller.md#diagrama-de-estados). Consulte [Control de ejecución y sesión](architecture/session/execution_control.md) para la semántica de ejecución, [Arquitectura de Debug](architecture/debug/debug_architecture.md) para el significado y la coherencia de la observación, y [Serializador de respuestas](architecture/debug/response_serializer.md) para la producción de bytes. [UART y Debug](verification/uart_debug.md) reúne las pruebas de esa interacción.
 
 ### Verificación de un requisito
 
@@ -76,13 +78,14 @@ Localice el identificador en [Requisitos](requirements.md) y consulte su contrat
 
 ## Estado y planificación del proyecto
 
-| Documento | Propósito |
-|---|---|
+| Documento                                               | Propósito                                                                                     |
+|---------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 | [Decisiones pendientes](decisions/pending_decisions.md) | Registra las decisiones de diseño todavía abiertas, sus dependencias y condiciones de cierre. |
-| [Plan de desarrollo](plan.md) | Organiza fases, actividades, entregables, hitos y condiciones de salida. |
+| [Plan de desarrollo](plan.md)                           | Organiza fases, actividades, entregables, hitos y condiciones de salida.                      |
+| [Plan de implementación](implementation_plan.md)        | Ordena los trabajos de implementación e integración y sus comprobaciones.                    |
 
-El plan establece las condiciones para pasar del diseño a la implementación. Las especificaciones de prueba describen comprobaciones previstas; sus resultados se acreditan mediante la ejecución y la evidencia requerida por el plan de verificación.
+El plan establece las condiciones para pasar del diseño a la implementación. Las especificaciones describen las pruebas previstas; los modelos aportan evidencia abstracta parcial. La ejecución RTL, el cliente implementado y las pruebas físicas siguen pendientes según el [plan de verificación](verification/verification_plan.md#evidencia-disponible-y-pendiente).
 
 ## Decisiones y antecedentes
 
-[Decisiones aprobadas](decisions/decisions.md) conserva las elecciones de diseño, sus justificaciones, consecuencias y revisiones, incluidas las decisiones reemplazadas que se mantienen por trazabilidad. Se consulta para conocer el origen de un contrato o la evolución de una aprobación. El diseño actual se consulta en los contratos vigentes identificados por el [mapa de autoridad documental](architecture/system_overview.md#autoridad-documental-por-tema).
+[Decisiones aprobadas](decisions/decisions.md) reúne las elecciones de diseño vigentes, sus justificaciones y consecuencias. Se consulta para conocer el fundamento de los contratos identificados por el [mapa de autoridad documental](architecture/system_overview.md#autoridad-documental-por-tema). El historial de cambios se conserva en Git.

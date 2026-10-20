@@ -142,7 +142,7 @@ Los tres casos de reset, C019, C020 y C021, utilizan capacidad 4 y los destinos 
 
 4. **Comprobar los tres destinos en integración.** En C016, consumir `prepare_done` debe activar `image_publish=1`, publicar el tamaño 16 y alcanzar READY con `cpu_cycle_fire=0`. En C017 y C018, exigir `image_publish=0` y `cpu_cycle_fire=1`: se ejecuta el primer fetch desde PC cero y el contador pasa de cero a uno. RUN continúa automáticamente; STEP conserva ese estado hasta una orden nueva.
 
-5. **Aplicar reset durante el recorrido.** En C019–C021, comprobar que reset impida una limpieza coincidente; en integración, la FSM alcanza NO_IMAGE. Preparar después el estado y la imagen del destino y volver a activar el servicio, sin modificar el índice reiniciado. Verificar que la preparación nueva recorra desde dirección cero, sin reanudar el índice anterior.
+5. **Aplicar reset durante el recorrido.** En C019–C021, comprobar que reset impida una limpieza coincidente; en integración, la FSM alcanza NO_IMAGE. Preparar después el estado y la imagen del destino y volver a activar el servicio, sin modificar el índice reiniciado. Verificar que la preparación nueva recorra desde dirección cero, sin reanudar el índice anterior. En C021, conectar también el Controller en `WAIT_STEP_END`, con serializador libre y sin resultado RUN pendiente. El reset distribuido debe llevarlo a `WAIT_COMMAND`, suprimir `response_start`, `uart_reset_request` y `debug_read_select`, y cancelar STEP sin dejar una operación diferida. Estas observaciones amplían la integración del mismo caso; conservan sus estímulos y expectativas de CPU y preparación.
 
 ### Resultados y criterio de aprobación
 
@@ -284,14 +284,14 @@ Los dos casos artificiales de fetch utilizan PC 1 y PC 1025. Su candidato se tra
 ### Datos de referencia
 
 | Causante / estímulo                                    | Causa | fault_pc |
-| ------------------------------------------------------ | ----: | -------: |
-| JAL x5,+2 en PC12                                      | 0     | 12       |
-| Imagen termina tras ADDI en PC12, sin halt; fetch PC16 | 1     | 16       |
-| Palabra 00000000 en PC12                               | 2     | 12       |
-| LW x3,1(x0)                                            | 4     | 12       |
-| LW x3, 0(x1)                                           | 5     | 12       |
-| SW x2,1(x0)                                            | 6     | 12       |
-| SW x2, 0(x1)                                           | 7     | 12       |
+|--------------------------------------------------------|------:|---------:|
+| JAL x5,+2 en PC12                                      |     0 |       12 |
+| Imagen termina tras ADDI en PC12, sin halt; fetch PC16 |     1 |       16 |
+| Palabra 00000000 en PC12                               |     2 |       12 |
+| LW x3,1(x0)                                            |     4 |       12 |
+| LW x3, 0(x1)                                           |     5 |       12 |
+| SW x2,1(x0)                                            |     6 |       12 |
+| SW x2, 0(x1)                                           |     7 |       12 |
 
 ### Procedimiento
 
@@ -436,10 +436,10 @@ Los dos recorridos legales de `halt` completan el único WB remanente mediante S
 
 Los dos casos locales restantes conservan estas expectativas:
 
-| Caso | Entrada local | Estado siguiente esperado |
-|---|---|---|
-| C006 | `run_request=1`, `pipeline_empty_next=0` | `HALT_DRAIN_AUTO` |
-| C007 | `run_request=1`, `pipeline_empty_next=1` | `FINISHED` |
+| Caso | Entrada local                            | Estado siguiente esperado |
+|------|------------------------------------------|---------------------------|
+| C006 | `run_request=1`, `pipeline_empty_next=0` | `HALT_DRAIN_AUTO`         |
+| C007 | `run_request=1`, `pipeline_empty_next=1` | `FINISHED`                |
 
 C006 comprueba el contrato combinacional artificial de la FSM. En el drain legal de `halt`, el único WB pendiente se consume en un ciclo efectivo y deja `pipeline_empty_next=1`; la transición artificial de C006 queda fuera del grafo de sesiones alcanzables.
 
@@ -545,7 +545,7 @@ Esta prueba comprueba que la ausencia de `halt` no se confunda con terminación 
 
 Busca detectar un timeout interpretado como FINISHED, un `halt` implícito fuera de imagen o una UART que deje de atender mientras la CPU ejecuta un loop.
 
-La observación del loop es finita. El límite de 20 ciclos pertenece al banco de pruebas y no agrega un detector de terminación al procesador.
+La observación del loop utiliza una ventana de 20 ciclos efectivos del banco de pruebas y no agrega un detector de terminación al procesador. No fija el ciclo exacto del reset UART: la CPU continúa mientras se completa la aceptación de RUN y el intercambio RESET.
 
 ### Condiciones iniciales
 
@@ -553,7 +553,7 @@ Cada imagen tiene cuatro bytes y la sesión comienza limpia.
 
 La imagen de loop contiene `jal x0,0`, que redirige a su propio PC. La imagen de ADDI contiene una única instrucción y obliga al fetch posterior de PC 4. La imagen restante contiene la palabra ilegal cero en PC 0.
 
-UART permanece activa para consultar disponibilidad y solicitar reset en las ventanas permitidas.
+UART permanece activa durante RUN. No se envía CHECK_READY durante su ejecución; el único comando admitido es RESET, después del último Stop de RUN/ACCEPTED y con la preparación inactiva. El botón conserva su acción directa.
 
 ### Variantes cerradas
 
@@ -587,11 +587,11 @@ Para el caso `C004`, se utiliza el siguiente programa:
 
 ### Procedimiento
 
-1. **Cargar y ejecutar el loop.** Observar 20 ciclos efectivos, sin esperar una terminación del programa.
+1. **Cargar y ejecutar el loop.** Completar LOAD, enviar RUN y observar una ventana de 20 ciclos efectivos, sin esperar una terminación del programa.
 
-2. **Consultar disponibilidad.** Utilizar las ventanas permitidas y comprobar que CHECK_READY no detenga la CPU.
+2. **Respetar la fase de transporte.** En C001, esperar el último Stop de RUN/ACCEPTED y comprobar `prepare_active=0` antes de enviar RESET. La CPU puede seguir ejecutando más allá de la ventana observada. No intercalar CHECK_READY ni otros comandos; su descarte y recuperación se comprueban en TEST-UART-003.
 
-3. **Solicitar el reset.** Aplicar UART o botón según la variante. No exigir un FINISHED ni un snapshot terminal del RUN abandonado.
+3. **Solicitar el reset.** En C001, enviar `04`, recibir `04 01` completa y exigir reset global después de su último Stop, sin pausar anticipadamente la CPU. En C002, aplicar el botón sin esperar aceptación UART; puede abortar una respuesta en curso. No exigir FINISHED ni snapshot terminal del RUN abandonado.
 
 4. **Ejecutar las otras dos imágenes.** Comparar FAULT con causa 1 y PC 4 después de ADDI, y causa 2 con PC cero para la palabra ilegal.
 
@@ -599,13 +599,13 @@ Para el caso `C004`, se utiliza el siguiente programa:
 
 ### Resultados y criterio de aprobación
 
-El loop permanece en RUNNING, sin terminal ni timeout de duración. CHECK_READY devuelve BUSY y conserva la ejecución.
+El loop permanece en RUNNING, sin terminal ni timeout de duración. No se consulta disponibilidad durante RUN ni se espera BUSY. UART admite RESET en su ventana y el botón permite abandonar la ejecución directamente.
 
 La ADDI sin `halt` produce un access fault de fetch; la palabra cero produce un fault por instrucción ilegal. Un timeout del banco de pruebas no equivale a FINISHED.
 
 Reset abandona el loop y deja NO_IMAGE, PC, Register File y contador en cero, con flags inválidos. No se requiere una finalización normal ni un snapshot del RUN cancelado.
 
-El reset UART espera el fin físico de ACCEPTED. El botón puede solicitar reset inmediatamente. La aprobación exige recuperación y distinción entre terminación, fault y abandono dentro de la observación acotada.
+RESET UART se reconoce después de completar RUN/ACCEPTED y la preparación; el reset global espera además el último Stop de RESET/ACCEPTED. El botón puede solicitar reset inmediatamente. La aprobación exige recuperación y distinción entre terminación, fault y abandono dentro de la observación acotada.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 

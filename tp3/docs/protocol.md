@@ -36,7 +36,7 @@ El protocolo fija tres cosas inseparables:
 
 La semántica interna de la CPU no se redefine aquí. `RUN`, `STEP`, preparación, drain, terminales y elegibilidad arquitectónica pertenecen a [Control de ejecución y sesión](architecture/session/execution_control.md). El contenido persistente que puede observarse y la coherencia de un snapshot pertenecen a [Arquitectura de Debug](architecture/debug/debug_architecture.md). Este documento toma esos contratos y define cómo se representan y secuencian sobre UART.
 
-PC y FPGA forman un sistema diseñado conjuntamente para este trabajo práctico. La PC prepara completamente una imagen antes de solicitar `LOAD`, transmite exactamente la cantidad declarada y respeta las esperas entre operaciones. Las reglas de recuperación cubren errores básicos de recepción, respuestas truncadas y pérdida de sincronización sin repetir automáticamente operaciones que podrían haber producido efectos.
+PC y FPGA forman un sistema diseñado conjuntamente para este trabajo práctico. La PC prepara completamente una imagen antes de solicitar `LOAD`, transmite exactamente la cantidad declarada y respeta las esperas entre operaciones. Las reglas de recuperación cubren errores de recepción, respuestas truncadas y pérdida de sincronización.
 
 Los diagramas muestran mensajes entre ambos extremos y, cuando resulta útil, hitos internos que explican la secuencia. Una flecha de respuesta representa todos sus bytes en el orden indicado. Cuando se menciona el **fin físico** de una respuesta se incluye el bit de Stop del último byte. Los hitos internos del protocolo no agregan estados a la FSM global de ejecución.
 
@@ -84,10 +84,10 @@ La recepción continúa procesando bytes a medida que llegan. Si TX no puede ace
 
 PC y FPGA seleccionan previamente el mismo perfil. Las capacidades provienen de la [tabla de perfiles de memoria](architecture/memory/memory_architecture.md#perfiles-definidos).
 
-| Perfil | IMEM | DMEM | Alcance |
-|---|---:|---:|---|
+| Perfil      |       IMEM |       DMEM | Alcance                                               |
+|-------------|-----------:|-----------:|-------------------------------------------------------|
 | `REFERENCE` | 1024 bytes | 2048 bytes | Perfil por defecto; incluye validación física en FPGA |
-| `ALT_1000` | 1000 bytes | 1000 bytes | Elaboración y simulación de parametrización |
+| `ALT_1000`  | 1000 bytes | 1000 bytes | Elaboración y simulación de parametrización           |
 
 El formato de los mensajes no cambia entre perfiles. La capacidad seleccionada afecta:
 
@@ -140,17 +140,19 @@ El protocolo no incorpora checksum, CRC ni marcador explícito de fin de mensaje
 
 ## Solicitudes y respuestas
 
+El [orden de los intercambios](#orden-de-los-intercambios) define cuándo la FPGA interpreta una solicitud y qué ocurre con los bytes recibidos durante otra operación.
+
 ### Códigos de operación
 
 El primer byte de una solicitud identifica la operación.
 
-| Código | Operación | Solicitud |
-|---|---|---|
-| `0x01` | `LOAD` | Código + `N` unsigned de cinco bytes little-endian; seis bytes. El contenido se transmite después de aceptación |
-| `0x02` | `RUN` | Un byte, sin parámetros |
-| `0x03` | `STEP` | Un byte, sin parámetros |
-| `0x04` | `RESET` | Un byte, sin parámetros |
-| `0x05` | `CHECK_READY` | Un byte, sin parámetros |
+| Código | Operación     | Solicitud                                                                                                       |
+|--------|---------------|-----------------------------------------------------------------------------------------------------------------|
+| `0x01` | `LOAD`        | Código + `N` unsigned de cinco bytes little-endian; seis bytes. El contenido se transmite después de aceptación |
+| `0x02` | `RUN`         | Un byte, sin parámetros                                                                                         |
+| `0x03` | `STEP`        | Un byte, sin parámetros                                                                                         |
+| `0x04` | `RESET`       | Un byte, sin parámetros                                                                                         |
+| `0x05` | `CHECK_READY` | Un byte, sin parámetros                                                                                         |
 
 `RUN`, `STEP`, `RESET` y `CHECK_READY` quedan completos al recibir correctamente su único byte.
 
@@ -168,27 +170,27 @@ Esta separación permite que la FPGA valide el tamaño y la elegibilidad de la c
 
 Toda respuesta comienza con dos bytes:
 
-| Posición | Campo | Significado |
-|---:|---|---|
-| 0 | Código de operación | Reproduce el código de la solicitud |
-| 1 | Resultado | Indica aceptación, finalización, disponibilidad o error |
+| Posición | Campo               | Significado                                             |
+|---------:|---------------------|---------------------------------------------------------|
+|        0 | Código de operación | Reproduce el código de la solicitud                     |
+|        1 | Resultado           | Indica aceptación, finalización, disponibilidad o error |
 
 Los resultados definidos son:
 
-| Código | Resultado | Uso |
-|---|---|---|
-| `0x01` | `ACCEPTED` | `LOAD`, `RUN` o `RESET` aceptado |
-| `0x02` | `DONE` | `LOAD` completado o ciclo `STEP` realizado |
-| `0x03` | `READY` | `CHECK_READY`: disponible para `LOAD` |
-| `0x04` | `BUSY` | No disponible para la operación |
-| `0x05` | `NO_IMAGE` | `RUN` o `STEP` sin imagen válida |
-| `0x06` | `INVALID_SIZE` | Tamaño `LOAD` inválido |
-| `0x07` | `INCOMPLETE_REQUEST` | Tamaño `LOAD` incompleto |
-| `0x08` | `INCOMPLETE_DATA` | Programa `LOAD` incompleto |
-| `0x09` | `UART_ERROR` | Error UART durante recepción `LOAD` |
-| `0x0A` | `FINISHED` | `RUN` termina normalmente por `halt` |
-| `0x0B` | `FAULT` | `RUN` termina por fault de CPU |
-| `0x0C` | `UNKNOWN_COMMAND` | Código de operación desconocido |
+| Código | Resultado            | Uso                                        |
+|--------|----------------------|--------------------------------------------|
+| `0x01` | `ACCEPTED`           | `LOAD`, `RUN` o `RESET` aceptado           |
+| `0x02` | `DONE`               | `LOAD` completado o ciclo `STEP` realizado |
+| `0x03` | `READY`              | `CHECK_READY`: disponible para `LOAD`      |
+| `0x04` | `BUSY`               | No disponible para la operación            |
+| `0x05` | `NO_IMAGE`           | `RUN` o `STEP` sin imagen válida           |
+| `0x06` | `INVALID_SIZE`       | Tamaño `LOAD` inválido                     |
+| `0x07` | `INCOMPLETE_REQUEST` | Tamaño `LOAD` incompleto                   |
+| `0x08` | `INCOMPLETE_DATA`    | Programa `LOAD` incompleto                 |
+| `0x09` | `UART_ERROR`         | Error UART durante recepción `LOAD`        |
+| `0x0A` | `FINISHED`           | `RUN` termina normalmente por `halt`       |
+| `0x0B` | `FAULT`              | `RUN` termina por fault de CPU             |
+| `0x0C` | `UNKNOWN_COMMAND`    | Código de operación desconocido            |
 
 `LOAD`, `CHECK_READY` y `RESET` producen respuestas de exactamente dos bytes.
 
@@ -265,9 +267,7 @@ sequenceDiagram
 
 La PC consulta antes de cada `LOAD`. La FPGA valida esa `LOAD` de forma independiente, sin almacenar ni exigir una consulta previa.
 
-Durante `RUN` o drain automático, `CHECK_READY` responde `BUSY` siempre que el transporte esté admitiendo comandos.
-
-Durante recuperación RX o exclusión para transmitir Debug, RX se consume y se descarta. En esas fases `CHECK_READY` no genera respuesta.
+Durante `RUN` o drain automático, `CHECK_READY` no se admite.
 
 ---
 
@@ -357,9 +357,9 @@ Aceptar `LOAD` abandona la sesión anterior e invalida inmediatamente la imagen 
 
 Una `LOAD` aceptada que falla no restaura el programa anterior.
 
-En cambio, una solicitud rechazada, o un tamaño que queda incompleto antes de aceptación, conserva imagen y sesión anteriores. Un rechazo durante `RUN` tampoco detiene la ejecución.
+En cambio, una solicitud rechazada, o un tamaño que queda incompleto antes de aceptación, conserva imagen y sesión anteriores.
 
-La FPGA recibe los seis bytes completos de cabecera antes de aceptar o rechazar por tamaño o elegibilidad, mientras no empiece una exclusión Debug por terminal `RUN`. Ese cruce sigue la [prioridad aprobada](#terminal-run-durante-cabecera-load). Un rechazo completo termina con su respuesta de dos bytes y la PC no envía contenido.
+La FPGA recibe los seis bytes de cabecera antes de evaluar el tamaño y decidir si acepta la carga. Un rechazo termina con su respuesta de dos bytes y la PC no envía contenido.
 
 ```mermaid
 sequenceDiagram
@@ -485,15 +485,15 @@ La recuperación elimina la recepción parcial y los bytes RX pendientes, pero c
 
 ### Resumen de LOAD
 
-| Fase / resultado | Respuesta | Efecto |
-|---|---|---|
-| Aceptación | `01 01` | Invalida imagen anterior e inicia recepción |
-| Éxito preparado y comprometido | `01 02` | Imagen válida y `READY`, sin CPU automático |
-| Tamaño inválido | `01 06` | Conserva imagen y sesión; rechazo completo sin silencio de recuperación |
-| Estado no disponible | `01 04` | Conserva ejecución e imagen; cabecera completa recibida |
-| Tamaño incompleto | `01 07` | Conserva imagen y sesión; recupera RX |
-| Contenido incompleto después de aceptar | `01 08` | Imagen inválida; recupera RX |
-| Error UART durante tamaño o contenido | `01 09` | Aborta y recupera RX; imagen según si `LOAD` ya fue aceptada |
+| Fase / resultado                        | Respuesta | Efecto                                                                  |
+|-----------------------------------------|-----------|-------------------------------------------------------------------------|
+| Aceptación                              | `01 01`   | Invalida imagen anterior e inicia recepción                             |
+| Éxito preparado y comprometido          | `01 02`   | Imagen válida y `READY`, sin CPU automático                             |
+| Tamaño inválido                         | `01 06`   | Conserva imagen y sesión; rechazo completo sin silencio de recuperación |
+| Estado no disponible                    | `01 04`   | Conserva ejecución e imagen; cabecera completa recibida                 |
+| Tamaño incompleto                       | `01 07`   | Conserva imagen y sesión; recupera RX                                   |
+| Contenido incompleto después de aceptar | `01 08`   | Imagen inválida; recupera RX                                            |
+| Error UART durante tamaño o contenido   | `01 09`   | Aborta y recupera RX; imagen según si `LOAD` ya fue aceptada            |
 
 ---
 
@@ -515,13 +515,13 @@ confirma que la orden fue tomada, no que preparación o ejecución hayan termina
 
 El estado inicial determina la acción de `RUN`:
 
-| Estado inicial | Acción |
-|---|---|
-| `READY` | Comienza la ejecución |
-| `STEPPING` | Continúa la sesión |
-| `HALT_DRAIN_STEP` | Ejecuta un ciclo de drain, consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo. |
-| `FAULT_DRAIN_STEP` | Ejecuta un ciclo de drain: alcanza `FAULT` si el pipeline queda vacío; si queda trabajo, continúa en `FAULT_DRAIN_AUTO`. |
-| `FINISHED` o `FAULT` | Primero prepara una sesión nueva de la misma imagen |
+| Estado inicial       | Acción                                                                                                                   |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `READY`              | Comienza la ejecución                                                                                                    |
+| `STEPPING`           | Continúa la sesión                                                                                                       |
+| `HALT_DRAIN_STEP`    | Ejecuta un ciclo de drain, consume el único WB pendiente y alcanza `FINISHED` en ese mismo ciclo.                        |
+| `FAULT_DRAIN_STEP`   | Ejecuta un ciclo de drain: alcanza `FAULT` si el pipeline queda vacío; si queda trabajo, continúa en `FAULT_DRAIN_AUTO`. |
+| `FINISHED` o `FAULT` | Primero prepara una sesión nueva de la misma imagen                                                                      |
 
 ```mermaid
 sequenceDiagram
@@ -547,7 +547,7 @@ Se transmite después de `ACCEPTED` completo aunque el programa termine antes de
 
 La PC espera hasta 200 ms por `ACCEPTED`. Luego espera la terminación sin timeout de duración del programa.
 
-Durante ejecución efectiva puede consultar disponibilidad o solicitar `RESET` cuando la fase de transporte lo permite.
+La PC puede interrumpir la ejecución mediante [RESET](#aplicar-reset-global).
 
 ### Rechazo
 
@@ -557,13 +557,13 @@ Sin imagen válida:
 02 05
 ```
 
-Durante `RUNNING` o drain automático, otro `RUN`:
+Si el sistema no está disponible para iniciar o continuar la ejecución:
 
 ```text
 02 04
 ```
 
-sin alterar la ejecución.
+El rechazo no inicia ejecución ni genera una respuesta final con Debug.
 
 ```mermaid
 sequenceDiagram
@@ -577,8 +577,6 @@ sequenceDiagram
     end
     Note over PC,FPGA: Esta solicitud rechazada termina sin respuesta final ni Debug asociado
 ```
-
-Si otra `RUN` estaba ejecutando, conserva su resultado terminal y su Debug pendientes. Rechazar la nueva solicitud no cancela el intercambio de la ejecución anterior.
 
 ---
 
@@ -659,7 +657,7 @@ Sin imagen:
 03 05
 ```
 
-En estado incompatible, incluidos `RUNNING` y drains automáticos:
+Si el sistema no está disponible para ejecutar el paso:
 
 ```text
 03 04
@@ -711,9 +709,9 @@ sequenceDiagram
     Note over PC,FPGA: Puede comenzar una nueva LOAD
 ```
 
-Reconocer `RESET` no pausa anticipadamente la CPU ni agrega un estado global de espera UART.
+La CPU puede continuar ejecutando mientras sale `RESET/ACCEPTED`. Una vez reconocido `RESET`, la FPGA no envía el resultado final del `RUN` interrumpido, aunque este termine antes de que se aplique el reset.
 
-Si había un `RUN` pendiente, la PC abandona esa espera.
+Si la FPGA reconoce `RESET` en el mismo ciclo en que termina `RUN`, atiende `RESET`. Si `RUN` ya había terminado y su respuesta final todavía no se completó, termina de enviar el resultado con Debug y descarta `RESET`.
 
 El reset deja `NO_IMAGE`, sin imagen ejecutable, y no exige borrar físicamente todos los arrays.
 
@@ -743,24 +741,25 @@ La última observación completa puede conservarse como anterior. Un fragmento t
 
 ## Orden de los intercambios
 
-La elegibilidad arquitectónica y la fase del transporte se evalúan conjuntamente.
+La FPGA interpreta los bytes recibidos según la fase del intercambio.
 
 ### Una operación en curso
 
-La PC mantiene una operación normal en curso por vez.
+La PC mantiene una operación normal en curso por vez. Envía la siguiente solicitud después de completar el intercambio, con la excepción de `RESET` durante `RUN`.
 
 Cada operación normal comprende el siguiente intercambio:
 
-| Operación | Intercambio |
-|---|---|
-| `LOAD` | Cabecera, aceptación, contenido y respuesta final |
-| `STEP` | Termina con `DONE` + Debug |
-| `CHECK_READY` | Termina con dos bytes |
-| `RESET` | Aceptación y flujo posterior de consulta |
+| Operación     | Intercambio                                       |
+|---------------|---------------------------------------------------|
+| `LOAD`        | Cabecera, aceptación, contenido y respuesta final |
+| `RUN`         | Aceptación y resultado terminal con Debug, salvo `RESET` reconocido |
+| `STEP`        | Termina con `DONE` + Debug                        |
+| `CHECK_READY` | Termina con dos bytes                             |
+| `RESET`       | Aceptación y flujo posterior de consulta          |
 
-`RUN` es la excepción: después de `ACCEPTED`, la CPU puede seguir ejecutando mientras el resultado terminal queda pendiente.
+El intercambio `RUN` permanece abierto después de `ACCEPTED`. La PC debe recibir el resultado final y Debug completo antes de enviar `LOAD`, otro `RUN`, `STEP` o `CHECK_READY`.
 
-Durante `RUNNING` o drain automático, fuera de exclusiones de transporte, la PC puede solicitar `CHECK_READY` o `RESET` y espera esa respuesta antes de otra solicitud.
+Durante la ejecución de `RUN` o su drain automático, la FPGA admite únicamente `RESET`, después de completar `ACCEPTED` y la preparación de la sesión.
 
 ```mermaid
 sequenceDiagram
@@ -769,10 +768,10 @@ sequenceDiagram
     PC->>FPGA: RUN (02)
     FPGA-->>PC: ACCEPTED (02 01)
     Note over PC,FPGA: CPU ejecutando o drenando automáticamente
-    PC->>FPGA: CHECK_READY (05)
-    FPGA-->>PC: BUSY (05 04)
     alt El programa termina
         FPGA-->>PC: Resultado terminal RUN y Debug completo
+        PC->>FPGA: CHECK_READY (05), si se quiere iniciar LOAD
+        FPGA-->>PC: READY (05 03)
     else La PC solicita reset durante ejecución
         PC->>FPGA: RESET (04)
         Note right of PC: Abandonar la espera del resultado RUN
@@ -784,64 +783,49 @@ sequenceDiagram
     end
 ```
 
-`LOAD`, `RUN` y `STEP` enviados durante ejecución continua o drain automático responden `BUSY` sin cancelar ciclos CPU. Para `LOAD`, primero se reciben sus seis bytes de cabecera, salvo interrupción por [terminal RUN antes de resolver esa cabecera](#terminal-run-durante-cabecera-load).
-
 ### Respuestas coincidentes
 
 Cada respuesta termina completamente antes de comenzar otra. No se intercalan respuestas, incluidos sus cuerpos Debug.
 
-Si `RUN` alcanza terminal mientras ya sale una respuesta breve, esa respuesta termina primero. El estado terminal queda retenido y luego se transmite `RUN` terminal + Debug.
+Si `RUN` termina mientras todavía se transmite `ACCEPTED`, esa aceptación termina primero. La FPGA retiene el estado observado y después transmite `RUN/FINISHED` o `RUN/FAULT` con Debug.
 
 ```mermaid
 sequenceDiagram
     participant PC as PC
     participant FPGA as FPGA
-    Note over PC,FPGA: RUN aceptado, CPU todavía ejecutando
-    PC->>FPGA: CHECK_READY (05)
-    FPGA-->>PC: Primer byte CHECK_READY (05)
+    PC->>FPGA: RUN (02)
+    FPGA-->>PC: Primer byte de RUN/ACCEPTED (02)
     FPGA->>FPGA: RUN alcanza FINISHED o FAULT, retener estado terminal
-    FPGA-->>PC: Segundo byte CHECK_READY (04)
-    Note over PC,FPGA: Último Stop de la respuesta breve
+    FPGA-->>PC: Segundo byte de RUN/ACCEPTED (01)
+    Note over PC,FPGA: Último Stop de ACCEPTED
     FPGA-->>PC: Cabecera RUN terminal (02 0A o 02 0B)
     FPGA-->>PC: Debug completo del estado retenido
 ```
 
-La misma regla mantiene `ACCEPTED` antes de un resultado `RUN` muy rápido.
+### Tráfico fuera de fase durante RUN
 
-El arbitraje físico de TX y los registros privados necesarios pertenecen al diseño de bloques.
+Durante la ejecución de `RUN` o su drain automático, un byte distinto de `RESET` o un error UART inicia [recuperación RX](#recuperación-de-la-recepción), sin respuesta. La CPU continúa ejecutando y la imagen se conserva.
 
-### Terminal RUN durante cabecera LOAD
-
-El terminal `RUN` tiene prioridad si llega mientras el controlador todavía recibe o valida una cabecera `LOAD`, antes de aceptarla o rechazarla. En ese caso:
-
-1. Comienza la exclusión Debug.
-2. Se abandona esa cabecera y se descartan sus bytes restantes.
-3. Se envían el resultado terminal y Debug.
-4. Al completar el último Stop, se admite nuevamente transporte según las condiciones de fase.
-
-Esa `LOAD` no produce aceptación ni rechazo, no se guarda para después y no modifica la imagen porque todavía no fue aceptada. Su supervisión de tamaño termina al abandonar la cabecera: no se emite `INCOMPLETE_REQUEST` por ese intento más tarde.
-
-Si antes del instante terminal observado ya se había preparado una respuesta breve para `LOAD`, esa respuesta se conserva y completa primero; después se atiende `RUN` terminal con Debug. Lo mismo vale para una respuesta de error ya determinada. Los eventos se resuelven con estado y flags previos al flanco, conservando el orden aprobado de respuestas.
-
-Esta prioridad concreta el cruce entre recepción completa de cabecera y descarte desde el instante observado. No agrega un comando, recurso o cola. La secuencia normal PC durante `RUN` sigue siendo `CHECK_READY` o `RESET` cuando el transporte lo admite. Véase el [acuerdo del 2026-10-05](decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--prioridad-del-terminal-run-sobre-cabecera-load-sin-resolver).
+Esto incluye `LOAD`, otro `RUN`, `STEP`, `CHECK_READY` y códigos desconocidos. Se descarta el resto de los bytes recibidos: por ejemplo, un `04` del tamaño de una `LOAD` enviada durante `RUN` no se interpreta como `RESET`.
 
 ### Estado CPU y fase de transporte
 
-Estar en un estado CPU elegible no basta si el transporte todavía está ocupado.
+La siguiente tabla resume qué solicitudes se interpretan en cada fase.
 
-| Fase | Política de solicitudes |
-|---|---|
-| Transporte disponible, `NO_IMAGE` | `CHECK_READY`→`READY`; `LOAD` validado; `RUN`/`STEP`→`NO_IMAGE`; `RESET` reconocido |
-| Transporte disponible, `READY` / `STEPPING` / drains `STEP` / `FINISHED` / `FAULT` | `LOAD`/`RUN`/`STEP` según arquitectura; `CHECK_READY`→`READY`; `RESET` reconocido |
-| `RUNNING` / drains AUTO, fuera de respuestas/exclusión | `CHECK_READY`→`BUSY`; `RESET` reconocido; `LOAD`/`RUN`/`STEP`→`BUSY` sin detener CPU |
-| Tamaño o contenido `LOAD` | Los bytes pertenecen a `LOAD` y no se interpretan como comandos; cabecera sin resolver puede ser interrumpida por terminal `RUN` según la prioridad indicada arriba |
-| Preparación `LOAD` y confirmación final | PC espera; RX adicional descartado hasta último Stop de `DONE` |
-| Preparación `RUN`/`STEP` y respuesta pendiente | PC espera el intercambio antes de otra operación normal |
-| Respuesta breve en TX | PC espera completa; otra respuesta no se intercala |
-| Debug pendiente o en transmisión | PC espera; FPGA consume y descarta RX sin responder ni guardar comandos |
-| Recuperación por silencio | FPGA consume y descarta RX, incluidas consultas y `RESET` UART |
+| Fase                                                                               | Política de solicitudes                                                                                                                                             |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Transporte disponible, `NO_IMAGE`                                                  | `CHECK_READY`→`READY`; `LOAD` validado; `RUN`/`STEP`→`NO_IMAGE`; `RESET` reconocido                                                                                 |
+| Transporte disponible, `READY` / `STEPPING` / drains `STEP` / `FINISHED` / `FAULT` | `LOAD`/`RUN`/`STEP` según arquitectura; `CHECK_READY`→`READY`; `RESET` reconocido                                                                                   |
+| `RUNNING` / drains `AUTO`, después de `ACCEPTED` completo                            | Solo `RESET` |
+| Tamaño o contenido `LOAD`                                                          | Los bytes pertenecen a `LOAD`; no se interpretan como comandos |
+| Aceptaciones `LOAD`, `RUN` o `RESET` en TX                                           | PC espera hasta el último Stop; RX adicional descartado |
+| Preparación `LOAD` y confirmación final                                            | PC espera; RX adicional descartado hasta último Stop de `DONE`                                                                                                      |
+| Preparación `RUN`/`STEP`                                                            | PC espera; RX adicional descartado |
+| Respuesta corta en TX                                                              | PC espera completa; RX adicional descartado y otra respuesta no se intercala |
+| Debug pendiente o en transmisión                                                   | PC espera; FPGA consume y descarta RX sin responder ni guardar comandos                                                                                             |
+| Recuperación por silencio                                                          | FPGA consume y descarta RX, incluidas consultas y `RESET` UART                                                                                                      |
 
-No existe una cola de comandos para bytes recibidos durante períodos de descarte. El botón físico conserva reset directo en todas las fases.
+El botón físico puede aplicar reset en cualquiera de estas fases.
 
 ---
 
@@ -871,18 +855,17 @@ sequenceDiagram
     participant FPGA as FPGA
     FPGA->>FPGA: Completar STEP o el último ciclo RUN
     Note right of FPGA: Retener CPU y sesión, comienza exclusión
-    FPGA->>FPGA: Esperar TX si hay una respuesta previa pendiente
     FPGA-->>PC: Cabecera STEP realizado o RUN terminal
     FPGA-->>PC: Contexto, RF, latches y used_count (228 bytes)
     opt used_count mayor que cero
         FPGA-->>PC: Lista de memoria (5 bytes por entrada)
     end
     Note over PC,FPGA: Fin físico del último byte, incluido Stop
-    FPGA->>FPGA: Terminar exclusión y admitir nuevas solicitudes
+    FPGA->>FPGA: Terminar exclusión Debug
     Note right of PC: Publicar solamente la observación completa
 ```
 
-La exclusión incluye la espera previa por TX, la cabecera y todo el cuerpo.
+La exclusión incluye la espera previa para comenzar la transmisión, la cabecera y todo el cuerpo.
 
 Durante ella, RX se consume y se descarta sin interpretar comandos, responder o guardar solicitudes.
 
@@ -910,21 +893,21 @@ Los offsets se cuentan desde cero después de los dos bytes de cabecera común.
 
 ### Distribución general
 
-| Campo / bloque | Offset | Bytes |
-|---|---:|---:|
-| `global_state` | 0 | 1 |
-| `image_valid` | 1 | 1 |
-| PC global | 2 | 4 |
-| `cycle_count` | 6 | 8 |
-| `fault_cause` global | 14 | 1 |
-| `fault_pc` global | 15 | 4 |
-| RF `x0…x31` | 19 | 128 |
-| `IF/ID` | 147 | 11 |
-| `ID/EX` | 158 | 30 |
-| `EX/MEM` | 188 | 20 |
-| `MEM/WB` | 208 | 15 |
-| `used_count` | 223 | 5 |
-| Lista de memoria | 228 | `5*used_count` |
+| Campo / bloque       | Offset |          Bytes |
+|----------------------|-------:|---------------:|
+| `global_state`       |      0 |              1 |
+| `image_valid`        |      1 |              1 |
+| PC global            |      2 |              4 |
+| `cycle_count`        |      6 |              8 |
+| `fault_cause` global |     14 |              1 |
+| `fault_pc` global    |     15 |              4 |
+| RF `x0…x31`          |     19 |            128 |
+| `IF/ID`              |    147 |             11 |
+| `ID/EX`              |    158 |             30 |
+| `EX/MEM`             |    188 |             20 |
+| `MEM/WB`             |    208 |             15 |
+| `used_count`         |    223 |              5 |
+| Lista de memoria     |    228 | `5*used_count` |
 
 El contexto ocupa 19 bytes.
 
@@ -942,12 +925,12 @@ Después se transmite RF desde `x0` hasta `x31`. Cada registro ocupa cuatro byte
 
 Los registros interetapa se identifican por posición, sin ID adicional.
 
-| Latch | Campos, con bytes entre paréntesis |
-|---|---|
-| `IF/ID` | `valid(1)`, `pc(4)`, `instruction(4)`, `fetch_fault_valid(1)`, `fetch_fault_cause(1)` |
-| `ID/EX` | `valid(1)`, `pc(4)`, `instruction(4)`, `rs1(1)`, `rs2(1)`, `rd(1)`, `rs1_value(4)`, `rs2_value(4)`, `immediate(4)`, `alu_op(1)`, `alu_src(1)`, `result_sel(1)`, `flow_op(1)`, `mem_op(1)`, `reg_write(1)` |
-| `EX/MEM` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `mem_op(1)`, `ex_result(4)`, `store_data(4)` |
-| `MEM/WB` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `wb_value(4)` |
+| Latch    | Campos, con bytes entre paréntesis                                                                                                                                                                        |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `IF/ID`  | `valid(1)`, `pc(4)`, `instruction(4)`, `fetch_fault_valid(1)`, `fetch_fault_cause(1)`                                                                                                                     |
+| `ID/EX`  | `valid(1)`, `pc(4)`, `instruction(4)`, `rs1(1)`, `rs2(1)`, `rd(1)`, `rs1_value(4)`, `rs2_value(4)`, `immediate(4)`, `alu_op(1)`, `alu_src(1)`, `result_sel(1)`, `flow_op(1)`, `mem_op(1)`, `reg_write(1)` |
+| `EX/MEM` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `mem_op(1)`, `ex_result(4)`, `store_data(4)`                                                                                              |
+| `MEM/WB` | `valid(1)`, `pc(4)`, `instruction(4)`, `rd(1)`, `reg_write(1)`, `wb_value(4)`                                                                                                                             |
 
 Internamente:
 
@@ -974,14 +957,14 @@ Los controles conservan los códigos de [Etapa ID](architecture/cpu/stage_id.md#
 
 Cada campo ocupa un byte con padding superior en cero.
 
-| Campo | Códigos |
-|---|---|
-| `alu_op` | SLL=`0x00`, SRL=`0x02`, SRA=`0x03`, ADD=`0x20`, SUB=`0x22`, AND=`0x24`, OR=`0x25`, XOR=`0x26`, SLT=`0x2A`, SLTU=`0x2B` |
-| `alu_src` | Registro=`0`, inmediato=`1` |
-| `result_sel` | ALU=`0`, IMMEDIATE=`1`, LINK=`2` |
-| `flow_op` | `NONE`=`0`, BEQ=`1`, BNE=`2`, JAL=`3`, JALR=`4`, HALT=`5` |
-| `mem_op` | `NONE`=`0`, LB=`1`, LH=`2`, LW=`3`, LBU=`4`, LHU=`5`, SB=`6`, SH=`7`, SW=`8` |
-| `reg_write` | `0` o `1` |
+| Campo        | Códigos                                                                                                                |
+|--------------|------------------------------------------------------------------------------------------------------------------------|
+| `alu_op`     | SLL=`0x00`, SRL=`0x02`, SRA=`0x03`, ADD=`0x20`, SUB=`0x22`, AND=`0x24`, OR=`0x25`, XOR=`0x26`, SLT=`0x2A`, SLTU=`0x2B` |
+| `alu_src`    | Registro=`0`, inmediato=`1`                                                                                            |
+| `result_sel` | ALU=`0`, IMMEDIATE=`1`, LINK=`2`                                                                                       |
+| `flow_op`    | `NONE`=`0`, BEQ=`1`, BNE=`2`, JAL=`3`, JALR=`4`, HALT=`5`                                                              |
+| `mem_op`     | `NONE`=`0`, LB=`1`, LH=`2`, LW=`3`, LBU=`4`, LHU=`5`, SB=`6`, SH=`7`, SW=`8`                                           |
+| `reg_write`  | `0` o `1`                                                                                                              |
 
 El snapshot no agrega un bus de control duplicado.
 
@@ -989,22 +972,22 @@ Los valores registrados se transmiten incluso en entradas inválidas y el lector
 
 ### `global_state`
 
-| Código | `global_state` |
-|---|---|
-| `0x00` | `NO_IMAGE` |
-| `0x01` | LOADING |
-| `0x02` | `PREPARING_READY` |
-| `0x03` | `READY` |
-| `0x04` | `RUNNING` |
-| `0x05` | `STEPPING` |
-| `0x06` | `HALT_DRAIN_AUTO` |
-| `0x07` | `HALT_DRAIN_STEP` |
+| Código | `global_state`     |
+|--------|--------------------|
+| `0x00` | `NO_IMAGE`         |
+| `0x01` | LOADING            |
+| `0x02` | `PREPARING_READY`  |
+| `0x03` | `READY`            |
+| `0x04` | `RUNNING`          |
+| `0x05` | `STEPPING`         |
+| `0x06` | `HALT_DRAIN_AUTO`  |
+| `0x07` | `HALT_DRAIN_STEP`  |
 | `0x08` | `FAULT_DRAIN_AUTO` |
 | `0x09` | `FAULT_DRAIN_STEP` |
-| `0x0A` | `FINISHED` |
-| `0x0B` | `FAULT` |
-| `0x0C` | `PREPARING_RUN` |
-| `0x0D` | `PREPARING_STEP` |
+| `0x0A` | `FINISHED`         |
+| `0x0B` | `FAULT`            |
+| `0x0C` | `PREPARING_RUN`    |
+| `0x0D` | `PREPARING_STEP`   |
 
 Esta es una codificación externa; no impone la codificación física de la FSM.
 
@@ -1026,16 +1009,16 @@ Ejemplos:
 
 `fault_cause` conserva tres bits arquitectónicos y completa el byte con ceros superiores.
 
-| Byte | Causa |
-|---|---|
+| Byte   | Causa                            |
+|--------|----------------------------------|
 | `0x00` | `INSTRUCTION_ADDRESS_MISALIGNED` |
-| `0x01` | `INSTRUCTION_ACCESS_FAULT` |
-| `0x02` | `ILLEGAL_INSTRUCTION` |
-| `0x03` | RESERVED, ninguna causa válida |
-| `0x04` | `LOAD_ADDRESS_MISALIGNED` |
-| `0x05` | `LOAD_ACCESS_FAULT` |
-| `0x06` | `STORE_ADDRESS_MISALIGNED` |
-| `0x07` | `STORE_ACCESS_FAULT` |
+| `0x01` | `INSTRUCTION_ACCESS_FAULT`       |
+| `0x02` | `ILLEGAL_INSTRUCTION`            |
+| `0x03` | RESERVED, ninguna causa válida   |
+| `0x04` | `LOAD_ADDRESS_MISALIGNED`        |
+| `0x05` | `LOAD_ACCESS_FAULT`              |
+| `0x06` | `STORE_ADDRESS_MISALIGNED`       |
+| `0x07` | `STORE_ACCESS_FAULT`             |
 
 `fault_cause` y `fault_pc` siempre ocupan su lugar.
 
@@ -1079,10 +1062,10 @@ Cada sesión comienza con lista vacía, también al reiniciar la misma imagen de
 
 Cada entrada:
 
-| Campo | Bytes | Representación |
-|---|---:|---|
-| Dirección de byte | 4 | little-endian |
-| Valor actual | 1 | byte almacenado |
+| Campo             | Bytes | Representación  |
+|-------------------|------:|-----------------|
+| Dirección de byte |     4 | little-endian   |
+| Valor actual      |     1 | byte almacenado |
 
 Las direcciones son únicas y aparecen en orden creciente.
 
@@ -1102,12 +1085,12 @@ cuerpo = 228 + 5*K bytes
 respuesta completa = 230 + 5*K bytes
 ```
 
-| `K` | Longitud completa |
-|---:|---:|
-| 0 | 230 bytes |
-| 2 | 240 bytes |
-| 1000 | 5230 bytes |
-| 2048 | 10470 bytes |
+|  `K` | Longitud completa |
+|-----:|------------------:|
+|    0 |         230 bytes |
+|    2 |         240 bytes |
+| 1000 |        5230 bytes |
+| 2048 |       10470 bytes |
 
 Con `K=0`, los cinco bytes de cantidad son cero y no siguen entradas.
 
@@ -1121,7 +1104,7 @@ Solo un mensaje completo constituye una nueva observación. Si se interrumpe, se
 
 ### Descarte y silencio
 
-Después de una recepción incompleta o un error UART, la FPGA abandona el mensaje parcial, descarta RX pendiente y conserva TX.
+La recuperación RX descarta los bytes pendientes y los que sigan llegando hasta detectar un intervalo de silencio. Las respuestas que ya se estaban transmitiendo continúan.
 
 Luego exige:
 
@@ -1145,7 +1128,9 @@ ningún byte en curso
 FIFO RX vacía
 ```
 
-antes de admitir solicitudes.
+También deben completarse las respuestas pendientes, incluido Debug, antes de admitir solicitudes.
+
+La recuperación no detiene `RUN`. Si termina durante el descarte, su resultado y Debug se transmiten antes de volver a admitir solicitudes.
 
 ```mermaid
 sequenceDiagram
@@ -1159,16 +1144,17 @@ sequenceDiagram
     end
     Note over PC,FPGA: R = 100 ms continuos sin actividad RX
     FPGA->>FPGA: Verificar línea idle, ningún byte en curso y RX vacía
-    Note right of FPGA: Volver a admitir solicitudes
+    FPGA->>FPGA: Esperar que terminen las respuestas pendientes, incluido Debug
+    Note right of FPGA: Recepción recuperada
 ```
 
 Durante recuperación se descartan todos los bytes, incluso `CHECK_READY` y `RESET` UART.
 
-Es una fase privada de transporte: no aplica reset global ni agrega estado a la FSM CPU.
+Recuperar RX no aplica reset global.
 
 ### Código desconocido
 
-En contexto de comandos, un byte válido fuera de `0x01` a `0x05` produce:
+Cuando la FPGA está disponible para recibir una nueva solicitud, un byte válido fuera de `0x01` a `0x05` produce:
 
 ```text
 <byte recibido> 0C
@@ -1190,8 +1176,6 @@ sequenceDiagram
 ```
 
 Tamaño y contenido `LOAD` no se interpretan como comandos.
-
-Tampoco se generan `UNKNOWN_COMMAND` durante recuperación o exclusión Debug.
 
 ### Error UART al recibir un código
 
@@ -1226,17 +1210,17 @@ Los cálculos incluyen diez bits físicos por byte.
 
 `ceil` redondea hacia arriba.
 
-| Espera | Inicio | Plazo |
-|---|---|---:|
-| `CHECK_READY` y aceptación `LOAD`/`RUN` | Inicio de solicitud | 200 ms |
-| Final `LOAD`, perfiles actuales | Inicio de envío del contenido | `N*10*1000/19200 + 201` ms |
-| Aceptación `RESET` | Inicio de solicitud | 200 ms |
-| Cabecera `STEP` completa | Inicio de solicitud | 200 ms |
-| Terminación `RUN` antes de cabecera final | Después de `ACCEPTED` | Sin límite de ejecución |
-| Completar cabecera final `RUN` iniciada | Primer byte de esa cabecera | 200 ms |
-| Parte fija Debug, 228 bytes | Cabecera completa | 319 ms |
-| Lista Debug, `K>0` | `used_count` completo | `ceil(5*K*10*1000/19200 +200)` ms |
-| `K=0` | Fin de parte fija | Respuesta terminada |
+| Espera                                    | Inicio                        |                             Plazo |
+|-------------------------------------------|-------------------------------|----------------------------------:|
+| `CHECK_READY` y aceptación `LOAD`/`RUN`   | Inicio de solicitud           |                            200 ms |
+| Final `LOAD`, perfiles actuales           | Inicio de envío del contenido |        `N*10*1000/19200 + 201` ms |
+| Aceptación `RESET`                        | Inicio de solicitud           |                            200 ms |
+| Cabecera `STEP` completa                  | Inicio de solicitud           |                            200 ms |
+| Terminación `RUN` antes de cabecera final | Después de `ACCEPTED`         |           Sin límite de ejecución |
+| Completar cabecera final `RUN` iniciada   | Primer byte de esa cabecera   |                            200 ms |
+| Parte fija Debug, 228 bytes               | Cabecera completa             |                            319 ms |
+| Lista Debug, `K>0`                        | `used_count` completo         | `ceil(5*K*10*1000/19200 +200)` ms |
+| `K=0`                                     | Fin de parte fija             |               Respuesta terminada |
 
 Los 228 bytes fijos requieren nominalmente 118,75 ms. Con margen de 200 ms y redondeo hacia arriba:
 
@@ -1316,13 +1300,13 @@ Perder `ACCEPTED` o `DONE` no demuestra que la FPGA haya revertido la operación
 
 ### Perder una respuesta o conexión
 
-Fuera de `LOAD`, un timeout, desconexión o respuesta truncada hace que la PC informe fallo y abandone el parcial.
+Fuera de `LOAD`, un timeout, desconexión o respuesta truncada hace que la PC informe fallo y abandone el parcial. Si existía un snapshot completo anterior, se conserva como observación anterior. La operación interrumpida no se repite automáticamente.
 
-Si existía un snapshot completo anterior, se conserva como observación anterior.
+La PC intenta recuperar comunicación con `CHECK_READY` y, si falla, un único `RESET`. Ese reset puede interrumpir la ejecución e invalidar la imagen cargada.
 
-No se repiten automáticamente `STEP`, `RUN` ni `RESET` porque la operación pudo haber ocurrido.
+#### Descarte por silencio
 
-Para cubrir una respuesta Debug aun sin haber recibido `used_count`, se usa la capacidad DMEM `C`.
+Para cubrir una respuesta Debug aun sin haber recibido `used_count`, se usa la capacidad DMEM `C`:
 
 ```text
 B_lista(C) =
@@ -1350,54 +1334,52 @@ REFERENCE → W_debug = 6100 ms
 ALT_1000  → W_debug = 3400 ms
 ```
 
-`W_debug(C)` es un intervalo de **silencio continuo de RX en PC**, medido con un reloj monótono. La cuenta comienza después de abandonar el intercambio o retomar el enlace tras una desconexión, y vuelve a cero cada vez que PC recibe uno o más bytes. Mientras espera, PC lee y descarta los datos; los bytes pendientes en sus buffers también cuentan como recepción y reinician el intervalo. No basta con que transcurra ese tiempo desde el comienzo de la recuperación.
+`W_debug(C)` es un intervalo de **silencio continuo de RX en PC**, medido con reloj monótono. Durante el descarte, PC lee y descarta los bytes recibidos. Cada descarte comienza una cuenta nueva y cada recepción, incluidos bytes pendientes en buffers, vuelve a iniciarla. Tras una desconexión, la cuenta comienza al retomar el enlace.
 
-La cota cubre una respuesta Debug ya iniciada, incluido su contenido máximo y los márgenes de transporte aprobados. No limita cuándo termina RUN. Si RUN empieza a transmitir durante el descarte, sus bytes prolongan la espera hasta que haya terminado la transmisión y transcurra un intervalo completo sin recibir datos. Se mantienen los supuestos del transporte de laboratorio: el enlace retomado entrega bytes en orden y cumple los presupuestos de recepción; una nueva pérdida, desconexión o error reinicia la recuperación. No se garantiza alineación ante bytes retenidos por el transporte durante un tiempo arbitrario.
+Antes de dar por cumplido el silencio, PC procesa cualquier byte pendiente en su lector. Al salir del descarte no vacía ni limpia RX: mantiene el mismo flujo de lectura y su buffer.
+
+El intervalo cubre una respuesta Debug ya iniciada. Si `RUN` comienza a transmitir su resultado durante el descarte, sus bytes prolongan la espera. Se supone que el enlace de laboratorio entrega los bytes en orden y dentro de los presupuestos de recepción; no se garantiza alineación ante demoras arbitrarias del transporte.
+
+#### Consulta y confirmación de RESET
+
+| Paso | Comportamiento de la PC |
+|---|---|
+| Descarte inicial | Completar `W_debug(C)` de silencio antes de consultar. |
+| Consulta | Enviar una sola solicitud `CHECK_READY`. Aceptar `05 03` o `05 04` desde el primer byte recibido, completos dentro de 200 ms desde el inicio del envío. Una respuesta válida recupera comunicación sin reset. |
+| Consulta fallida sin datos | Al vencer los 200 ms sin recibir bytes, pasar a `RESET`. Respetar `R = 100 ms` desde la última transmisión PC; el plazo de consulta cubre ese silencio con los tiempos previstos del enlace. |
+| Consulta fallida con datos | Ante un primer byte distinto de `05`, resultado inválido o respuesta incompleta al vencer el plazo, abandonar la consulta y completar otro descarte por `W_debug(C)`. Después pasar a `RESET`, sin repetir `CHECK_READY`. |
+| RESET | Registrar el intento como utilizado antes de enviar `04`. Exigir `04 01` desde el primer byte recibido, completos dentro de 200 ms desde el inicio del envío. |
+| RESET confirmado | Informar que se recurrió a reset y volver al flujo de sesión reiniciada, incluida la consulta antes de una nueva `LOAD`. No repetir automáticamente `LOAD`, `RUN` ni `STEP`. |
+| RESET sin confirmar | Ante timeout, respuesta inválida, truncamiento o nueva pérdida de enlace, informar fallo y detener la recuperación automática. No iniciar otra operación ni enviar otra consulta o `RESET`. Otro intento requiere acción explícita del usuario. |
+
+Las respuestas de consulta y `RESET` pueden llegar fragmentadas por el driver. Solo se acepta el par que comienza en el primer byte: no se buscan `05 03`, `05 04` ni `04 01` dentro de un cuerpo Debug o de una respuesta inválida. Los bytes posteriores a una consulta válida se conservan para el lector normal.
+
+Recuperar comunicación no permite reconstruir la sesión ni los ciclos ejecutados.
 
 ```mermaid
 sequenceDiagram
     participant PC as PC
     participant FPGA as FPGA
-    Note over PC,FPGA: Timeout, desconexión o respuesta truncada fuera de LOAD
-    PC->>PC: Informar fallo y abandonar parcial sin repetir la operación
-    loop Hasta recuperar una consulta completa válida desde su primer byte
-        Note right of PC: Leer y descartar RX hasta W_debug(C) de silencio continuo
-        Note right of PC: Cada recepción reinicia la cuenta; no limpiar RX al salir
-        Note right of FPGA: Puede continuar RUN o emitir su terminal
-        PC->>FPGA: CHECK_READY (05)
-        alt Los primeros bytes son 05 03 o 05 04 dentro de 200 ms
-            FPGA-->>PC: READY (05 03) o BUSY (05 04)
-            Note right of PC: Comunicación restablecida
-        else Primer byte distinto de 05, resultado inválido o timeout
-            Note right of PC: Abandonar consulta y volver al descarte con silencio continuo
+    Note over PC,FPGA: Fallo de comunicación fuera de LOAD
+    PC->>PC: Abandonar parcial y descartar hasta W_debug de silencio
+    PC->>FPGA: CHECK_READY (05)
+    alt Respuesta válida dentro del plazo
+        FPGA-->>PC: READY (05 03) o BUSY (05 04)
+        Note right of PC: Comunicación recuperada
+    else Consulta inválida, incompleta o sin respuesta
+        opt Se recibieron datos durante la consulta
+            PC->>PC: Nuevo descarte hasta W_debug de silencio
+        end
+        PC->>FPGA: Único RESET automático (04)
+        alt Aceptación válida dentro del plazo
+            FPGA-->>PC: RESET / ACCEPTED (04 01)
+            FPGA->>FPGA: Aplicar reset después del último Stop
+            Note right of PC: Informar reset y volver al flujo de sesión reiniciada
+        else RESET sin confirmación
+            Note right of PC: Informar fallo y detener recuperación automática
         end
     end
 ```
-
-La recuperación utiliza estas dos fases:
-
-| Fase | Regla |
-|---|---|
-| Descarte | Consumir RX sin interpretar cabeceras. Cada recepción reinicia la cuenta. Solo después de `W_debug(C)` completo sin bytes se envía una única consulta `CHECK_READY`. |
-| Consulta | Conservar todos los bytes recibidos desde el envío. El primer byte debe ser `05` y el siguiente `03` o `04`, ambos dentro de los 200 ms desde el inicio del envío. Solo ese par consecutivo, comenzando en el primer byte, restablece comunicación. |
-
-Al salir del descarte **no se vacía ni limpia RX**: se mantiene el mismo flujo de lectura y su buffer. Si hay bytes recibidos pendientes al vencer el intervalo, se procesan primero y reinician la cuenta; no se envía la consulta en ese vencimiento. Las entregas parciales del driver no modifican las fronteras y una entrega puede contener varios mensajes. Los bytes posteriores a una respuesta `CHECK_READY` válida se conservan para el lector normal.
-
-Si el primer byte de consulta es `02`, puede haber comenzado el terminal de un RUN que seguía ejecutando. La PC abandona esa consulta y descarta ese byte y los siguientes, reiniciando el intervalo con cada recepción. Aunque en el cuerpo aparezca `05 03` o `05 04`, no se vuelve a interpretar durante ese descarte. También se vuelve al descarte ante cualquier otro primer byte, resultado inválido, timeout o nuevo fallo de enlace. La nueva cuenta comienza al abandonar la consulta o, si se reciben más datos, con su última recepción. No se busca otro par dentro de los bytes ya recibidos.
-
-Solo `CHECK_READY` se repite automáticamente porque es informativa.
-
-Una respuesta breve válida puede preceder a un terminal RUN: la FPGA termina primero esa respuesta, sin intercalarla con Debug. Recuperar comunicación no significa que RUN haya terminado ni que no pueda emitir su terminal inmediatamente después. La PC conserva ese mensaje posterior y no reanuda automáticamente una ejecución desconocida.
-
-`READY` o `BUSY` no reconstruyen sesión ni `cycle_count`.
-
-Para volver a un estado conocido, el usuario puede aplicar `RESET` y cargar otra vez.
-
-`W_debug` no limita la duración de `RUN`: el programa puede continuar y `CHECK_READY` responder `BUSY`.
-
-`LOAD` conserva su recuperación mediante `W_load`; `W_debug` no la reemplaza.
-
-La verificación del cliente debe incluir ambos perfiles y estos recorridos: terminal que empieza cerca del vencimiento durante el descarte, terminal que empieza después del silencio y gana a la consulta, cuerpo con `05 03`/`05 04`, cabecera de consulta fragmentada, respuesta breve seguida de terminal en la misma entrega del driver, bytes pendientes al vencer el silencio, timeout y desconexión durante consulta. En ningún caso un par del payload restablece comunicación. Estas pruebas pertenecen al cliente PC; no agregan casos al catálogo de hardware.
 
 ---
 
@@ -1407,7 +1389,7 @@ El protocolo fija formatos, condiciones, secuencias, tiempos, respuestas, descar
 
 El diseño de [uart_core](architecture/uart/uart_core.md) y sus bloques físicos define los puertos de actividad RX, recepción en curso y fin físico TX, el generador de ticks desde 50 MHz, las FIFO y la separación entre control y acciones de las máquinas de estado del TP2.
 
-El diseño documental ya concreta:
+Las especificaciones de bloques detallan:
 
 - arbitraje y FSM privadas de recepción/serialización: [controlador](architecture/debug/protocol_controller.md#diseño-conjunto-vigente-del-controlador-completo), [RX](architecture/uart/uart_rx.md#tabla-de-acciones) y [serializador](architecture/debug/response_serializer.md#estados-de-la-fsm-del-serializador);
 - seguimiento del fin físico de las respuestas: [seguimiento de transmisión](architecture/debug/response_serializer.md#seguimiento-de-transmisión);
@@ -1426,9 +1408,9 @@ El cierre del protocolo no completa D0 del sistema ni adelanta implementación.
 
 ## Referencias y trazabilidad
 
-- [Decisiones aprobadas](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): DEC-PROTO-001/002/003, DEC-ARCH-009 y DEC-SYS-005; diseño consolidado el 2026-10-01.
+- [Decisiones de protocolo](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): formato y secuencias; [servicios](decisions/DEC-PROTO-002.md) y [timeouts y recuperación](decisions/DEC-PROTO-003.md).
 - [Arquitectura de memoria](architecture/memory/memory_architecture.md): capacidades, imagen contigua, little-endian y bytes escritos de la sesión.
 - [Control de ejecución y sesión](architecture/session/execution_control.md): aceptación, preparación, ciclos y terminación.
 - [Arquitectura de Debug](architecture/debug/debug_architecture.md): contenido persistente, coherencia e interpretación.
 - [Contratos de interfaces](interfaces.md): conexiones y detalles de diseño FPGA concretados; comprobación RTL/física posterior.
-- [Aprobación y consolidación del protocolo](decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): revisión documental de recorridos, ejemplos, tablas y cálculos del contrato aprobado.
+- [Requisitos](requirements.md): obligaciones y criterios de aceptación del sistema.

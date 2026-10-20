@@ -59,7 +59,7 @@ Un caso adicional aplica SB con dato cero en dirección 2 y marcas `0000`. Los t
 ### Datos de referencia
 
 | Operación / EA | Máscara | Bytes físicos esperados en dirección 0,1,2,3 |
-| -------------- | ------- | -------------------------------------------- |
+|----------------|---------|----------------------------------------------|
 | SB / 0         | 0001    | 78 B2 C3 D4                                  |
 | SB / 1         | 0010    | A1 78 C3 D4                                  |
 | SB / 2         | 0100    | A1 B2 78 D4                                  |
@@ -128,13 +128,13 @@ Otros diez casos combinan los dos bitmaps previstos con cinco lecturas: LW, LH y
 
 ### Datos de referencia
 
-| Operación | EA      | Resultado                             |
-| --------- | ------: | ------------------------------------- |
+| Operación |      EA | Resultado                             |
+|-----------|--------:|---------------------------------------|
 | LB        | 0,1,2,3 | FFFFFF80, FFFFFFFF,00000000, FFFFFF80 |
 | LBU       | 0,1,2,3 | 00000080,000000FF,00000000,00000080   |
-| LH        | 0,2     | FFFFFF80, FFFF8000                    |
-| LHU       | 0,2     | 0000FF80,00008000                     |
-| LW        | 0       | 8000FF80                              |
+| LH        |     0,2 | FFFFFF80, FFFF8000                    |
+| LHU       |     0,2 | 0000FF80,00008000                     |
+| LW        |       0 | 8000FF80                              |
 
 ### Procedimiento
 

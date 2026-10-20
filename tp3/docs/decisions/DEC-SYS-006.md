@@ -100,10 +100,10 @@ Cuenta exactamente una vez por ciclo CPU efectivo, incluidos stalls, bubbles, re
 
 Conforme al acuerdo 44 de `DEC-ARCH-003`, la finalización de preparación distingue estos casos:
 
-| Condición | Resultado en el flanco |
-|---|---|
+| Condición                            | Resultado en el flanco                                                         |
+|--------------------------------------|--------------------------------------------------------------------------------|
 | `PREPARING_RUN/STEP && prepare_done` | La preparación ya terminó antes del flanco; ese flanco ejecuta el primer ciclo |
-| `PREPARING_READY && prepare_done` | Queda en `READY` con el contador en cero |
+| `PREPARING_READY && prepare_done`    | Queda en `READY` con el contador en cero                                       |
 
 El wrap-around **no constituye un fault**, no detiene ni altera la ejecución, no modifica `global_state`, no genera flags y no requiere estado persistente adicional. Se eligen 64 bits para que el wrap sea irrelevante en ejecuciones prácticas, sin lógica especial de saturación u overflow. El contador continúa siendo un identificador lógico observable por Debug; no es un identificador ilimitado o globalmente único entre sesiones.
 

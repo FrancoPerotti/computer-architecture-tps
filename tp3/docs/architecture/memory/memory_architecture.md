@@ -162,7 +162,7 @@ flowchart LR
     DONE --> PUB["publicar loaded_image_size_bytes"]
 ```
 
-`load_ok` indica que la recepción y validación privada de la carga terminaron correctamente, pero no publica por sí solo la imagen.
+`load_ok` certifica ante la Global FSM que la última palabra quedó escrita en IMEM en el flanco de la última entrega válida al Loader. En ese flanco comienza la preparación; la imagen todavía no se publica.
 
 El commit ocurre con:
 
@@ -171,7 +171,7 @@ PREPARING_READY
 && prepare_done
 ```
 
-En ese momento el tamaño validado se convierte en `loaded_image_size_bytes`. Ese flanco publica la nueva imagen, pero no inicia un ciclo de la CPU.
+En ese momento el tamaño validado se convierte en `loaded_image_size_bytes`. Ese flanco publica la nueva imagen, pero no inicia un ciclo de la CPU. Execution Control desactiva `prepare_active`, su indicador de preparación en curso. El Controller observa ese cambio y entrega `LOAD/DONE` al serializador en el flanco siguiente.
 
 Una carga vacía, parcial, truncada, discontinua, sobredimensionada o fallida no publica una imagen nueva. Una solicitud de `LOAD` rechazada conserva la imagen y la sesión vigentes.
 
@@ -191,9 +191,9 @@ word_index = PC >> 2
 
 El índice se utiliza únicamente después de establecer que el acceso pertenece a la región válida. El shift no redondea un PC inválido ni transforma una dirección fuera de rango en una posición aceptable.
 
-Durante la carga, el [Loader aprobado](../session/loader.md) reconstruye cada palabra antes del flanco que habilita su escritura en IMEM. Conserva los tres primeros bytes en un registro de 24 bits y los combina con el cuarto byte actual.
+Durante la carga, el [Loader](../session/loader.md) reconstruye cada palabra antes del flanco que habilita su escritura en IMEM. Conserva los tres primeros bytes en un registro de 24 bits y los combina con el cuarto byte actual.
 
-Loader deriva posición y dirección del tamaño menos faltantes ya conservados por el controlador, sin contador ni FSM privados adicionales. `load_ok` certifica la escritura final en ese mismo flanco. La publicación sigue esperando preparación.
+El Controller presenta al Loader el tamaño validado mediante `load_size_bytes`: incluye el quinto byte actual del campo tamaño en el flanco de aceptación y permanece estable hasta la publicación. También entrega la posición de cada byte como la diferencia entre ese tamaño y los bytes aún pendientes antes del flanco. El Loader deriva de esa posición el lane y el índice de palabra, sin contador ni FSM privados adicionales. `load_ok` certifica la escritura final en el flanco de la última entrega. La publicación sigue esperando preparación.
 
 En ejecución, IF utiliza cuatro bytes consecutivos:
 
@@ -299,7 +299,7 @@ Para una palabra:
 
 almacenada desde una dirección `A`:
 
-| Dirección | Byte   |
+| Dirección |   Byte |
 |-----------|-------:|
 | `A + 0`   | `0x78` |
 | `A + 1`   | `0x56` |
@@ -611,24 +611,24 @@ Además de la CPU, otros bloques utilizan las memorias en momentos específicos.
 
 Dentro de una misma memoria existe como máximo un agente autorizado para una operación incompatible en un momento dado.
 
-El contrato arquitectónico fija esa exclusión. La selección de dirección de lectura CPU/Debug está definida en [Selector CPU/Debug](#selector-de-dirección-de-lectura-cpudebug); el mantenimiento está definido en [preparación](../session/session_preparation.md). Los caminos de lanes/metadatos están concretados en [acceso DMEM](dmem_access.md); el cableado de los tops está definido en la [composición aprobada](../system_composition.md); véase la [revisión local de composición](../system_composition.md#revisión-local-y-cierre-de-composición). No se exige un registro de owner ni un grant adicional.
+El contrato arquitectónico fija esa exclusión. La selección de dirección de lectura CPU/Debug está definida en [Selector CPU/Debug](#selector-de-dirección-de-lectura-cpudebug); el mantenimiento está definido en [preparación](../session/session_preparation.md). Los caminos de lanes/metadatos están concretados en [acceso DMEM](dmem_access.md); el cableado de los tops está definido en la [composición del sistema](../system_composition.md). No se exige un registro de owner ni un grant adicional.
 
 ### Selector de dirección de lectura CPU/Debug
 
-El [acuerdo de selector de lectura](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--selector-de-dirección-de-lectura-cpudebug-de-dmem) agrega dentro de DMEM un multiplexor combinacional de dirección, controlado por `dmem_debug_select` de un bit desde `protocol_controller`.
+DMEM contiene un multiplexor combinacional de dirección controlado por `debug_read_select`, la señal de un bit del `protocol_controller` que selecciona las lecturas Debug tanto en RF como en DMEM. Cada memoria recibe su propia dirección desde el serializador.
 
-| `dmem_debug_select` | Dirección de lectura seleccionada                                 |
-|--------------------:|-------------------------------------------------------------------|
-|                   0 | Address[31:0] de CPU, desde `EX/MEM.ex_result`                    |
+| `debug_read_select` | Dirección de lectura seleccionada                                 |
+| ------------------: | ----------------------------------------------------------------- |
+|                   0 | `Address[31:0]` de CPU, desde `EX/MEM.ex_result`                  |
 |                   1 | `debug_dmem_addr` del serializador, extendida con ceros a 32 bits |
 
 La dirección resultante es una conexión combinacional interna de 32 bits, sin registro adicional. Cuando Debug está seleccionado, `debug_dmem_data` y `debug_dmem_used` corresponden a esa posición y se consumen según la [lectura entre flancos](../debug/response_serializer.md#lectura-de-dmem-entre-flancos). Fuera de esa selección, el serializador no consume esos retornos como consulta válida de Debug.
 
-`protocol_controller` mantiene `dmem_debug_select` activo durante la ventana exclusiva de observación aprobada: desde el estado posterior al ciclo CPU observado hasta el Stop del último byte, incluyendo la espera por una respuesta anterior. El ciclo que produce la observación conserva su acceso CPU; la selección Debug se activa después de ese flanco. Durante reset la selección queda en cero y se aborta la observación conforme al contrato global.
+`protocol_controller` mantiene `debug_read_select` activo desde el estado posterior al ciclo CPU observado hasta el Stop del último byte Debug, incluida la espera previa a su transmisión. La detección del terminal `RUN` activa la selección incluso antes de registrar la retención. El ciclo que produce la observación conserva su acceso CPU; la selección Debug se activa después de ese flanco. Durante reset la selección queda en cero y se aborta la observación conforme al contrato global.
 
-Durante la ventana Debug, CPU permanece retenida y preparación no modifica DMEM. El selector corresponde a lectura; stores CPU y escritura de mantenimiento conservan sus controles y responsabilidades. Preparación utiliza `prepare_dmem_clear`/addr aprobados; su conexión al backend y a los caminos de metadatos está definida junto con los lanes en [acceso DMEM](dmem_access.md). Con preparación efectiva, el serializador no consume una consulta Debug. Fuera de Debug, seleccionar la dirección CPU no autoriza por sí solo ciclos ni escrituras.
+Durante la ventana Debug, CPU permanece retenida y preparación no modifica DMEM. El selector corresponde a lectura; stores CPU y escritura de mantenimiento conservan sus controles y responsabilidades. Preparación utiliza `prepare_dmem_clear` y su dirección de mantenimiento; su conexión al backend y a los caminos de metadatos está definida junto con los lanes en [acceso DMEM](dmem_access.md). Con preparación efectiva, el serializador no consume una consulta Debug. Fuera de Debug, seleccionar la dirección CPU no autoriza por sí solo ciclos ni escrituras.
 
-La generación de `dmem_debug_select` está aprobada en [controlador](../debug/protocol_controller.md#señales-y-conexiones-aprobadas), y las órdenes de mantenimiento en [preparación](../session/session_preparation.md). Empaquetado de lanes, adaptación de datos y camino de metadatos/mantenimiento están definidos en [acceso DMEM](dmem_access.md); la composición del top conserva su revisión propia. Este acuerdo no agrega un puerto de lectura simultánea CPU/Debug ni una validación de implementación.
+La generación de `debug_read_select` se define en el [controlador](../debug/protocol_controller.md#terminal-run-y-exclusión-debug), y las órdenes de mantenimiento en [preparación](../session/session_preparation.md). La conexión común hacia RF y DMEM se especifica en [Interfaces](../../interfaces.md). La selección conserva un único acceso de lectura compartido entre CPU y Debug.
 
 Una colisión prohibida entre agentes representa una violación interna de la implementación, no un nuevo fault del programa ejecutado.
 
@@ -737,14 +737,14 @@ La parametrización conserva la semántica de rango explicada anteriormente: los
 
 ### Perfiles definidos
 
-| Perfil      | IMEM       | DMEM       | Alcance                                                             |
+| Perfil      |       IMEM |       DMEM | Alcance                                                             |
 |-------------|-----------:|-----------:|---------------------------------------------------------------------|
 | `REFERENCE` | 1024 bytes | 2048 bytes | elaboración, simulación, síntesis, implementación y validación FPGA |
 | `ALT_1000`  | 1000 bytes | 1000 bytes | elaboración, simulación y smoke tests de parametrización            |
 
 `ALT_1000` verifica especialmente que el diseño no dependa de que las capacidades sean potencias de dos.
 
-Esta tabla es la fuente común de capacidades de PC y FPGA. El [acuerdo de perfil compartido](../../decisions/DEC-PROTO-001.md#acuerdo-parcial-de-dec-proto-001--perfil-compartido-de-memoria-y-protocolo) fija `REFERENCE` por defecto y selección igual a priori en ambos extremos. Códigos/layout del protocolo se conservan entre perfiles, y límites/ventanas se derivan de sus capacidades; no se agrega negociación de perfil en UART. La [configuración común FPGA aprobada](../common_configuration.md) concreta cómo materializar y distribuir esas capacidades, sin elegir perfiles nuevos; FPGA-03 cerrado en diseño documental.
+Esta tabla es la fuente común de capacidades de PC y FPGA. El [acuerdo de perfil compartido](../../protocol.md#perfil-de-memoria) fija `REFERENCE` por defecto y selección igual a priori en ambos extremos. Códigos/layout del protocolo se conservan entre perfiles, y límites/ventanas se derivan de sus capacidades; no se agrega negociación de perfil en UART. La [configuración común FPGA aprobada](../common_configuration.md) concreta cómo materializar y distribuir esas capacidades.
 
 Una configuración fuera del dominio arquitectónico se rechaza antes de ejecutar. Una configuración perteneciente al dominio pero no soportada por una realización concreta se distingue mediante un error de configuración, sin convertirla en un fault producido por el programa.
 
@@ -794,9 +794,9 @@ La representación binaria externa aprobada contiene:
 - Cantidad unsigned de cinco bytes little-endian.
 - Entradas de dirección de cuatro bytes little-endian y valor de uno.
 
-Una cantidad cero no tiene entradas. Véase [DEC-SYS-005](../../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada), cerrada.
+Una cantidad cero no tiene entradas. Véase [DEC-SYS-005](../../decisions/DEC-SYS-005.md#dec-sys-005--criterio-de-memoria-de-datos-utilizada).
 
-D06 aprueba lectura directa del estado retenido y exclusión de solicitudes. La [secuencia del serializador](../debug/response_serializer.md#recorrido-de-dmem-y-orden-de-producción) utiliza un primer recorrido por metadatos para contar y un segundo para producir la lista creciente después de la parte fija y `used_count`; cantidad cero omite el segundo recorrido.
+Debug utiliza lectura directa del estado retenido y exclusión de solicitudes. La [secuencia del serializador](../debug/response_serializer.md#recorrido-de-dmem-y-orden-de-producción) utiliza un primer recorrido por metadatos para contar y un segundo para producir la lista creciente después de la parte fija y `used_count`; cantidad cero omite el segundo recorrido.
 
 Los [recursos del serializador](../debug/response_serializer.md#recursos-de-dirección-y-cantidad) y sus anchos están aprobados, junto con las [señales de consulta](../debug/response_serializer.md#señales-de-consulta-de-dmem): dirección de byte, valor de ocho bits y marca de utilizado de uno. El conteo utiliza solo la marca y el listado consume el dato únicamente para posiciones utilizadas. La [lectura entre flancos](../debug/response_serializer.md#lectura-de-dmem-entre-flancos) utiliza salidas combinacionales y consume la dirección previa al flanco, con una posición por ciclo activo de conteo.
 

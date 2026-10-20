@@ -9,7 +9,7 @@
 
 El generador produce la referencia temporal compartida por el receptor y el transmisor UART. Su salida `s_tick` es un pulso de un ciclo del clock funcional, utilizado para avanzar las cuentas que miden los intervalos de muestreo y transmisión.
 
-Se conserva el módulo [baud_tick_gen del TP2](../../../../tp2/rtl/baud_tick_gen.sv), adaptado a la frecuencia funcional del TP3 según el [acuerdo del generador](../../decisions/DEC-SYS-007.md#acuerdo-parcial-de-dec-sys-007--generador-de-ticks-uart). La configuración utiliza 50 MHz, 19200 baud nominales y factor 16. Receptor y transmisor reciben la misma salida del generador.
+Se conserva el módulo [baud_tick_gen del TP2](../../../../tp2/rtl/baud_tick_gen.sv), adaptado a la frecuencia funcional del TP3 según el [acuerdo del generador](../../decisions/DEC-SYS-007.md#configuración-física-y-ticks). La configuración utiliza 50 MHz, 19200 baud nominales y factor 16. Receptor y transmisor reciben la misma salida del generador.
 
 ## Organización
 
@@ -32,27 +32,27 @@ Los recursos y el control permanecen dentro de `baud_tick_gen`. El bloque utiliz
 
 Se conserva el cálculo del TP2: dividir la frecuencia funcional por la frecuencia nominal de ticks y redondear al entero más cercano.
 
-| Magnitud | Valor |
-|---|---|
-| Frecuencia funcional | 50.000.000 Hz |
-| Baud nominal | 19.200 |
-| Factor de ticks por bit | 16 |
-| Frecuencia nominal de ticks | 19.200 × 16 = 307.200 Hz |
-| Divisor ideal | 50.000.000 / 307.200 = 162,760416… |
-| Divisor entero seleccionado | 163 |
-| Frecuencia efectiva de ticks | 50.000.000 / 163 ≈ 306.748,47 Hz |
-| Baud efectivo | 50.000.000 / (163 × 16) ≈ 19.171,78 |
-| Error relativo al baud nominal | Aproximadamente −0,147 % |
+| Magnitud                       | Valor                               |
+|--------------------------------|-------------------------------------|
+| Frecuencia funcional           | 50.000.000 Hz                       |
+| Baud nominal                   | 19.200                              |
+| Factor de ticks por bit        | 16                                  |
+| Frecuencia nominal de ticks    | 19.200 × 16 = 307.200 Hz            |
+| Divisor ideal                  | 50.000.000 / 307.200 = 162,760416…  |
+| Divisor entero seleccionado    | 163                                 |
+| Frecuencia efectiva de ticks   | 50.000.000 / 163 ≈ 306.748,47 Hz    |
+| Baud efectivo                  | 50.000.000 / (163 × 16) ≈ 19.171,78 |
+| Error relativo al baud nominal | Aproximadamente −0,147 %            |
 
 Cada clock funcional dura 20 ns. Los pulsos consecutivos se separan por 163 clocks, equivalentes a 3,26 µs, y dieciséis intervalos de tick duran 52,16 µs.
 
 Los parámetros conservan los nombres del TP2 y toman estos valores para el TP3:
 
-| Parámetro | Valor |
-|---|---:|
+| Parámetro     |      Valor |
+|---------------|-----------:|
 | `CLK_FREQ_HZ` | 50.000.000 |
-| `BAUD_RATE` | 19.200 |
-| `OVERSAMPLE` | 16 |
+| `BAUD_RATE`   |     19.200 |
+| `OVERSAMPLE`  |         16 |
 
 El divisor y el ancho del contador se derivan de esos parámetros. La integración debe utilizar la misma frecuencia funcional declarada por la plataforma. La frecuencia de referencia de 100 MHz del TP2 se adapta a la configuración común de 50 MHz.
 
@@ -64,11 +64,11 @@ El protocolo y la configuración de PC mantienen 19200 baud nominales. Los presu
 
 Se conservan los puertos del TP2:
 
-| Dirección | Señal | Ancho | Origen o destino |
-|---|---|---|---|
-| Entrada | `clk` | 1 | Clock funcional común. |
-| Entrada | `reset` | 1 | Reset funcional común, activo alto. |
-| Salida | `s_tick` | 1 | Pulso registrado hacia `uart_rx` y `uart_tx`. |
+| Dirección | Señal    | Ancho | Origen o destino                              |
+|-----------|----------|-------|-----------------------------------------------|
+| Entrada   | `clk`    | 1     | Clock funcional común.                        |
+| Entrada   | `reset`  | 1     | Reset funcional común, activo alto.           |
+| Salida    | `s_tick` | 1     | Pulso registrado hacia `uart_rx` y `uart_tx`. |
 
 El contador y su comparación son internos al módulo. El generador tampoco recibe comandos del protocolo: su salida aporta la referencia periódica a los bloques físicos de UART.
 
@@ -78,10 +78,10 @@ El contador y su comparación son internos al módulo. El generador tampoco reci
 
 El contador utiliza los valores de cero a 162. En cada flanco ascendente del clock funcional, fuera de reset, el contador y el registro de salida se actualizan según esta tabla:
 
-| Condición previa al flanco | Acción del contador | Valor registrado en `s_tick` |
-|---|---|---|
-| `counter` distinto de 162 | Incrementar una vez. | Cero. |
-| `counter` igual a 162 | Volver a cero. | Uno. |
+| Condición previa al flanco | Acción del contador  | Valor registrado en `s_tick` |
+|----------------------------|----------------------|------------------------------|
+| `counter` distinto de 162  | Incrementar una vez. | Cero.                        |
+| `counter` igual a 162      | Volver a cero.       | Uno.                         |
 
 Después del flanco de fin de cuenta, `s_tick` permanece en uno hasta el siguiente flanco. En ese siguiente flanco vuelve a cero y el contador avanza a uno, conservando el comportamiento del TP2. La comparación utiliza el valor previo al flanco y las actualizaciones se hacen visibles después de él.
 
@@ -101,16 +101,12 @@ La cuenta permanece activa entre tramas, durante `HOLD` de la CPU y durante las 
 
 Los límites del divisor y la frecuencia resultante están en [Divisor y frecuencia efectiva](#divisor-y-frecuencia-efectiva). La relación entre pulso, cuenta y reinicio se precisa en [Cuenta y generación del pulso](#cuenta-y-generación-del-pulso) y [Clock y reset](#clock-y-reset).
 
-## Verificación y evidencia
-
-### Alcance del siguiente paso
-
-Quedan definidos el divisor, la cuenta, el pulso registrado, la relación con sus consumidores, el reset y los puertos del generador. Las [FIFO RX y TX](uart_fifo.md) tienen definido su funcionamiento. [uart_core](uart_core.md) conecta una única instancia del generador a RX y TX; el control del protocolo y su coordinación con los servicios quedaron aprobados y comprobados en el [cierre UART](uart_core.md#presupuesto-de-integración).
-
-El diseño del clock de plataforma está aprobado en [plataforma](../platform/platform_reference.md). La generación de la IP y la validación temporal del enlace en simulación y FPGA corresponden a implementación y permanecen pendientes. La revisión de este documento no acredita esas pruebas. DEC-SYS-007 está aprobada; el trabajo continúa con la [decisión pendiente de aplicación PC](../../decisions/pending_decisions.md#7-software-de-pc).
+La generación de la IP de clock y la validación del enlace en simulación y FPGA corresponden a la implementación.
 
 ## Referencias y trazabilidad
 
+- [Plataforma](../platform/platform_reference.md): generación y distribución del clock funcional.
+- [Integración UART](uart_core.md#presupuesto-de-integración): conexiones entre módulos y cotas de recepción y transmisión.
 - [Mapa de autoridad documental](../system_overview.md#autoridad-documental-por-tema): contratos vigentes y origen de las decisiones.
 - [Requisitos](../../requirements.md): obligaciones y criterios de aceptación.
 - [Decisiones pendientes](../../decisions/pending_decisions.md): decisiones de diseño abiertas y condiciones de cierre.
