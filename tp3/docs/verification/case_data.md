@@ -2,7 +2,7 @@
 
 El [preparador de casos](../../scripts/prepare_case.py) toma las entradas y
 expectativas del [manifiesto](cases.json) y genera un archivo que consume el
-[lector SystemVerilog](../../tb/common/case_data.sv). El JSON conserva los
+[lector SystemVerilog](../../tb/common/tp3_case_data.sv). El JSON conserva los
 valores de referencia; el archivo generado se reemplaza al preparar el caso.
 El testbench contiene la lógica para aplicar las entradas y comprobar el
 comportamiento.
@@ -30,7 +30,7 @@ mismo archivo a partir de los mismos datos.
 
 ## Lectura en SystemVerilog
 
-El archivo `tb/common/case_data.sv` se compila junto con el testbench. Este
+El archivo `tb/common/tp3_case_data.sv` se compila junto con el testbench. Este
 instancia el lector y llama a `load()` antes de consultar los datos:
 
 ~~~systemverilog

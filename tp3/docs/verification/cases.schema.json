@@ -205,15 +205,31 @@
           }
         },
         "parameters": {
-          "description": "Parámetros de elaboración del top: identificadores, constantes de paquete o literales enteros de SystemVerilog.",
+          "description": "Parámetros de elaboración del top: expresiones enteras restringidas o referencias a entradas enteras del caso.",
           "type": "object",
           "minProperties": 1,
           "propertyNames": {
             "pattern": "^[A-Za-z_][A-Za-z0-9_$]*$"
           },
           "additionalProperties": {
-            "type": "string",
-            "pattern": "^(?:[A-Za-z_][A-Za-z0-9_$]*(?:::[A-Za-z_][A-Za-z0-9_$]*)*|-?[0-9]+|'[01xXzZ]|-?[1-9][0-9]*'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+)$"
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[A-Za-z_][A-Za-z0-9_$]*(?:::[A-Za-z_][A-Za-z0-9_$]*)*|-?[0-9]+|'[01xXzZ]|-?[1-9][0-9]*'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ?]+)$"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "$ref": "#/$defs/nonEmptyString"
+                  }
+                }
+              }
+            ]
           }
         },
         "expected_rejection": {
@@ -242,6 +258,7 @@
       "additionalProperties": false,
       "required": [
         "id",
+        "status",
         "inputs",
         "expected",
         "kind",
@@ -310,6 +327,13 @@
               }
             }
           }
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "implemented"
+          ],
+          "description": "Implementación del testbench registrada; no expresa aprobación ni validación física."
         }
       }
     }

@@ -5,16 +5,15 @@ import argparse
 import json
 import math
 import os
-from pathlib import Path
 import sys
 import tempfile
-
+from pathlib import Path
 
 from verification_manifest import MANIFEST, SCHEMA, load_manifest
 
 
 def load_case(manifest_path, case_id):
-    """Delegate schema validation, then resolve exactly one canonical case."""
+    """Valida el manifiesto y devuelve los datos de un único caso canónico."""
     manifest = load_manifest(manifest_path)
     matches = [
         (group, case)
@@ -31,7 +30,7 @@ def load_case(manifest_path, case_id):
 
 
 def case_payload(manifest, case):
-    """Use the same payload for the standalone preparer and the runner."""
+    """Reúne las entradas, expectativas y fixture compartido que recibirá el banco."""
     return {
         "id": case["id"],
         "inputs": case["inputs"],
@@ -41,11 +40,12 @@ def case_payload(manifest, case):
 
 
 def pointer_token(key):
+    """Escapa una clave para que pueda utilizarse como segmento de JSON Pointer."""
     return key.replace("~", "~0").replace("/", "~1")
 
 
 def records(value, path=""):
-    """Yield typed JSON Pointer records without interpreting case semantics."""
+    """Recorre los datos y emite registros tipados con rutas JSON Pointer."""
     if isinstance(value, dict):
         yield path, "object", str(len(value))
         for key in sorted(value):
@@ -71,23 +71,24 @@ def records(value, path=""):
 
 
 def encode_token(value):
+    """Codifica texto UTF-8 como hexadecimal y rechaza NUL, incompatible con el lector."""
     if "\0" in value:
         raise ValueError("NUL characters cannot be represented in SystemVerilog strings")
     return value.encode("utf-8").hex() or "-"
 
 
 def serialize(data):
+    """Genera la cabecera y los registros del archivo de datos externos."""
     entries = list(records(data))
     lines = [f"TP3_CASE_DATA {len(entries)}\n"]
     lines.extend(
-        f"{encode_token(path)} {kind} {encode_token(value)}\n"
-        for path, kind, value in entries
+        f"{encode_token(path)} {kind} {encode_token(value)}\n" for path, kind, value in entries
     )
     return "".join(lines)
 
 
 def write_data(output, data):
-    """Replace the output only after every value has been serialized."""
+    """Reemplaza la salida de forma atómica solo después de serializar todos los valores."""
     content = serialize(data)
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -105,6 +106,7 @@ def write_data(output, data):
 
 
 def main(argv=None):
+    """Prepara el caso solicitado y devuelve un código de fallo ante errores de entrada o escritura."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     parser.add_argument("--case", required=True, help="Full canonical case ID")

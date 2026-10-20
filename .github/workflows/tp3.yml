@@ -1,0 +1,162 @@
+name: TP3 quality
+
+on:
+  pull_request:
+    branches: [feature/tp3-riscv-pipeline]
+  push:
+    branches:
+      - 'feature/tp3-*'
+      - '!feature/tp3-riscv-pipeline'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: tp3-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
+jobs:
+  classify:
+    name: Classify TP3 change
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      mode: ${{ steps.change.outputs.mode }}
+      reason: ${{ steps.change.outputs.reason }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Decide applicability and avoid duplicate push checks
+        id: change
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { execFileSync } = require('node:child_process');
+            const target = 'feature/tp3-riscv-pipeline';
+            let mode = 'check';
+            let reason = 'Comprobación completa por precaución.';
+            if (context.eventName === 'workflow_dispatch') {
+              reason = 'Ejecución manual completa.';
+            } else {
+              try {
+                const pr = context.payload.pull_request;
+                const head = pr ? pr.head.sha : context.payload.after;
+                let base = pr ? pr.base.sha : context.payload.before;
+                const validSha = value => /^[0-9a-f]{40}$/.test(value || '') && !/^0+$/.test(value);
+                if (!validSha(base) || !validSha(head)) throw new Error('Rango no disponible.');
+                if (pr) {
+                  base = execFileSync('git', ['merge-base', base, head], { encoding: 'utf8' }).trim();
+                }
+                // --no-renames conserva ambas rutas de un renombre como baja y alta.
+                const paths = execFileSync('git', ['diff', '--name-only', '-z', '--no-renames', base, head],
+                  { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 }).split('\0').filter(Boolean);
+                const relevant = path => {
+                  if (path.startsWith('tp3/')) return !path.endsWith('.md');
+                  if (path.startsWith('tp1/') || path.startsWith('tp2/')) return false;
+                  if (path.endsWith('.md')) return false;
+                  // El workflow, configuraciones compartidas y rutas desconocidas ejecutan.
+                  return true;
+                };
+                if (paths.length && !paths.some(relevant)) {
+                  mode = 'not-applicable';
+                  reason = 'Solo documentación narrativa o TP1/TP2 sin dependencias de TP3.';
+                } else {
+                  reason = paths.length ? 'Hay entradas ejecutables o compartidas relevantes.' : 'Diff vacío: comprobación completa.';
+                }
+              } catch (error) {
+                core.warning(`No se pudo clasificar el rango: ${error.message}. Se ejecuta todo.`);
+              }
+              if (context.eventName === 'push' && mode === 'check') {
+                try {
+                  const branch = context.ref.replace(/^refs\/heads\//, '');
+                  const prs = await github.paginate(github.rest.pulls.list, {
+                    ...context.repo, state: 'open', base: target,
+                    head: `${context.repo.owner}:${branch}`, per_page: 100,
+                  });
+                  const matching = prs.find(pr => pr.head.sha === context.payload.after &&
+                    pr.head.repo?.full_name === `${context.repo.owner}/${context.repo.repo}`);
+                  if (matching) {
+                    mode = 'delegated';
+                    reason = `Push delegado a la comprobación del PR #${matching.number} para el mismo commit.`;
+                  }
+                } catch (error) {
+                  core.warning(`No se pudo comprobar si existe un PR: ${error.message}. Se ejecuta el push.`);
+                }
+              }
+            }
+            core.setOutput('mode', mode);
+            core.setOutput('reason', reason);
+            await core.summary.addHeading('Alcance de TP3').addRaw(`${mode}: ${reason}`).write();
+
+  check:
+    name: Check TP3 in Docker
+    needs: classify
+    if: needs.classify.outputs.mode == 'check'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build the tools from this checkout
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: tp3/docker
+          platforms: linux/amd64
+          load: true
+          tags: tp3-dev:ci
+          cache-from: type=gha,scope=tp3-tools
+          cache-to: type=gha,mode=max,scope=tp3-tools
+      - name: Run the same checks as local development
+        timeout-minutes: 10
+        shell: bash
+        working-directory: tp3
+        run: |
+          set -euo pipefail
+          mkdir -p build/reports
+          docker image inspect tp3-dev:ci --format '{{.Id}} {{.Size}}' | tee build/reports/image.txt
+          time docker run --rm --network none \
+            --user "$(id -u):$(id -g)" \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/workspace" \
+            --workdir /workspace/tp3 tp3-dev:ci make check \
+            2>&1 | tee build/reports/check.log
+      - name: Preserve reports and diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tp3-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tp3/build/reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  result:
+    # El resultado de push/manual nunca se publica con el nombre obligatorio del PR.
+    name: ${{ github.event_name == 'pull_request' && 'TP3 PR' || 'TP3 push/manual' }}
+    needs: [classify, check]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check the actual outcome
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CLASSIFICATION: ${{ needs.classify.result }}
+          MODE: ${{ needs.classify.outputs.mode }}
+          CHECK_RESULT: ${{ needs.check.result }}
+          REASON: ${{ needs.classify.outputs.reason }}
+        with:
+          script: |
+            const { CLASSIFICATION, MODE, CHECK_RESULT, REASON } = process.env;
+            const validSkip = MODE === 'not-applicable' ||
+              (MODE === 'delegated' && context.eventName === 'push');
+            if (CLASSIFICATION !== 'success' ||
+                (MODE === 'check' ? CHECK_RESULT !== 'success' : !validSkip)) {
+              core.setFailed(`TP3 no verificado: clasificación=${CLASSIFICATION}, modo=${MODE}, controles=${CHECK_RESULT}.`);
+            }
+            await core.summary.addHeading('Resultado de TP3')
+              .addRaw(`${REASON || 'Sin clasificación válida.'}\n\nControles: ${CHECK_RESULT}.`).write();

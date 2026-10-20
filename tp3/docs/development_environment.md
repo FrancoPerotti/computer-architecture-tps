@@ -6,28 +6,44 @@
 
 ## Contenido del entorno
 
-El entorno usa Ubuntu 24.04, Icarus Verilog 13.0 (`iverilog` y `vvp`)
-y `check-jsonschema` 0.38.2, con Python, Bash y utilidades GNU. Los
-desarrolladores usan la misma imagen para compilar, ejecutar simulaciones
-y validar la estructura del manifiesto de pruebas.
+El entorno usa Ubuntu 24.04 para `linux/amd64`. Los desarrolladores y CI
+compilan, simulan y comprueban las fuentes con las mismas herramientas:
 
-El [Dockerfile](../docker/Dockerfile) tiene tres etapas sobre la misma base:
+| Herramienta          | Versión             | Responsabilidad                            |
+| -------------------- | ------------------- | ------------------------------------------ |
+| Icarus Verilog / VVP | 13.0                | Compilación y simulación SystemVerilog     |
+| check-jsonschema     | 0.38.2              | Esquemas JSON y estructura del catálogo    |
+| GNU Make             | 4.3                 | Interfaz común de comprobaciones           |
+| Verible              | v0.0-4296-g0f262651 | Lint y formato SystemVerilog               |
+| Verilator            | 5.020               | Análisis técnico del RTL con `--lint-only` |
+| Ruff                 | 0.17.1              | Lint, docstrings y formato Python          |
+| ShellCheck           | 0.9.0               | Análisis de scripts Bash                   |
+| shfmt                | 3.8.0               | Formato Bash                               |
 
-| Etapa       | Contenido                                                                                          | Uso                                                                     |
-| ----------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `build`     | C/C++, Make, Autoconf, Bison, Flex, Gperf y cabeceras Readline/zlib/bzip2                          | Construir Icarus desde su fuente fijada                                 |
-| `validator` | Python, Pip y Venv                                                                                 | Preparar check-jsonschema y sus dependencias verificadas                |
-| `runtime`   | Icarus, check-jsonschema, Python, bibliotecas de ejecución, Bash, Coreutils, Findutils, Grep y Sed | Compilar RTL/testbenches, ejecutar simulaciones y validar el manifiesto |
+Python 3.12, Bash y utilidades GNU completan el entorno.
+El [Dockerfile](../docker/Dockerfile) tiene cuatro etapas sobre la misma base:
+
+| Etapa       | Contenido                                                  | Uso                                                      |
+| ----------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| `build`     | Compiladores y dependencias de construcción                | Construir Icarus desde su fuente fijada                  |
+| `validator` | Python, Pip y Venv                                         | Preparar check-jsonschema y sus dependencias verificadas |
+| `quality`   | Archivos oficiales de Verible y Ruff                       | Verificar hashes y preparar ejecutables/licencias        |
+| `runtime`   | Herramientas de desarrollo y sus dependencias de ejecución | Ejecutar los comandos de Make                            |
 
 La etapa `runtime` conserva los auxiliares `ivl`/`ivlpp`, targets y módulos
 de Icarus. Incluye su licencia y el archivo exacto de fuentes distribuido con
-la imagen, bajo `/opt/iverilog/share/`. Los compiladores C/C++ y las herramientas
-de construcción quedan en `build`. Los ejecutables y módulos se instalan sin
+la imagen, bajo `/opt/iverilog/share/`. Los compiladores C/C++ y las dependencias
+de construcción de Icarus quedan en `build`; Make también está disponible en `runtime`. Los ejecutables y módulos se instalan sin
 símbolos de depuración para reducir el tamaño.
 
 La etapa `validator` instala `check-jsonschema` en `/opt/check-jsonschema`,
 un entorno virtual que se copia a `runtime`. Pip se utiliza durante su
 preparación; el entorno virtual distribuido se crea sin Pip.
+
+Los ejecutables de Verible y Ruff se instalan en `/opt/quality/bin` y sus
+licencias en `/opt/quality/share/licenses`. Se copian únicamente las herramientas
+de lint y formato de Verible. Verilator se instala sin las recomendaciones
+opcionales de APT; `make lint` no compila modelos C++.
 
 ## Entradas fijadas
 
@@ -39,6 +55,11 @@ preparación; el entorno virtual distribuido se crea sin Pip.
 | Archivo de fuentes de ese commit                                                   | SHA-256 `c3a18398dd25073845550af2f35926193f4d3aa7cd7080122bdc501f59717c00` |
 | Certificados iniciales: paquete Ubuntu `ca-certificates_20240203_all.deb`          | SHA-256 `641de77d8f142cfd62a1a6f964ba67b20754d3337c480efb529d086075a06c9a` |
 | check-jsonschema 0.38.2 y sus dependencias Python                                  | [Versiones y hashes fijados](../docker/check-jsonschema.requirements.txt)  |
+
+Make `4.3-4.1build2`, Verilator `5.020-1`, ShellCheck `0.9.0-1` y shfmt
+`3.8.0-1` provienen del mismo snapshot firmado. Verible y Ruff provienen de sus
+releases oficiales, con versión y SHA-256 de archivos y licencias fijados en el
+Dockerfile. Las configuraciones de lint y formato se toman del repositorio montado.
 
 El digest fija el contenido de la base. El
 [archivo APT](../docker/ubuntu.sources) fija el conjunto disponible de paquetes
@@ -113,29 +134,65 @@ La terminal se abre en `/workspace/tp3`. Las salidas que se generen dentro
 del directorio montado permanecen en el host, con el UID/GID del usuario.
 El contenedor termina al salir de la terminal.
 
-## Validación del manifiesto
+## Comprobaciones locales
 
 Dentro del contenedor, desde `/workspace/tp3`:
 
 ~~~bash
-check-jsonschema \
-  --schemafile docs/verification/cases.schema.json \
-  docs/verification/cases.json
+make help
+make check
 ~~~
 
-La herramienta comprueba la sintaxis JSON y su estructura contra el esquema
-local. Un archivo inválido produce un diagnóstico y un código de salida
-distinto de cero. La validación utiliza archivos locales y funciona sin red.
+`make check` comprueba formato, lint, esquemas y catálogo, infraestructura y todos
+los casos de simulación implementados. No modifica fuentes. Para aplicar el formato
+explícitamente se usa `make format`. También están disponibles `format-check`,
+`lint`, `validate`, `test-infra`, `test-rtl` y `test`.
 
-Para comprobar que el propio esquema esté bien formado:
+El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/` y `scripts/`, incluidos
+fixtures. Verilator analiza exclusivamente el RTL y sus dependencias ordenadas en
+Make, actualmente `rtl/system_pkg.sv`. El catálogo de pruebas conserva sus bancos
+y fuentes de simulación; no define el alcance de lint RTL.
 
-~~~bash
-check-jsonschema --check-metaschema docs/verification/cases.schema.json
-~~~
+Ruff comprueba errores básicos, imports y presencia/formato básico de docstrings.
+La exigencia de documentar también funciones privadas y anidadas se revisa donde
+Ruff no la cubre. Bash utiliza ShellCheck y shfmt; sus comentarios se revisan sin
+un validador de documentación adicional. Las reglas están en `ruff.toml`,
+`.rules.verible_lint` y `.verible-format-flags`. Las excepciones son locales y
+justificadas junto a la construcción correspondiente.
 
-La [guía de ejecución y selección de pruebas](verification/test_selection.md)
-describe el uso de `scripts/run_tests.sh` para ejecutar los casos registrados
-o inspeccionar la selección con `--list`, con salida legible o JSON.
+La [guía de pruebas](verification/test_selection.md) describe selección, estados,
+CLI JSON y reportes en `build/reports/`. Las convenciones de escritura de RTL se
+encuentran en la [guía de estilo del repositorio](../../docs/code-style.md#alcance-de-tp3).
+
+## GitHub Actions
+
+El [workflow de TP3](../../.github/workflows/tp3.yml) se activa para PR dirigidos a
+`feature/tp3-riscv-pipeline`, pushes a `feature/tp3-*` excepto esa rama destino y
+ejecuciones manuales. Las ejecuciones manuales siempre realizan el control completo.
+GitHub [exige que el workflow esté en la rama predeterminada](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
+para habilitar `workflow_dispatch`; declararlo en una rama de trabajo por sí solo
+no habilita el botón de ejecución manual.
+
+Un análisis ligero omite la construcción y pruebas ante cambios exclusivamente
+narrativos o de TP1/TP2 sin dependencias directas de TP3. Catálogo, esquemas, fuentes,
+configuraciones, Dockerfile y workflow son entradas ejecutables. Las rutas desconocidas
+ejecutan el control completo. Los renombres consideran las rutas vieja y nueva.
+Si no puede determinarse el rango de cambios, se comprueba todo por precaución.
+
+Cuando existe un PR abierto hacia la rama destino para el mismo commit de un push,
+el push informa que delegó la comprobación al PR. Una consulta de metadatos fallida
+conserva la comprobación del push. Los eventos PR y push tienen grupos de cancelación
+y nombres de resultado separados; un push no sustituye el resultado `TP3 PR`.
+
+Cuando aplica, CI construye el Dockerfile del checkout con caché de BuildKit y ejecuta
+`make check` en esa imagen sin red. El contexto `tp3/docker/` evita invalidar sus capas
+por cambios de RTL. El job tiene un límite de duración y la fase de comprobaciones
+un límite adicional que también contiene una compilación detenida.
+
+Los informes y logs se conservan como artifacts incluso al fallar. El resultado
+final distingue controles satisfactorios, cambio no aplicable y errores; un fallo
+de clasificación o del entorno no se presenta como aprobación. Las acciones se
+fijan por commit y el workflow utiliza permisos de lectura, sin publicar imágenes.
 
 ## Fuentes
 
@@ -143,3 +200,6 @@ o inspeccionar la selección con `--list`, con salida legible o JSON.
 - [Ubuntu Snapshot Service](https://ubuntu.com/server/docs/how-to/software/snapshot-service/).
 - [Construcciones de varias etapas](https://docs.docker.com/build/building/multi-stage/).
 - [Uso de check-jsonschema](https://check-jsonschema.readthedocs.io/en/latest/usage.html).
+- [Verible](https://chipsalliance.github.io/verible/).
+- [Verilator](https://verilator.org/guide/latest/).
+- [Ruff](https://docs.astral.sh/ruff/).

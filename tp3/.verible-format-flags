@@ -1,0 +1,15 @@
+--indentation_spaces=2
+--wrap_spaces=4
+--column_limit=100
+--line_terminator=LF
+--assignment_statement_alignment=align
+--module_net_variable_alignment=align
+--named_parameter_alignment=align
+--named_port_alignment=align
+--formal_parameters_alignment=align
+--port_declarations_alignment=align
+--struct_union_members_alignment=align
+--alignment_group_boundary=blank-lines-and-separator-comments
+--failsafe_success=false
+--try_wrap_long_lines=true
+--parameter_declaration_alignment=align

@@ -116,9 +116,209 @@ localparam system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES =
     system_pkg::dmem_capacity_bytes(MEMORY_PROFILE);
 ~~~
 
-El [banco de perfiles](../../tb/system_pkg_profiles_tb.sv) muestra el guard
+El [banco del paquete](../../tb/system_pkg_tb.sv) muestra el guard
 de elaboración y emite el diagnóstico con `$fatal(1, ...)` en la rama
 rechazada.
+
+### Interfaz de capacidades implementada
+
+`MIN_MEMORY_CAPACITY_BYTES` y `MAX_MEMORY_CAPACITY_BYTES` fijan el dominio
+de `4` a `2^32` bytes. `memory_capacity_valid(C)` exige además que `C` sea
+múltiplo de cuatro. `memory_capacity_diagnostic(C)` devuelve una cadena
+vacía para capacidades válidas o `CONFIG_INVALID_CAPACITY` para las demás.
+
+`byte_address_width(C)`, `word_index_width(C)`, `row_index_width(C)` y
+`capacity_inclusive_width(C)` implementan las fórmulas de anchos de este
+documento. `memory_word_count(C)` devuelve `C/4` para capacidades válidas.
+Todas reciben `memory_capacity_t` y se pueden evaluar como constantes de
+elaboración. `C + 1` se calcula con aritmética de 64 bits.
+
+Para capacidades inválidas, los anchos y la cantidad auxiliar de palabras
+devuelven `1`. Son centinelas que permiten emitir el diagnóstico;
+el consumidor debe separar los recursos mediante `memory_capacity_valid`
+y `generate` antes de reservarlos.
+
+### Soporte físico declarado
+
+`basys3_memory_supported(IMEM_C, DMEM_C)` admite únicamente el par de
+capacidades de `REFERENCE`, conforme a
+[DEC-ARCH-006](../decisions/DEC-ARCH-006.md). `ALT_1000` conserva su alcance
+de elaboración, simulación y pruebas de parametrización.
+
+`basys3_memory_diagnostic(IMEM_C, DMEM_C)` devuelve
+`CONFIG_INVALID_CAPACITY` si alguna capacidad es inválida;
+`CONFIG_UNSUPPORTED` si ambas son válidas pero el par no está declarado
+soportado; y una cadena vacía para la configuración admitida.
+Estas funciones se evalúan antes de elaborar recursos y comprueban el
+soporte declarado. La utilización y el timing se verifican con la
+implementación física.
+
+### Configuración compartida de clock y UART
+
+El paquete publica las constantes aprobadas por
+[plataforma](platform/platform_reference.md#propósito-y-alcance) y el
+[enlace UART](../protocol.md#enlace-uart):
+
+| Constante                | Valor                |
+| ------------------------ | -------------------- |
+| `FUNCTIONAL_CLOCK_HZ`    | 50 MHz               |
+| `UART_BAUD_RATE`         | 19200 baud nominales |
+| `UART_DATA_BITS`         | 8                    |
+| `UART_PARITY_ENABLED`    | false                |
+| `UART_STOP_BITS`         | 1                    |
+| `UART_OVERSAMPLE_FACTOR` | 16                   |
+| `UART_FIFO_DEPTH`        | 4                    |
+
+Las frecuencias utilizan `longint unsigned` de 64 bits; los tamaños y
+factores utilizan `int unsigned`, y la habilitación de paridad es `bit`.
+`UART_FIFO_DEPTH` se aplica a las FIFO independientes de RX y TX.
+El divisor y el ancho del contador del
+[generador de ticks](uart/uart_baud_tick_gen.md#divisor-y-frecuencia-efectiva)
+se derivan localmente de la configuración compartida.
+
+### Tiempos compartidos del protocolo
+
+`PROTOCOL_LOAD_INACTIVITY_*` representa T, el tiempo de
+[inactividad de recepción LOAD](../protocol.md#recepción-incompleta).
+`PROTOCOL_RECOVERY_SILENCE_*` representa R, el
+[silencio de recuperación](../protocol.md#descarte-y-silencio).
+Ambos plazos están fijados en 100 ms:
+
+| Constante                          | Valor   | Unidad             |
+| ---------------------------------- | ------- | ------------------ |
+| `PROTOCOL_LOAD_INACTIVITY_MS`      | 100     | ms                 |
+| `PROTOCOL_RECOVERY_SILENCE_MS`     | 100     | ms                 |
+| `PROTOCOL_LOAD_INACTIVITY_CYCLES`  | 5000000 | ciclos funcionales |
+| `PROTOCOL_RECOVERY_SILENCE_CYCLES` | 5000000 | ciclos funcionales |
+
+Las cuatro constantes son `longint unsigned` de 64 bits. Los ciclos se
+calculan como `FUNCTIONAL_CLOCK_HZ * plazo_ms / 1000`, con aritmética de
+64 bits desde la multiplicación: el producto intermedio es 5000000000
+a 50 MHz. Los valores en ciclos representan intervalos completos;
+el [contrato del controlador](debug/protocol_controller.md#tiempos-y-prioridades)
+distingue esa duración del valor previo de contador 4999999 al vencer.
+
+T limita las pausas durante tamaño o contenido; R exige silencio continuo
+y se reinicia por actividad RX. El contador compartido, su ancho y las
+reglas de actualización pertenecen al controlador del protocolo.
+
+### Tipos y controles de los registros interetapa
+
+`word_t` representa palabras, PC, instrucciones y resultados de 32 bits;
+`register_index_t` representa índices de registros de cinco bits. Los
+controles utilizan `alu_op_t`, `alu_src_t`, `result_sel_t`, `flow_op_t`,
+`mem_op_t` y `fault_cause_t`, con los anchos de
+[interfaces](../interfaces.md#02-convenciones-anchos-y-codificaciones).
+Son vectores `logic` sin signo que conservan los cuatro estados.
+
+Las constantes `ALU_OP_*`, `ALU_SRC_*`, `RESULT_SEL_*`, `FLOW_OP_*` y
+`MEM_OP_*` conservan las
+[codificaciones de ID](cpu/stage_id.md#codificación-de-los-controles).
+`FAULT_*` conserva las
+[causas aprobadas](session/faults_and_termination.md#referencia-de-causas).
+
+Los payloads internos usan `struct packed`, con los campos en el orden de
+[pipeline](cpu/cpu_pipeline.md) y del fixture compartido:
+
+| Tipo       | Campos | Bits |
+| ---------- | -----: | ---: |
+| `if_id_t`  |      5 |   69 |
+| `id_ex_t`  |     15 |  193 |
+| `ex_mem_t` |      8 |  139 |
+| `mem_wb_t` |      6 |  103 |
+
+El primer campo ocupa los bits más significativos. Las estructuras suman
+504 bits funcionales, sin padding. El contrato de observación mantiene
+sus 34 puertos Debug individuales y forma el padding UART al serializar.
+
+### Selectores compartidos de CPU
+
+`forward_sel_t` y `access_size_t` son vectores `logic` sin signo de dos
+bits que conservan `X` y `Z`. Publican las codificaciones de
+[forwarding](cpu/control_and_hazards.md#selectores) y
+[tamaño de acceso](cpu/stage_mem.md#mem-decode):
+
+| Tipo            | Constante              | Código |
+| --------------- | ---------------------- | ------ |
+| `forward_sel_t` | `FORWARD_SEL_ID_EX`    | `00`   |
+| `forward_sel_t` | `FORWARD_SEL_EX_MEM`   | `01`   |
+| `forward_sel_t` | `FORWARD_SEL_MEM_WB`   | `10`   |
+| `access_size_t` | `ACCESS_SIZE_BYTE`     | `00`   |
+| `access_size_t` | `ACCESS_SIZE_HALFWORD` | `01`   |
+| `access_size_t` | `ACCESS_SIZE_WORD`     | `10`   |
+
+El selector de forwarding elige, respectivamente, el operando registrado
+en `ID/EX`, el resultado de `EX/MEM` o el valor de writeback de `MEM/WB`.
+El tamaño de acceso distingue byte, halfword y word. `11` está reservado
+en ambas familias. Estos controles se derivan combinacionalmente en sus
+consumidores y no agregan campos a los registros interetapa.
+
+### Códigos compartidos del protocolo
+
+El paquete publica las tres tablas de códigos del
+[protocolo](../protocol.md#solicitudes-y-respuestas) mediante tipos `logic`
+unsigned de ocho bits, con cuatro estados:
+
+| Familia        | Tipo                  | Constantes     |
+| -------------- | --------------------- | -------------- |
+| Comandos       | `protocol_opcode_t`   | `CMD_*`        |
+| Resultados     | `protocol_result_t`   | `RESULT_*`     |
+| Estado externo | `global_state_code_t` | `STATE_CODE_*` |
+
+`CMD_*` conserva los cinco
+[códigos de operación](../protocol.md#códigos-de-operación);
+`RESULT_*`, los doce
+[resultados](../protocol.md#cabecera-común-de-respuesta);
+y `STATE_CODE_*`, los catorce
+[códigos externos de estado](../protocol.md#global_state).
+Por ejemplo, `CMD_CHECK_READY=8'h05`, `RESULT_READY=8'h03` y
+`STATE_CODE_READY=8'h03` pertenecen a familias independientes.
+
+El código externo se utiliza en la observación Debug. La representación
+one-hot y las transiciones del estado interno permanecen en `Global FSM`.
+
+### Layout compartido del protocolo
+
+Las constantes `PROTOCOL_*_BYTES` y `DEBUG_*_BYTES` describen los tamaños
+en bytes del [formato UART](../protocol.md#representación-de-los-mensajes).
+Son `int unsigned` de elaboración. Los campos de código o control ocupan
+un byte (`PROTOCOL_CODE_BYTES`), las palabras cuatro
+(`PROTOCOL_WORD_BYTES`), el contador de ciclos ocho
+(`PROTOCOL_COUNTER_BYTES`) y los tamaños/cantidades cinco
+(`PROTOCOL_SIZE_BYTES`).
+
+| Constante                        | Bytes |
+| -------------------------------- | ----- |
+| `PROTOCOL_SIZE_BYTES`            | 5     |
+| `PROTOCOL_LOAD_HEADER_BYTES`     | 6     |
+| `PROTOCOL_RESPONSE_HEADER_BYTES` | 2     |
+| `DEBUG_FIXED_BYTES`              | 228   |
+| `DEBUG_RESPONSE_FIXED_BYTES`     | 230   |
+| `DEBUG_MEMORY_ENTRY_BYTES`       | 5     |
+
+`PROTOCOL_LOAD_SIZE_OFFSET` vale uno: el tamaño `N` comienza después del
+opcode. La cabecera LOAD ocupa seis bytes; los cinco bytes corresponden
+solo a `N`. `PROTOCOL_RESPONSE_OPCODE_OFFSET` y
+`PROTOCOL_RESPONSE_RESULT_OFFSET` valen cero y uno, respectivamente.
+
+Los offsets `DEBUG_*_OFFSET` del snapshot se cuentan desde el primer byte
+del cuerpo, después de la cabecera de respuesta. Incluyen los campos del
+contexto, RF, los cuatro latches, `used_count` y el comienzo de la lista,
+según el [layout fijo](../protocol.md#estructura-del-snapshot).
+`DEBUG_<LATCH>_<FIELD>_OFFSET` publica el comienzo de cada uno de los 34
+campos de latches. El inicio de RF es `DEBUG_RF_OFFSET`; cada registro
+ocupa `PROTOCOL_WORD_BYTES`. Para obtener una posición dentro de la respuesta
+completa se suma `PROTOCOL_RESPONSE_HEADER_BYTES`.
+
+`DEBUG_MEMORY_ADDRESS_OFFSET` y `DEBUG_MEMORY_VALUE_OFFSET` son relativos
+al inicio de cada entrada de la lista y valen cero y cuatro. La
+[longitud completa](../protocol.md#final-y-longitud) para `K` entradas es
+`DEBUG_RESPONSE_FIXED_BYTES + DEBUG_MEMORY_ENTRY_BYTES * K`.
+El cálculo de esa longitud utiliza aritmética unsigned de 64 bits para
+conservar el resultado cuando `K` alcanza la capacidad máxima de DMEM.
+Los campos de varios bytes mantienen little-endian. Los campos pequeños
+se completan a un byte en el transporte; los structs funcionales de
+latches conservan sus 504 bits sin padding UART.
 
 ## Definiciones compartidas de `system_pkg`
 
@@ -249,17 +449,14 @@ Las fórmulas de anchos y límites se verificaron mediante un modelo matemático
 - los anchos derivados son siempre suficientes;
 - cada consumidor recibe la capacidad de la memoria correspondiente.
 
-La evidencia RTL descrita a continuación cubre la API de perfiles y su diagnóstico. La comprobación matemática anterior conserva su alcance sobre las fórmulas y capacidades.
+La comprobación RTL descrita a continuación cubre las funciones de perfiles, capacidades y anchos del paquete.
 
-### Comprobación RTL de la API de perfiles
+### Comprobación RTL del paquete
 
 Dentro del contenedor, desde `/workspace/tp3`:
 
 ~~~bash
-bash scripts/run_tests.sh \
-  --test TEST-PLAT-001/C001 \
-  --test TEST-PLAT-001/C002 \
-  --test TEST-PLAT-001/C014
+bash scripts/run_tests.sh --test TEST-PLAT-001 --test TEST-PIPE-001
 ~~~
 
 Las ejecuciones están registradas en el
@@ -270,23 +467,94 @@ cada caso. El banco SystemVerilog compara las capacidades y el diagnóstico
 con esos datos mediante el
 [intercambio de datos externos](../verification/case_data.md).
 
-Las referencias utilizadas son las capacidades de `TEST-PLAT-001/C001`
-y `C002` y el diagnóstico de `C014`. El alcance es la resolución constante,
-la representación unsigned de 64 bits, el diagnóstico y la exclusión de
-recursos en la rama rechazada. Las ejecuciones declaran el nivel `Unidad`:
-un `PASS` acredita esta comprobación local, sin acreditar la propagación
-por la jerarquía funcional ni el grupo completo `TEST-PLAT-001`. Seleccionar
-el grupo completo produce un error si alguno de sus casos carece de una
-ejecución registrada.
+Las ejecuciones registradas cubren `C001`/`C002` (resolución de perfiles),
+`C003` (elaboración mínima con consumidores de prueba),
+`C004`–`C008` (anchos y representación de índices y capacidades),
+`C009`–`C013` (capacidades inválidas y protección de elaboración),
+`C014` (perfil desconocido) y `C015` (capacidad legal sin soporte físico
+declarado). Se pueden combinar sus IDs con `--test`.
 
-El banco informa `PASS` o `FAIL`; para el perfil desconocido informa
+Para las capacidades, el parámetro `CAPACITY_BYTES` se toma de `inputs.C`
+antes de compilar. El banco compara los anchos constantes con `expected`
+y comprueba que los vectores resultantes representen los índices y la
+capacidad sin truncamiento. El caso `2^32` usa únicamente señales de hasta
+33 bits, sin arrays de memoria.
+
+`C003` utiliza `system_pkg_minimum_tb`, en el mismo archivo del banco.
+Recibe las capacidades de IMEM y DMEM desde `inputs.IMEM_C` y `inputs.DMEM_C`
+e instancia dos consumidores auxiliares. Cada uno deriva sus vectores con
+las funciones del paquete y elabora un array de una palabra de 32 bits.
+El banco comprueba los anchos positivos y el tamaño real de los arrays
+frente a `expected.positive_widths` y `expected.one_row`. El fixture reserva
+el array únicamente cuando la capacidad es válida y produce una fila.
+Esta comprobación cubre la geometría de elaboración del paquete.
+
+`C015` utiliza `system_pkg_target_tb`. Consulta el soporte de la capacidad
+`inputs.C` para IMEM y DMEM por separado, manteniendo la otra memoria en
+`REFERENCE`. Comprueba la legalidad arquitectónica, el diagnóstico y la
+exclusión de recursos contra las expectativas del caso. Un módulo centinela
+indefinido en la rama aceptada hace fallar la elaboración si cualquiera de
+las consultas admite esa capacidad. El banco no declara arrays grandes.
+
+Las ejecuciones declaran el nivel `Unidad`. Un `PASS` acredita las funciones
+del paquete, la geometría de los consumidores de prueba y las protecciones
+del banco. El funcionamiento de las memorias, la propagación por la jerarquía
+funcional y la realización física requieren sus comprobaciones propias.
+El comando de grupo ejecuta estas comprobaciones de unidad para sus quince
+casos; la verificación completa de `TEST-PLAT-001` incluye también la
+propagación y la revisión de configuración.
+
+`C001` registra además `system_pkg_clock_uart_tb` para comprobar las
+constantes compartidas de clock y UART contra
+`expected.clock_uart_configuration` y los tiempos T/R contra
+`expected.protocol_timing`. Para los tiempos verifica tanto los valores
+en milisegundos y ciclos como su ancho y representación unsigned, y
+rechaza constantes del catálogo sin comprobar. Esta ejecución valida la
+configuración del paquete;
+la generación de ticks, las tramas, las operaciones de FIFO y el
+comportamiento de los temporizadores requieren las comprobaciones
+funcionales de sus bloques.
+
+El mismo caso registra `system_pkg_protocol_codes_tb` en el archivo del
+banco para comprobar los comandos, resultados y códigos externos de estado
+contra `expected.protocol_codes`. Verifica los valores y anchos de todas
+las constantes, los tipos unsigned de cuatro estados y que ninguna entrada
+del catálogo quede sin comprobar. Esta ejecución acredita las definiciones
+compartidas del paquete; los intercambios UART y las transiciones de las
+FSM requieren las pruebas funcionales de sus bloques.
+
+`C001` también registra `system_pkg_protocol_layout_tb` en el archivo del
+banco. Compara todas las constantes de tamaños y offsets con
+`expected.protocol_layout` y rechaza entradas sin comprobar. Los valores
+esperados conservan los offsets del cuerpo definidos por el protocolo;
+las posiciones del serializador incluyen además la cabecera. Esta prueba
+acredita las definiciones del paquete y no ejecuta una serialización UART.
+
+El banco informa `PASS` o `FAIL`; para configuraciones rechazadas informa
 `REJECT` y termina con código `1`. El ejecutor solo aprueba ese rechazo
 si coinciden el ID, el diagnóstico de `expected` y el código registrado.
 Las instancias temporales, los datos y los ejecutables se eliminan al terminar.
 
+`TEST-PIPE-001` registra una ejecución `Unidad` con
+`system_pkg_latches_tb`, en el mismo archivo del banco. Lee nombres, anchos
+y valores de `latch_fixture` para comprobar los miembros de los cuatro
+tipos y su empaquetado. También deriva máscaras por campo para comprobar
+su posición, su representación sin signo y la conservación de `X`.
+Los valores esperados de las constantes de control se leen de
+`expected.control_codes` del caso.
+
+La misma ejecución compara los anchos y códigos de los selectores de
+forwarding y tamaño de acceso con `expected.selectors`. Comprueba además
+que sus tipos sean unsigned y conserven `X` y `Z`, y rechaza entradas del
+catálogo de selectores que no hayan sido comprobadas.
+
+Esta ejecución cubre la estructura de los payloads y las codificaciones.
+La traza del programa y sus efectos en RF requieren la ejecución funcional
+de la CPU.
+
 ### Límites
 
-La evidencia del modelo es documental y matemática. La evidencia RTL local se limita a la API de perfiles y a la protección de elaboración del banco descrito. Estas comprobaciones no acreditan síntesis, timing ni soporte físico para todas las capacidades del dominio. Este acuerdo no modifica el diseño de la aplicación PC ni autoriza implementación.
+La evidencia del modelo es documental y matemática. La comprobación RTL local se limita a las funciones del paquete y a la protección de elaboración del banco descrito. Estas comprobaciones no acreditan síntesis, timing ni soporte físico para todas las capacidades del dominio. Este acuerdo no modifica el diseño de la aplicación PC ni autoriza implementación.
 
 [Acuerdo de configuración común](../decisions/DEC-ARCH-006.md#acuerdo-de-concreción-de-dec-arch-006--paquete-común-y-propagación-de-configuración).
 

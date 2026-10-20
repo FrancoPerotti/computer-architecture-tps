@@ -6,7 +6,8 @@
   "required": [
     "status",
     "summary",
-    "results"
+    "results",
+    "pending_cases"
   ],
   "properties": {
     "status": {
@@ -40,6 +41,13 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/result"
+      }
+    },
+    "pending_cases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "cases.schema.json#/$defs/caseId"
       }
     }
   },
