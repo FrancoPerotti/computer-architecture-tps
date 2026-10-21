@@ -18890,142 +18890,259 @@
       "source": "pipeline.md#test-pipe-006",
       "case_count": 10,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/decoder.sv",
+            "rtl/load_use_detector.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/load_use_detector_tb.sv"
+          ],
+          "top": "load_use_detector_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "parameters": {
+            "USE_DECODER": "1'b1"
+          },
+          "case_ids": [
+            "TEST-PIPE-006/C001",
+            "TEST-PIPE-006/C002",
+            "TEST-PIPE-006/C003",
+            "TEST-PIPE-006/C004",
+            "TEST-PIPE-006/C005",
+            "TEST-PIPE-006/C006",
+            "TEST-PIPE-006/C007",
+            "TEST-PIPE-006/C008",
+            "TEST-PIPE-006/C009"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-006/C001",
           "inputs": {
             "condition": "ADDI-rs2-aparente",
-            "idex_load_rd": 1
+            "word": "0x00110093",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 0,
+            "rs1": 2,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C002",
           "inputs": {
             "condition": "LUI-sources-aparentes",
-            "idex_load_rd": 1
+            "word": "0x001080B7",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 0,
+            "uses_rs2": 0,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C003",
           "inputs": {
             "condition": "JAL-sources-aparentes",
-            "idex_load_rd": 1
+            "word": "0x001080EF",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 0,
+            "uses_rs2": 0,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C004",
           "inputs": {
             "condition": "halt",
-            "idex_load_rd": 1
+            "word": "0x0000000B",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 0,
+            "uses_rs2": 0,
+            "rs1": 0,
+            "rs2": 0
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C005",
           "inputs": {
             "condition": "illegal",
-            "idex_load_rd": 1
+            "word": "0x021080B3",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 0,
+            "uses_rs1": 0,
+            "uses_rs2": 0,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C006",
           "inputs": {
             "condition": "ifid-invalid",
-            "idex_load_rd": 1
+            "word": "0x001081B3",
+            "ifid_valid": 0,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C007",
           "inputs": {
             "condition": "fetch-candidate",
-            "idex_load_rd": 1
+            "word": "0x001081B3",
+            "ifid_valid": 0,
+            "ifid_fetch_fault_valid": 1,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C008",
           "inputs": {
             "condition": "load-invalid",
-            "idex_load_rd": 1
+            "word": "0x001081B3",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 0,
+            "idex_rd": 1,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "rs1": 1,
+            "rs2": 1
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C009",
           "inputs": {
             "condition": "load-rd0",
-            "idex_load_rd": 0
+            "word": "0x000001B3",
+            "ifid_valid": 1,
+            "ifid_fetch_fault_valid": 0,
+            "idex_valid": 1,
+            "idex_rd": 0,
+            "idex_mem_op": 3
           },
           "expected": {
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "decode_legal": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "rs1": 0,
+            "rs2": 0
           },
           "kind": "vector",
           "origins": [
             "Falsas dependencias"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-006/C010",
@@ -21230,6 +21347,577 @@
             "Acuerdo 47: prioridad global sobre candidato"
           ],
           "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TEST-PIPE-011",
+      "source": "pipeline.md#test-pipe-011",
+      "case_count": 25,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/load_use_detector.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/load_use_detector_tb.sv"
+          ],
+          "top": "load_use_detector_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-PIPE-011/C001",
+          "inputs": {
+            "condition": "NONE",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 0
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C002",
+          "inputs": {
+            "condition": "LB",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 1
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C003",
+          "inputs": {
+            "condition": "LH",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 2
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C004",
+          "inputs": {
+            "condition": "LW",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C005",
+          "inputs": {
+            "condition": "LBU",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 4
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C006",
+          "inputs": {
+            "condition": "LHU",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 5
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C007",
+          "inputs": {
+            "condition": "SB",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 6
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C008",
+          "inputs": {
+            "condition": "SH",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 7
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C009",
+          "inputs": {
+            "condition": "SW",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 8
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C010",
+          "inputs": {
+            "condition": "reserved-9",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 9
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C011",
+          "inputs": {
+            "condition": "reserved-10",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 10
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C012",
+          "inputs": {
+            "condition": "reserved-11",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 11
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C013",
+          "inputs": {
+            "condition": "reserved-12",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 12
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C014",
+          "inputs": {
+            "condition": "reserved-13",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 13
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C015",
+          "inputs": {
+            "condition": "reserved-14",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 14
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C016",
+          "inputs": {
+            "condition": "reserved-15",
+            "ifid_valid": 1,
+            "rs1": 31,
+            "rs2": 31,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 31,
+            "idex_mem_op": 15
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "artificial",
+          "origins": [
+            "Load-Use Detector: clasificación explícita de mem_op"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C017",
+          "inputs": {
+            "condition": "ifid-invalid",
+            "ifid_valid": 0,
+            "rs1": 1,
+            "rs2": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C018",
+          "inputs": {
+            "condition": "idex-invalid",
+            "ifid_valid": 1,
+            "rs1": 1,
+            "rs2": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 0,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C019",
+          "inputs": {
+            "condition": "rd-zero",
+            "ifid_valid": 1,
+            "rs1": 0,
+            "rs2": 0,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 0,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C020",
+          "inputs": {
+            "condition": "no-used-source",
+            "ifid_valid": 1,
+            "rs1": 1,
+            "rs2": 1,
+            "uses_rs1": 0,
+            "uses_rs2": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C021",
+          "inputs": {
+            "condition": "match-rs1-only",
+            "ifid_valid": 1,
+            "rs1": 1,
+            "rs2": 2,
+            "uses_rs1": 1,
+            "uses_rs2": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C022",
+          "inputs": {
+            "condition": "match-rs2-only",
+            "ifid_valid": 1,
+            "rs1": 2,
+            "rs2": 1,
+            "uses_rs1": 0,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C023",
+          "inputs": {
+            "condition": "neither-matches",
+            "ifid_valid": 1,
+            "rs1": 2,
+            "rs2": 3,
+            "uses_rs1": 1,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C024",
+          "inputs": {
+            "condition": "unused-rs1-matches",
+            "ifid_valid": 1,
+            "rs1": 1,
+            "rs2": 2,
+            "uses_rs1": 0,
+            "uses_rs2": 1,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C025",
+          "inputs": {
+            "condition": "unused-rs2-matches",
+            "ifid_valid": 1,
+            "rs1": 2,
+            "rs2": 1,
+            "uses_rs1": 1,
+            "uses_rs2": 0,
+            "idex_valid": 1,
+            "idex_rd": 1,
+            "idex_mem_op": 3
+          },
+          "expected": {
+            "load_use_stall": 0
+          },
+          "kind": "vector",
+          "origins": [
+            "Load-Use Detector: guardas y consumo efectivo de fuentes"
+          ],
+          "status": "implemented"
         }
       ]
     },

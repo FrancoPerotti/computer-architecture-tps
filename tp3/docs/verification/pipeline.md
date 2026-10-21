@@ -23,6 +23,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-008 — Wrong-path y fronteras por antigüedad](#test-pipe-008)
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
+- [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
 
 <a id="test-pipe-001"></a>
 
@@ -439,13 +440,19 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-PIPE-006 — Ausencia de dependencias falsas
 
-- **Nivel:** unidad detector y CPU.
+- **Nivel:** integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal y flags locales controlados.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** nueve variantes locales implementadas; programa de CPU pendiente.
 
 **Requisitos:** [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [control_and_hazards](../architecture/cpu/control_and_hazards.md).
+
+### Ejecución disponible
+
+El banco `load_use_detector_tb`, con `USE_DECODER=1`, ejecuta `C001`–`C009` en nivel `Integración local`. La palabra explícita de cada caso alimenta al decoder real; sus salidas `uses_rs1` y `uses_rs2` llegan al detector. El banco comprueba también los índices extraídos y los usos esperados para verificar el fixture.
+
+`C006` y `C007` presentan las mismas entradas al detector: ambos tienen `IF/ID.valid=0`. La metadata distingue la burbuja del candidato de fetch, pero no es un puerto del detector ni se comprueba aquí su transporte. El programa `C010` permanece pendiente; esta integración no acredita ejecución de instrucciones, memoria ni acciones del pipeline.
 
 ### Qué comprueba y por qué
 
@@ -826,3 +833,51 @@ La confirmación de fetch solo ocurre desde ID y con el PC registrado de su cand
 Las comprobaciones reutilizadas de [TEST-PIPE-007](#test-pipe-007) cubren las ocho acciones/$onehot0; las de [TEST-PIPE-008](#test-pipe-008), otras fronteras wrong-path y commits anteriores. Conservan sus IDs y no sustituyen las secuencias conjuntas C001–C020.
 
 Para aprobar se requiere la traza y los resultados de los 20 casos propios y las comprobaciones reutilizadas. El diseño de estas pruebas y sus recálculos documentales no acreditan ejecución contra RTL. Ante una contradicción, el contrato vigente conserva autoridad.
+
+<a id="test-pipe-011"></a>
+
+## TEST-PIPE-011 — Detector load-use aislado
+
+- **Nivel:** unidad `load_use_detector`.
+- **Tipo de estímulo:** vectores directos y códigos reservados artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), con alcance sobre la detección combinacional.
+
+**Contratos:** [detección load-use](../architecture/cpu/control_and_hazards.md#detección); [interfaz 2.8](../interfaces.md#bloque-2-8).
+
+### Qué comprueba y por qué
+
+El detector debe reconocer un load válido cuyo destino distinto de `x0` coincide con una fuente realmente consumida por la instrucción válida de IF/ID. Esta unidad recibe índices y usos explícitos; no decodifica instrucciones ni aplica acciones sobre el pipeline.
+
+La clasificación enumera las cinco operaciones load mediante las constantes compartidas `MEM_OP_*`. Las operaciones store, `MEM_OP_NONE` y los códigos reservados no deben clasificarse como load. Los códigos reservados son entradas artificiales del bloque y no instrucciones admitidas por la CPU.
+
+### Variantes cerradas
+
+Los 25 casos canónicos `TEST-PIPE-011/C001`–`C025` están enumerados en [cases.json](cases.json). Sus entradas y expectativas son explícitas; el testbench no expande combinaciones adicionales.
+
+| Casos     | Estímulo                                              | load_use_stall |
+| --------- | ----------------------------------------------------- | -------------- |
+| C001      | MEM_OP_NONE; ambas fuentes coinciden en x31           | 0              |
+| C002–C006 | LB, LH, LW, LBU y LHU; ambas fuentes coinciden en x31 | 1              |
+| C007–C009 | SB, SH y SW; ambas fuentes coinciden en x31           | 0              |
+| C010–C016 | Códigos reservados 9–15 con coincidencia en x31       | 0              |
+| C017      | IF/ID inválido; LW y ambas fuentes coincidentes       | 0              |
+| C018      | ID/EX inválido; LW y ambas fuentes coincidentes       | 0              |
+| C019      | Destino x0 y ambas fuentes x0 usadas                  | 0              |
+| C020      | Ambas fuentes coinciden, pero ninguna se utiliza      | 0              |
+| C021      | Solo rs1 se utiliza y coincide                        | 1              |
+| C022      | Solo rs2 se utiliza y coincide                        | 1              |
+| C023      | Ambas fuentes se utilizan, pero ninguna coincide      | 0              |
+| C024      | Solo coincide rs1, que no se utiliza                  | 0              |
+| C025      | Solo coincide rs2, que no se utiliza                  | 0              |
+
+C017–C025 usan `MEM_OP_LW`; los destinos y fuentes se especifican individualmente en el manifiesto. Las variantes de clasificación usan registros `x31` para comprobar también el bit alto de los índices.
+
+### Procedimiento y criterio de aprobación
+
+1. Aplicar las ocho entradas del detector desde el caso JSON.
+2. Esperar la estabilización combinacional sin reloj ni flanco.
+3. Comparar `load_use_stall` con su expectativa mediante una aserción SystemVerilog que también rechaza X/Z.
+
+El banco `load_use_detector_tb` usa `USE_DECODER=0` en este grupo y debe aprobar los 25 casos. La conexión al decoder real se comprueba por separado en TEST-PIPE-006. TEST-PIPE-005 conserva pendientes sus nueve programas y la comprobación de exactamente un stall, avance del load, bubble y retención de PC/IF/ID. No se acredita validación física.
