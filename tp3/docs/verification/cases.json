@@ -30950,6 +30950,2172 @@
       ]
     },
     {
+      "id": "TEST-PIPE-013",
+      "source": "pipeline.md#test-pipe-013",
+      "case_count": 15,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "rtl/fetch_fault_check.sv",
+            "rtl/if_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/if_stage_tb.sv"
+          ],
+          "top": "if_stage_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-PIPE-013/C001",
+          "inputs": {
+            "scenario": "sequential-and-fetch-candidate",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 12,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 12,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 12,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 12,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 12,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 12,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C002",
+          "inputs": {
+            "scenario": "redirect-to-last-word-and-hold",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1020,
+                "loaded_image_size_bytes": 1024,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 1024,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 50
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C003",
+          "inputs": {
+            "scenario": "hold-before-and-after-normal",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 50
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 50
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C004",
+          "inputs": {
+            "scenario": "hold-fetch-candidate-and-resume",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 50
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C005",
+          "inputs": {
+            "scenario": "redirect-away-from-fetch-candidate",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C006",
+          "inputs": {
+            "scenario": "pc-wrap-modulo-32-bits",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4294967292,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4294967292,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4294967292,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4294967292,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4294967292,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C007",
+          "inputs": {
+            "scenario": "reset-dominates-normal-and-redirect",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 1,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 1,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1020,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C008",
+          "inputs": {
+            "scenario": "prepare-dominates-normal-and-redirect",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 1,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 1,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 996,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C009",
+          "inputs": {
+            "scenario": "image-valid-derived-from-size",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 0
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 0
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C010",
+          "inputs": {
+            "scenario": "short-image-masks-residual-halt",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 11,
+                "imem_write_enable": 1,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 0
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1020,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1020,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1020,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C011",
+          "inputs": {
+            "scenario": "reset-blocks-loader-write-and-preserves-memory",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 1,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C012",
+          "inputs": {
+            "scenario": "loader-last-word-alt-1000",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 249,
+                "imem_write_data": 2309737967,
+                "imem_write_enable": 1,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 996,
+                "loaded_image_size_bytes": 1000,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 996,
+                    "instruction": 2309737967,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C013",
+          "inputs": {
+            "scenario": "minimum-capacity",
+            "C": 4,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 1,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 1,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 10
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 4,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C014",
+          "inputs": {
+            "scenario": "redirect-target-changes-without-edge",
+            "C": 1024,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 0
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "integration_fixture",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C015",
+          "inputs": {
+            "scenario": "physical-limit-with-oversized-image",
+            "C": 1000,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 250,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1000,
+                "loaded_image_size_bytes": 1004,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 996,
+                "loaded_image_size_bytes": 1000,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
+          },
+          "expected": {
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1000,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1000,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1000,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1000,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 996,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "IF Stage: acciones PC, recursos y payload IF/ID"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
       "id": "TEST-MEM-001",
       "source": "memory.md#test-mem-001",
       "case_count": 18,
@@ -33396,6 +35562,48 @@
             "TEST-MEM-004/C021",
             "TEST-MEM-004/C022"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "rtl/fetch_fault_check.sv",
+            "rtl/if_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/if_stage_tb.sv"
+          ],
+          "top": "if_stage_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          },
+          "case_ids": [
+            "TEST-MEM-004/C001",
+            "TEST-MEM-004/C002",
+            "TEST-MEM-004/C003",
+            "TEST-MEM-004/C004",
+            "TEST-MEM-004/C005",
+            "TEST-MEM-004/C006",
+            "TEST-MEM-004/C007",
+            "TEST-MEM-004/C008",
+            "TEST-MEM-004/C009",
+            "TEST-MEM-004/C010",
+            "TEST-MEM-004/C011",
+            "TEST-MEM-004/C012",
+            "TEST-MEM-004/C013",
+            "TEST-MEM-004/C014",
+            "TEST-MEM-004/C015",
+            "TEST-MEM-004/C016",
+            "TEST-MEM-004/C017",
+            "TEST-MEM-004/C018",
+            "TEST-MEM-004/C019",
+            "TEST-MEM-004/C020",
+            "TEST-MEM-004/C021",
+            "TEST-MEM-004/C022"
+          ]
         }
       ],
       "cases": [
@@ -33405,12 +35613,98 @@
             "C": 1024,
             "PC": 0,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33424,12 +35718,98 @@
             "C": 1024,
             "PC": 4,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33443,12 +35823,98 @@
             "C": 1024,
             "PC": 8,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 8,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33462,12 +35928,98 @@
             "C": 1024,
             "PC": 1020,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1020,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1020,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1020,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1020,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33481,12 +36033,98 @@
             "C": 1024,
             "PC": 1024,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1024,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1024,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1024,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1024,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1024,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1024,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1024,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33500,12 +36138,98 @@
             "C": 1024,
             "PC": 1020,
             "image_size": 1024,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1020,
+                "loaded_image_size_bytes": 1024,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 1024,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1020,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 1020,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33519,12 +36243,98 @@
             "C": 1024,
             "PC": 1,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33538,12 +36348,98 @@
             "C": 1024,
             "PC": 2,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 2,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33557,12 +36453,98 @@
             "C": 1024,
             "PC": 3,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 3,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33576,12 +36558,98 @@
             "C": 1024,
             "PC": 1025,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1025,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1025,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1025,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1025,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1025,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1025,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1025,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33595,12 +36663,98 @@
             "C": 1024,
             "PC": 0,
             "image_size": 0,
-            "image_valid": 0
+            "image_valid": 0,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33614,12 +36768,98 @@
             "C": 1000,
             "PC": 0,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33633,12 +36873,98 @@
             "C": 1000,
             "PC": 4,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 4,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 4,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33652,12 +36978,98 @@
             "C": 1000,
             "PC": 8,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 8,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 8,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 8,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33671,12 +37083,98 @@
             "C": 1000,
             "PC": 996,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 996,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 996,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 996,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 996,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33690,12 +37188,98 @@
             "C": 1000,
             "PC": 1000,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1000,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1000,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1000,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1000,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1000,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1000,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1000,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33709,12 +37293,98 @@
             "C": 1000,
             "PC": 996,
             "image_size": 1000,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 996,
+                "loaded_image_size_bytes": 1000,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 1000,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": true,
             "cause": null,
-            "if_fetch_fault_candidate": false
+            "if_fetch_fault_candidate": false,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 996,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 996,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 996,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 996,
+                    "instruction": 11,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33728,12 +37398,98 @@
             "C": 1000,
             "PC": 1,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33747,12 +37503,98 @@
             "C": 1000,
             "PC": 2,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 2,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 2,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 2,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33766,12 +37608,98 @@
             "C": 1000,
             "PC": 3,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 3,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 3,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 3,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33785,12 +37713,98 @@
             "C": 1000,
             "PC": 1001,
             "image_size": 8,
-            "image_valid": 1
+            "image_valid": 1,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 1001,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 8,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 0,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 10847667,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1001,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1001,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 1001,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1001,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 1001,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 1001,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -33804,12 +37818,98 @@
             "C": 1000,
             "PC": 0,
             "image_size": 0,
-            "image_valid": 0
+            "image_valid": 0,
+            "if_initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 1,
+                "data": 11
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "if_steps": [
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 1,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              },
+              {
+                "reset": 0,
+                "prepare_init": 0,
+                "act_normal": 0,
+                "act_redirect": 0,
+                "redirect_target": 0,
+                "loaded_image_size_bytes": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edges": 1
+              }
+            ]
           },
           "expected": {
             "instruction_valid": false,
             "cause": 1,
-            "if_fetch_fault_candidate": true
+            "if_fetch_fault_candidate": true,
+            "if_steps": [
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              },
+              {
+                "before_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                },
+                "after_edge": {
+                  "debug_pc": 0,
+                  "ifid_input": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 1
+                  }
+                }
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
@@ -52441,6 +56541,54 @@
             "tb/instruction_memory_tb.sv"
           ],
           "top": "instruction_memory_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C010",
+            "TEST-PLAT-001/C011",
+            "TEST-PLAT-001/C012",
+            "TEST-PLAT-001/C013"
+          ],
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "rtl/fetch_fault_check.sv",
+            "rtl/if_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/if_stage_tb.sv"
+          ],
+          "top": "if_stage_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C009"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "rtl/fetch_fault_check.sv",
+            "rtl/if_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/if_stage_tb.sv"
+          ],
+          "top": "if_stage_config_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "expected_rejection": {

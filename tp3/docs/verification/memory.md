@@ -232,7 +232,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad IMEM/IF y CPU.
 - **Tipo de estímulo:** legal y PCs locales artificiales.
-- **Estado:** validación unitaria de fetch implementada; memoria e integración IF/CPU pendientes.
+- **Estado:** validación unitaria de fetch e integración local de IF implementadas; Loader y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -240,9 +240,11 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-El banco `fetch_fault_check_tb` ejecuta `C001`–`C022` en nivel `Unidad`. La capacidad se recibe como parámetro de elaboración desde `inputs.C`; el PC, el tamaño y `image_valid` son entradas explícitas del JSON. El banco compara el candidato y, cuando está activo, su causa. `expected.instruction_valid` conserva la referencia para la futura integración de IF; no se interpreta como un puerto adicional del comprobador.
+El banco `fetch_fault_check_tb` ejecuta `C001`–`C022` en nivel `Unidad`. La capacidad se recibe como parámetro de elaboración desde `inputs.C`; el PC, el tamaño y `image_valid` son entradas explícitas del JSON. El banco compara el candidato y, cuando está activo, su causa. `expected.instruction_valid` también sirve de referencia para la integración de IF; no se interpreta como un puerto adicional del comprobador.
 
-Esta proyección no lee IMEM ni comprueba palabras, little-endian, el payload de IF/ID o su transporte a ID. `C023` conserva pendiente el programa de CPU. Los extremos aritméticos adicionales se ejecutan en TEST-MEM-009, sin modificar los 23 casos originales de este grupo.
+La proyección unitaria no lee IMEM. Una segunda ejecución de los mismos 22 casos utiliza `if_stage_tb` en nivel `Integración local`: carga palabras completas por el puerto de escritura de IMEM, establece el PC mediante redirect y compara `debug_pc` y los cinco campos del payload antes y después del flanco. Las entradas y expectativas adicionales están en `inputs.if_initial_words`, `inputs.if_steps` y `expected.if_steps`. Un fetch inválido entrega instrucción cero y conserva el PC y la causa correspondientes.
+
+Los redirects a PCs inválidos son inyecciones locales; no acreditan aceptación de esos destinos por EX. La carga de palabras completas tampoco acredita reconstrucción little-endian por Loader. El registro IF/ID real y el transporte a ID siguen pendientes, al igual que el programa de CPU `C023`. Los extremos aritméticos adicionales se ejecutan en TEST-MEM-009, sin modificar los 23 casos originales de este grupo.
 
 ### Qué comprueba y por qué
 

@@ -8,9 +8,9 @@ PY_DIR := scripts
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \
                rtl/register_file.sv rtl/id_fault_check.sv rtl/load_use_detector.sv rtl/id_stage.sv \
-               rtl/fetch_fault_check.sv rtl/instruction_memory.sv
+               rtl/fetch_fault_check.sv rtl/instruction_memory.sv rtl/if_stage.sv
 RTL_TOPS := decoder immediate_generator register_file id_fault_check load_use_detector id_stage
-IMEM_RTL_TOPS := fetch_fault_check instruction_memory
+IMEM_RTL_TOPS := fetch_fault_check instruction_memory if_stage
 IMEM_LINT_CAPACITIES := 4 1000 1024
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint

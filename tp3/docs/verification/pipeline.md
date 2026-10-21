@@ -25,6 +25,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
 - [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
 - [TEST-PIPE-012 — Composición de ID y payload combinacional](#test-pipe-012)
+- [TEST-PIPE-013 — Composición de IF y actualización del PC](#test-pipe-013)
 
 <a id="test-pipe-001"></a>
 
@@ -936,3 +937,52 @@ C001 mantiene la misma instrucción mientras cambia la validez del productor; de
 4. Aplicar el flanco de cada contexto. Al finalizar, leer los 32 registros por Debug y compararlos con `expected.id_rf_after`, sin otro flanco de escritura o inicialización.
 
 No se calcula la elegibilidad de WB en el testbench: la habilitación y los selectores son entradas explícitas del JSON. El banco no implementa el registro ID/EX, el arbitraje, la espera de un ciclo, el forwarding de EX ni la confirmación de halt/fault. La aprobación de estos 14 casos y de TEST-PIPE-002 en integración local no acredita ejecución de CPU ni validación física.
+
+<a id="test-pipe-013"></a>
+
+## TEST-PIPE-013 — Composición de IF y actualización del PC
+
+- **Nivel:** integración local `if_stage`.
+- **Tipo de estímulo:** acciones locales, escritura de IMEM e inyecciones artificiales de PC y tamaño.
+- **Estado:** banco de integración implementado.
+
+**Contratos:** [Etapa IF](../architecture/cpu/stage_if.md); [control del PC](../architecture/cpu/control_and_hazards.md#pc); [composición](../architecture/system_composition.md); [reset](../architecture/platform/reset_integration.md); [preparación](../architecture/session/session_preparation.md).
+
+### Qué comprueba y por qué
+
+El banco conecta el PC, su sumador y mux, IMEM, el comprobador de fetch y la formación del payload combinacional de IF/ID. Comprueba que las acciones recibidas actualicen el PC únicamente en el flanco y que `debug_pc` y el payload describan siempre la búsqueda del PC actual. Reset y `prepare_init` tienen prioridad síncrona sobre el avance y redirect; no borran IMEM.
+
+`PC + 4` opera en 32 bits y puede volver a cero. La validación de fetch conserva por separado su extremo de 33 bits, para impedir que ese mismo desborde legalice una búsqueda fuera de memoria. La retención del PC no oculta el candidato combinacional ni confirma un fault.
+
+### Variantes cerradas
+
+Los 15 casos canónicos `TEST-PIPE-013/C001`–`C015` están enumerados en [cases.json](cases.json). `inputs.C` fija la capacidad, `inputs.if_initial_words` prepara palabras por el puerto funcional y `inputs.if_steps` define las acciones y el número de flancos. `expected.if_steps` contiene observaciones `before_edge` y `after_edge`, con `debug_pc` y los cinco campos de `ifid_input`.
+
+| Caso | Contexto                                       | Comprobación principal                                   |
+| ---- | ---------------------------------------------- | -------------------------------------------------------- |
+| C001 | Avance secuencial con imagen corta             | ADD, halt y candidatos sucesivos sin parada autónoma     |
+| C002 | Redirect a la última palabra de 1024 bytes     | Captura del destino y retención durante 50 flancos       |
+| C003 | Retención y avance con capacidad de 1000 bytes | PC estable durante 50 flancos antes y después del avance |
+| C004 | PC fuera de imagen retenido                    | Candidato estable y avance posterior                     |
+| C005 | Redirect desde un PC inválido a cero           | Recuperación combinacional sin candidato persistente     |
+| C006 | PC `0xFFFFFFFC` seguido de avance              | Fault de acceso y wrap del PC a cero                     |
+| C007 | Reset coincidente con avance o redirect        | Prioridad síncrona y conservación de IMEM                |
+| C008 | Preparación coincidente con avance o redirect  | Inicialización síncrona del PC sin borrar IMEM           |
+| C009 | Tamaño cero, cuatro y cero sin avance          | Validez de imagen derivada del tamaño                    |
+| C010 | Escritura y publicación local de imagen corta  | Palabra nueva visible y sufijo residual enmascarado      |
+| C011 | Escritura de IMEM durante reset                | Escritura bloqueada y palabras anteriores conservadas    |
+| C012 | Escritura de la última palabra en 1000 bytes   | Índice y dato de 32 bits propagados hasta IMEM           |
+| C013 | Memoria de una palabra                         | Anchos mínimos, avance fuera de rango y preparación      |
+| C014 | Cambio de destino sin flanco                   | Ausencia de captura anticipada o diferida del redirect   |
+| C015 | Índice físico y tamaño fuera de capacidad      | Sin alias de escritura ni fetch autorizado por el tamaño |
+
+Las secuencias de 50 flancos conservan un único ID canónico. Los PCs inválidos, las colisiones de reset/preparación y el tamaño mayor que la capacidad son estímulos artificiales locales. Los valores de tamaño se presentan desde el banco; no se implementa ni se acredita la publicación de imagen por Loader o una sesión completa.
+
+### Procedimiento y criterio de aprobación
+
+1. Reiniciar el PC y cargar las palabras iniciales por el puerto de IMEM, con tamaño cero y sin avance.
+2. Aplicar cada paso entre flancos y comparar las seis salidas observables con las expectativas externas.
+3. Aplicar el número de flancos indicado y repetir la comparación después de cada uno. Un paso con cero flancos comprueba exclusivamente el comportamiento combinacional.
+4. Exigir igualdad estricta en las aserciones SystemVerilog, sin aceptar X/Z. Reutilizar además los 22 casos locales de TEST-MEM-004 y los rechazos de TEST-PLAT-001/C009–C013.
+
+El banco presenta acciones ya seleccionadas; no calcula arbitraje ni autoriza destinos de EX. Tampoco implementa el registro IF/ID: su captura del payload preflanco, retención e invalidación requieren la integración correspondiente. La aprobación de estas proyecciones no acredita transporte hasta ID, ejecución de CPU, confirmación de halt/fault, síntesis ni validación física.
