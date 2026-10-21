@@ -182,8 +182,9 @@ explícitamente se usa `make format`. También están disponibles `format-check`
 
 El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/` y `scripts/`, incluidos
 fixtures. Verilator analiza exclusivamente el RTL y sus dependencias ordenadas en
-`RTL_SOURCES` de Make: `rtl/system_pkg.sv`, `rtl/if_id_register.sv` y
-`rtl/id_ex_register.sv`. Cada módulo de `RTL_TOPS` se analiza como top explícito,
+`RTL_SOURCES` de Make: `rtl/system_pkg.sv`, `rtl/if_id_register.sv`,
+`rtl/id_ex_register.sv` y `rtl/ex_mem_register.sv`. Cada módulo de `RTL_TOPS`
+se analiza como top explícito,
 sin silenciar advertencias por múltiples tops independientes. El catálogo de
 pruebas conserva sus bancos y fuentes de simulación; no define el alcance de lint RTL.
 

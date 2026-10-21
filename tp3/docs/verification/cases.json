@@ -21719,6 +21719,873 @@
       ]
     },
     {
+      "id": "TEST-PIPE-013",
+      "source": "pipeline.md#test-pipe-013",
+      "case_count": 7,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_mem_register.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_mem_register_tb.sv"
+          ],
+          "top": "ex_mem_register_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-PIPE-013/C001",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura preflanco de ocho campos con resultado y dato de store separados"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C002",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "mem_op": 15,
+                  "ex_result": 4294967295,
+                  "store_data": 4294967295
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 0,
+                  "instruction": 0,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "mem_op": 0,
+                  "ex_result": 0,
+                  "store_data": 0
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "mem_op": 15,
+                  "ex_result": 4294967295,
+                  "store_data": 4294967295
+                },
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 0,
+                  "instruction": 0,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "mem_op": 0,
+                  "ex_result": 0,
+                  "store_data": 0
+                },
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura inválida con controles residuales y payload cero"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C003",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "retained",
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de entrada válida durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C004",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "mem_op": 15,
+                  "ex_result": 4294967295,
+                  "store_data": 4294967295
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "mem_op": 15,
+                  "ex_result": 4294967295,
+                  "store_data": 4294967295
+                },
+                "valid_next": false
+              },
+              {
+                "state": "retained",
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de entrada inválida durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C005",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 2
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "mem_op": 15,
+                  "ex_result": 4294967295,
+                  "store_data": 4294967295
+                },
+                "cycles": 3
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": "retained",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Invalidación repetida, retención posterior y recaptura"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C006",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "RESET síncrono sobre captura, retención e invalidación"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-013/C007",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 139,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 19,
+                  "reg_write": 0,
+                  "mem_op": 8,
+                  "ex_result": 2147483652,
+                  "store_data": 324508639
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 12,
+                  "reg_write": 1,
+                  "mem_op": 7,
+                  "ex_result": 2147483643,
+                  "store_data": 3970458656
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Inicialización de sesión sobre captura, retención e invalidación"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
       "id": "TEST-MEM-001",
       "source": "memory.md#test-mem-001",
       "case_count": 18,
