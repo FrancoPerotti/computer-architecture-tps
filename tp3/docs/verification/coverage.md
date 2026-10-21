@@ -315,10 +315,13 @@ locales y los niveles de integración y CPU de TEST-PIPE-001 y TEST-PIPE-007–0
 al nivel Unidad. Su fila conserva pendientes la selección MEM, las guardas y
 commits WB y los niveles de integración y CPU de TEST-PIPE-001 y TEST-PIPE-007–010.
 
-[TEST-PIPE-007/C001–C021](pipeline.md#test-pipe-007) registra el banco del
-árbitro al nivel Unidad: selección y exclusión de acciones, ausencia de acción
-sin ciclo y pares de prioridad. Las actualizaciones de PC/registros preflanco,
-confirmaciones y commits conservan pendientes sus bancos de composición.
+[TEST-PIPE-001 y 007–010](pipeline.md#acreditacion-local-7) conservan una tabla
+por ID/nivel con contribución local y pendientes de integración. TEST-PIPE-007
+agrega composición del árbitro con los cuatro registros y PC de fixture;
+TEST-PIPE-008/C006–C009 observa fronteras y disponibilidad preflanco de anteriores;
+TEST-PIPE-009/C001–C007 verifica la frontera MEM/WB con selección y elegibilidad
+inyectadas/observadas. Estos bancos no acreditan controles reales de processor_top,
+commits RF/DMEM, FSM, secuencias legales de CPU ni aceptación física.
 
 ## Transporte e integración adicionales
 

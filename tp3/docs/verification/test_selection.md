@@ -51,9 +51,11 @@ Para comprobar el árbitro combinacional:
 bash scripts/run_tests.sh --test TEST-PIPE-007
 ~~~
 
-Este banco verifica selección y exclusión de acciones al nivel `Unidad`.
-La [especificación](pipeline.md#test-pipe-007) distingue esa acreditación de las
-actualizaciones de PC/registros y demás comprobaciones pendientes de composición.
+El grupo ejecuta el árbitro al nivel `Unidad` y su composición con los cuatro
+registros al nivel `Integración local`. La [especificación](pipeline.md#test-pipe-007)
+delimita el PC de fixture y las comprobaciones pendientes en processor_top/CPU.
+Los grupos TEST-PIPE-001, 008 y 009 agregan las proyecciones locales que figuran
+en la [tabla de acreditación](pipeline.md#acreditacion-local-7).
 
 Para listar un grupo completo:
 

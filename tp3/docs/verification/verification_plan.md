@@ -1,8 +1,8 @@
 # TP3 — Plan de verificación de hardware
 
 - **Tipo:** plan de verificación.
-- **Estado documental:** plan vigente; ejecución RTL pendiente.
-- **Fecha:** 2026-10-20.
+- **Estado documental:** plan vigente; ejecución parcial de unidades y fixtures locales.
+- **Fecha:** 2026-10-21.
 
 ## Propósito y alcance
 

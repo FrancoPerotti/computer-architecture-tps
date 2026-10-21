@@ -15330,6 +15330,27 @@
           "top": "system_pkg_latches_tb",
           "level": "Unidad",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/if_id_register.sv",
+            "rtl/id_ex_register.sv",
+            "rtl/ex_mem_register.sv",
+            "rtl/mem_wb_register.sv",
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_composition_tb.sv"
+          ],
+          "top": "pipeline_composition_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-001/C001"
+          ],
+          "parameters": {
+            "FILL_FIXTURE": "1"
+          }
         }
       ],
       "cases": [
@@ -15337,7 +15358,287 @@
           "id": "TEST-PIPE-001/C001",
           "inputs": {
             "program": "addi x1,x0,1; addi x2,x0,2; addi x3,x0,3; addi x4,x0,4; addi x5,x0,5; addi x6,x0,6; halt",
-            "mode": "RUN"
+            "mode": "RUN",
+            "composition": {
+              "PC": 0,
+              "redirect_target": 128,
+              "preload_source": "empty",
+              "cpu_cycle_fire": 1,
+              "drain_mode": 0,
+              "fetch_order": [
+                "step0",
+                "step1",
+                "step2",
+                "step3",
+                "step4"
+              ],
+              "payloads": {
+                "empty": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rs1": 0,
+                    "rs2": 0,
+                    "rd": 0,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 0,
+                    "alu_op": 0,
+                    "alu_src": 0,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 0,
+                    "ex_result": 0,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 0
+                  }
+                },
+                "step0": {
+                  "ifid": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 1048723,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rs1": 0,
+                    "rs2": 0,
+                    "rd": 0,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 0,
+                    "alu_op": 0,
+                    "alu_src": 0,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 0,
+                    "ex_result": 0,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 0
+                  }
+                },
+                "step1": {
+                  "ifid": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 2097427,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 1048723,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 1,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 1,
+                    "alu_op": 32,
+                    "alu_src": 1,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 1
+                  },
+                  "exmem": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 0,
+                    "ex_result": 0,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 0
+                  }
+                },
+                "step2": {
+                  "ifid": {
+                    "valid": 1,
+                    "pc": 8,
+                    "instruction": 3146131,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 2097427,
+                    "rs1": 0,
+                    "rs2": 2,
+                    "rd": 2,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 2,
+                    "alu_op": 32,
+                    "alu_src": 1,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 1
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 1048723,
+                    "rd": 1,
+                    "reg_write": 1,
+                    "mem_op": 0,
+                    "ex_result": 1,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 0,
+                    "pc": 0,
+                    "instruction": 0,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 0
+                  }
+                },
+                "step3": {
+                  "ifid": {
+                    "valid": 1,
+                    "pc": 12,
+                    "instruction": 4194835,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 8,
+                    "instruction": 3146131,
+                    "rs1": 0,
+                    "rs2": 3,
+                    "rd": 3,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 3,
+                    "alu_op": 32,
+                    "alu_src": 1,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 1
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 2097427,
+                    "rd": 2,
+                    "reg_write": 1,
+                    "mem_op": 0,
+                    "ex_result": 2,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 0,
+                    "instruction": 1048723,
+                    "rd": 1,
+                    "reg_write": 1,
+                    "wb_value": 1
+                  }
+                },
+                "step4": {
+                  "ifid": {
+                    "valid": 1,
+                    "pc": 16,
+                    "instruction": 5243539,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 12,
+                    "instruction": 4194835,
+                    "rs1": 0,
+                    "rs2": 4,
+                    "rd": 4,
+                    "rs1_value": 0,
+                    "rs2_value": 0,
+                    "immediate": 4,
+                    "alu_op": 32,
+                    "alu_src": 1,
+                    "result_sel": 0,
+                    "flow_op": 0,
+                    "mem_op": 0,
+                    "reg_write": 1
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 8,
+                    "instruction": 3146131,
+                    "rd": 3,
+                    "reg_write": 1,
+                    "mem_op": 0,
+                    "ex_result": 3,
+                    "store_data": 0
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 4,
+                    "instruction": 2097427,
+                    "rd": 2,
+                    "reg_write": 1,
+                    "wb_value": 2
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "RF": "xi=i para i=1..6",
@@ -15399,6 +15700,119 @@
                   "ACCESS_SIZE_WORD": 2
                 }
               }
+            },
+            "fill_action": "act_normal",
+            "fill_trace": [
+              {
+                "PC": 4,
+                "valids": [
+                  1,
+                  0,
+                  0,
+                  0
+                ],
+                "pcs": [
+                  0,
+                  null,
+                  null,
+                  null
+                ],
+                "instructions": [
+                  1048723,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "PC": 8,
+                "valids": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "pcs": [
+                  4,
+                  0,
+                  null,
+                  null
+                ],
+                "instructions": [
+                  2097427,
+                  1048723,
+                  null,
+                  null
+                ]
+              },
+              {
+                "PC": 12,
+                "valids": [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                "pcs": [
+                  8,
+                  4,
+                  0,
+                  null
+                ],
+                "instructions": [
+                  3146131,
+                  2097427,
+                  1048723,
+                  null
+                ]
+              },
+              {
+                "PC": 16,
+                "valids": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "pcs": [
+                  12,
+                  8,
+                  4,
+                  0
+                ],
+                "instructions": [
+                  4194835,
+                  3146131,
+                  2097427,
+                  1048723
+                ]
+              },
+              {
+                "PC": 20,
+                "valids": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "pcs": [
+                  16,
+                  12,
+                  8,
+                  4
+                ],
+                "instructions": [
+                  5243539,
+                  4194835,
+                  3146131,
+                  2097427
+                ]
+              }
+            ],
+            "fifth_preedge_wb": {
+              "pc": 0,
+              "rd": 1,
+              "wb_value": 1
             }
           },
           "kind": "program",
@@ -17443,6 +17857,64 @@
           "parameters": {
             "PRIORITY_FIXTURE": "1"
           }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/if_id_register.sv",
+            "rtl/id_ex_register.sv",
+            "rtl/ex_mem_register.sv",
+            "rtl/mem_wb_register.sv",
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_composition_tb.sv"
+          ],
+          "top": "pipeline_composition_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-007/C001",
+            "TEST-PIPE-007/C002",
+            "TEST-PIPE-007/C003",
+            "TEST-PIPE-007/C004",
+            "TEST-PIPE-007/C005",
+            "TEST-PIPE-007/C006",
+            "TEST-PIPE-007/C007",
+            "TEST-PIPE-007/C008",
+            "TEST-PIPE-007/C009",
+            "TEST-PIPE-007/C010",
+            "TEST-PIPE-007/C011",
+            "TEST-PIPE-007/C012",
+            "TEST-PIPE-007/C013",
+            "TEST-PIPE-007/C014",
+            "TEST-PIPE-007/C015",
+            "TEST-PIPE-007/C016",
+            "TEST-PIPE-007/C018",
+            "TEST-PIPE-007/C019",
+            "TEST-PIPE-007/C020",
+            "TEST-PIPE-007/C021"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/if_id_register.sv",
+            "rtl/id_ex_register.sv",
+            "rtl/ex_mem_register.sv",
+            "rtl/mem_wb_register.sv",
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_composition_tb.sv"
+          ],
+          "top": "pipeline_composition_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-007/C017"
+          ],
+          "parameters": {
+            "TERMINAL_FIXTURE": "1"
+          }
         }
       ],
       "cases": [
@@ -17460,7 +17932,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_ex_fault",
@@ -17470,7 +18000,17 @@
               "bubble",
               "invalidate",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_ex_fault",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17492,7 +18032,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17503,7 +18101,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17525,7 +18133,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_halt",
@@ -17535,7 +18201,17 @@
               "bubble",
               "invalidate",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_halt",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17557,7 +18233,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17568,7 +18302,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17590,7 +18334,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_redirect",
@@ -17600,7 +18402,17 @@
               "bubble",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_redirect",
+              "next_updates": [
+                "target",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17622,7 +18434,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17633,7 +18503,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17655,7 +18535,65 @@
               "id_fault_candidate": 1,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_id_fault",
@@ -17665,7 +18603,17 @@
               "bubble",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_id_fault",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17687,7 +18635,65 @@
               "id_fault_candidate": 1,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17698,7 +18704,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17720,7 +18736,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 1
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_load_use",
@@ -17730,7 +18804,17 @@
               "bubble",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_load_use",
+              "next_updates": [
+                "hold",
+                "hold_all_5_fields",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17752,7 +18836,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 1
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17763,7 +18905,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17785,7 +18937,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_normal",
@@ -17795,7 +19005,17 @@
               "capture_ID",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_normal",
+              "next_updates": [
+                "PC+4",
+                "capture_IF",
+                "capture_ID",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17817,7 +19037,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17828,7 +19106,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17850,7 +19138,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 1
             },
-            "drain_mode": 1
+            "drain_mode": 1,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_drain_load_use",
@@ -17860,7 +19206,17 @@
               "bubble",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_drain_load_use",
+              "next_updates": [
+                "hold",
+                "hold_all_5_fields",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -17882,7 +19238,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 1
             },
-            "drain_mode": 1
+            "drain_mode": 1,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17893,7 +19307,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -17915,7 +19339,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 1
+            "drain_mode": 1,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "act_drain_advance",
@@ -17925,7 +19407,17 @@
               "capture_ID",
               "capture_EX",
               "capture_MEM"
-            ]
+            ],
+            "composition": {
+              "selected_action": "act_drain_advance",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "capture_ID",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17947,7 +19439,65 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 1
+            "drain_mode": 1,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
             "selected_action": "ninguna",
@@ -17958,7 +19508,17 @@
               "hold",
               "hold",
               "hold"
-            ]
+            ],
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -17977,10 +19537,120 @@
               0
             ],
             "cpu_cycle_fire": 0,
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "terminal"
+              ],
+              "future_order": [
+                "alternate"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                },
+                "terminal": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 19088743,
+                    "instruction": 2309737967,
+                    "fetch_fault_valid": 0,
+                    "fetch_fault_cause": 1
+                  },
+                  "idex": {
+                    "valid": 0,
+                    "pc": 2309737967,
+                    "instruction": 19088743,
+                    "rs1": 31,
+                    "rs2": 30,
+                    "rd": 29,
+                    "rs1_value": 19088743,
+                    "rs2_value": 2309737967,
+                    "immediate": 19088743,
+                    "alu_op": 43,
+                    "alu_src": 1,
+                    "result_sel": 2,
+                    "flow_op": 5,
+                    "mem_op": 8,
+                    "reg_write": 1
+                  },
+                  "exmem": {
+                    "valid": 0,
+                    "pc": 19088743,
+                    "instruction": 2309737967,
+                    "rd": 31,
+                    "reg_write": 1,
+                    "mem_op": 8,
+                    "ex_result": 19088743,
+                    "store_data": 2309737967
+                  },
+                  "memwb": {
+                    "valid": 0,
+                    "pc": 2309737967,
+                    "instruction": 19088743,
+                    "rd": 31,
+                    "reg_write": 1,
+                    "wb_value": 2309737967
+                  }
+                }
+              }
+            }
           },
           "expected": {
-            "selected_action": "ninguna"
+            "selected_action": "ninguna",
+            "composition": {
+              "selected_action": "ninguna",
+              "next_updates": [
+                "hold",
+                "hold",
+                "hold",
+                "hold",
+                "hold"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
@@ -18005,10 +19675,78 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
-            "winner": "EX_fault"
+            "winner": "EX_fault",
+            "composition": {
+              "selected_action": "act_ex_fault",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -18033,10 +19771,78 @@
               "id_fault_candidate": 0,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
-            "winner": "halt"
+            "winner": "halt",
+            "composition": {
+              "selected_action": "act_halt",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -18061,10 +19867,78 @@
               "id_fault_candidate": 1,
               "load_use_stall": 0
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
-            "winner": "redirect"
+            "winner": "redirect",
+            "composition": {
+              "selected_action": "act_redirect",
+              "next_updates": [
+                "target",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -18089,10 +19963,78 @@
               "id_fault_candidate": 1,
               "load_use_stall": 1
             },
-            "drain_mode": 0
+            "drain_mode": 0,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current",
+                "alternate"
+              ],
+              "future_order": [
+                "alternate",
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              }
+            }
           },
           "expected": {
-            "winner": "ID_fault"
+            "winner": "ID_fault",
+            "composition": {
+              "selected_action": "act_id_fault",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "artificial",
           "origins": [
@@ -18107,7 +20049,32 @@
       "source": "pipeline.md#test-pipe-008",
       "case_count": 9,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/if_id_register.sv",
+            "rtl/id_ex_register.sv",
+            "rtl/ex_mem_register.sv",
+            "rtl/mem_wb_register.sv",
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_composition_tb.sv"
+          ],
+          "top": "pipeline_composition_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-008/C006",
+            "TEST-PIPE-008/C007",
+            "TEST-PIPE-008/C008",
+            "TEST-PIPE-008/C009"
+          ],
+          "parameters": {
+            "FRONTIER_FIXTURE": "1"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-008/C001",
@@ -18190,18 +20157,103 @@
             "EX": "fault",
             "ID": "illegal",
             "older_MEM_store": 3,
-            "older_WB_value": 11
+            "older_WB_value": 11,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current"
+              ],
+              "future_order": [
+                "alternate"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              },
+              "cpu_cycle_fire": 1,
+              "drain_mode": 0,
+              "events": {
+                "ex_fault_candidate": 1,
+                "ex_halt_candidate": 0,
+                "redirect_requested": 0,
+                "id_fault_candidate": 1,
+                "load_use_stall": 0
+              },
+              "older_mem": {
+                "valid": 1,
+                "mem_op": 8,
+                "reg_write": 0
+              },
+              "older_wb": {
+                "valid": 1,
+                "reg_write": 1,
+                "rd": 31
+              }
+            }
           },
           "expected": {
             "winner": "EX",
             "older_commits": true,
-            "ID_confirm": false
+            "ID_confirm": false,
+            "composition": {
+              "selected_action": "act_ex_fault",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
             "Eventos por antigüedad"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-008/C007",
@@ -18209,18 +20261,103 @@
             "EX": "redirect",
             "ID": "load-use",
             "older_MEM_store": 3,
-            "older_WB_value": 11
+            "older_WB_value": 11,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current"
+              ],
+              "future_order": [
+                "alternate"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              },
+              "cpu_cycle_fire": 1,
+              "drain_mode": 0,
+              "events": {
+                "ex_fault_candidate": 0,
+                "ex_halt_candidate": 0,
+                "redirect_requested": 1,
+                "id_fault_candidate": 0,
+                "load_use_stall": 1
+              },
+              "older_mem": {
+                "valid": 1,
+                "mem_op": 8,
+                "reg_write": 0
+              },
+              "older_wb": {
+                "valid": 1,
+                "reg_write": 1,
+                "rd": 31
+              }
+            }
           },
           "expected": {
             "winner": "EX",
             "older_commits": true,
-            "ID_confirm": false
+            "ID_confirm": false,
+            "composition": {
+              "selected_action": "act_redirect",
+              "next_updates": [
+                "target",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
             "Eventos por antigüedad"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-008/C008",
@@ -18228,18 +20365,103 @@
             "EX": "redirect",
             "ID": "fetch-candidate",
             "older_MEM_store": 3,
-            "older_WB_value": 11
+            "older_WB_value": 11,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "alternate"
+              ],
+              "future_order": [
+                "current"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              },
+              "cpu_cycle_fire": 1,
+              "drain_mode": 0,
+              "events": {
+                "ex_fault_candidate": 0,
+                "ex_halt_candidate": 0,
+                "redirect_requested": 1,
+                "id_fault_candidate": 1,
+                "load_use_stall": 0
+              },
+              "older_mem": {
+                "valid": 1,
+                "mem_op": 8,
+                "reg_write": 0
+              },
+              "older_wb": {
+                "valid": 1,
+                "reg_write": 1,
+                "rd": 31
+              }
+            }
           },
           "expected": {
             "winner": "EX",
             "older_commits": true,
-            "ID_confirm": false
+            "ID_confirm": false,
+            "composition": {
+              "selected_action": "act_redirect",
+              "next_updates": [
+                "target",
+                "invalidate_flags",
+                "bubble",
+                "capture_EX",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
             "Eventos por antigüedad"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-008/C009",
@@ -18247,18 +20469,103 @@
             "EX": "halt",
             "ID": "illegal",
             "older_MEM_store": 3,
-            "older_WB_value": 11
+            "older_WB_value": 11,
+            "composition": {
+              "PC": 64,
+              "redirect_target": 128,
+              "preload_order": [
+                "current"
+              ],
+              "future_order": [
+                "alternate"
+              ],
+              "payloads": {
+                "alternate": {
+                  "ifid": {
+                    "valid": 0,
+                    "pc": 2147483650,
+                    "instruction": 0,
+                    "fetch_fault_valid": 1,
+                    "fetch_fault_cause": 0
+                  },
+                  "idex": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rs1": 0,
+                    "rs2": 1,
+                    "rd": 2,
+                    "rs1_value": 4275878552,
+                    "rs2_value": 1985229328,
+                    "immediate": 4275878552,
+                    "alu_op": 20,
+                    "alu_src": 0,
+                    "result_sel": 1,
+                    "flow_op": 2,
+                    "mem_op": 7,
+                    "reg_write": 0
+                  },
+                  "exmem": {
+                    "valid": 1,
+                    "pc": 4275878552,
+                    "instruction": 1985229328,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "mem_op": 7,
+                    "ex_result": 4275878552,
+                    "store_data": 1985229328
+                  },
+                  "memwb": {
+                    "valid": 1,
+                    "pc": 1985229328,
+                    "instruction": 4275878552,
+                    "rd": 0,
+                    "reg_write": 0,
+                    "wb_value": 1985229328
+                  }
+                }
+              },
+              "cpu_cycle_fire": 1,
+              "drain_mode": 0,
+              "events": {
+                "ex_fault_candidate": 0,
+                "ex_halt_candidate": 1,
+                "redirect_requested": 0,
+                "id_fault_candidate": 1,
+                "load_use_stall": 0
+              },
+              "older_mem": {
+                "valid": 1,
+                "mem_op": 8,
+                "reg_write": 0
+              },
+              "older_wb": {
+                "valid": 1,
+                "reg_write": 1,
+                "rd": 31
+              }
+            }
           },
           "expected": {
             "winner": "EX",
             "older_commits": true,
-            "ID_confirm": false
+            "ID_confirm": false,
+            "composition": {
+              "selected_action": "act_halt",
+              "next_updates": [
+                "hold",
+                "invalidate_flags",
+                "bubble",
+                "invalidate",
+                "capture_MEM"
+              ]
+            }
           },
           "kind": "vector",
           "origins": [
             "Eventos por antigüedad"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -18267,14 +20574,70 @@
       "source": "pipeline.md#test-pipe-009",
       "case_count": 11,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_wb_register.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_wb_boundary_tb.sv"
+          ],
+          "top": "mem_wb_boundary_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-009/C001",
+            "TEST-PIPE-009/C002"
+          ],
+          "parameters": {
+            "MEM_SOURCE_FIXTURE": "1"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_wb_register.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_wb_boundary_tb.sv"
+          ],
+          "top": "mem_wb_boundary_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-009/C003",
+            "TEST-PIPE-009/C004",
+            "TEST-PIPE-009/C005",
+            "TEST-PIPE-009/C006",
+            "TEST-PIPE-009/C007"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-009/C001",
           "inputs": {
             "source": "ex_result",
             "ex_result": "0x11223344",
-            "load_value": "0xFFFFFF80"
+            "load_value": "0xFFFFFF80",
+            "boundary": {
+              "initial": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 0
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 287454020
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "memwb_next_wb_value": "0x11223344"
@@ -18283,14 +20646,33 @@
           "origins": [
             "Selector MEM"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C002",
           "inputs": {
             "source": "load_value",
             "ex_result": "0x11223344",
-            "load_value": "0xFFFFFF80"
+            "load_value": "0xFFFFFF80",
+            "boundary": {
+              "initial": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 0
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 4294967168
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "memwb_next_wb_value": "0xFFFFFF80"
@@ -18299,14 +20681,33 @@
           "origins": [
             "Selector MEM"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C003",
           "inputs": {
             "guard": "ninguna",
             "current_wb_value": 7,
-            "future_wb_value": 99
+            "future_wb_value": 99,
+            "boundary": {
+              "initial": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 7
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 99
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "write_fire": true,
@@ -18316,14 +20717,33 @@
           "origins": [
             "Writeback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C004",
           "inputs": {
             "guard": "valid0",
             "current_wb_value": 7,
-            "future_wb_value": 99
+            "future_wb_value": 99,
+            "boundary": {
+              "initial": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 7
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 99
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "write_fire": false,
@@ -18333,14 +20753,33 @@
           "origins": [
             "Writeback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C005",
           "inputs": {
             "guard": "reg_write0",
             "current_wb_value": 7,
-            "future_wb_value": 99
+            "future_wb_value": 99,
+            "boundary": {
+              "initial": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 0,
+                "wb_value": 7
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 99
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "write_fire": false,
@@ -18350,14 +20789,33 @@
           "origins": [
             "Writeback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C006",
           "inputs": {
             "guard": "rd0",
             "current_wb_value": 7,
-            "future_wb_value": 99
+            "future_wb_value": 99,
+            "boundary": {
+              "initial": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 0,
+                "reg_write": 1,
+                "wb_value": 7
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 99
+              },
+              "cpu_cycle_fire": 1
+            }
           },
           "expected": {
             "write_fire": false,
@@ -18367,14 +20825,33 @@
           "origins": [
             "Writeback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C007",
           "inputs": {
             "guard": "fire0",
             "current_wb_value": 7,
-            "future_wb_value": 99
+            "future_wb_value": 99,
+            "boundary": {
+              "initial": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 7
+              },
+              "future": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 99
+              },
+              "cpu_cycle_fire": 0
+            }
           },
           "expected": {
             "write_fire": false,
@@ -18384,7 +20861,7 @@
           "origins": [
             "Writeback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-009/C008",

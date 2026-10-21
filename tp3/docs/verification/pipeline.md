@@ -27,6 +27,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-012 — Registro ID/EX aislado](#test-pipe-012)
 - [TEST-PIPE-013 — Registro EX/MEM aislado](#test-pipe-013)
 - [TEST-PIPE-014 — Registro MEM/WB aislado](#test-pipe-014)
+- [Acreditación local de #7 y pendientes de integración](#acreditacion-local-7)
 
 <a id="test-pipe-001"></a>
 
@@ -34,11 +35,22 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 - **Nivel:** CPU y revisión de estructura.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** esquema de tipos y llenado local implementados; CPU pendiente.
 
 **Requisitos:** [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-002](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [cpu_pipeline](../architecture/cpu/cpu_pipeline.md); [system_composition](../architecture/system_composition.md).
+
+### Alcance ejecutable actual
+
+`system_pkg_latches_tb` comprueba el esquema de tipos al nivel Unidad.
+`pipeline_composition_tb`, con `FILL_FIXTURE=1`, observa cinco flancos de
+llenado al nivel Integración local. Inyecta el prefijo de cinco ADDI y los
+payloads de ID/EX/MEM definidos en `inputs.composition`, sin ejecutar Decoder,
+ALU, memorias ni RF. Contrasta los PCs e instrucciones de cada frontera con
+`expected.fill_trace`; la primera entrada elegible de WB aparece en el quinto
+flanco. El programa completo, la escritura real de x1…x6, el halt y la
+estructura de CPU conservan su verificación pendiente en #9.
 
 ### Qué comprueba y por qué
 
@@ -515,7 +527,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad hazard y registros interetapa.
 - **Tipo de estímulo:** entradas locales controladas; drain-load-use artificial.
-- **Estado:** banco del árbitro implementado; composición pendiente.
+- **Estado:** bancos de árbitro y composición local implementados; CPU pendiente.
 
 **Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -544,12 +556,31 @@ recibe la autorización de ciclo suministrada. No se instancia ni acredita la FS
 C013/C014 conservan su carácter artificial, sin atribuir alcanzabilidad legal
 a drain-load-use.
 
-`status=implemented` registra este banco al nivel Unidad. Las expectativas
-`next_updates`, la actualización de PC y los payloads preflanco de los cuatro
-registros siguen pendientes de composición. No se acredita generación de
-confirmaciones, captura de metadatos ni commits de RF/DMEM. La aprobación de
-la especificación completa requiere también esas comprobaciones; los resultados
-de las corridas se conservan por separado en los reportes del ejecutor común.
+`pipeline_composition_tb` agrega una ejecución por ID al nivel Integración
+local. Instancia los cinco módulos RTL, convierte acciones en controles locales
+dentro del banco y utiliza un PC de fixture. C001–C016 y C018–C021 tienen dos
+observaciones explícitas: preload actual/futuro y el intercambio de ambos.
+Así IF/ID comienza una vez con instrucción y otra con candidato de fetch.
+C017 tiene una observación con los cuatro registros inválidos. Estos pasos
+pertenecen al mismo caso; no agregan variantes ni un producto cartesiano.
+
+El fixture actual procede de `latch_fixture`; el alternativo y las órdenes de
+preload/captura están concretados en `inputs.composition`. El preload utiliza
+los puertos de captura, sin `force` ni escrituras jerárquicas. Los campos de
+identidad y control conectados entre registros proceden del estado registrado
+anterior; los demás resultados de etapas ausentes se inyectan en su frontera.
+Una referencia separada usa las copias preflanco y los modos del JSON para
+comprobar productores, `valid_next`, `pipeline_empty_next` y el estado posterior.
+Las capturas y retenciones comparan payloads completos; las invalidaciones
+comparan solo sus flags, sin imponer valores a datos inactivos.
+
+Las expectativas originales se conservan. `expected.composition` concreta la
+acción y los cinco modos, incluida la tabla de actualización para pares de
+prioridad y terminal vacío. El banco acredita esta composición local, con
+fixtures artificiales de payload; no declara una sesión alcanzable de CPU.
+La aplicación real de controles en `processor_top`, la FSM, los metadatos de
+fault y los commits reales de RF/DMEM siguen pendientes en #9. Los resultados
+por ID, banco y nivel se conservan en los reportes del ejecutor común.
 
 ### Qué comprueba y por qué
 
@@ -628,11 +659,28 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración hazard.
 - **Tipo de estímulo:** legal; combinación EX/ID local indicada.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** proyección local C006–C009 implementada; programas y efectos reales pendientes.
 
 **Requisitos:** [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [faults_and_termination](../architecture/session/faults_and_termination.md); [control_and_hazards](../architecture/cpu/control_and_hazards.md).
+
+### Alcance ejecutable actual
+
+`pipeline_composition_tb`, con `FRONTIER_FIXTURE=1`, ejecuta C006–C009 al nivel
+Integración local. Los candidatos EX/ID y los payloads concretos se inyectan
+por las interfaces del árbitro y los registros. Comprueba el ganador EX, la
+supresión de `act_id_fault`, el descarte de IF/ID e ID/EX y el avance o
+invalidación de EX/MEM según la frontera. C008 precarga un candidato de fetch;
+los otros casos precargan una instrucción en IF/ID.
+
+Un observador en el flanco verifica que el dato de store 3 y el valor WB 11
+anteriores siguen disponibles con sus flags de elegibilidad, aunque los
+registros se actualicen después. La expectativa `older_commits` se proyecta
+localmente sobre esa disponibilidad; no se escribe RF ni DMEM y no se acredita
+el commit real o su cuenta. La captura de metadatos y los programas C001–C005
+siguen pendientes de CPU. Los fixtures de candidatos y payloads no acreditan
+alcanzabilidad de esas coincidencias en una sesión legal.
 
 ### Qué comprueba y por qué
 
@@ -688,11 +736,28 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad MEM/WB y CPU.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** frontera MEM/WB C001–C007 implementada; selección MEM, control WB y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_mem](../architecture/cpu/stage_mem.md); [stage_wb](../architecture/cpu/stage_wb.md); [architectural_invariants](../architecture/architectural_invariants.md).
+
+### Alcance ejecutable actual
+
+`mem_wb_boundary_tb` ejecuta C001–C007 al nivel Unidad. C001/C002 inyectan
+el valor preseleccionado en la entrada de `mem_wb_register` y contrastan su
+almacenamiento con `memwb_next_wb_value`. La selección real entre EX y DMEM
+sigue pendiente del mux de MEM; este fixture no la implementa como RTL del producto.
+
+C003–C007 precargan el valor 7 y presentan la entrada futura 99. Un observador
+WB de testbench muestrea los campos registrados anteriores y su elegibilidad
+`cpu_cycle_fire && valid && reg_write && rd!=0`; compara esa proyección con
+`write_fire` y `written_value`. Comprueba captura o retención de los seis
+campos y detecta el consumo accidental del valor nuevo en el mismo flanco.
+Las guardas del control WB real, la escritura en RF y su cuenta no se acreditan
+con ese observador. Los programas C008–C011 y sus HOLD UART siguen pendientes
+de CPU/sistema. Las expectativas canónicas conservan su significado completo;
+la configuración de Unidad registra solo esta contribución de MEM/WB.
 
 ### Qué comprueba y por qué
 
@@ -903,7 +968,7 @@ Este grupo acredita exclusivamente el registro. Los controles se inyectan desde
 el banco; no se agrega lógica de IF, arbitraje ni control local al producto.
 No acredita el programa, solapamiento ni estructura completa de
 `TEST-PIPE-001/C001`, las acciones y prioridades de `TEST-PIPE-007/C001–C021`,
-las fronteras de `TEST-PIPE-008/C001–C009`, los commits de
+las fronteras en CPU de `TEST-PIPE-008/C001–C009`, los commits de
 `TEST-PIPE-009/C001–C011` ni las secuencias de CPU/control de
 `TEST-PIPE-010/C001–C020`. Sus estados y configuraciones conservan el alcance
 previo; siguen pendientes los niveles de integración y CPU correspondientes.
@@ -961,7 +1026,7 @@ pendientes de integración. El módulo conserva los valores entregados en sus
 puertos, sin incorporar Decoder, bypass, arbitraje ni controles de `processor_top`.
 `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
 su programa y estructura completa siguen pendientes. También siguen pendientes
-la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
+la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La generación real de controles para
@@ -1018,7 +1083,7 @@ EX se inyectan por sus puertos; su selección real mediante forwarding y Result
 MUX, la autorización de DMEM y las fronteras de instrucciones siguen pendientes
 de integración. `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos
 al nivel Unidad; su programa y estructura completa siguen pendientes. También
-siguen pendientes la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
+siguen pendientes la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. No se atribuye al registro aislado la
@@ -1075,9 +1140,59 @@ MEM, las guardas de writeback, el consumo de la entrada anterior en un commit
 simultáneo y su cuenta por instancia siguen pendientes de integración.
 `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
 su programa y estructura completa siguen pendientes. También siguen pendientes
-la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
+la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La captura de MEM para las ocho acciones,
 incluida una frontera EX joven o el último avance de drain, requiere los
 controles locales y la integración correspondientes.
+
+<a id="acreditacion-local-7"></a>
+
+## Acreditación local de #7 y pendientes de integración
+
+El alcance implementado conserva los 34 campos y 504 bits de los cuatro
+registros y el árbitro combinacional sin estado. Los controles de composición,
+el PC y los observadores son exclusivos de testbench. No se modifica
+`processor_top`, la FSM ni la lógica de las etapas ausentes. Registrar una
+proyección con `status=implemented` significa que existe ese banco y nivel;
+no aprueba los niveles ni las partes pendientes de la especificación completa.
+
+| IDs                     | Contribución ejecutable en #7                                                             | Pendiente de integración/aceptación                                                  |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| TEST-PIPE-001/C001      | Unidad: tipos; integración local: cinco flancos de llenado e identidad.                   | Programa completo, RF, halt y estructura real de CPU.                                |
+| TEST-PIPE-007/C001–C016 | Unidad e integración local: ocho acciones, ocho HOLD, payloads y próximos valid.          | Generación y aplicación real de controles en processor_top.                          |
+| TEST-PIPE-007/C017      | Unidad e integración local: ausencia de acción, PC/registros retenidos y vacío próximo.   | Alcanzar FINISHED con FSM real y ausencia de commits reales.                         |
+| TEST-PIPE-007/C018–C021 | Unidad e integración local: prioridades y actualizaciones de sus fronteras.               | Secuencia de CPU y metadatos persistentes; los pares son fixtures artificiales.      |
+| TEST-PIPE-008/C001–C005 | Sin ejecución CPU; variantes conservadas pendientes.                                      | Branch/wrong-path, loop y orden halt/ilegal en CPU.                                  |
+| TEST-PIPE-008/C006–C009 | Integración local: EX/ID, descarte y disponibilidad/elegibilidad preflanco de anteriores. | Escrituras reales de store/WB, su cuenta y metadatos de fault.                       |
+| TEST-PIPE-009/C001–C002 | Unidad: registro del valor preseleccionado de MEM.                                        | Selección RTL del mux de MEM y revisión de decisión única.                           |
+| TEST-PIPE-009/C003–C007 | Unidad: consumo preflanco 7 frente a 99, retención y observador de elegibilidad.          | Control WB real, escritura y cuenta de commits en RF.                                |
+| TEST-PIPE-009/C008–C011 | Sin ejecución CPU; variantes conservadas pendientes.                                      | Programas, RUN/STEP, HOLD UART y commits únicos.                                     |
+| TEST-PIPE-010/C001–C020 | Sin ejecución CPU/control; las veinte variantes permanecen pendientes.                    | Secuencias legales de fetch/load-use, fronteras, RESET y LOAD con etapas/FSM reales. |
+
+La integración real de controles y CPU corresponde a #9. La aceptación física
+requiere sus niveles de sistema/placa; ninguna de estas corridas acredita FPGA.
+C013/C014 de TEST-PIPE-007 conservan la rama artificial drain-load-use, sin
+cambiar la FSM para hacerla alcanzable. TEST-PIPE-010 conserva veinte variantes,
+aunque la tabla original de la issue indicaba una; no se sustituyen sus
+secuencias de CPU por candidatos forzados.
+
+Los grupos TEST-PIPE-011–014 conservan sus pruebas individuales de registros.
+I09 se observa aquí como retención local; I11–I13 como selección/exclusión del
+árbitro. La contribución a descarte, antigüedad y disponibilidad de anteriores
+se observa en los registros; los efectos arquitectónicos de I01, I02, I04,
+I06, I07, I16, I17 e I18 mantienen su comprobación global pendiente.
+
+La selección usa `--test` repetible y `--all`, sin añadir `--issue`. Con la
+imagen exacta de `docker/image.ref`, desde el entorno de desarrollo:
+
+~~~bash
+make test-rtl TESTS="TEST-PIPE-001 TEST-PIPE-007 TEST-PIPE-008 TEST-PIPE-009 TEST-PIPE-010"
+make check
+~~~
+
+La primera selección informa también los IDs pendientes; no los convierte en
+aprobaciones. `build/reports/results.json` registra cada ejecución con banco y
+nivel, y `build/reports/simulation/` conserva los diagnósticos. Los reportes son
+evidencia generada de la corrida y no forman parte de los vectores canónicos.
