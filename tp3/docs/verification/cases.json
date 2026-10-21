@@ -22586,6 +22586,568 @@
       ]
     },
     {
+      "id": "TEST-PIPE-014",
+      "source": "pipeline.md#test-pipe-014",
+      "case_count": 6,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_wb_register.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_wb_register_tb.sv"
+          ],
+          "top": "mem_wb_register_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-PIPE-014/C001",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura preflanco y reemplazo de los seis campos con wb_value completo"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-014/C002",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 4294967295
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 0,
+                  "pc": 0,
+                  "instruction": 0,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 0
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 4294967295
+                },
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 0,
+                  "instruction": 0,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 0
+                },
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura inválida con reg_write residual y payload cero"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-014/C003",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": "retained",
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de entrada válida durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-014/C004",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 4294967295
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 4294967295
+                },
+                "valid_next": false
+              },
+              {
+                "state": "retained",
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de entrada inválida durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-014/C005",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "RESET síncrono sobre captura y retención"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-014/C006",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 103,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "rd": 31,
+                  "reg_write": 1,
+                  "wb_value": 2147483655
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878555,
+                  "instruction": 1985229328,
+                  "rd": 0,
+                  "reg_write": 0,
+                  "wb_value": 2147483640
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Inicialización de sesión sobre captura y retención"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
       "id": "TEST-MEM-001",
       "source": "memory.md#test-mem-001",
       "case_count": 18,

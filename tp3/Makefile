@@ -7,8 +7,8 @@ SV_DIRS := rtl tb scripts/tests/fixtures
 PY_DIR := scripts
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv rtl/if_id_register.sv rtl/id_ex_register.sv \
-  rtl/ex_mem_register.sv
-RTL_TOPS := if_id_register id_ex_register ex_mem_register
+  rtl/ex_mem_register.sv rtl/mem_wb_register.sv
+RTL_TOPS := if_id_register id_ex_register ex_mem_register mem_wb_register
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags

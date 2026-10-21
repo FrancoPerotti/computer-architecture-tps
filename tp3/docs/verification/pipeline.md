@@ -26,6 +26,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-011 — Registro IF/ID aislado](#test-pipe-011)
 - [TEST-PIPE-012 — Registro ID/EX aislado](#test-pipe-012)
 - [TEST-PIPE-013 — Registro EX/MEM aislado](#test-pipe-013)
+- [TEST-PIPE-014 — Registro MEM/WB aislado](#test-pipe-014)
 
 <a id="test-pipe-001"></a>
 
@@ -993,3 +994,60 @@ secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. No se atribuye al registro aislado la
 continuidad de trabajo anterior ante redirect/fault ID ni la generación real
 de controles de HOLD, LOAD, halt/fault EX y drain.
+
+<a id="test-pipe-014"></a>
+
+## TEST-PIPE-014 — Registro MEM/WB aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a MEM/WB.
+
+**Contratos:** [registro MEM/WB](../architecture/cpu/cpu_pipeline.md#registro-memwb),
+[interfaz](../interfaces.md#bloque-4-7) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `mem_wb_register_tb` instancia únicamente el registro y el lector de
+datos externo. Los seis casos conservan estímulos y expectativas en el
+manifiesto. Cada paso aplica controles y datos en el flanco descendente,
+comprueba estabilidad del registro y contrasta `valid_next` antes del flanco
+ascendente. Después del flanco compara el estado con igualdad estricta para
+detectar X/Z.
+
+| Caso   | Comprobación                                                                  |
+| ------ | ----------------------------------------------------------------------------- |
+| C001   | Captura preflanco y reemplazo de los seis campos, incluido wb_value completo. |
+| C002   | Captura de entrada inválida con reg_write residual y de payload cero.         |
+| C003   | Retención de entrada válida durante tres clocks sin captura.                  |
+| C004   | Retención de entrada inválida durante tres clocks sin captura.                |
+| C005   | RESET síncrono sobre captura y retención, seguido de nueva captura.           |
+| C006   | Inicialización de sesión sobre captura y retención, seguida de nueva captura. |
+
+Las capturas comparan los seis campos contra el JSON. C001 utiliza patrones
+complementarios en los bits del payload salvo `valid`; `wb_value` alterna sus
+32 bits y difiere de PC e instrucción. La segunda captura conserva `valid=1`
+con `rd=0` y `reg_write=0`: el registro transporta esos campos sin decidir la
+autorización del writeback. C002 comprueba captura de `valid=0`, incluido
+`reg_write=1` inactivo, y luego reemplazo por payload cero. Son vectores del
+registro; no representan instrucciones ejecutables ni commits de RF.
+
+La expectativa `retained` compara los 103 bits con su copia preflanco;
+`invalidated` exige solo `valid=0`, sin fijar valores para datos y controles
+inactivos. Todos los casos comprueban el ancho de 103 bits y el reset inicial.
+RESET e inicialización de sesión prevalecen sobre captura. Sin controles se
+retiene; la interfaz no agrega bubble ni invalidación local.
+
+Este grupo acredita exclusivamente el registro. La selección del valor final en
+MEM, las guardas de writeback, el consumo de la entrada anterior en un commit
+simultáneo y su cuenta por instancia siguen pendientes de integración.
+`TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
+su programa y estructura completa siguen pendientes. También siguen pendientes
+las acciones de `TEST-PIPE-007/C001–C021`, las fronteras de
+`TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
+secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
+estados y configuraciones no cambian. La captura de MEM para las ocho acciones,
+incluida una frontera EX joven o el último avance de drain, requiere los
+controles locales y la integración correspondientes.
