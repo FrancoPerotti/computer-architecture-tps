@@ -183,10 +183,11 @@ explícitamente se usa `make format`. También están disponibles `format-check`
 El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/` y `scripts/`, incluidos
 fixtures. Verilator analiza exclusivamente el RTL y sus dependencias ordenadas en
 Make, con `system_pkg` antes de `decoder`, `immediate_generator`, `register_file`,
-`id_fault_check`, `load_use_detector`, `id_stage` y `fetch_fault_check`. Cada módulo se
-selecciona como top para analizarlo sin ambigüedad entre raíces independientes.
-El comprobador de fetch se analiza con capacidad explícita de cuatro bytes; las
-simulaciones también cubren otras capacidades, incluido el extremo aritmético `2^32`.
+`id_fault_check`, `load_use_detector`, `id_stage`, `fetch_fault_check` e
+`instruction_memory`. Cada módulo se selecciona como top para analizarlo sin
+ambigüedad entre raíces independientes. Los dos consumidores de capacidad IMEM se
+analizan con cuatro, 1000 y 1024 bytes. Las simulaciones del comprobador de fetch
+también cubren el extremo aritmético `2^32`, sin elaborar una memoria de ese tamaño.
 El catálogo de pruebas conserva sus bancos
 y fuentes de simulación; no define el alcance de lint RTL.
 

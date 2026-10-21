@@ -30,9 +30,9 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 **Contratos:** [common_configuration](../architecture/common_configuration.md); [memory_architecture](../architecture/memory/memory_architecture.md); [system_composition](../architecture/system_composition.md).
 
-### Rechazos disponibles en el comprobador de fetch
+### Rechazos disponibles en consumidores IMEM
 
-Además de los bancos del paquete, `fetch_fault_check_config_tb` reutiliza `C009`–`C013` para comprobar el rechazo de configuración del módulo real. `C009` omite el parámetro y ejercita el centinela cero; los otros cuatro reciben `inputs.C` durante la elaboración. El DUT debe terminar con `CONFIG_INVALID_CAPACITY` y código uno. El banco registra el marcador `REJECT` al finalizar; si el DUT no rechaza la configuración, el banco termina con código cero y el ejecutor informa un fallo. No se crean otros casos canónicos ni se acredita soporte físico para capacidades grandes.
+Además de los bancos del paquete, `fetch_fault_check_config_tb` e `instruction_memory_config_tb` reutilizan `C009`–`C013` para comprobar el rechazo de configuración de cada módulo real. `C009` omite el parámetro y ejercita el centinela cero; los otros cuatro reciben `inputs.C` durante la elaboración. El DUT debe terminar con `CONFIG_INVALID_CAPACITY` y código uno. El banco registra el marcador `REJECT` al finalizar; si el DUT no rechaza la configuración, el banco termina con código cero y el ejecutor informa un fallo. IMEM mantiene su array dentro de la rama de capacidad válida. No se crean otros casos canónicos ni se acredita soporte físico para capacidades grandes.
 
 ### Qué comprueba y por qué
 

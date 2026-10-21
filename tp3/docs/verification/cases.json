@@ -33844,41 +33844,184 @@
       "source": "memory.md#test-mem-005",
       "case_count": 3,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/instruction_memory_tb.sv"
+          ],
+          "top": "instruction_memory_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          },
+          "case_ids": [
+            "TEST-MEM-005/C001",
+            "TEST-MEM-005/C002"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-005/C001",
           "inputs": {
             "scenario": "read-address-change",
             "before": "0x12345678",
-            "after": "0x89ABCDEF"
+            "after": "0x89ABCDEF",
+            "C": 1024,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 1,
+                "data": 2309737967
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
           },
           "expected": {
             "read_comb": true,
-            "write_sync": true
+            "write_sync": true,
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 305419896
+              },
+              {
+                "address": 4,
+                "data": 2309737967
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
             "Temporización local"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-005/C002",
           "inputs": {
             "scenario": "write-then-read",
             "before": "0x12345678",
-            "after": "0x89ABCDEF"
+            "after": "0x89ABCDEF",
+            "C": 1000,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 2309737967,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 0,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
           },
           "expected": {
             "read_comb": true,
-            "write_sync": true
+            "write_sync": true,
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 11,
+                "after_edge": 11
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 2309737967
+              },
+              {
+                "address": 996,
+                "data": 11
+              }
+            ]
           },
           "kind": "vector",
           "origins": [
             "Temporización local"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-005/C003",
@@ -34732,6 +34875,886 @@
           "kind": "artificial",
           "origins": [
             "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
+      "id": "TEST-MEM-010",
+      "source": "memory.md#test-mem-010",
+      "case_count": 9,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/instruction_memory_tb.sv"
+          ],
+          "top": "instruction_memory_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-MEM-010/C001",
+          "inputs": {
+            "scenario": "single-row-and-invalid-index",
+            "C": 4,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 2309737967,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 1,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 2,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 3,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              },
+              {
+                "before_edge": 305419896,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 2309737967
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C002",
+          "inputs": {
+            "scenario": "reference-first-last",
+            "C": 1024,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 255,
+                "data": 11
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1020,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1020,
+                "imem_write_index": 255,
+                "imem_write_data": 2309737967,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              },
+              {
+                "before_edge": 11,
+                "after_edge": 11
+              },
+              {
+                "before_edge": 11,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 10847667
+              },
+              {
+                "address": 1020,
+                "data": 2309737967
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C003",
+          "inputs": {
+            "scenario": "alt-1000-first-last-and-unused-indices",
+            "C": 1000,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 10847667
+              },
+              {
+                "index": 249,
+                "data": 11
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 249,
+                "imem_write_data": 2309737967,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 250,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 255,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              },
+              {
+                "before_edge": 11,
+                "after_edge": 11
+              },
+              {
+                "before_edge": 11,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 10847667
+              },
+              {
+                "address": 996,
+                "data": 2309737967
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C004",
+          "inputs": {
+            "scenario": "reference-invalid-read-addresses",
+            "C": 1024,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 2309737967
+              },
+              {
+                "index": 255,
+                "data": 305419896
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 1,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 2,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 3,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1024,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1028,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 2147483648,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 4294967292,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 4294967295,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 2309737967
+              },
+              {
+                "address": 1020,
+                "data": 305419896
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C005",
+          "inputs": {
+            "scenario": "alt-1000-invalid-read-addresses",
+            "C": 1000,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 2309737967
+              },
+              {
+                "index": 249,
+                "data": 305419896
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 1,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 2,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 3,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1000,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1004,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1020,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 2147483648,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 4294967292,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              },
+              {
+                "before_edge": 0,
+                "after_edge": 0
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 2309737967
+              },
+              {
+                "address": 996,
+                "data": 305419896
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C006",
+          "inputs": {
+            "scenario": "reference-reset-blocks-write-and-preserves-words",
+            "C": 1024,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 1,
+                "data": 2309737967
+              },
+              {
+                "index": 255,
+                "data": 10847667
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 1,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 4,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 1020,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              },
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 305419896
+              },
+              {
+                "address": 4,
+                "data": 2309737967
+              },
+              {
+                "address": 1020,
+                "data": 10847667
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C007",
+          "inputs": {
+            "scenario": "alt-1000-reset-blocks-last-write",
+            "C": 1000,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 1,
+                "data": 2309737967
+              },
+              {
+                "index": 249,
+                "data": 10847667
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 1,
+                "read_address": 996,
+                "imem_write_index": 249,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 1,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              },
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 0
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              },
+              {
+                "before_edge": 10847667,
+                "after_edge": 10847667
+              },
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 305419896
+              },
+              {
+                "address": 4,
+                "data": 2309737967
+              },
+              {
+                "address": 996,
+                "data": 10847667
+              }
+            ]
+          },
+          "kind": "artificial",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C008",
+          "inputs": {
+            "scenario": "reference-disabled-writes",
+            "C": 1024,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 255,
+                "data": 2309737967
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 0,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 1020,
+                "imem_write_index": 255,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 1
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 305419896
+              },
+              {
+                "address": 1020,
+                "data": 2309737967
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-010/C009",
+          "inputs": {
+            "scenario": "alt-1000-disabled-writes",
+            "C": 1000,
+            "initial_words": [
+              {
+                "index": 0,
+                "data": 305419896
+              },
+              {
+                "index": 249,
+                "data": 2309737967
+              }
+            ],
+            "imem_steps": [
+              {
+                "reset": 0,
+                "read_address": 0,
+                "imem_write_index": 0,
+                "imem_write_data": 3735928559,
+                "imem_write_enable": 0,
+                "clock_edge": 1
+              },
+              {
+                "reset": 0,
+                "read_address": 996,
+                "imem_write_index": 249,
+                "imem_write_data": 0,
+                "imem_write_enable": 0,
+                "clock_edge": 1
+              }
+            ]
+          },
+          "expected": {
+            "imem_steps": [
+              {
+                "before_edge": 305419896,
+                "after_edge": 305419896
+              },
+              {
+                "before_edge": 2309737967,
+                "after_edge": 2309737967
+              }
+            ],
+            "words_after": [
+              {
+                "address": 0,
+                "data": 305419896
+              },
+              {
+                "address": 996,
+                "data": 2309737967
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Instruction Memory: límites, datos y guardas locales"
           ],
           "status": "implemented"
         }
@@ -51374,6 +52397,50 @@
             "tb/fetch_fault_check_tb.sv"
           ],
           "top": "fetch_fault_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C010",
+            "TEST-PLAT-001/C011",
+            "TEST-PLAT-001/C012",
+            "TEST-PLAT-001/C013"
+          ],
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/instruction_memory_tb.sv"
+          ],
+          "top": "instruction_memory_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C009"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/instruction_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/instruction_memory_tb.sv"
+          ],
+          "top": "instruction_memory_config_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "expected_rejection": {
