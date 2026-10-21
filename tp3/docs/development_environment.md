@@ -207,7 +207,7 @@ no habilita el botón de ejecución manual.
 
 Un análisis ligero omite la construcción y pruebas ante cambios exclusivamente
 narrativos o de TP1/TP2 sin dependencias directas de TP3. Catálogo, esquemas, fuentes,
-configuraciones, Dockerfile y workflow son entradas ejecutables. Las rutas desconocidas
+configuraciones, contexto Docker y workflow son entradas ejecutables. Las rutas desconocidas
 ejecutan el control completo. Los renombres consideran las rutas vieja y nueva.
 Si no puede determinarse el rango de cambios, se comprueba todo por precaución.
 
@@ -216,10 +216,41 @@ el push informa que delegó la comprobación al PR. Una consulta de metadatos fa
 conserva la comprobación del push. Los eventos PR y push tienen grupos de cancelación
 y nombres de resultado separados; un push no sustituye el resultado `TP3 PR`.
 
-Cuando aplica, CI construye el Dockerfile del checkout con caché de BuildKit y ejecuta
-`make check` en esa imagen sin red. El contexto `tp3/docker/` evita invalidar sus capas
-por cambios de RTL. El job tiene un límite de duración y la fase de comprobaciones
-un límite adicional que también contiene una compilación detenida.
+Cuando aplica, CI selecciona cómo obtener las herramientas antes de ejecutar
+`make check` sin red:
+
+- Si cambian RTL, testbenches, catálogo, scripts, reglas o workflow, y la definición
+  de herramientas permanece igual a la publicada, descarga la referencia exacta
+  de `docker/image.ref`. No prepara Buildx ni reconstruye la imagen.
+- Si cambia el contexto `tp3/docker/`, salvo `image.ref`, construye y verifica el
+  Dockerfile del checkout con caché de BuildKit. Los archivos nuevos, eliminados
+  o renombrados del contexto también cuentan como cambios de herramientas.
+- Si solo cambia `image.ref`, descarga y verifica la nueva referencia. El archivo
+  debe ser regular y contener una única referencia al paquete acordado fijada por
+  digest; las etiquetas, referencias inválidas y archivos ausentes producen error.
+- Las ejecuciones manuales reconstruyen y verifican las herramientas. Si no se
+  puede determinar con seguridad la procedencia o el rango, se reconstruye por
+  precaución y se deja el motivo visible.
+
+La clasificación de una PR considera el diff completo desde el ancestro común,
+no solo su último commit. La selección de herramientas también compara la receta
+con el commit que registró la referencia publicada: un push de RTL posterior a
+un cambio de herramientas todavía no publicado conserva la reconstrucción.
+Actualizar `image.ref` después de modificar herramientas dentro de la misma PR
+no elimina la obligación de verificar esa receta.
+
+Cuando la rama destino todavía no contiene `image.ref`, se utiliza su primera
+incorporación en el historial como frontera de herramientas ya publicadas. La
+comparación sigue incluyendo todos los cambios posteriores de la PR; una historia
+ambigua fuerza la reconstrucción. Esto permite reutilizar una entrega publicada
+que todavía espera integración en la rama destino.
+
+La referencia publicada no sustituye el análisis del checkout ni genera un PASS
+por sí sola. Un fallo de descarga o construcción detiene los controles, sin
+cambiar de imagen como alternativa. El reporte `image-source.json` registra el
+modo, la referencia y el motivo de selección; se conservan también los logs de
+la descarga cuando corresponda. El job tiene un límite de duración y la fase de
+comprobaciones un límite adicional que también contiene una compilación detenida.
 
 Los informes y logs se conservan como artifacts incluso al fallar. El resultado
 final distingue controles satisfactorios, cambio no aplicable y errores; un fallo

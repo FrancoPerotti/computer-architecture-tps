@@ -25,6 +25,8 @@ jobs:
     outputs:
       mode: ${{ steps.change.outputs.mode }}
       reason: ${{ steps.change.outputs.reason }}
+      tools: ${{ steps.change.outputs.tools }}
+      tools_reason: ${{ steps.change.outputs.tools_reason }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -37,10 +39,23 @@ jobs:
           script: |
             const { execFileSync } = require('node:child_process');
             const target = 'feature/tp3-riscv-pipeline';
+            const git = args => execFileSync('git', args, { encoding: 'utf8',
+              maxBuffer: 16 * 1024 * 1024 });
+            const changedPaths = (base, head) => git([
+              'diff', '--name-only', '-z', '--no-renames', base, head,
+            ]).split('\0').filter(Boolean);
+            const imageRefPath = 'tp3/docker/image.ref';
+            const pinnedImage = value =>
+              /^ghcr\.io\/francoperotti\/tp3-dev@sha256:[0-9a-f]{64}\n?$/.exec(value)?.[0] === value;
+            let comparisonBase;
+            let comparisonHead;
+            let tools = 'build';
+            let toolsReason = 'Reconstrucción por precaución: rango de cambios no disponible.';
             let mode = 'check';
             let reason = 'Comprobación completa por precaución.';
             if (context.eventName === 'workflow_dispatch') {
               reason = 'Ejecución manual completa.';
+              toolsReason = 'La ejecución manual reconstruye y verifica las herramientas.';
             } else {
               try {
                 const pr = context.payload.pull_request;
@@ -49,12 +64,14 @@ jobs:
                 const validSha = value => /^[0-9a-f]{40}$/.test(value || '') && !/^0+$/.test(value);
                 if (!validSha(base) || !validSha(head)) throw new Error('Rango no disponible.');
                 if (pr) {
-                  base = execFileSync('git', ['merge-base', base, head], { encoding: 'utf8' }).trim();
+                  base = git(['merge-base', base, head]).trim();
                 }
                 // --no-renames conserva ambas rutas de un renombre como baja y alta.
-                const paths = execFileSync('git', ['diff', '--name-only', '-z', '--no-renames', base, head],
-                  { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 }).split('\0').filter(Boolean);
+                const paths = changedPaths(base, head);
+                comparisonBase = base;
+                comparisonHead = head;
                 const relevant = path => {
+                  if (path.startsWith('tp3/docker/')) return true;
                   if (path.startsWith('tp3/')) return !path.endsWith('.md');
                   if (path.startsWith('tp1/') || path.startsWith('tp2/')) return false;
                   if (path === 'README.md' || (path.startsWith('docs/') && path.endsWith('.md'))) return false;
@@ -88,9 +105,52 @@ jobs:
                 }
               }
             }
+            if (mode === 'check' && comparisonBase && comparisonHead) {
+              try {
+                const { readFileSync } = require('node:fs');
+                const reference = readFileSync(imageRefPath, 'utf8');
+                if (!pinnedImage(reference)) throw new Error('image.ref no contiene un digest válido.');
+                const checkout = git(['rev-parse', 'HEAD']).trim();
+                const publication = git(['log', '-1', '--format=%H', checkout, '--', imageRefPath]).trim();
+                if (!publication || git(['show', `${publication}:${imageRefPath}`]) !== reference) {
+                  throw new Error('No se pudo identificar el registro de la imagen publicada.');
+                }
+                let toolsBase = comparisonBase;
+                if (!git(['ls-tree', '--name-only', toolsBase, '--', imageRefPath]).trim()) {
+                  // Si la base no contiene la referencia, usar su incorporación inicial,
+                  // sin omitir cambios posteriores en ningún commit del PR.
+                  const introductions = git(['log', '--format=%H', '--diff-filter=A',
+                    checkout, '--', imageRefPath]).trim().split('\n').filter(Boolean);
+                  if (introductions.length !== 1) throw new Error('Publicación inicial ambigua.');
+                  toolsBase = introductions[0];
+                  git(['merge-base', '--is-ancestor', comparisonBase, toolsBase]);
+                  git(['merge-base', '--is-ancestor', toolsBase, comparisonHead]);
+                  if (!pinnedImage(git(['show', `${toolsBase}:${imageRefPath}`]))) {
+                    throw new Error('La referencia inicial no es una imagen fijada por digest.');
+                  }
+                }
+                const toolInput = path => path.startsWith('tp3/docker/') && path !== imageRefPath;
+                // El rango completo detecta herramientas cambiadas en commits anteriores,
+                // incluso si después se modifica image.ref. La comparación con la publicación
+                // evita usar una imagen antigua en un push posterior que solo cambia RTL.
+                const inputs = [...new Set([
+                  ...changedPaths(toolsBase, comparisonHead),
+                  ...changedPaths(publication, checkout),
+                ].filter(toolInput))];
+                tools = inputs.length ? 'build' : 'published';
+                toolsReason = inputs.length ? `Definición de herramientas modificada: ${inputs.join(', ')}.` :
+                  `Receta publicada sin cambios; referencia registrada en ${publication}.`;
+              } catch (error) {
+                toolsReason = `Reconstrucción por precaución: ${error.message}`;
+                core.warning(toolsReason);
+              }
+            }
+            core.setOutput('tools', tools);
+            core.setOutput('tools_reason', toolsReason);
             core.setOutput('mode', mode);
             core.setOutput('reason', reason);
-            await core.summary.addHeading('Alcance de TP3').addRaw(`${mode}: ${reason}`).write();
+            await core.summary.addHeading('Alcance de TP3')
+              .addRaw(`${mode}: ${reason}\n\nHerramientas: ${tools}. ${toolsReason}`).write();
 
   check:
     name: Check TP3 in Docker
@@ -102,8 +162,47 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Select and record the tools image
+        id: image
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TOOLS_MODE: ${{ needs.classify.outputs.tools }}
+          TOOLS_REASON: ${{ needs.classify.outputs.tools_reason }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            fs.mkdirSync('tp3/build/reports', { recursive: true });
+            try {
+              const path = 'tp3/docker/image.ref';
+              if (!fs.lstatSync(path).isFile()) throw new Error('image.ref debe ser un archivo regular.');
+              const reference = fs.readFileSync(path, 'utf8');
+              if (/^ghcr\.io\/francoperotti\/tp3-dev@sha256:[0-9a-f]{64}\n?$/.exec(reference)?.[0] !== reference) {
+                throw new Error('image.ref debe contener una única referencia GHCR fijada por digest.');
+              }
+              const mode = process.env.TOOLS_MODE;
+              if (mode !== 'build' && mode !== 'published') throw new Error('Modo de herramientas inválido.');
+              const image = mode === 'published' ? reference.trim() : 'tp3-dev:ci';
+              core.setOutput('image', image);
+              fs.writeFileSync('tp3/build/reports/image-source.json', JSON.stringify({
+                mode, image, published_reference: reference.trim(), reason: process.env.TOOLS_REASON,
+              }, null, 2) + '\n');
+            } catch (error) {
+              fs.writeFileSync('tp3/build/reports/image-selection-error.txt', error.message + '\n');
+              throw error;
+            }
+      - name: Pull the published tools by digest
+        if: needs.classify.outputs.tools == 'published'
+        shell: bash
+        env:
+          TOOLS_IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set -euo pipefail
+          docker pull --platform linux/amd64 "$TOOLS_IMAGE" \
+            2>&1 | tee tp3/build/reports/image-pull.log
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        if: needs.classify.outputs.tools == 'build'
       - name: Build the tools from this checkout
+        if: needs.classify.outputs.tools == 'build'
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: tp3/docker
@@ -116,14 +215,16 @@ jobs:
         timeout-minutes: 10
         shell: bash
         working-directory: tp3
+        env:
+          TOOLS_IMAGE: ${{ steps.image.outputs.image }}
         run: |
           set -euo pipefail
           mkdir -p build/reports
-          docker image inspect tp3-dev:ci --format '{{.Id}} {{.Size}}' | tee build/reports/image.txt
-          time docker run --rm --network none \
+          docker image inspect "$TOOLS_IMAGE" --format '{{.Id}} {{.Size}}' | tee build/reports/image.txt
+          time docker run --rm --pull never --network none \
             --user "$(id -u):$(id -g)" \
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/workspace" \
-            --workdir /workspace/tp3 tp3-dev:ci make check \
+            --workdir /workspace/tp3 "$TOOLS_IMAGE" make check \
             2>&1 | tee build/reports/check.log
       - name: Preserve reports and diagnostics
         if: always()
