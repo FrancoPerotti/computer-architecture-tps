@@ -19565,6 +19565,985 @@
       ]
     },
     {
+      "id": "TEST-PIPE-011",
+      "source": "pipeline.md#test-pipe-011",
+      "case_count": 10,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/if_id_register.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/if_id_register_tb.sv"
+          ],
+          "top": "if_id_register_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-PIPE-011/C001",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "valid_next": true
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 4294967295,
+                  "instruction": 4294967295,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura normal preflanco y reemplazo completo"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C002",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Captura de candidato con causas cero y uno"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C003",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              },
+              {
+                "state": "retained",
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Hold explícito de instrucción durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C004",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "valid_next": false
+              },
+              {
+                "state": "retained",
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Hold explícito de candidato durante tres clocks"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C005",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "valid_next": true
+              },
+              {
+                "state": "retained",
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de instrucción sin acción"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C006",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 3
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "valid_next": false
+              },
+              {
+                "state": "retained",
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Retención implícita de candidato sin acción"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C007",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 2
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "valid_next": false
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Invalidación de instrucción y recaptura"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C008",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": false,
+                "hold": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 2
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "valid_next": false
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Invalidación de candidato y recaptura"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C009",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": false,
+                "hold": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 1
+              },
+              {
+                "reset": true,
+                "prepare_init": false,
+                "capture": false,
+                "hold": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "valid_next": false
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "valid_next": false
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "RESET síncrono sobre captura, hold e invalidación"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-PIPE-011/C010",
+          "inputs": {
+            "steps": [
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": false,
+                "hold": true,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": true,
+                "capture": false,
+                "hold": false,
+                "invalidate": true,
+                "data": {
+                  "valid": 1,
+                  "pc": 4275878552,
+                  "instruction": 1985229328,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 2
+                },
+                "cycles": 1
+              },
+              {
+                "reset": false,
+                "prepare_init": false,
+                "capture": true,
+                "hold": false,
+                "invalidate": false,
+                "data": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "cycles": 1
+              }
+            ]
+          },
+          "expected": {
+            "width": 69,
+            "startup": "invalidated",
+            "steps": [
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483650,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 0
+                },
+                "valid_next": false
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 0,
+                  "pc": 2147483652,
+                  "instruction": 0,
+                  "fetch_fault_valid": 1,
+                  "fetch_fault_cause": 1
+                },
+                "valid_next": false
+              },
+              {
+                "state": "invalidated",
+                "valid_next": false
+              },
+              {
+                "state": {
+                  "valid": 1,
+                  "pc": 19088740,
+                  "instruction": 2309737967,
+                  "fetch_fault_valid": 0,
+                  "fetch_fault_cause": 7
+                },
+                "valid_next": true
+              }
+            ]
+          },
+          "kind": "vector",
+          "origins": [
+            "Inicialización de sesión sobre captura, hold e invalidación"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
       "id": "TEST-MEM-001",
       "source": "memory.md#test-mem-001",
       "case_count": 18,

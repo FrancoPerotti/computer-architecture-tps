@@ -23,6 +23,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-008 — Wrong-path y fronteras por antigüedad](#test-pipe-008)
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
+- [TEST-PIPE-011 — Registro IF/ID aislado](#test-pipe-011)
 
 <a id="test-pipe-001"></a>
 
@@ -821,3 +822,58 @@ La confirmación de fetch solo ocurre desde ID y con el PC registrado de su cand
 Las comprobaciones reutilizadas de [TEST-PIPE-007](#test-pipe-007) cubren las ocho acciones/$onehot0; las de [TEST-PIPE-008](#test-pipe-008), otras fronteras wrong-path y commits anteriores. Conservan sus IDs y no sustituyen las secuencias conjuntas C001–C020.
 
 Para aprobar se requiere la traza y los resultados de los 20 casos propios y las comprobaciones reutilizadas. El diseño de estas pruebas y sus recálculos documentales no acreditan ejecución contra RTL. Ante una contradicción, el contrato vigente conserva autoridad.
+
+<a id="test-pipe-011"></a>
+
+## TEST-PIPE-011 — Registro IF/ID aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a IF/ID.
+
+**Contratos:** [registro IF/ID](../architecture/cpu/cpu_pipeline.md#registro-ifid),
+[interfaz](../interfaces.md#bloque-1-9) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `if_id_register_tb` instancia únicamente `if_id_register` y el lector de
+datos externo. El manifiesto define las secuencias, payloads, repeticiones y
+expectativas de los diez casos. Cada paso cambia las entradas en el flanco
+descendente, comprueba que el registro todavía conserve el estado anterior y
+contrasta `valid_next` antes del flanco ascendente. Después del flanco compara
+el estado registrado mediante igualdad estricta para detectar X/Z.
+
+| Caso   | Comprobación                                                     |
+| ------ | ---------------------------------------------------------------- |
+| C001   | Captura y reemplazo de los cinco campos, incluida entrada vacía. |
+| C002   | Captura de candidatos con causas 0 y 1; regreso a instrucción.   |
+| C003   | Hold explícito de instrucción durante tres clocks.               |
+| C004   | Hold explícito de candidato durante tres clocks.                 |
+| C005   | Retención implícita de instrucción sin controles activos.        |
+| C006   | Retención implícita de candidato sin controles activos.          |
+| C007   | Invalidación de instrucción, repetición y nueva captura.         |
+| C008   | Invalidación de candidato, repetición y nueva captura.           |
+| C009   | RESET síncrono sobre captura, hold e invalidación.               |
+| C010   | Inicialización de sesión sobre captura, hold e invalidación.     |
+
+Las capturas comparan los cinco campos contra los valores esperados del JSON.
+La expectativa `retained` compara los 69 bits con su copia preflanco;
+`invalidated` compara solo `valid=0` y `fetch_fault_valid=0`, sin imponer valores
+a los datos inactivos. Todos los casos comprueban el ancho de 69 bits y el reset
+inicial. Las secuencias usan indicadores de instrucción y candidato excluyentes.
+Captura, hold e invalidación son controles locales excluyentes; RESET e
+inicialización de sesión pueden coincidir con ellos y deben prevalecer.
+
+Este grupo acredita exclusivamente el registro. Los controles se inyectan desde
+el banco; no se agrega lógica de IF, arbitraje ni control local al producto.
+No acredita el programa, solapamiento ni estructura completa de
+`TEST-PIPE-001/C001`, las acciones y prioridades de `TEST-PIPE-007/C001–C021`,
+las fronteras de `TEST-PIPE-008/C001–C009`, los commits de
+`TEST-PIPE-009/C001–C011` ni las secuencias de CPU/control de
+`TEST-PIPE-010/C001–C020`. Sus estados y configuraciones conservan el alcance
+previo; siguen pendientes los niveles de integración y CPU correspondientes.
+El HOLD sin ciclo y la retención al aceptar LOAD se representan aquí únicamente
+por ausencia de controles. Su generación real y la preparación posterior
+requieren integración con el control de sesión.
