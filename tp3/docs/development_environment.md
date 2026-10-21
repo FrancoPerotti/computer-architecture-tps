@@ -90,6 +90,33 @@ La receta fija las entradas del entorno. Los metadatos generados durante
 la construcción pueden hacer que dos imágenes resultantes difieran byte
 a byte.
 
+## Imagen compartida
+
+La candidata `v0.1.0-rc.1` está disponible en el paquete público
+[tp3-dev de GitHub Container Registry](https://github.com/FrancoPerotti/computer-architecture-tps/pkgs/container/tp3-dev).
+Los desarrolladores pueden descargarla sin autenticarse ni construir las herramientas.
+
+La referencia exacta se conserva únicamente en
+[`docker/image.ref`](../docker/image.ref). Ese archivo fija el digest del
+contenido publicado; los comandos lo leen para utilizar la misma imagen aunque
+una etiqueta del registro cambie.
+
+Desde la raíz del repositorio, en una terminal Bash:
+
+~~~bash
+TP3_IMAGE="$(cat tp3/docker/image.ref)"
+docker pull "$TP3_IMAGE"
+docker run --rm --network none \
+  --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/workspace" \
+  "$TP3_IMAGE" make check
+~~~
+
+La descarga requiere acceso al registro; las comprobaciones se ejecutan sin red.
+La imagen compartida contiene las herramientas y utiliza las reglas, fuentes y
+pruebas del repositorio montado. La referencia no reemplaza la receta de
+construcción ni acredita la validación de otros bloques del proyecto.
+
 ## Construcción local
 
 Se necesita Docker con su servicio activo y un constructor compatible con
@@ -119,20 +146,25 @@ docker image inspect tp3-dev:local --format '{{.Id}} {{.Size}}'
 ## Uso con los archivos del proyecto
 
 La imagen contiene herramientas. El RTL y los testbenches se toman del
-repositorio montado desde el host.
+repositorio montado desde el host. Después de descargar la imagen compartida,
+se puede abrir una terminal interactiva con la misma referencia fijada.
 
 Desde la raíz del repositorio, en una terminal Bash:
 
 ~~~bash
+TP3_IMAGE="$(cat tp3/docker/image.ref)"
 docker run --rm -it --network none \
   --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
-  tp3-dev:local
+  "$TP3_IMAGE"
 ~~~
 
 La terminal se abre en `/workspace/tp3`. Las salidas que se generen dentro
 del directorio montado permanecen en el host, con el UID/GID del usuario.
 El contenedor termina al salir de la terminal.
+
+Para utilizar una construcción propia, se sustituye la referencia por
+`tp3-dev:local`. La distribución compartida conserva el digest de `image.ref`.
 
 ## Comprobaciones locales
 
