@@ -31931,6 +31931,227 @@
       ]
     },
     {
+      "id": "TEST-EXEC-011",
+      "source": "execution.md#test-exec-011",
+      "case_count": 10,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/id_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/id_fault_check_tb.sv"
+          ],
+          "top": "id_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-EXEC-011/C001",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 305419896,
+            "ifid_fetch_fault_valid": 0,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 0
+          },
+          "expected": {
+            "id_fault_candidate": false,
+            "id_fault_cause": null,
+            "id_fault_pc": 305419896
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C002",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 2147483652,
+            "ifid_fetch_fault_valid": 0,
+            "ifid_fetch_fault_cause": 0,
+            "decode_legal": 1
+          },
+          "expected": {
+            "id_fault_candidate": false,
+            "id_fault_cause": null,
+            "id_fault_pc": 2147483652
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C003",
+          "inputs": {
+            "ifid_valid": 1,
+            "ifid_pc": 4,
+            "ifid_fetch_fault_valid": 0,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 1
+          },
+          "expected": {
+            "id_fault_candidate": false,
+            "id_fault_cause": null,
+            "id_fault_pc": 4
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C004",
+          "inputs": {
+            "ifid_valid": 1,
+            "ifid_pc": 4294967292,
+            "ifid_fetch_fault_valid": 0,
+            "ifid_fetch_fault_cause": 0,
+            "decode_legal": 0
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 2,
+            "id_fault_pc": 4294967292
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C005",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 2147483650,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 0,
+            "decode_legal": 0
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 0,
+            "id_fault_pc": 2147483650
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C006",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 1,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 0,
+            "decode_legal": 1
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 0,
+            "id_fault_pc": 1
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C007",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 4294967292,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 0
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 1,
+            "id_fault_pc": 4294967292
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C008",
+          "inputs": {
+            "ifid_valid": 0,
+            "ifid_pc": 1024,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 1
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 1,
+            "id_fault_pc": 1024
+          },
+          "kind": "vector",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C009",
+          "inputs": {
+            "ifid_valid": 1,
+            "ifid_pc": 305419896,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 1
+          },
+          "expected": {
+            "id_fault_candidate": false,
+            "id_fault_cause": null,
+            "id_fault_pc": 305419896
+          },
+          "kind": "artificial",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-EXEC-011/C010",
+          "inputs": {
+            "ifid_valid": 1,
+            "ifid_pc": 2147483648,
+            "ifid_fetch_fault_valid": 1,
+            "ifid_fetch_fault_cause": 1,
+            "decode_legal": 0
+          },
+          "expected": {
+            "id_fault_candidate": true,
+            "id_fault_cause": 2,
+            "id_fault_pc": 2147483648
+          },
+          "kind": "artificial",
+          "origins": [
+            "ID Fault Check: ecuación local y transporte de metadatos"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    {
       "id": "TEST-UART-001",
       "source": "uart_debug.md#test-uart-001",
       "case_count": 31,
