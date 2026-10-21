@@ -1,7 +1,9 @@
 `timescale 1ns / 1ps
 
 // Comprueba la etapa con secuencias explícitas de WB, IF/ID, productor y Debug.
-module id_stage_tb;
+module id_stage_tb #(
+    parameter bit DECODE_ONLY = 1'b0
+);
   import system_pkg::*;
 
   tp3_case_data data ();
@@ -156,39 +158,71 @@ module id_stage_tb;
     check_value({path, "/debug_rf_data"}, debug_rf_data);
   endtask
 
+  // Reutiliza las expectativas del decoder en la frontera real de ID, sin confirmar faults.
+  task automatic check_decode();
+    check_value("/expected/idex_valid", idex_input.valid, 1);
+    check_value("/expected/id_fault_pc", idex_input.pc);
+    check_value("/inputs/word", idex_input.instruction);
+    check_value("/expected/alu_op", idex_input.alu_op, 63);
+    check_value("/expected/alu_src", idex_input.alu_src, 1);
+    check_value("/expected/result_sel", idex_input.result_sel, 3);
+    check_value("/expected/flow_op", idex_input.flow_op, 7);
+    check_value("/expected/mem_op", idex_input.mem_op, 15);
+    check_value("/expected/reg_write", idex_input.reg_write, 1);
+    check_value("/expected/id_fault_candidate", id_fault_candidate, 1);
+    check_value("/expected/id_fault_pc", id_fault_pc);
+    if (!data.is_null("/expected/id_fault_cause")) begin
+      check_value("/expected/id_fault_cause", id_fault_cause, 7);
+    end
+    check_value("/expected/load_use_stall", load_use_stall, 1);
+  endtask
+
   initial begin
     data.load();
-    if (data.get_size(
-            "/inputs/id_steps"
-        ) != data.get_size(
-            "/expected/id_steps"
-        ) || data.get_size(
-            "/inputs/id_steps"
-        ) == 0) begin
-      $fatal(1, "ID steps and expectations must have the same nonzero length");
-    end
-    if (data.get_size("/expected/id_rf_after") != 32) begin
-      $fatal(1, "RF expectation must contain 32 registers");
-    end
-    load_fixture();
-    for (int step = 0; step < data.get_size("/inputs/id_steps"); step++) begin
-      apply_step($sformatf("/inputs/id_steps/%0d", step));
-      #1;
-      check_step($sformatf("/expected/id_steps/%0d", step));
+    if (DECODE_ONLY) begin
+      // Un reset propio deja RF definido; no se simulan otros registros interetapa.
+      @(negedge clk);
+      reset = 1'b1;
       @(posedge clk);
       #1;
       @(negedge clk);
-    end
+      apply_step("/inputs/id_context");
+      #1;
+      check_value("/inputs/ifid_valid", ifid.valid, 1);
+      check_decode();
+    end else begin
+      if (data.get_size(
+              "/inputs/id_steps"
+          ) != data.get_size(
+              "/expected/id_steps"
+          ) || data.get_size(
+              "/inputs/id_steps"
+          ) == 0) begin
+        $fatal(1, "ID steps and expectations must have the same nonzero length");
+      end
+      if (data.get_size("/expected/id_rf_after") != 32) begin
+        $fatal(1, "RF expectation must contain 32 registers");
+      end
+      load_fixture();
+      for (int step = 0; step < data.get_size("/inputs/id_steps"); step++) begin
+        apply_step($sformatf("/inputs/id_steps/%0d", step));
+        #1;
+        check_step($sformatf("/expected/id_steps/%0d", step));
+        @(posedge clk);
+        #1;
+        @(negedge clk);
+      end
 
-    // Revisa el estado final por Debug, sin otro flanco de escritura o inicialización.
-    rf_write_fire     = 1'b0;
-    reset             = 1'b0;
-    prepare_init      = 1'b0;
-    debug_read_select = 1'b1;
-    for (int index = 0; index < data.get_size("/expected/id_rf_after"); index++) begin
-      debug_rf_addr = register_index_t'(index);
-      #1ps;
-      check_value($sformatf("/expected/id_rf_after/%0d", index), debug_rf_data);
+      // Revisa el estado final por Debug, sin otro flanco de escritura o inicialización.
+      rf_write_fire     = 1'b0;
+      reset             = 1'b0;
+      prepare_init      = 1'b0;
+      debug_read_select = 1'b1;
+      for (int index = 0; index < data.get_size("/expected/id_rf_after"); index++) begin
+        debug_rf_addr = register_index_t'(index);
+        #1ps;
+        check_value($sformatf("/expected/id_rf_after/%0d", index), debug_rf_data);
+      end
     end
     $display("PASS %s", data.case_id);
     $finish;

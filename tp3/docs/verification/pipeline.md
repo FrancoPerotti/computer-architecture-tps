@@ -380,13 +380,21 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-PIPE-005 — Load-use en los consumidores efectivos
 
-- **Nivel:** CPU y unidad detector.
+- **Nivel:** unidad detector, integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad e integración local implementadas; programas de CPU pendientes.
 
 **Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [control_and_hazards](../architecture/cpu/control_and_hazards.md); [stage_id](../architecture/cpu/stage_id.md).
+
+### Ejecución disponible
+
+Los nueve IDs se ejecutan con `load_use_detector_tb` en dos niveles. `USE_DECODER=0` comprueba la unidad con índices y usos explícitos; `USE_DECODER=1` conecta el decoder real a la misma instancia del detector y utiliza la palabra de cada consumidor. Cada caso conserva sus datos y expectativas de programa, y agrega `word`, validez, fuentes, usos y productor en `inputs`, junto con la expectativa combinacional en `expected.load_use_stall` y los campos de decodificación esperados.
+
+Las nueve variantes presentan un load válido en ID/EX con destino `x1` y un consumidor válido con dependencia real. El banco compara `load_use_stall=1`; en integración también compara los índices, el uso de fuentes y la legalidad de la palabra. No deriva controles ni expectativas de las cadenas de ensamblador en Python.
+
+La variante STEP reutiliza la misma comprobación local que RUN. Estos 18 resultados no acreditan exactamente un stall, retención de PC/IF/ID, bubble y avance del load, forwarding, resultados arquitectónicos ni consumo de STEP. Esas observaciones requieren CPU y conservan pendientes los nueve programas. El estado `implemented` del manifiesto indica disponibilidad de estas ejecuciones locales y no aprobación del programa completo.
 
 ### Qué comprueba y por qué
 
