@@ -19406,8 +19406,8 @@
               0
             ],
             "latches_after": "invalid",
-            "fault_cause": 0,
-            "fault_pc": 0,
+            "fault_metadata_valid": false,
+            "fault_capture_fire": false,
             "registers_all_zero": true
           },
           "origins": [
@@ -19445,8 +19445,8 @@
               0
             ],
             "latches_after": "invalid",
-            "fault_cause": 0,
-            "fault_pc": 0,
+            "fault_metadata_valid": false,
+            "fault_capture_fire": false,
             "registers_all_zero": true
           },
           "origins": [
@@ -19484,8 +19484,9 @@
               0
             ],
             "latches_after": "retained",
-            "fault_cause": 0,
-            "fault_pc": 0,
+            "fault_metadata_valid": false,
+            "fault_capture_fire": false,
+            "fault_metadata_retained": true,
             "registers_all_zero": true,
             "after_preparation": {
               "state": "READY",
@@ -19537,8 +19538,9 @@
               1
             ],
             "latches_after": "retained",
-            "fault_cause": 0,
-            "fault_pc": 0,
+            "fault_metadata_valid": false,
+            "fault_capture_fire": false,
+            "fault_metadata_retained": true,
             "registers_all_zero": true,
             "after_preparation": {
               "state": "READY",

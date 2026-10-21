@@ -781,6 +781,17 @@ Las cuatro variantes restantes utilizan `lw x1,0(x0); add x2,x1,x1`, `word0=7`, 
 
 En C019/C020 se completa después una nueva imagen de cuatro bytes que contiene halt y su preparación. La inicialización de preparación limpia PC/RF/latches/contador; completar PREPARING_READY publica la imagen en READY, contador cero y DMEM sin posiciones utilizadas. No se exige borrar el candidato físicamente en el flanco de aceptación de LOAD: queda abandonado con la sesión y se limpia antes de que la nueva imagen pueda ejecutar. Los intercambios usan el contrato existente; no se crea una orden para instalar latches.
 
+En C017–C020, `expected.fault_metadata_valid=false` expresa que el estado global
+no valida un fault vigente; no representa un puerto ni un registro adicional.
+`fault_confirm` y `fault_capture_fire` deben permanecer en cero. Según el
+[contrato de metadatos](../architecture/session/faults_and_termination.md#metadata-persistente-del-fault),
+RESET no exige borrar `fault_cause` ni `fault_pc`: C017/C018 no comparan sus
+valores inactivos con cero. En C019/C020, `fault_metadata_retained=true` exige
+conservar ambos valores preflanco al aceptar LOAD, sin imponer un valor inicial.
+La preparación posterior tampoco exige borrarlos ni vuelve vigente un fault.
+El código de causa cero identifica un fault de alineación de instrucción;
+no significa ausencia de fault.
+
 ### Traza de referencia y procedimiento
 
 Los ciclos se numeran desde el primer fetch efectivo, después de preparar la sesión. Las fuentes son preflanco. Para C001–C007 y sus repeticiones STEP, la secuencia inicial es:
