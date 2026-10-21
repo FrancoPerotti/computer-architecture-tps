@@ -133,6 +133,10 @@ Cada variante prepara su estado de manera independiente. Para las lecturas ordin
 
 Para el bypass, la fuente elegida contiene inicialmente 3 y el valor de WB es 7. Se deshabilita una sola guarda por variante. Cuando se comprueba `rd=0`, tanto la fuente coincidente como el destino se direccionan a `x0` y su valor base es cero.
 
+En unidad RF e integración ID, el testbench suministra las entradas de escritura y los selectores de bypass por sus interfaces. Estas comprobaciones acreditan su aplicación en ID; la generación de esas señales se verifica con WB cuando esté disponible.
+
+En `C019` y `C020`, se reinstala el patrón `xi=0x01010101*i` y se presenta directamente al RF una escritura habilitada de 7 en `x1`, simultánea con reset o `prepare_init`, respectivamente. Es una colisión artificial para comprobar la prioridad local del banco. La exclusión del ciclo CPU durante reset o preparación se comprueba en la integración correspondiente.
+
 Las variantes de Debug no deben heredar el banco puesto en cero por una prueba anterior de reset. DMEM e IMEM no participan en estas comprobaciones.
 
 ### Variantes cerradas
@@ -143,7 +147,7 @@ Los casos comprenden:
 
 - Tres pares de lecturas, con índices iguales, distintos o correspondientes a `x0`.
 - Quince variantes de bypass: coincidencia en `rs1`, en `rs2` o en ambas, con la situación nominal y las cuatro guardas previstas.
-- Dos inicializaciones dominantes, una por reset y otra por `prepare_init`, frente a un WB elegible.
+- Dos inicializaciones dominantes, una por reset y otra por `prepare_init`, frente a una entrada de escritura RF activa suministrada por el testbench.
 - Las 32 direcciones del Register File leídas por Debug, cada una con el patrón inicial reinstalado.
 
 La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye por un caso donde simplemente no coinciden las direcciones.
@@ -156,7 +160,7 @@ La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye 
 
 3. **Aplicar la escritura.** Dar el flanco habilitado y comprobar el valor postflanco del Register File. Durante HOLD o con una guarda deshabilitada, exigir ausencia de escritura.
 
-4. **Aplicar reset o preparación.** En sus dos variantes, comprobar que `x1…x31` se pongan en cero en paralelo, incluso cuando WB sea elegible en ese flanco.
+4. **Aplicar reset o preparación.** En `C019` y `C020`, mantener activa la entrada `write_enable` del RF durante el flanco de inicialización y comprobar después sus 32 lecturas contra la lista `expected.RF`, ordenada de `x0` a `x31`.
 
 5. **Observar Debug.** Seleccionar cada uno de los 32 registros mediante la primera lectura y comprobar que la segunda continúe leyendo `x2`. Comparar el dato base del banco, antes del bypass.
 
@@ -164,7 +168,7 @@ La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye 
 
 Las dos lecturas deben ser combinacionales y simultáneas. El bypass entrega 7 únicamente cuando la fuente coincide con una escritura elegible; en los demás casos se observa el valor actual del Register File. `x0` permanece siempre en cero.
 
-La escritura elegible utiliza el `wb_value` preflanco y ocurre una sola vez. Reset y preparación ponen `x1…x31` en cero e impiden esa escritura coincidente.
+La escritura elegible utiliza el `wb_value` preflanco y ocurre una sola vez. En `C019` y `C020`, reset y preparación ponen `x1…x31` en cero en un único flanco e impiden la escritura coincidente; `x0` sigue leyendo cero. No se exige que el RF desactive la habilitación externa recibida.
 
 Debug debe leer el dato base mediante el puerto existente, sin bypass ni tercer puerto. La aprobación exige que las coincidencias, guardas y 32 direcciones produzcan sus resultados previstos, sin depender de residuos para mantener `x0=0`.
 
@@ -437,7 +441,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 Esta prueba comprueba que una coincidencia de bits produzca load-use únicamente cuando representa una fuente realmente consumida por una instrucción válida.
 
-Busca detectar pausas o bypass por campos que no son operandos, por flags inválidos o por un load cuyo destino es `x0`. También comprueba que un candidato de fetch no se interprete como una instrucción consumidora.
+Busca detectar pausas por campos que no son operandos, por flags inválidos o por un load cuyo destino es `x0`. También comprueba que un candidato de fetch no se interprete como una instrucción consumidora.
 
 ### Condiciones iniciales
 
@@ -489,7 +493,7 @@ El manifiesto concreta instrucción, flags y fuentes de cada situación. El prog
 
 2. **Aplicar una sola variación.** Mantener válido el resto del load. En los casos de load inválido o `rd=0`, modificar únicamente la condición indicada.
 
-3. **Observar el detector.** Comparar `load_use_stall` con cero para cada situación y revisar que los campos no utilizados no habiliten bypass.
+3. **Observar el detector.** Comparar `load_use_stall` con cero para cada situación y comprobar que solo las fuentes realmente consumidas participen en la dependencia.
 
 4. **Ejecutar el programa legal.** Seguir el acceso de `lw x0,0(x0)` y el consumidor posterior, hasta `halt`.
 
@@ -501,7 +505,9 @@ Todos los casos locales deben producir `load_use_stall=0`. Solo cuentan las fuen
 
 El programa de CPU conserva `x0=0` y deja `x3=1`, sin stall por dependencia de dato. El load hacia `x0` sigue siendo un acceso de memoria válido sujeto a sus comprobaciones de fault.
 
-La aprobación requiere ausencia de pausas y bypass por campos no utilizados, entradas inválidas o `x0`. Ninguna de esas guardas debe cancelar un fault propio de una operación válida.
+La aprobación requiere ausencia de pausas por campos no utilizados, entradas inválidas o `x0`. Ninguna de esas guardas debe cancelar un fault propio de una operación válida.
+
+Esta prueba no exige que los selectores de bypass WB→ID estén inactivos para campos no consumidos. Las ecuaciones aprobadas comparan los índices con una escritura WB efectiva; seleccionar un dato para un operando no consumido no crea una dependencia ni un efecto arquitectónico. La habilitación de escritura y los selectores de bypass se comprueban en `TEST-PIPE-002`.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 

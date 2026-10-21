@@ -214,11 +214,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad immediate_generator y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad implementada; comprobación CPU pendiente.
 
 **Requisitos:** [REQ-ISA-007](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-014](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [datapath](../architecture/cpu/datapath.md).
+
+### Ejecución disponible
+
+El banco `immediate_generator_tb` ejecuta las 24 variantes en nivel `Unidad`. Compara el inmediato con `expected.immediate` del manifiesto. La escritura de LUI, la conservación del resto del estado y la terminación se comprobarán en CPU; esta ejecución unitaria no las acredita.
 
 ### Qué comprueba y por qué
 
@@ -275,11 +279,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad decoder e integración ID.
 - **Tipo de estímulo:** legal y mutación de palabra.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad implementada; integración ID pendiente.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md).
+
+### Ejecución disponible
+
+El banco `decoder_tb` ejecuta las 409 variantes en nivel `Unidad` y compara las nueve salidas del decoder con las expectativas del manifiesto. Los 437 pares de mutación conservan sus IDs y orígenes. La formación de candidatos y el tratamiento de `IF/ID.valid` se comprobarán en integración ID; el banco unitario solo consume la palabra de instrucción y no acredita esa integración.
 
 ### Qué comprueba y por qué
 
