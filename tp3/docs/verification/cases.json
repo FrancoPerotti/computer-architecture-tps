@@ -17380,7 +17380,71 @@
       "source": "pipeline.md#test-pipe-007",
       "case_count": 21,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_hazard_control_tb.sv"
+          ],
+          "top": "pipeline_hazard_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-007/C001",
+            "TEST-PIPE-007/C002",
+            "TEST-PIPE-007/C003",
+            "TEST-PIPE-007/C004",
+            "TEST-PIPE-007/C005",
+            "TEST-PIPE-007/C006",
+            "TEST-PIPE-007/C007",
+            "TEST-PIPE-007/C008",
+            "TEST-PIPE-007/C009",
+            "TEST-PIPE-007/C010",
+            "TEST-PIPE-007/C011",
+            "TEST-PIPE-007/C012",
+            "TEST-PIPE-007/C013",
+            "TEST-PIPE-007/C014",
+            "TEST-PIPE-007/C015",
+            "TEST-PIPE-007/C016"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_hazard_control_tb.sv"
+          ],
+          "top": "pipeline_hazard_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-007/C017"
+          ],
+          "parameters": {
+            "TERMINAL_FIXTURE": "1"
+          }
+        },
+        {
+          "sources": [
+            "rtl/pipeline_hazard_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/pipeline_hazard_control_tb.sv"
+          ],
+          "top": "pipeline_hazard_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-PIPE-007/C018",
+            "TEST-PIPE-007/C019",
+            "TEST-PIPE-007/C020",
+            "TEST-PIPE-007/C021"
+          ],
+          "parameters": {
+            "PRIORITY_FIXTURE": "1"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-007/C001",
@@ -17412,7 +17476,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C002",
@@ -17445,7 +17509,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C003",
@@ -17477,7 +17541,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C004",
@@ -17510,7 +17574,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C005",
@@ -17542,7 +17606,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C006",
@@ -17575,7 +17639,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C007",
@@ -17607,7 +17671,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C008",
@@ -17640,7 +17704,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C009",
@@ -17672,7 +17736,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C010",
@@ -17705,7 +17769,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C011",
@@ -17737,7 +17801,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C012",
@@ -17770,7 +17834,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C013",
@@ -17802,7 +17866,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C014",
@@ -17835,7 +17899,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C015",
@@ -17867,7 +17931,7 @@
           "origins": [
             "Fila habilitada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C016",
@@ -17900,7 +17964,7 @@
           "origins": [
             "Sin ciclo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C017",
@@ -17922,7 +17986,7 @@
           "origins": [
             "Terminal vacío"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C018",
@@ -17950,7 +18014,7 @@
           "origins": [
             "Prioridad entre eventos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C019",
@@ -17978,7 +18042,7 @@
           "origins": [
             "Prioridad entre eventos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C020",
@@ -18006,7 +18070,7 @@
           "origins": [
             "Prioridad entre eventos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-007/C021",
@@ -18034,7 +18098,7 @@
           "origins": [
             "Prioridad entre eventos"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },

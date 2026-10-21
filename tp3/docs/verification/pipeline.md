@@ -1,7 +1,7 @@
 # TP3 — Pipeline y dependencias
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** diseño vigente; ejecución parcial de unidades.
 
 ## Propósito y alcance
 
@@ -515,11 +515,41 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad hazard y registros interetapa.
 - **Tipo de estímulo:** entradas locales controladas; drain-load-use artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** banco del árbitro implementado; composición pendiente.
 
 **Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [control_and_hazards](../architecture/cpu/control_and_hazards.md); [cpu_pipeline](../architecture/cpu/cpu_pipeline.md).
+
+### Ejecución del árbitro y alcance pendiente
+
+`pipeline_hazard_control_tb` ejecuta los 21 IDs al nivel Unidad. Compara las
+ocho salidas con `selected_action` o `winner` del JSON y comprueba `$onehot0`;
+con ciclo efectivo exige exactamente una acción, y sin ciclo exige cero.
+La máscara esperada traduce el nombre del catálogo, sin recalcular prioridades
+a partir de las entradas ni consultar al DUT.
+
+| Casos       | Alcance del banco del árbitro                                       |
+| ----------- | ------------------------------------------------------------------- |
+| C001–C016   | Ocho acciones habilitadas y ocho testigos sin ciclo efectivo.       |
+| C017        | Ausencia de acción con `cpu_cycle_fire=0` en el fixture terminal.   |
+| C018–C021   | Cuatro pares adyacentes de prioridad con sus ganadores publicados.  |
+
+El manifiesto registra tres configuraciones del mismo banco: vectores ordinarios,
+fixture terminal y pares de prioridad. Sus parámetros `TERMINAL_FIXTURE` y
+`PRIORITY_FIXTURE` seleccionan la forma de leer las entradas y expectativas
+existentes; no agregan variantes ni cambian estímulos o resultados. En C017,
+FINISHED y los cuatro latches inválidos son datos del fixture; el árbitro solo
+recibe la autorización de ciclo suministrada. No se instancia ni acredita la FSM.
+C013/C014 conservan su carácter artificial, sin atribuir alcanzabilidad legal
+a drain-load-use.
+
+`status=implemented` registra este banco al nivel Unidad. Las expectativas
+`next_updates`, la actualización de PC y los payloads preflanco de los cuatro
+registros siguen pendientes de composición. No se acredita generación de
+confirmaciones, captura de metadatos ni commits de RF/DMEM. La aprobación de
+la especificación completa requiere también esas comprobaciones; los resultados
+de las corridas se conservan por separado en los reportes del ejecutor común.
 
 ### Qué comprueba y por qué
 
@@ -931,7 +961,7 @@ pendientes de integración. El módulo conserva los valores entregados en sus
 puertos, sin incorporar Decoder, bypass, arbitraje ni controles de `processor_top`.
 `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
 su programa y estructura completa siguen pendientes. También siguen pendientes
-las acciones de `TEST-PIPE-007/C001–C021`, las fronteras de
+la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La generación real de controles para
@@ -988,7 +1018,7 @@ EX se inyectan por sus puertos; su selección real mediante forwarding y Result
 MUX, la autorización de DMEM y las fronteras de instrucciones siguen pendientes
 de integración. `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos
 al nivel Unidad; su programa y estructura completa siguen pendientes. También
-siguen pendientes las acciones de `TEST-PIPE-007/C001–C021`, las fronteras de
+siguen pendientes la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. No se atribuye al registro aislado la
@@ -1045,7 +1075,7 @@ MEM, las guardas de writeback, el consumo de la entrada anterior en un commit
 simultáneo y su cuenta por instancia siguen pendientes de integración.
 `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
 su programa y estructura completa siguen pendientes. También siguen pendientes
-las acciones de `TEST-PIPE-007/C001–C021`, las fronteras de
+la composición de `TEST-PIPE-007/C001–C021`, las fronteras de
 `TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
 secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La captura de MEM para las ocho acciones,

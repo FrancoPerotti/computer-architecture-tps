@@ -45,6 +45,16 @@ bash scripts/run_tests.sh \
 Estas ejecuciones comprueban la API al nivel `Unidad`, con el
 [alcance descrito en configuración común](../architecture/common_configuration.md#comprobación-rtl-del-paquete).
 
+Para comprobar el árbitro combinacional:
+
+~~~bash
+bash scripts/run_tests.sh --test TEST-PIPE-007
+~~~
+
+Este banco verifica selección y exclusión de acciones al nivel `Unidad`.
+La [especificación](pipeline.md#test-pipe-007) distingue esa acreditación de las
+actualizaciones de PC/registros y demás comprobaciones pendientes de composición.
+
 Para listar un grupo completo:
 
 ~~~bash
