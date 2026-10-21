@@ -109,11 +109,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad RF/WB e integración ID.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad RF implementada; bypass e integración ID pendientes.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [stage_wb](../architecture/cpu/stage_wb.md).
+
+### Ejecución disponible
+
+El banco `register_file_tb` ejecuta 37 variantes en nivel `Unidad`: `C001`–`C003` y `C019`–`C052`. Comprueba las lecturas base, la escritura síncrona, `x0`, reset/preparación y el puerto compartido CPU/Debug. El testbench suministra la habilitación de escritura; no implementa el control WB ni los muxes de bypass de ID.
+
+Las 15 variantes `C004`–`C018` mantienen su estado pendiente hasta disponer de los bloques de bypass. La ejecución unitaria de RF no acredita la generación de sus controles ni la integración de ID.
 
 ### Qué comprueba y por qué
 
@@ -129,7 +135,11 @@ Busca detectar:
 
 ### Condiciones iniciales
 
-Cada variante prepara su estado de manera independiente. Para las lecturas ordinarias y de Debug, se reinstala el patrón `xi=0x01010101*i` en el Register File.
+Cada variante prepara su estado de manera independiente. Para las lecturas ordinarias y de Debug, se reinstala el patrón `xi=0x01010101*i` en el Register File. En las variantes implementadas, `inputs.initial_rf` enumera los 32 valores de ese patrón, de `x0` a `x31`, para cargarlos por el puerto funcional.
+
+Antes del primer reset, las dos lecturas de `x0` y el alias Debug se comparan con `expected.x0_before_init`. Esto comprueba que su valor no dependa de inicializar el banco.
+
+Después de sus lecturas principales, `C001` intenta escribir 7 en `x0`, `C002` presenta una escritura deshabilitada de 7 en `x1` y `C003` escribe 7 en `x31`. `inputs.write_probe` define esos estímulos y `expected.write_probe` sus lecturas preflanco y postflanco; `expected.RF_after_probe` comprueba además que los otros registros se conserven. Son observaciones de esas tres variantes, sin agregar casos canónicos.
 
 Para el bypass, la fuente elegida contiene inicialmente 3 y el valor de WB es 7. Se deshabilita una sola guarda por variante. Cuando se comprueba `rd=0`, tanto la fuente coincidente como el destino se direccionan a `x0` y su valor base es cero.
 
@@ -160,9 +170,9 @@ La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye 
 
 3. **Aplicar la escritura.** Dar el flanco habilitado y comprobar el valor postflanco del Register File. Durante HOLD o con una guarda deshabilitada, exigir ausencia de escritura.
 
-4. **Aplicar reset o preparación.** En `C019` y `C020`, mantener activa la entrada `write_enable` del RF durante el flanco de inicialización y comprobar después sus 32 lecturas contra la lista `expected.RF`, ordenada de `x0` a `x31`.
+4. **Aplicar reset o preparación.** En `C019` y `C020`, mantener activa la entrada `write_enable` del RF durante el flanco de inicialización. Antes del flanco, la lectura conserva `expected.before_init`; después se comprueban los 32 registros contra `expected.RF`, de `x0` a `x31`, antes de otro flanco de reloj.
 
-5. **Observar Debug.** Seleccionar cada uno de los 32 registros mediante la primera lectura y comprobar que la segunda continúe leyendo `x2`. Comparar el dato base del banco, antes del bypass.
+5. **Observar Debug.** Seleccionar cada uno de los 32 registros mediante la primera lectura y comprobar que la segunda continúe leyendo `x2`. Comparar el dato base del banco, antes del bypass. Desactivar después el selector y comprobar el retorno combinacional a la dirección CPU con `expected.cpu_read1`.
 
 ### Resultados y criterio de aprobación
 
