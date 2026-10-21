@@ -40,7 +40,7 @@ Cada sección identifica el motivo de sus casos mediante los requisitos y las fu
 
 Un mismo vector puede compartirse entre una prueba unitaria y una prueba de integración cuando ambas comprueban la misma semántica. La integración agrega casos propios cuando es necesario observar temporización, ownership o efectos que una prueba unitaria aislada no puede demostrar. Cambiar únicamente el registro o la dirección dentro de una misma clase no justifica, por sí solo, un caso nuevo.
 
-El [manifiesto](cases.json) enumera 1373 variantes canónicas en 57 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
+El [manifiesto](cases.json) enumera 1380 variantes canónicas en 58 grupos. Las 151 reejecuciones de placa utilizan IDs de esa selección y se enumeran por separado.
 
 Las [reglas del protocolo y su coordinación](coverage.md#reglas-del-protocolo-y-coordinación) relacionan admisión, carga, respuestas, Debug y reset con esos casos. La política de recuperación PC complementa la verificación de hardware; su modelo no acredita una aplicación implementada.
 

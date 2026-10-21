@@ -24,6 +24,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
 - [TEST-PIPE-011 — Registro IF/ID aislado](#test-pipe-011)
+- [TEST-PIPE-012 — Registro ID/EX aislado](#test-pipe-012)
 
 <a id="test-pipe-001"></a>
 
@@ -877,3 +878,59 @@ previo; siguen pendientes los niveles de integración y CPU correspondientes.
 El HOLD sin ciclo y la retención al aceptar LOAD se representan aquí únicamente
 por ausencia de controles. Su generación real y la preparación posterior
 requieren integración con el control de sesión.
+
+<a id="test-pipe-012"></a>
+
+## TEST-PIPE-012 — Registro ID/EX aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a ID/EX.
+
+**Contratos:** [registro ID/EX](../architecture/cpu/cpu_pipeline.md#registro-idex),
+[interfaz](../interfaces.md#bloque-2-10) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `id_ex_register_tb` instancia únicamente el registro y el lector de datos
+externo. Los siete casos conservan estímulos y expectativas en el manifiesto.
+Cada paso aplica controles y datos en el flanco descendente, comprueba estabilidad
+del estado registrado y contrasta `valid_next` antes del flanco ascendente.
+Después del flanco compara el estado con igualdad estricta para detectar X/Z.
+
+| Caso   | Comprobación                                                                     |
+| ------ | -------------------------------------------------------------------------------- |
+| C001   | Captura preflanco y reemplazo de los quince campos con patrones complementarios. |
+| C002   | Captura de entrada inválida con controles residuales y de payload cero.          |
+| C003   | Retención de entrada válida durante tres clocks sin acción.                      |
+| C004   | Retención de entrada inválida durante tres clocks sin acción.                    |
+| C005   | Bubble repetida, retención posterior y nueva captura.                            |
+| C006   | RESET síncrono sobre captura, retención y bubble.                                |
+| C007   | Inicialización de sesión sobre captura, retención y bubble.                      |
+
+Las capturas comparan los quince campos contra valores del JSON, incluidos ambos
+operandos base, el inmediato y los seis controles. Los patrones de C001 alternan
+todos los bits del payload salvo `valid`, cuya captura en cero se comprueba en
+C002. Son vectores del registro: sus campos se ejercitan independientemente y
+no se interpretan como instrucciones decodificadas ejecutables. C002 conserva
+controles no nulos bajo `valid=0`, sin convertirlos en trabajo activo.
+
+La expectativa `retained` compara los 193 bits con su copia preflanco;
+`invalidated` exige solo `valid=0`, sin imponer valores a los datos y controles
+inactivos. Todos los casos comprueban el ancho de 193 bits y el reset inicial.
+Captura y bubble son controles locales excluyentes; RESET e inicialización de
+sesión pueden coincidir con ellos y deben prevalecer. Sin controles se retiene.
+
+Este grupo acredita exclusivamente el registro, con los datos y controles
+inyectados desde el banco. El bypass WB→ID y su selección de operandos siguen
+pendientes de integración. El módulo conserva los valores entregados en sus
+puertos, sin incorporar Decoder, bypass, arbitraje ni controles de `processor_top`.
+`TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
+su programa y estructura completa siguen pendientes. También siguen pendientes
+las acciones de `TEST-PIPE-007/C001–C021`, las fronteras de
+`TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
+secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
+estados y configuraciones no cambian. La generación real de controles para
+HOLD, LOAD, drain y fronteras de instrucciones corresponde a la integración.
