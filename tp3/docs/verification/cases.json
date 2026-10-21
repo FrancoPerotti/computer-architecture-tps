@@ -33356,381 +33356,466 @@
       "source": "memory.md#test-mem-004",
       "case_count": 23,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/fetch_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/fetch_fault_check_tb.sv"
+          ],
+          "top": "fetch_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          },
+          "case_ids": [
+            "TEST-MEM-004/C001",
+            "TEST-MEM-004/C002",
+            "TEST-MEM-004/C003",
+            "TEST-MEM-004/C004",
+            "TEST-MEM-004/C005",
+            "TEST-MEM-004/C006",
+            "TEST-MEM-004/C007",
+            "TEST-MEM-004/C008",
+            "TEST-MEM-004/C009",
+            "TEST-MEM-004/C010",
+            "TEST-MEM-004/C011",
+            "TEST-MEM-004/C012",
+            "TEST-MEM-004/C013",
+            "TEST-MEM-004/C014",
+            "TEST-MEM-004/C015",
+            "TEST-MEM-004/C016",
+            "TEST-MEM-004/C017",
+            "TEST-MEM-004/C018",
+            "TEST-MEM-004/C019",
+            "TEST-MEM-004/C020",
+            "TEST-MEM-004/C021",
+            "TEST-MEM-004/C022"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-004/C001",
           "inputs": {
             "C": 1024,
             "PC": 0,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C002",
           "inputs": {
             "C": 1024,
             "PC": 4,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C003",
           "inputs": {
             "C": 1024,
             "PC": 8,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C004",
           "inputs": {
             "C": 1024,
             "PC": 1020,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C005",
           "inputs": {
             "C": 1024,
             "PC": 1024,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C006",
           "inputs": {
             "C": 1024,
             "PC": 1020,
-            "image_size": 1024
+            "image_size": 1024,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C007",
           "inputs": {
             "C": 1024,
             "PC": 1,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C008",
           "inputs": {
             "C": 1024,
             "PC": 2,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C009",
           "inputs": {
             "C": 1024,
             "PC": 3,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C010",
           "inputs": {
             "C": 1024,
             "PC": 1025,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C011",
           "inputs": {
             "C": 1024,
             "PC": 0,
-            "image_size": 0
+            "image_size": 0,
+            "image_valid": 0
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C012",
           "inputs": {
             "C": 1000,
             "PC": 0,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C013",
           "inputs": {
             "C": 1000,
             "PC": 4,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C014",
           "inputs": {
             "C": 1000,
             "PC": 8,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C015",
           "inputs": {
             "C": 1000,
             "PC": 996,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C016",
           "inputs": {
             "C": 1000,
             "PC": 1000,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C017",
           "inputs": {
             "C": 1000,
             "PC": 996,
-            "image_size": 1000
+            "image_size": 1000,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": true,
-            "cause": null
+            "cause": null,
+            "if_fetch_fault_candidate": false
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C018",
           "inputs": {
             "C": 1000,
             "PC": 1,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C019",
           "inputs": {
             "C": 1000,
             "PC": 2,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C020",
           "inputs": {
             "C": 1000,
             "PC": 3,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C021",
           "inputs": {
             "C": 1000,
             "PC": 1001,
-            "image_size": 8
+            "image_size": 8,
+            "image_valid": 1
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 0
+            "cause": 0,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C022",
           "inputs": {
             "C": 1000,
             "PC": 0,
-            "image_size": 0
+            "image_size": 0,
+            "image_valid": 0
           },
           "expected": {
             "instruction_valid": false,
-            "cause": 1
+            "cause": 1,
+            "if_fetch_fault_candidate": true
           },
           "kind": "vector",
           "origins": [
             "Fetch yimagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-004/C023",
@@ -34299,6 +34384,356 @@
             "Formato sin origen ni huecos"
           ],
           "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TEST-MEM-009",
+      "source": "memory.md#test-mem-009",
+      "case_count": 18,
+      "reuse_groups": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/fetch_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/fetch_fault_check_tb.sv"
+          ],
+          "top": "fetch_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        }
+      ],
+      "cases": [
+        {
+          "id": "TEST-MEM-009/C001",
+          "inputs": {
+            "C": 4,
+            "PC": 0,
+            "image_size": 4,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": false,
+            "cause": null
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C002",
+          "inputs": {
+            "C": 4,
+            "PC": 4,
+            "image_size": 4,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C003",
+          "inputs": {
+            "C": 4,
+            "PC": 1,
+            "image_size": 4,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 0
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C004",
+          "inputs": {
+            "C": 4,
+            "PC": 0,
+            "image_size": 0,
+            "image_valid": 0
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C005",
+          "inputs": {
+            "C": 1024,
+            "PC": 4294967292,
+            "image_size": 1024,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C006",
+          "inputs": {
+            "C": 1024,
+            "PC": 4294967295,
+            "image_size": 1024,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 0
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C007",
+          "inputs": {
+            "C": 4294967296,
+            "PC": 4294967292,
+            "image_size": 4294967296,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": false,
+            "cause": null
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C008",
+          "inputs": {
+            "C": 4294967296,
+            "PC": 4294967288,
+            "image_size": 4294967292,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": false,
+            "cause": null
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C009",
+          "inputs": {
+            "C": 4294967296,
+            "PC": 4294967292,
+            "image_size": 4294967292,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C010",
+          "inputs": {
+            "C": 4294967296,
+            "PC": 0,
+            "image_size": 4294967296,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": false,
+            "cause": null
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C011",
+          "inputs": {
+            "C": 4294967296,
+            "PC": 4294967295,
+            "image_size": 4294967296,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 0
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C012",
+          "inputs": {
+            "C": 4294967292,
+            "PC": 4294967288,
+            "image_size": 4294967292,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": false,
+            "cause": null
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C013",
+          "inputs": {
+            "C": 4294967292,
+            "PC": 4294967292,
+            "image_size": 4294967292,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "arithmetic_only",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C014",
+          "inputs": {
+            "C": 1024,
+            "PC": 0,
+            "image_size": 8,
+            "image_valid": 0
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "artificial",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C015",
+          "inputs": {
+            "C": 1024,
+            "PC": 0,
+            "image_size": 0,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "artificial",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C016",
+          "inputs": {
+            "C": 1024,
+            "PC": 4,
+            "image_size": 7,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "artificial",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C017",
+          "inputs": {
+            "C": 1024,
+            "PC": 0,
+            "image_size": 3,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "artificial",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
+        },
+        {
+          "id": "TEST-MEM-009/C018",
+          "inputs": {
+            "C": 1000,
+            "PC": 1000,
+            "image_size": 1004,
+            "image_valid": 1
+          },
+          "expected": {
+            "if_fetch_fault_candidate": true,
+            "cause": 1
+          },
+          "kind": "artificial",
+          "origins": [
+            "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+          ],
+          "status": "implemented"
         }
       ]
     },
@@ -50912,6 +51347,50 @@
           "case_ids": [
             "TEST-PLAT-001/C001"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/fetch_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/fetch_fault_check_tb.sv"
+          ],
+          "top": "fetch_fault_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C009"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/fetch_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/fetch_fault_check_tb.sv"
+          ],
+          "top": "fetch_fault_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C010",
+            "TEST-PLAT-001/C011",
+            "TEST-PLAT-001/C012",
+            "TEST-PLAT-001/C013"
+          ],
+          "parameters": {
+            "IMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
         }
       ],
       "cases": [

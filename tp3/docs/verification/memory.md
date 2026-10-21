@@ -19,6 +19,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-MEM-006 — Ownership y colisiones internas](#test-mem-006)
 - [TEST-MEM-007 — Loader por cuarto byte y aborto](#test-mem-007)
 - [TEST-MEM-008 — Publicación de imagen y reemplazo más corto](#test-mem-008)
+- [TEST-MEM-009 — Extremos aritméticos de fetch](#test-mem-009)
 
 <a id="test-mem-001"></a>
 
@@ -230,11 +231,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad IMEM/IF y CPU.
 - **Tipo de estímulo:** legal y PCs locales artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** validación unitaria de fetch implementada; memoria e integración IF/CPU pendientes.
 
 **Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
 **Contratos:** [stage_if](../architecture/cpu/stage_if.md); [memory_architecture](../architecture/memory/memory_architecture.md).
+
+### Ejecución disponible
+
+El banco `fetch_fault_check_tb` ejecuta `C001`–`C022` en nivel `Unidad`. La capacidad se recibe como parámetro de elaboración desde `inputs.C`; el PC, el tamaño y `image_valid` son entradas explícitas del JSON. El banco compara el candidato y, cuando está activo, su causa. `expected.instruction_valid` conserva la referencia para la futura integración de IF; no se interpreta como un puerto adicional del comprobador.
+
+Esta proyección no lee IMEM ni comprueba palabras, little-endian, el payload de IF/ID o su transporte a ID. `C023` conserva pendiente el programa de CPU. Los extremos aritméticos adicionales se ejecutan en TEST-MEM-009, sin modificar los 23 casos originales de este grupo.
 
 ### Qué comprueba y por qué
 
@@ -544,3 +551,56 @@ B debe ejecutarse independientemente de los datos y del sufijo físico de A. El 
 La aprobación exige distinguir rechazo, aborto y publicación, y conservar las condiciones esperadas en cada fase.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+<a id="test-mem-009"></a>
+
+## TEST-MEM-009 — Extremos aritméticos de fetch
+
+- **Nivel:** unidad `fetch_fault_check`.
+- **Tipo de estímulo:** extremos aritméticos y estados locales artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), con alcance sobre la validación combinacional del fetch.
+
+**Contratos:** [validación de fetch](../architecture/memory/memory_architecture.md#validación-de-fetch); [interfaz 1.6](../interfaces.md#bloque-1-6); [tipos de configuración](../architecture/common_configuration.md#tipos-y-aritmética-de-configuración).
+
+### Qué comprueba y por qué
+
+La suma `PC + 4` debe conservar 33 bits antes de compararse con la capacidad y la imagen. El límite `2^32` es una capacidad válida: la última instrucción alineada puede terminar exactamente allí. En una memoria pequeña, esa misma dirección no puede reaparecer como cero por truncamiento.
+
+El puerto de tamaño utiliza `capacity_inclusive_width(C)`, derivado localmente y sin un parámetro de ancho independiente. La capacidad entra como entero unsigned de 64 bits, se valida y después se representa con 33 bits. El banco comprueba el candidato y la causa mediante aserciones SystemVerilog; `null` indica que la causa no se consume para un fetch válido.
+
+### Variantes cerradas
+
+Los 18 casos canónicos `TEST-MEM-009/C001`–`C018` tienen entradas y expectativas explícitas en [cases.json](cases.json). La tabla no define combinaciones adicionales.
+
+| Caso | C      | PC         | Tamaño de imagen | image_valid | Resultado              |
+| ---- | ------ | ---------- | ---------------- | ----------- | ---------------------- |
+| C001 | 4      | 0          | 4                | 1           | Válido                 |
+| C002 | 4      | 4          | 4                | 1           | Access, causa 1        |
+| C003 | 4      | 1          | 4                | 1           | Desalineación, causa 0 |
+| C004 | 4      | 0          | 0                | 0           | Access, causa 1        |
+| C005 | 1024   | 0xFFFFFFFC | 1024             | 1           | Access, causa 1        |
+| C006 | 1024   | 0xFFFFFFFF | 1024             | 1           | Desalineación, causa 0 |
+| C007 | 2^32   | 0xFFFFFFFC | 2^32             | 1           | Válido                 |
+| C008 | 2^32   | 0xFFFFFFF8 | 0xFFFFFFFC       | 1           | Válido                 |
+| C009 | 2^32   | 0xFFFFFFFC | 0xFFFFFFFC       | 1           | Access, causa 1        |
+| C010 | 2^32   | 0          | 2^32             | 1           | Válido                 |
+| C011 | 2^32   | 0xFFFFFFFF | 2^32             | 1           | Desalineación, causa 0 |
+| C012 | 2^32-4 | 0xFFFFFFF8 | 2^32-4           | 1           | Válido                 |
+| C013 | 2^32-4 | 0xFFFFFFFC | 2^32-4           | 1           | Access, causa 1        |
+| C014 | 1024   | 0          | 8                | 0           | Access, causa 1        |
+| C015 | 1024   | 0          | 0                | 1           | Access, causa 1        |
+| C016 | 1024   | 4          | 7                | 1           | Access, causa 1        |
+| C017 | 1024   | 0          | 3                | 1           | Access, causa 1        |
+| C018 | 1000   | 1000       | 1004             | 1           | Access, causa 1        |
+
+C014–C018 son entradas artificiales del bloque: banderas contradictorias con el tamaño, imágenes parciales o un tamaño superior a la capacidad física. Sirven para comprobar las guardas por separado; no representan estados publicados por Loader. En la integración normal, `image_valid` se deriva del tamaño confirmado.
+
+### Procedimiento y criterio de aprobación
+
+1. Elaborar el comprobador con `IMEM_CAPACITY_BYTES` tomado de `inputs.C`.
+2. Presentar PC, tamaño e `image_valid` sin reducir el PC a un índice de memoria.
+3. Esperar la estabilización combinacional y comparar candidato y causa con el catálogo.
+
+Los 18 casos deben pasar junto con la proyección unitaria de TEST-MEM-004. Las configuraciones inválidas se comprueban mediante las ejecuciones adicionales de TEST-PLAT-001/C009–C013. El banco solo elabora señales y aritmética; no reserva arrays de tamaño `2^32`. La aprobación no acredita lectura de IMEM, transporte por IF/ID, confirmación de faults, síntesis ni placa.
