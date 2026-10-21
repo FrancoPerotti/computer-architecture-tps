@@ -24,6 +24,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
 - [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
+- [TEST-PIPE-012 — Composición de ID y payload combinacional](#test-pipe-012)
 
 <a id="test-pipe-001"></a>
 
@@ -110,7 +111,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad RF/WB e integración ID.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** unidad RF implementada; bypass e integración ID pendientes.
+- **Estado:** unidad RF e integración ID implementadas; generación de controles WB pendiente.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit).
 
@@ -120,7 +121,9 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 El banco `register_file_tb` ejecuta 37 variantes en nivel `Unidad`: `C001`–`C003` y `C019`–`C052`. Comprueba las lecturas base, la escritura síncrona, `x0`, reset/preparación y el puerto compartido CPU/Debug. El testbench suministra la habilitación de escritura; no implementa el control WB ni los muxes de bypass de ID.
 
-Las 15 variantes `C004`–`C018` mantienen su estado pendiente hasta disponer de los bloques de bypass. La ejecución unitaria de RF no acredita la generación de sus controles ni la integración de ID.
+El banco `id_stage_tb` ejecuta las 52 variantes en nivel `Integración local`. En `C004`–`C018`, el JSON suministra directamente `rf_write_fire` y ambos selectores de bypass para las guardas de cada variante. Se comparan los operandos antes del flanco, el dato base de Debug y la lectura del banco después de la escritura. Estas pruebas acreditan la aplicación de esos controles; su generación se comprobará con el RTL de WB.
+
+La integración de `C001`–`C003` comprueba sus lecturas iniciales; los probes de escritura conservan su ejecución en `register_file_tb`. `C019`–`C020` comprueban la prioridad de inicialización y el estado posterior. `C021`–`C052` observan cada dirección Debug y el retorno a CPU. Todos los casos de integración comparan además el payload completo y los 32 registros finales con las expectativas del JSON.
 
 ### Qué comprueba y por qué
 
@@ -881,3 +884,55 @@ C017–C025 usan `MEM_OP_LW`; los destinos y fuentes se especifican individualme
 3. Comparar `load_use_stall` con su expectativa mediante una aserción SystemVerilog que también rechaza X/Z.
 
 El banco `load_use_detector_tb` usa `USE_DECODER=0` en este grupo y debe aprobar los 25 casos. La conexión al decoder real se comprueba por separado en TEST-PIPE-006. TEST-PIPE-005 conserva pendientes sus nueve programas y la comprobación de exactamente un stall, avance del load, bubble y retención de PC/IF/ID. No se acredita validación física.
+
+<a id="test-pipe-012"></a>
+
+## TEST-PIPE-012 — Composición de ID y payload combinacional
+
+- **Nivel:** integración local `id_stage`.
+- **Tipo de estímulo:** contextos locales de IF/ID, productor ID/EX, WB y RF.
+- **Estado:** banco de integración implementado.
+
+**Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), con alcance parcial sobre la composición de ID.
+
+**Contratos:** [Etapa ID](../architecture/cpu/stage_id.md); [payload ID/EX](../architecture/cpu/cpu_pipeline.md#registro-idex); [composición](../architecture/system_composition.md#fronteras-de-las-cinco-etapas); [interfaz EX de flujo](../interfaces.md#bloque-3-12).
+
+### Qué comprueba y por qué
+
+El banco conecta los cinco submódulos de `id_stage` y sus dos muxes locales de bypass. Comprueba los quince campos del payload combinacional de ID/EX, el candidato de fault con su causa y PC, `load_use_stall` y la lectura base de Debug. La observación ocurre antes del flanco; solo RF conserva estado en esta etapa.
+
+La validez del payload sigue a `IF/ID.valid`, incluso para una palabra ilegal. El candidato de fault informa al arbitraje externo, que deberá insertar la bubble correspondiente; ID no cambia por su cuenta la política de captura. Los controles derivados de una palabra residual pueden conservar sus valores combinacionales, sin producir efectos cuando su entrada es inválida.
+
+**Aclaración documental registrada:** la tabla resumida de fronteras en `system_composition` menciona candidatos «ID/halt/load-use» entre las salidas de ID. Las interfaces de `Flow Control` y el contrato de EX ubican `ex_halt_candidate` en EX. Esta integración sigue esas interfaces: ID transporta `FLOW_OP_HALT` en el payload y no agrega un puerto ni una confirmación de halt. El resumen no se interpreta como un cambio de ese contrato.
+
+### Variantes cerradas
+
+Los 14 casos canónicos `TEST-PIPE-012/C001`–`C014` están enumerados en [cases.json](cases.json). `inputs.initial_rf` define los 32 valores iniciales; `inputs.id_steps` presenta cada contexto y `expected.id_steps` contiene todas sus salidas. Las observaciones de una secuencia conservan un único ID canónico.
+
+| Caso | Contexto                                | Comprobación principal                                    |
+| ---- | --------------------------------------- | --------------------------------------------------------- |
+| C001 | ADD con ambas fuentes dependientes      | Stall, liberación del productor y dato WB de 32 bits      |
+| C002 | ADDI con inmediato negativo             | Extensión de signo y rs2 aparente sin dependencia         |
+| C003 | SW con desplazamiento negativo          | Fuente de dato, control de store y dependencia en rs2     |
+| C004 | BEQ con desplazamiento negativo         | Inmediato B, operación SUB y dependencia en rs1           |
+| C005 | JALR con desplazamiento negativo        | Inmediato I, selección LINK y dependencia en rs1          |
+| C006 | LUI con campos aparentes coincidentes   | Inmediato U y ausencia de dependencia                     |
+| C007 | JAL con campos aparentes coincidentes   | Inmediato J, selección LINK y ausencia de dependencia     |
+| C008 | Halt exacto                             | Transporte de FLOW_OP_HALT sin candidato de fault         |
+| C009 | MUL no soportado                        | Controles neutros, candidato ilegal y PC de 32 bits       |
+| C010 | Burbuja con ADD residual                | Validez cero sin candidato ni dependencia                 |
+| C011 | Fetch desalineado con ADD residual      | Causa cero y PC transportados sin reinterpretación ilegal |
+| C012 | Fetch fuera de acceso con halt residual | Causa uno conservada y payload inválido                   |
+| C013 | LW con base dependiente                 | Controles de load e inmediato negativo                    |
+| C014 | SRAI con rs2 aparente coincidente       | Operación de shift, inmediato y fuente no consumida       |
+
+C001 mantiene la misma instrucción mientras cambia la validez del productor; después presenta un writeback con el bit 31 activo y comprueba el dato antes del flanco y en RF después de escribirlo. Esto verifica tanto el camino combinacional como el puerto de escritura de 32 bits. Los patrones iniciales también contienen palabras con bits altos activos.
+
+### Procedimiento y criterio de aprobación
+
+1. Reiniciar RF y cargar sus valores iniciales por el puerto funcional de escritura.
+2. Aplicar cada contexto entre flancos y esperar la estabilización combinacional.
+3. Comparar las quince salidas del payload y las señales independientes con aserciones SystemVerilog. La causa solo se compara cuando su expectativa no es `null`.
+4. Aplicar el flanco de cada contexto. Al finalizar, leer los 32 registros por Debug y compararlos con `expected.id_rf_after`, sin otro flanco de escritura o inicialización.
+
+No se calcula la elegibilidad de WB en el testbench: la habilitación y los selectores son entradas explícitas del JSON. El banco no implementa el registro ID/EX, el arbitraje, la espera de un ciclo, el forwarding de EX ni la confirmación de halt/fault. La aprobación de estos 14 casos y de TEST-PIPE-002 en integración local no acredita ejecución de CPU ni validación física.
