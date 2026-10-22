@@ -853,3 +853,77 @@ La mejora de legibilidad posterior repitió las mismas 17.408 comparaciones fren
 al snapshot previo, manteniendo los dos bloques y todas las expectativas del
 catálogo. La evidencia más reciente, incluidos comandos, referencia, banco y
 fixture de dependencias, queda en `build/reports/global-fsm-readability/`.
+
+## Evidencia local de Execution Control — segundo bloque de #8
+
+El primer bloque, Global FSM y sus pruebas, quedó consolidado en `82fe145`.
+`rtl/execution_control.sv` instancia esa FSM sin modificarla y agrega los recursos
+locales previstos en Interfaces §6.1–6.3, §7.1 y §9.3–9.4:
+
+- Selección de causa/PC de EX o ID y captura con las acciones de fault confirmadas.
+  Reset inhibe la captura, sin exigir borrar físicamente la metadata; su vigencia
+  continúa determinada por la fase global.
+- Tamaño confirmado con prioridad `reset > load_start > image_publish > retener`.
+  `image_valid` es combinacional; `load_ok` no publica la imagen.
+- Contador de 64 bits con prioridad `reset > prepare_init > cpu_cycle_fire > retener`,
+  wrap módulo `2^64` y sin borrado por la sola aceptación de LOAD.
+- Reducción combinacional de los cuatro próximos `valid`, independiente de
+  `next_state`, para decidir terminal o drain sin un ciclo vacío adicional.
+
+El parámetro `IMEM_CAPACITY_BYTES` determina `IMAGE_SIZE_WIDTH` mediante el paquete
+compartido. Las capacidades inválidas se rechazan antes de elaborar la FSM y los
+recursos registrados; no se agregan memorias ni registros de validez redundantes.
+Loader, preparación, hazards y los registros del pipeline siguen fuera del módulo.
+
+`tb/execution_control_tb.sv` comprueba las salidas antes del flanco y los recursos
+registrados después. Las inyecciones y valores comunes se declaran en
+`inputs.control_fixture`; `resource_defaults` evita duplicar esos datos en cada
+flanco. Los vectores y secuencias de la FSM se leen de sus campos originales;
+`inputs.control_steps` y `expected.control_steps` agregan los recursos del contenedor
+y las secuencias propias. El banco puede repetir una
+expectativa estable durante varios clocks de HOLD; los ciclos que incrementan
+usan una expectativa por flanco. El ejecutor Python y el banco anterior de la FSM
+permanecen sin cambios. No se reemplazan IDs, entradas, expectativas ni ejecuciones
+anteriores del catálogo.
+
+| IDs reutilizados | Comprobación nueva | Límite de la evidencia |
+|---|---|---|
+| `TEST-EXEC-001/C001–C153` | FSM dentro del contenedor, imagen, contador, metadata y reducción desde los cuatro próximos `valid`. | Vectores locales con estado y recursos instalados; no son recorridos de CPU. |
+| `TEST-EXEC-004/C001–C011` | Causa/PC de ID o EX, retención durante 50 clocks de HOLD, drain, terminal y reset. C001 incluye una coincidencia EX/ID forzada para comprobar el multiplexor. | Las causas y acciones llegan modeladas: no se detectan faults ni se ejecutan los programas originales. |
+| `TEST-EXEC-005/C001–C004`, `TEST-EXEC-006/C001–C007` | Secuencias anteriores con imagen y contador reales del contenedor; captura y retención de metadata de fault. | Confirmaciones y próximos `valid` modelados. C006–C007 siguen siendo vectores artificiales de halt. |
+| `TEST-EXEC-007/C001–C004` | Reutilización sin cambiar el tamaño, inicialización del contador y primer ciclo con cuenta uno; metadata residual conservada. | El productor de preparación está modelado; PC/RF/DMEM no participan. |
+| `TEST-EXEC-009/C001–C002`, `C008`, `C011–C012` | Cuenta, HOLD, wrap, ciclo posterior e inicialización. | C011–C012 fuerzan la orden de ciclo para enfrentar reset/preparación al incremento del recurso. C008 acredita el contador y la fase; hazards, PC y comparación integrada con contador 41 siguen pendientes. |
+| `TEST-EXEC-010/C001–C009` | LOAD aceptado/rechazado, reset y preparación frente a los recursos locales. | No acredita supresión o autorización de commits de CPU, última escritura IMEM ni limpieza real de DMEM. |
+| `TEST-PLAT-001/C004–C008` | Publicación de la capacidad inclusive, retención y reset para 4, 1000, 1024, 2048 y `2^32` bytes. | Solo registros de tamaño de hasta 33 bits; no reserva arrays ni acredita realización física. |
+
+Son **198 ejecuciones locales adicionales** sobre los mismos IDs. El catálogo
+conserva 1363 casos canónicos; 209 tienen alguna ejecución disponible y 1154 siguen
+pendientes. La disponibilidad de una proyección local no completa los niveles de
+CPU o sistema exigidos por el caso original.
+
+### Reproducción y alcance
+
+`make check`, con la imagen exacta de `docker/image.ref`, incluye ambos bancos y
+las nuevas ejecuciones. La regresión completa aprobó formato, lint, catálogo,
+**40 pruebas de infraestructura y 385 ejecuciones RTL**, sin fallos ni errores:
+187 ejecuciones anteriores y las 198 del contenedor. Desde `/workspace/tp3`
+también puede seleccionarse:
+
+```bash
+bash scripts/run_tests.sh \
+  --test TEST-EXEC-001 --test TEST-EXEC-004 \
+  --test TEST-EXEC-005 --test TEST-EXEC-006 --test TEST-EXEC-007 \
+  --test TEST-EXEC-009 --test TEST-EXEC-010 --test TEST-PLAT-001 \
+  --format json --reports-dir build/reports/execution-control/selected
+```
+
+`build/reports/execution-control/` conserva el log de regresión, la comprobación de
+preservación del catálogo y verificaciones suplementarias: rechazo de las cinco
+capacidades inválidas de `TEST-PLAT-001/C009–C013` sin elaborar la FSM, y lint de un
+fixture con confirmaciones/próximos `valid` derivados de `cpu_cycle_fire` y
+`drain_mode`. Estas verificaciones no agregan casos canónicos ni sustituyen hazards
+o CPU reales. Los resultados y hashes del árbol comprobado se registran en
+`build/reports/execution-control/context.json`.
+
+Este bloque no cierra #8. Continúan pendientes Loader, Session Preparation y su
+integración; CPU, UART, síntesis, timing y placa conservan sus comprobaciones propias.
