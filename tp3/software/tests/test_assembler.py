@@ -3,7 +3,8 @@
 Verifica la operación pública ``assemble`` contra las expectativas
 independientes de ``tp3/docs/software/assembler_tests.md``. Los bytes y mapas
 esperados son constantes del catálogo; no se calculan con las tablas ni con el
-encoder del producto.
+encoder del producto. Las regresiones fuera de la selección finita del catálogo
+se agrupan en ``TestRegressions``.
 """
 
 import unittest
@@ -302,6 +303,83 @@ class TestAsm008(_CatalogCase):
         )
 
         self.assert_success_result(first, "0B 00 00 00", {0: 1})
+
+
+class TestRegressions(_CatalogCase):
+    """Regresiones de entradas fuera de la selección finita del catálogo."""
+
+    def test_huge_decimal_with_leading_zeros(self):
+        self.assert_success(
+            "addi x1, x0, " + "0" * 4300 + "1",
+            "93 00 10 00",
+            {0: 1},
+        )
+
+    def test_huge_hexadecimal_with_leading_zeros(self):
+        self.assert_success(
+            "addi x1, x0, 0x" + "0" * 5000 + "f",
+            "93 00 F0 00",
+            {0: 1},
+        )
+
+    def test_huge_decimal_out_of_range(self):
+        self.assert_rejected(
+            "addi x1, x0, 1" + "0" * 5000,
+            1,
+            ("excede",),
+        )
+
+    def test_huge_hexadecimal_out_of_range(self):
+        self.assert_rejected(
+            "lui x1, 0x" + "f" * 5000,
+            1,
+            ("excede",),
+        )
+
+    def test_huge_binary_out_of_range(self):
+        self.assert_rejected(
+            "addi x1, x0, 0b" + "1" * 5000,
+            1,
+            ("excede",),
+        )
+
+    def test_huge_register_index(self):
+        self.assert_rejected(
+            "add x" + "9" * 5000 + ", x0, x1",
+            1,
+            ("registro",),
+        )
+
+    def test_huge_register_with_leading_zeros(self):
+        self.assert_rejected(
+            "add x" + "0" * 5000 + "1, x0, x1",
+            1,
+            ("ceros iniciales",),
+        )
+
+    def test_hex_and_binary_negative_boundaries(self):
+        self.assert_success(
+            "jal x1, -0x" + "0" * 5000 + "100000",
+            "EF 00 00 80",
+            {0: 1},
+        )
+        self.assert_success(
+            "jal x1, -0b100000000000000000000",
+            "EF 00 00 80",
+            {0: 1},
+        )
+
+    def test_non_breaking_space_is_rejected(self):
+        self.assert_rejected("addi\u00a0x1, x0, 1", 1, ("separador",))
+
+    def test_vertical_tab_is_rejected(self):
+        self.assert_rejected("addi\vx1, x0, 1", 1, ("separador",))
+
+    def test_form_feed_is_rejected(self):
+        self.assert_rejected("addi\fx1, x0, 1", 1, ("separador",))
+
+    def test_trailing_non_breaking_space_is_rejected(self):
+        self.assert_rejected("halt\u00a0", 1, ("separador",))
 
 
 class TestCatalogCoverage(unittest.TestCase):

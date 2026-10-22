@@ -175,8 +175,21 @@ _RESERVED_NAMES = set(_INSTRUCTIONS) | set(_REGISTERS)
 _LABEL_PATTERN = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _REGISTER_PATTERN = re.compile(r"[xX][0-9]+")
 _LITERAL_PATTERN = re.compile(r"[+-]?(?:0[xX][0-9a-fA-F]+|0[bB][01]+|[0-9]+)")
-_MEMORY_PATTERN = re.compile(r"([^\s()]+)\s*\(\s*([^\s()]+)\s*\)")
-_INSTRUCTION_PATTERN = re.compile(r"(\S+)(?:\s+(.*))?")
+_MEMORY_PATTERN = re.compile(r"([^\s()]+)[ \t]*\([ \t]*([^\s()]+)[ \t]*\)")
+_INSTRUCTION_PATTERN = re.compile(r"(\S+)(?:[ \t]+(.*))?")
+
+# El lenguaje solo admite espacios y tabulaciones como separadores.
+_SEPARATORS = " \t"
+
+# Con más dígitos significativos que estos, el literal supera cualquier rango
+# admitido. El límite evita convertir cadenas enormes y sus diagnósticos.
+_MAX_LITERAL_DIGITS = {10: 7, 16: 7, 2: 21}
+
+
+def _abbreviate(token: str, limit: int = 40) -> str:
+    """Acorta un token para que un diagnóstico no crezca sin límite."""
+
+    return token if len(token) <= limit else token[:limit] + "…"
 
 
 def _read_source(source_text: str) -> list[SourceRecord]:
@@ -187,9 +200,18 @@ def _read_source(source_text: str) -> list[SourceRecord]:
         text = text[1:]
     records: list[SourceRecord] = []
     for number, raw_line in enumerate(text.replace("\r\n", "\n").split("\n"), start=1):
-        code = raw_line.split("#", 1)[0].strip()
+        code = raw_line.split("#", 1)[0].strip(_SEPARATORS)
         if not code:
             continue
+        if any(
+            character.isspace() and character not in _SEPARATORS
+            for character in code
+        ):
+            raise _AssemblyError(
+                number,
+                "La línea contiene un separador no admitido; solo se permiten "
+                "espacios y tabulaciones.",
+            )
         label, rest = _split_label(code, number)
         if not rest:
             records.append(SourceRecord(number, label, None, []))
@@ -206,7 +228,7 @@ def _split_label(code: str, line: int) -> tuple[str | None, str]:
     if ":" not in code:
         return None, code
     head, tail = code.split(":", 1)
-    name = head.strip()
+    name = head.strip(_SEPARATORS)
     if any(character.isspace() for character in name):
         # Los dos puntos pertenecen al texto de una instrucción, no a una etiqueta.
         return None, code
@@ -221,9 +243,9 @@ def _split_label(code: str, line: int) -> tuple[str | None, str]:
             line,
             f"El nombre '{name}' está reservado y no puede usarse como etiqueta.",
         )
-    rest = tail.strip()
+    rest = tail.strip(_SEPARATORS)
     if ":" in rest:
-        second = rest.split(":", 1)[0].strip()
+        second = rest.split(":", 1)[0].strip(_SEPARATORS)
         if second and not any(character.isspace() for character in second):
             raise _AssemblyError(
                 line, "La línea contiene una segunda definición de etiqueta."
@@ -264,7 +286,7 @@ def _split_operands(mnemonic: str, operand_text: str, line: int) -> list[str]:
                 line, "La instrucción 'halt' no admite operandos."
             )
         return []
-    chunks = [chunk.strip() for chunk in operand_text.split(",")]
+    chunks = [chunk.strip(_SEPARATORS) for chunk in operand_text.split(",")]
     if len(chunks) < len(roles):
         if "," not in operand_text and len(operand_text.split()) > 1:
             raise _AssemblyError(
@@ -355,22 +377,25 @@ def _parse_register(token: str, line: int) -> int:
     match = _REGISTER_PATTERN.fullmatch(token)
     if match is not None:
         digits = token[1:]
-        if digits != str(int(digits)):
+        if digits.startswith("0") and digits != "0":
             raise _AssemblyError(
                 line,
-                f"El nombre de registro '{token}' no es válido: "
+                f"El nombre de registro '{_abbreviate(token)}' no es válido: "
                 "no se admiten ceros iniciales.",
             )
-        if int(digits) > 31:
+        if len(digits) > 2 or int(digits) > 31:
             raise _AssemblyError(
                 line,
-                f"El registro '{token}' no existe; se admiten x0 a x31 y sus alias.",
+                f"El registro '{_abbreviate(token)}' no existe; "
+                "se admiten x0 a x31 y sus alias.",
             )
         raise _AssemblyError(
-            line, f"El registro '{token}' debe escribirse en minúsculas."
+            line,
+            f"El registro '{_abbreviate(token)}' debe escribirse en minúsculas.",
         )
     raise _AssemblyError(
-        line, f"El operando '{token}' no identifica un registro admitido."
+        line,
+        f"El operando '{_abbreviate(token)}' no identifica un registro admitido.",
     )
 
 
@@ -380,15 +405,29 @@ def _parse_literal(token: str, line: int) -> int:
     match = _LITERAL_PATTERN.fullmatch(token)
     if match is None:
         raise _AssemblyError(
-            line, f"El operando '{token}' no es un literal admitido."
+            line,
+            f"El operando '{_abbreviate(token)}' no es un literal admitido.",
         )
     body = token.lstrip("+-")
-    if body[:2].lower() == "0x":
-        value = int(body[2:], 16)
-    elif body[:2].lower() == "0b":
-        value = int(body[2:], 2)
+    prefix = body[:2].lower()
+    if prefix == "0x":
+        digits = body[2:].lstrip("0")
+        base = 16
+    elif prefix == "0b":
+        digits = body[2:].lstrip("0")
+        base = 2
     else:
-        value = int(body, 10)
+        digits = body.lstrip("0")
+        base = 10
+    if not digits:
+        return 0
+    if len(digits) > _MAX_LITERAL_DIGITS[base]:
+        raise _AssemblyError(
+            line,
+            f"El operando '{_abbreviate(token)}' excede el rango de los "
+            "valores admitidos.",
+        )
+    value = int(digits, base)
     return -value if token.startswith("-") else value
 
 
