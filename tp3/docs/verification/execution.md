@@ -1,7 +1,7 @@
 # TP3 — Sesión y ejecución
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** catálogo diseñado; ejecución parcial en unidad de Global FSM.
 
 ## Propósito y alcance
 
@@ -30,7 +30,7 @@ En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_reque
 
 - **Nivel:** unidad global_fsm e integración execution_control.
 - **Tipo de estímulo:** fixtures de estado y solicitudes locales; cruces simultáneos artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline).
 
@@ -323,7 +323,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones), [REQ-EXEC-001](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-002](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-005](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -404,7 +404,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU y unidad global_fsm.
 - **Tipo de estímulo:** recorridos legales y fixtures locales artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -475,7 +475,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit).
 
@@ -736,3 +736,120 @@ La preparación prevalece sobre WB y el clear prevalece sobre store, según los 
 La aprobación exige la prioridad global correcta sobre estado y commits. Una solicitud rechazada no debe interpretarse como abandono de la sesión.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+## Evidencia local de Global FSM — primer bloque de #8
+
+`rtl/global_fsm.sv` implementa la fase de sesión, selección de comandos y autorización
+sin puertos de prueba. `tb/global_fsm_tb.sv` comprueba los controles antes del flanco,
+la captura del destino, el estado one-hot y su código externo después del flanco.
+La implementación utiliza dos bloques: un único `always_comb` fija valores por
+defecto y calcula salidas Moore, autorización y estado siguiente; un `always_ff`
+actualiza únicamente `global_state` en el flanco. La autorización y las transiciones
+se describen en tablas planas `casez` sobre concatenaciones del estado actual y
+sus entradas relevantes. Los patrones `?` ignoran columnas sin efecto y el orden
+de filas hace explícita la prioridad. Las combinaciones de órdenes usan constantes
+`CTRL_*` con nombre; las máscaras separan sus bits con `_` y tienen encabezados
+junto a cada tabla. Las transiciones se agrupan por estado de origen después de
+las reglas globales de RESET y LOAD, conservando el orden relativo de sus filas.
+Las columnas de ambas tablas se alinean manualmente; directivas locales de
+Verible preservan esa presentación al ejecutar el formatter.
+La autorización usa estado, solicitudes y preparación; las confirmaciones y
+`pipeline_empty_next` solo intervienen en la tabla de destino. La decodificación
+Moore depende únicamente del estado registrado. El único registro de la FSM es
+`global_state`; las acciones sobre los recursos se realizan en sus consumidores.
+
+| IDs | Nivel registrado | Comprobación disponible | Pendiente |
+|---|---|---|---|
+| `TEST-EXEC-001/C001–C153` | Unidad | Las 153 filas originales de elegibilidad, prioridad, autorización, publicación, Moore/Mealy y transición. | Integración de `execution_control`, tamaño confirmado y productores reales. |
+| `TEST-EXEC-005/C001–C004` | Unidad | Proyección de confirmación halt, terminal directo, drain AUTO/STEP y HOLD de 50 clocks en C004. | Programa real, reconocimiento/consumo EX, PC, descarte y commits anteriores/jóvenes en CPU. |
+| `TEST-EXEC-006/C001–C005` | Unidad | Proyección de los drains con resultados de pipeline modelados, HOLD de 50 clocks y cambio STEP a RUN con trabajo restante o último WB. | Recorrido de CPU, precisión de efectos, captura/retención de metadata y respuestas UART. |
+| `TEST-EXEC-006/C006–C007` | Unidad | Los dos vectores artificiales originales; C006 conserva `HALT_DRAIN_AUTO` con `pipeline_empty_next=0`. | No representan recorridos alcanzables de halt; no acreditan integración CPU. |
+| `TEST-EXEC-007/C001–C004` | Unidad | Desde FINISHED/FAULT, aceptación sin ciclo, espera en PREPARING_RUN/STEP, primer ciclo con done y continuidad RUN/retención STEP. | Imagen real retenida, PC/RF/DMEM/pipeline preparados y contador de cero a uno. |
+
+Son **168 IDs con ejecución unitaria**, conservando todos los IDs, entradas y
+expectativas anteriores. `implemented` indica disponibilidad de una ejecución;
+no significa que estén aprobados todos los niveles del caso.
+
+Los vectores de TEST-EXEC-001 y C006–C007 instalan el estado mediante una escritura
+jerárquica exclusiva del banco. Las trece proyecciones restantes conducen una
+secuencia desde reset y suministran resultados modelados de carga, preparación,
+confirmación y vacío. Su setup incluye carga abortada, carga completa, espera y
+publicación. Los nuevos `inputs.fsm_steps` y `expected.fsm_steps` mantienen cada
+estímulo y expectativa en JSON; `clocks` fija los flancos con ese estímulo. Durante
+HOLD no hay ciclos CPU; en RUNNING cada flanco repetido sí autoriza un ciclo.
+El banco interpreta esos datos y realiza las aserciones SystemVerilog; el ejecutor
+Python permanece genérico y sin cambios.
+
+Estas secuencias acreditan la frontera de la FSM. No ejecutan las instrucciones
+que figuran en los casos originales, no producen commits ni modelan como CPU real
+la ubicación o edad de cada instrucción. Loader, preparación y `execution_control`
+se incorporan en los siguientes bloques de #8; la integración con CPU corresponde
+a #9 y UART/sistema a sus entregas posteriores. Los demás IDs y niveles conservan
+su obligación y su estado pendiente; esta unidad no cierra #8.
+
+### Reproducción
+
+Desde la raíz del repositorio, con la imagen exacta de `tp3/docker/image.ref`:
+
+```bash
+TP3_IMAGE="$(cat tp3/docker/image.ref)"
+docker run --rm --network none \
+  --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/workspace" \
+  "$TP3_IMAGE" make check
+```
+
+Dentro del contenedor, desde `/workspace/tp3`, la selección de esta unidad es:
+
+```bash
+bash scripts/run_tests.sh \
+  --test TEST-EXEC-001 \
+  --test TEST-EXEC-005 \
+  --test TEST-EXEC-006 \
+  --test TEST-EXEC-007 \
+  --format json --reports-dir build/reports/global-fsm
+```
+
+La regresión de `make check` conserva resultados y comandos de compilación/simulación
+en `build/reports/results.json`, `build/reports/simulation/` e
+`infrastructure.log`. La evidencia de esta implementación corresponde al árbol
+local sobre `c8ddc08`, con cambios sin commit. `build/reports/global-fsm-context.json`
+registra la referencia Git, la imagen y los hashes de sus fuentes y catálogo.
+Síntesis, timing y placa siguen pendientes.
+
+La comprobación local con la imagen fijada aprobó formato, lint, catálogo,
+**40 pruebas de infraestructura y 187 ejecuciones RTL**: 168 de esta unidad y
+19 de la base compartida de #3, con cero fallos y errores. El catálogo conserva
+1363 casos canónicos: 184 tienen una ejecución disponible y 1179 están pendientes.
+
+
+### Comprobación de la refactorización a tablas casez
+
+La misma imagen fijada ejecutó además una comparación suplementaria de la versión
+previa y la refactorizada: los 14 estados legales y tres representaciones internas
+inválidas (cero, dos bits activos y todos los bits activos), con las 1024
+combinaciones binarias de las diez entradas de control para cada estado. Las
+**17.408 comparaciones** verifican salidas Moore/Mealy, código externo, próximo
+estado y captura registrada. Incluyen combinaciones artificiales; no constituyen
+17.408 casos nuevos del catálogo ni sesiones legales de CPU.
+
+El snapshot previo, el banco de comparación, los comandos y logs quedan en
+`build/reports/global-fsm-casez/`. Esta comparación acredita equivalencia frente
+al snapshot; las expectativas independientes continúan en `cases.json` y se
+comprueban mediante la regresión habitual. La documentación de diseño, los IDs y
+sus expectativas no se modificaron durante esta refactorización.
+
+
+La reorganización posterior en un bloque combinacional y uno secuencial repitió
+las 17.408 comparaciones frente al snapshot de tres bloques combinacionales, con
+las mismas columnas y alcance binario. `build/reports/global-fsm-two-block/`
+conserva ambos modelos, banco, comandos y resultados. También se elaboró con
+Verilator un fixture que produce confirmaciones y vacío a partir de
+`cpu_cycle_fire` y `drain_mode`, para comprobar las dependencias combinacionales;
+no se detectaron lazos y no se agregó ningún puerto al producto.
+
+
+La mejora de legibilidad posterior repitió las mismas 17.408 comparaciones frente
+al snapshot previo, manteniendo los dos bloques y todas las expectativas del
+catálogo. La evidencia más reciente, incluidos comandos, referencia, banco y
+fixture de dependencias, queda en `build/reports/global-fsm-readability/`.
