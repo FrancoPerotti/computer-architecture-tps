@@ -214,11 +214,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad immediate_generator y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad implementada; comprobación CPU pendiente.
 
 **Requisitos:** [REQ-ISA-007](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-014](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [datapath](../architecture/cpu/datapath.md).
+
+### Ejecución disponible
+
+El banco `immediate_generator_tb` ejecuta las 24 variantes en nivel `Unidad`. Compara el inmediato con `expected.immediate` del manifiesto. La escritura de LUI, la conservación del resto del estado y la terminación se comprobarán en CPU; esta ejecución unitaria no las acredita.
 
 ### Qué comprueba y por qué
 
@@ -275,11 +279,19 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad decoder e integración ID.
 - **Tipo de estímulo:** legal y mutación de palabra.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad e integración local de ID implementadas.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md).
+
+### Ejecución disponible
+
+El banco `decoder_tb` ejecuta las 409 variantes en nivel `Unidad` y compara las nueve salidas del decoder con las expectativas del manifiesto. Los 437 pares de mutación conservan sus IDs y orígenes.
+
+Una segunda ejecución de esos mismos IDs utiliza `id_stage_tb` con `DECODE_ONLY=1` en nivel `Integración local`. `inputs.id_context` presenta la entrada de IF/ID y mantiene inactivos el productor ID/EX, WB, bypass y Debug. El banco reinicia RF antes de presentar ese contexto. Compara los controles transportados por ID/EX, su validez, instrucción y PC, el candidato de fault, su PC y la causa cuando corresponde. También exige que no aparezca load-use con el productor inválido. Las expectativas de controles y candidato se reutilizan del caso; la causa, PC, validez y ausencia de dependencia están explícitos en `expected`.
+
+Esta integración no necesita un registro IF/ID real: presenta sus cinco campos desde el banco. No acredita captura de registros interetapa, confirmación de fault/halt, arbitraje ni ejecución de CPU. `expected.halt_candidate` conserva su referencia para EX; en ID se comprueba el control `flow_op`, sin agregar un puerto de halt.
 
 ### Qué comprueba y por qué
 

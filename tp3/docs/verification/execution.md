@@ -23,6 +23,7 @@ En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_reque
 - [TEST-EXEC-008 — Sin halt y recuperación por reset](#test-exec-008)
 - [TEST-EXEC-009 — Contador efectivo y wrap de64 bits](#test-exec-009)
 - [TEST-EXEC-010 — Reset y LOAD dominan efectos de la sesión anterior](#test-exec-010)
+- [TEST-EXEC-011 — Candidato local de fault en ID](#test-exec-011)
 
 <a id="test-exec-001"></a>
 
@@ -736,3 +737,50 @@ La preparación prevalece sobre WB y el clear prevalece sobre store, según los 
 La aprobación exige la prioridad global correcta sobre estado y commits. Una solicitud rechazada no debe interpretarse como abandono de la sesión.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+<a id="test-exec-011"></a>
+
+## TEST-EXEC-011 — Candidato local de fault en ID
+
+- **Nivel:** unidad `id_fault_check`.
+- **Tipo de estímulo:** vectores locales y entradas artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), con alcance parcial sobre la formación del candidato.
+
+**Contratos:** [ID Fault Check](../architecture/cpu/stage_id.md#id-fault-check); [interfaz 2.7](../interfaces.md#bloque-2-7); [faults en ID](../architecture/session/faults_and_termination.md#confirmación-en-id).
+
+### Qué comprueba y por qué
+
+El banco comprueba la formación combinacional de `id_fault_candidate`, la selección de su causa y el transporte de los 32 bits de `IF/ID.pc`. Aplica directamente la salida `decode_legal` del decoder y los campos de IF/ID; no instancia el decoder ni comprueba el acceso a IMEM.
+
+Las burbujas deben permanecer inactivas aunque el decoder entregue cero. Un fault de fetch debe conservar su causa y no convertirse en instrucción ilegal por los bits residuales de la palabra.
+
+### Variantes cerradas
+
+Los diez casos canónicos `TEST-EXEC-011/C001`–`C010` se enumeran en [cases.json](cases.json), con todas sus entradas y expectativas. No se agregan combinaciones implícitas.
+
+| Caso   | valid | fetch_fault_valid | decode_legal | Causa IF | Candidato | Causa ID |
+| ------ | ----- | ----------------- | ------------ | -------- | --------- | -------- |
+| C001   | 0     | 0                 | 0            | 1        | 0         | —        |
+| C002   | 0     | 0                 | 1            | 0        | 0         | —        |
+| C003   | 1     | 0                 | 1            | 1        | 0         | —        |
+| C004   | 1     | 0                 | 0            | 0        | 1         | 2        |
+| C005   | 0     | 1                 | 0            | 0        | 1         | 0        |
+| C006   | 0     | 1                 | 1            | 0        | 1         | 0        |
+| C007   | 0     | 1                 | 0            | 1        | 1         | 1        |
+| C008   | 0     | 1                 | 1            | 1        | 1         | 1        |
+| C009   | 1     | 1                 | 1            | 1        | 0         | —        |
+| C010   | 1     | 1                 | 0            | 1        | 1         | 2        |
+
+C009 y C010 fuerzan ambas banderas de IF/ID activas. Son entradas artificiales para comprobar la ecuación del bloque; no representan una entrada producida por IF. Los dos candidatos internos siguen siendo excluyentes porque requieren valores opuestos de `valid`.
+
+Los PCs explícitos incluyen cero en el bit más significativo, valores con ese bit activo y direcciones próximas al extremo de 32 bits. El banco comprueba su transporte; no realiza una nueva validación de alineación o rango.
+
+### Procedimiento y criterio de aprobación
+
+1. Aplicar las cinco entradas del caso y esperar la estabilización combinacional, sin reloj ni flanco.
+2. Comparar el candidato y el PC con las expectativas mediante aserciones SystemVerilog.
+3. Comparar la causa cuando su expectativa sea un entero. `null` indica que no se consume sin candidato; no representa una causa arquitectónica adicional.
+
+Los diez casos deben pasar en nivel `Unidad`. Esta evidencia no acredita la confirmación del fault, su descarte por una frontera EX anterior, la captura de metadata, el drenado ni la validación física. Esas comprobaciones permanecen en TEST-EXEC-004, TEST-PIPE-008 y TEST-PIPE-010.

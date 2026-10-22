@@ -211,6 +211,12 @@ controles utilizan `alu_op_t`, `alu_src_t`, `result_sel_t`, `flow_op_t`,
 [interfaces](../interfaces.md#02-convenciones-anchos-y-codificaciones).
 Son vectores `logic` sin signo que conservan los cuatro estados.
 
+`opcode_t` representa los siete bits bajos de la instrucción. Las constantes
+`OPCODE_*` nombran las clases utilizadas por `decoder` e `immediate_generator`
+según la [whitelist de ID](cpu/stage_id.md#codificaciones-legales). Los campos
+de función y la palabra exacta de `halt` son constantes locales del decoder;
+la legalidad no se determina únicamente por el opcode.
+
 Las constantes `ALU_OP_*`, `ALU_SRC_*`, `RESULT_SEL_*`, `FLOW_OP_*` y
 `MEM_OP_*` conservan las
 [codificaciones de ID](cpu/stage_id.md#codificación-de-los-controles).
