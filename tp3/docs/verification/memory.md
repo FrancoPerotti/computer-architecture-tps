@@ -619,5 +619,7 @@ capacidades inválidas de `TEST-PLAT-001/C009–C013`: exige rechazo con
 `CONFIG_INVALID_CAPACITY` y ausencia de elaboración del buffer parcial. No agrega
 casos canónicos ni reemplaza la ejecución funcional del catálogo.
 
-Continúan pendientes Session Preparation, su integración y la verificación con
+La preparación real y la conexión de los tres módulos en el banco local se
+documentan en [la evidencia de Session Preparation](execution.md#evidencia-local-de-session-preparation--cuarto-bloque-de-8).
+Continúan pendientes la conexión en `processor_top`, la verificación con
 IMEM/CPU/UART reales, síntesis, timing y placa. Este bloque no cierra #8.

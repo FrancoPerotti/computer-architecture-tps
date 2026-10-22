@@ -98,7 +98,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad session_preparation e integración CPU.
 - **Tipo de estímulo:** legal con estado previo del fixture.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad e integración local ejecutadas con recursos modelados; CPU y Controller de producción pendientes.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -927,3 +927,74 @@ o CPU reales. Los resultados y hashes del árbol comprobado se registran en
 
 Este bloque no cierra #8. Continúan pendientes Loader, Session Preparation y su
 integración; CPU, UART, síntesis, timing y placa conservan sus comprobaciones propias.
+
+## Evidencia local de Session Preparation — cuarto bloque de #8
+
+`rtl/session_preparation.sv` implementa el recorrido de Interfaces §9.2. Su único
+registro es `prepare_index`, cuyo ancho representa también `DMEM_CAPACITY_BYTES`
+como centinela final. No agrega FSM, modo de sesión, copia de bitmap ni registro
+de done. Reset y la salida de preparación rearman el índice en cero.
+
+El primer flanco combina `prepare_init` y la limpieza de la marca cero. Cada
+flanco posterior limpia una dirección distinta; al llegar a C se desactiva el
+mantenimiento y se presenta `prepare_done`. El consumo de done ocupa un flanco
+separado: C limpiezas más uno de finalización, sin espera adicional.
+
+`tb/session_preparation_tb.sv` conecta el módulo con `execution_control` y Loader
+reales. Modela los consumidores de inicialización —PC, RF, flags del pipeline y
+marcas de DMEM— y una IMEM de cuatro palabras con escritura síncrona. Los datos
+físicos de DMEM siguen el patrón `a mod 256` y deben conservarse, al igual que IMEM.
+El contador observado es el recurso real de Execution Control. La captura de
+fetch es un modelo local: no implementa IF, hazards ni ejecución de instrucciones.
+
+Los estímulos y expectativas adicionales están en `inputs.prep_fixture` y
+`expected.preparation`, conservando todos los datos y registros de ejecución
+anteriores del catálogo. Las capacidades, conteos, palabras, residuos y destinos
+proceden de esos campos. El recorrido se comprueba como un rango ordenado, sin
+expandir miles de filas JSON por clock. El lector y ejecutor compartidos permanecen
+sin cambios y se conservan los límites de cinco segundos por ejecución.
+
+| IDs | Ejecución disponible | Alcance pendiente |
+|---|---|---|
+| `TEST-EXEC-002/C001`, `C004`, `C007`, `C010`, `C013`, `C016` | Unidad: 4, 28, 32, 36, 1000 y 2048 marcas, RF completo inicializado en el primer flanco aun con C menor que 32, índice/done y conservación de memorias físicas. | Consumidores de producción y coherencia CPU/Debug. |
+| `TEST-EXEC-002/C016` | Integración local: LOAD de 16 bytes por Loader, última escritura, preparación real y publicación en READY con contador cero. | Controller, UART e IMEM de producción. |
+| `TEST-EXEC-002/C017–C018` | Integración local: primera carga/preparación, terminal FINISHED/FAULT modelado y nueva preparación RUN/STEP conservando imagen; primer fetch modelado desde PC cero, contador uno y continuidad/retención posterior. | Confirmaciones de hazards, fetch y ejecución de CPU reales. No se ejecuta el halt de la imagen. |
+| `TEST-EXEC-002/C019–C021` | Unidad e integración local: reset tras dos clears, supresión de mantenimiento y reinicio desde cero para READY/RUN/STEP. El fixture restaura fase e imagen tras reset sin escribir el índice del servicio. | En C021, las observaciones de Controller `WAIT_STEP_END`, respuesta, Debug y cancelación UART permanecen pendientes. |
+| `TEST-PLAT-001/C004–C008` | Índice inclusivo en capacidades 4, 1000, 1024, 2048 y `2^32`; primer clear, inyección cerca del límite, último clear, done sin escritura y conservación del centinela. | No recorre `2^32` bytes ni reserva una memoria de ese tamaño. |
+
+La inicialización y todos los clears excluyen `cpu_cycle_fire` y las escrituras de
+Loader. En el flanco final, READY publica con contador cero; RUN y STEP permiten
+su primer ciclo con contador uno y sin mantenimiento concurrente. El banco también
+comprueba que done se conserve mientras el servicio siga activo y que la salida
+de preparación rearme el índice para una sesión posterior.
+
+Son **20 ejecuciones adicionales**: nueve de unidad del servicio, seis de
+integración local y cinco de límites. El catálogo conserva 1363 casos canónicos;
+229 tienen alguna ejecución disponible y 1134 permanecen pendientes. Una ejecución
+local disponible no aprueba los niveles CPU/sistema del caso original.
+
+### Reproducción y evidencia
+
+Con la imagen exacta de `docker/image.ref`, `make check` incluye el nuevo módulo y
+sus bancos. Verilator analiza Session Preparation como otra raíz RTL. Desde
+`/workspace/tp3`, la selección local es:
+
+```bash
+bash scripts/run_tests.sh --test TEST-EXEC-002 --test TEST-PLAT-001 \
+  --format json --reports-dir build/reports/session-preparation/selected
+```
+
+La regresión completa aprobó formato, lint, catálogo, **40 pruebas de
+infraestructura y 428 ejecuciones RTL**, sin fallos ni errores: las 408 anteriores
+y las 20 agregadas. REFERENCE y ALT_1000 requieren respectivamente 2049 y 1001
+flancos hasta consumir done; son 40,98 µs y 20,02 µs en la simulación a 50 MHz,
+sin constituir una verificación física de timing.
+
+`build/reports/session-preparation/` conserva logs, comandos, comprobación de
+preservación del catálogo y hashes de las fuentes en `context.json`. La prueba
+suplementaria de las cinco capacidades inválidas de `TEST-PLAT-001/C009–C013`
+exige `CONFIG_INVALID_CAPACITY` sin elaborar el índice de progreso; no agrega IDs.
+
+Los tres módulos de sesión están implementados y conectados en el banco local.
+La conexión en `processor_top`, memorias y CPU reales, transporte, síntesis, timing
+y placa conservan sus obligaciones; esta evidencia no cierra por sí sola #8.

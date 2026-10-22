@@ -38679,7 +38679,67 @@
       "source": "execution.md#test-exec-002",
       "case_count": 11,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_preparation_tb.sv"
+          ],
+          "top": "session_preparation_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-EXEC-002/C001",
+            "TEST-EXEC-002/C004",
+            "TEST-EXEC-002/C007",
+            "TEST-EXEC-002/C010",
+            "TEST-EXEC-002/C013",
+            "TEST-EXEC-002/C016",
+            "TEST-EXEC-002/C019",
+            "TEST-EXEC-002/C020",
+            "TEST-EXEC-002/C021"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C_DMEM"
+            },
+            "WITH_CONTROL": "0"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_preparation_tb.sv"
+          ],
+          "top": "session_preparation_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-EXEC-002/C016",
+            "TEST-EXEC-002/C017",
+            "TEST-EXEC-002/C018",
+            "TEST-EXEC-002/C019",
+            "TEST-EXEC-002/C020",
+            "TEST-EXEC-002/C021"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C_DMEM"
+            },
+            "WITH_CONTROL": "1"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-EXEC-002/C001",
@@ -38694,6 +38754,43 @@
             "target": "session_preparation y recursos de inicialización",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38705,13 +38802,42 @@
               "prepare_done": true,
               "prepare_init": false,
               "prepare_dmem_clear": false
+            },
+            "preparation": {
+              "clear_count": 4,
+              "completion_clocks": 5,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C004",
@@ -38726,6 +38852,43 @@
             "target": "session_preparation y recursos de inicialización",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38737,13 +38900,42 @@
               "prepare_done": true,
               "prepare_init": false,
               "prepare_dmem_clear": false
+            },
+            "preparation": {
+              "clear_count": 28,
+              "completion_clocks": 29,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C007",
@@ -38758,6 +38950,43 @@
             "target": "session_preparation y recursos de inicialización",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38769,13 +38998,42 @@
               "prepare_done": true,
               "prepare_init": false,
               "prepare_dmem_clear": false
+            },
+            "preparation": {
+              "clear_count": 32,
+              "completion_clocks": 33,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C010",
@@ -38790,6 +39048,43 @@
             "target": "session_preparation y recursos de inicialización",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38801,13 +39096,42 @@
               "prepare_done": true,
               "prepare_init": false,
               "prepare_dmem_clear": false
+            },
+            "preparation": {
+              "clear_count": 36,
+              "completion_clocks": 37,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C013",
@@ -38822,6 +39146,43 @@
             "target": "session_preparation y recursos de inicialización",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38833,13 +39194,42 @@
               "prepare_done": true,
               "prepare_init": false,
               "prepare_dmem_clear": false
+            },
+            "preparation": {
+              "clear_count": 1000,
+              "completion_clocks": 1001,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C016",
@@ -38855,6 +39245,43 @@
             "image_first_word": "0x0000000B",
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "load",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38873,13 +39300,42 @@
               "load_start": false,
               "cpu_cycle_fire": false,
               "image_publish": true
+            },
+            "preparation": {
+              "clear_count": 2048,
+              "completion_clocks": 2049,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C017",
@@ -38892,7 +39348,44 @@
             "dirty_bitmap": "todos1",
             "physical_byte_pattern": "a mod256",
             "target": "CPU",
-            "image_first_word": "0x0000000B"
+            "image_first_word": "0x0000000B",
+            "prep_fixture": {
+              "entry": "reuse",
+              "entry_state_onehot": 4096,
+              "confirmed_size": 16,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 1,
+              "step_request": 0,
+              "terminal": "FINISHED"
+            }
           },
           "expected": {
             "clear_count": 2048,
@@ -38911,13 +39404,42 @@
               "load_start": false,
               "cpu_cycle_fire": true,
               "image_publish": false
+            },
+            "preparation": {
+              "clear_count": 2048,
+              "completion_clocks": 2049,
+              "finish": {
+                "state": 4,
+                "count": 1,
+                "publish": 0,
+                "fire": 1,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  2,
+                  3
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C018",
@@ -38930,7 +39452,44 @@
             "dirty_bitmap": "todos1",
             "physical_byte_pattern": "a mod256",
             "target": "CPU",
-            "image_first_word": "0x0000000B"
+            "image_first_word": "0x0000000B",
+            "prep_fixture": {
+              "entry": "reuse",
+              "entry_state_onehot": 8192,
+              "confirmed_size": 16,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 0,
+              "run_request": 0,
+              "step_request": 1,
+              "terminal": "FAULT"
+            }
           },
           "expected": {
             "clear_count": 2048,
@@ -38949,13 +39508,42 @@
               "load_start": false,
               "cpu_cycle_fire": true,
               "image_publish": false
+            },
+            "preparation": {
+              "clear_count": 2048,
+              "completion_clocks": 2049,
+              "finish": {
+                "state": 5,
+                "count": 1,
+                "publish": 0,
+                "fire": 1,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  1,
+                  1
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 11
             }
           },
           "kind": "vector",
           "origins": [
             "Preparación completa"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C019",
@@ -38965,6 +39553,43 @@
             "reset_after_clears": 2,
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4,
+              "confirmed_size": 0,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 2,
+              "run_request": 0,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -38976,13 +39601,42 @@
               "load_start": false,
               "cpu_cycle_fire": false,
               "image_publish": false
+            },
+            "preparation": {
+              "clear_count": 4,
+              "completion_clocks": 5,
+              "finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "scenario",
           "origins": [
             "Reset a mitad"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C020",
@@ -38992,6 +39646,43 @@
             "reset_after_clears": 2,
             "unit_service_inputs": {
               "prepare_active": 1
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 4096,
+              "confirmed_size": 16,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 2,
+              "run_request": 1,
+              "step_request": 0,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -39003,13 +39694,42 @@
               "load_start": false,
               "cpu_cycle_fire": false,
               "image_publish": false
+            },
+            "preparation": {
+              "clear_count": 4,
+              "completion_clocks": 5,
+              "finish": {
+                "state": 4,
+                "count": 1,
+                "publish": 0,
+                "fire": 1,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  2,
+                  3
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "scenario",
           "origins": [
             "Reset a mitad"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-002/C021",
@@ -39026,6 +39746,43 @@
               "image_valid_before": true,
               "run_result_required": false,
               "reset_source": "button"
+            },
+            "prep_fixture": {
+              "entry": "direct",
+              "entry_state_onehot": 8192,
+              "confirmed_size": 16,
+              "pc": 64,
+              "count": 99,
+              "register_pattern": "0xA5A5A5A5",
+              "physical_modulus": 256,
+              "image_words": [
+                "0x0000000B",
+                "0x00000013",
+                "0x00000013",
+                "0x0000000B"
+              ],
+              "load_bytes": [
+                11,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                19,
+                0,
+                0,
+                0,
+                11,
+                0,
+                0,
+                0
+              ],
+              "reset_after": 2,
+              "run_request": 0,
+              "step_request": 1,
+              "terminal": "FINISHED"
             }
           },
           "expected": {
@@ -39044,13 +39801,42 @@
               "uart_reset_request": false,
               "debug_read_select": false,
               "STEP_queued_for_later": false
+            },
+            "preparation": {
+              "clear_count": 4,
+              "completion_clocks": 5,
+              "finish": {
+                "state": 5,
+                "count": 1,
+                "publish": 0,
+                "fire": 1,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  1,
+                  1
+                ]
+              },
+              "initial_load_finish": {
+                "state": 3,
+                "count": 0,
+                "publish": 1,
+                "fire": 0,
+                "size": 16,
+                "fetch_pc": 0,
+                "follow_counts": [
+                  0,
+                  0
+                ]
+              },
+              "terminal_code": 10
             }
           },
           "kind": "scenario",
           "origins": [
             "Reset a mitad"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -60890,6 +61676,32 @@
             },
             "WITH_CONTROL": "1"
           }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_preparation_tb.sv"
+          ],
+          "top": "session_preparation_capacity_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PLAT-001/C004",
+            "TEST-PLAT-001/C005",
+            "TEST-PLAT-001/C006",
+            "TEST-PLAT-001/C007",
+            "TEST-PLAT-001/C008"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
         }
       ],
       "cases": [
@@ -61275,7 +62087,10 @@
                 "loader_active": 0,
                 "remaining": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "last_index": 3
+            }
           },
           "expected": {
             "BYTE_ADDRESS_WIDTH": 2,
@@ -61669,7 +62484,10 @@
                 "image_valid_after": true,
                 "cycles_after": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "limit": 4
+            }
           },
           "kind": "arithmetic_only",
           "origins": [
@@ -61873,7 +62691,10 @@
                 "loader_active": 0,
                 "remaining": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "last_index": 999
+            }
           },
           "expected": {
             "BYTE_ADDRESS_WIDTH": 10,
@@ -62267,7 +63088,10 @@
                 "image_valid_after": true,
                 "cycles_after": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "limit": 1000
+            }
           },
           "kind": "arithmetic_only",
           "origins": [
@@ -62466,7 +63290,10 @@
                 "loader_active": 0,
                 "remaining": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "last_index": 1023
+            }
           },
           "expected": {
             "BYTE_ADDRESS_WIDTH": 10,
@@ -62860,7 +63687,10 @@
                 "image_valid_after": true,
                 "cycles_after": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "limit": 1024
+            }
           },
           "kind": "arithmetic_only",
           "origins": [
@@ -63064,7 +63894,10 @@
                 "loader_active": 0,
                 "remaining": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "last_index": 2047
+            }
           },
           "expected": {
             "BYTE_ADDRESS_WIDTH": 11,
@@ -63458,7 +64291,10 @@
                 "image_valid_after": true,
                 "cycles_after": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "limit": 2048
+            }
           },
           "kind": "arithmetic_only",
           "origins": [
@@ -63662,7 +64498,10 @@
                 "loader_active": 0,
                 "remaining": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "last_index": 4294967295
+            }
           },
           "expected": {
             "BYTE_ADDRESS_WIDTH": 32,
@@ -64056,7 +64895,10 @@
                 "image_valid_after": true,
                 "cycles_after": 0
               }
-            ]
+            ],
+            "prep_capacity_probe": {
+              "limit": 4294967296
+            }
           },
           "kind": "arithmetic_only",
           "origins": [
