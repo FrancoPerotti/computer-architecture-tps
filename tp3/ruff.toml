@@ -1,0 +1,18 @@
+target-version = "py312"
+line-length = 100
+indent-width = 4
+preview = false
+cache-dir = "build/.ruff_cache"
+
+[lint]
+select = [
+  "E4", "E7", "E9", "F", "I",
+  "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",
+  "D200", "D201", "D202", "D204", "D205", "D209", "D210", "D211", "D212",
+  "D300", "D400", "D419",
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

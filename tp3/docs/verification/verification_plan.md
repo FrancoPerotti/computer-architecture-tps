@@ -44,6 +44,46 @@ El [manifiesto](cases.json) enumera 1363 variantes canónicas en 56 grupos. Las 
 
 Las [reglas del protocolo y su coordinación](coverage.md#reglas-del-protocolo-y-coordinación) relacionan admisión, carga, respuestas, Debug y reset con esos casos. La política de recuperación PC complementa la verificación de hardware; su modelo no acredita una aplicación implementada.
 
+### Registro de ejecución en el manifiesto
+
+El manifiesto `tp3-verification-cases` reúne la descripción de los casos y la configuración de sus ejecuciones en el mismo archivo. Cada grupo conserva sus IDs, fuentes documentales, entradas, expectativas y relaciones de reutilización, y contiene una lista `executions`.
+
+Cada entrada de `executions` describe un testbench mediante sus fuentes en orden de compilación (`sources`), relativas a `tp3`, su módulo principal (`top`), el nivel de verificación que acredita (`level`) y el límite de tiempo por caso (`timeout_seconds`). Un grupo puede contener varias entradas para comprobar sus casos con distintos testbenches o en distintos niveles. Los IDs y las expectativas permanecen definidos en `cases` y `replay_cases`.
+
+Las propiedades opcionales `case_ids` y `parameters` restringen los casos aplicables y fijan los parámetros de elaboración del banco. Un parámetro puede tomar una entrada entera mediante `{"input": "C"}`, que referencia `inputs.C` del caso antes de compilar. Sin `case_ids`, la ejecución se aplica a todos los casos del grupo, incluidas sus reejecuciones. `expected_rejection` declara un rechazo controlado mediante su código de salida positivo y la clave del diagnóstico dentro de `expected`; el diagnóstico conserva su autoridad en el caso. La carga común verifica la pertenencia de los casos y la existencia y los tipos de las entradas referenciadas. El [ejecutor común](test_selection.md#compilación-y-simulación) aplica estas configuraciones y valida los resultados.
+
+`timeout_seconds` es un entero positivo que expresa el tiempo real máximo de cada simulación, en segundos. El límite corresponde a cada caso individual; no incluye la compilación ni representa tiempo simulado del circuito.
+
+La lista `executions` vacía indica que el grupo no tiene una ejecución registrada. Una entrada solo referencia fuentes y testbenches existentes. La presencia de un caso en el catálogo o de una configuración de ejecución no representa un resultado aprobado.
+
+Los resultados de las corridas se conservan como evidencia separada del manifiesto. Registrar una ejecución o sus resultados no cambia las entradas, expectativas ni cantidades de casos aprobadas.
+
+El [intercambio de datos con los testbenches](case_data.md) describe la preparación de archivos desde el manifiesto y su lectura en SystemVerilog. Las entradas y los valores esperados se conservan en el JSON; los testbenches implementan la aplicación de estímulos y las comprobaciones.
+
+La [guía de ejecución y selección de pruebas](test_selection.md) describe la CLI para consultar grupos y casos, eliminar repeticiones, validar las referencias del manifiesto y ejecutar los testbenches registrados con Icarus.
+
+### Estructura del manifiesto
+
+El [JSON Schema del manifiesto](cases.schema.json) define sus campos obligatorios, tipos, formatos de ID y configuraciones de ejecución. El campo `$schema` de `cases.json` lo vincula con ese archivo; `schema` conserva el identificador del manifiesto.
+
+La raíz, los grupos, los casos, los fixtures y las configuraciones de ejecución rechazan campos desconocidos. Cada ejecución requiere `sources`, `top`, `level` y `timeout_seconds`: las fuentes son rutas relativas a `tp3`, el módulo principal usa un identificador simple de SystemVerilog, el nivel corresponde a uno de los nombres de la tabla de niveles de este plan y el límite de tiempo es un entero mayor o igual a uno. Las listas `executions` vacías son válidas.
+
+Los objetos `inputs` y `expected` conservan los campos específicos de cada caso. El esquema comprueba que sean objetos con contenido; sus valores y significado se contrastan con el catálogo y los contratos. Los estímulos ilegales intencionales forman parte de los casos y no se rechazan por representar una entrada inválida para el hardware.
+
+El esquema valida la estructura. La coincidencia entre `case_count` y la cantidad de casos, la unicidad por ID, la pertenencia de cada caso a su grupo, las referencias entre grupos/casos y la existencia de las fuentes son comprobaciones de coherencia adicionales a JSON Schema.
+
+La validación del esquema se ejecuta con `check-jsonschema`, incluido en la imagen compartida. La [guía del entorno](../development_environment.md#validación-del-manifiesto) contiene los comandos de validación del manifiesto y del propio esquema.
+
+### Formato estructurado de resultados
+
+El [JSON Schema de resultados](results.schema.json) define un documento con el estado global (`status`), los contadores (`summary`) y los resultados individuales (`results`). Cada resultado identifica el caso (`case_id`), el testbench (`top`) y el nivel de verificación (`level`), e incluye su estado (`status`) y un diagnóstico (`message`). Los contadores corresponden a ejecuciones individuales: un mismo caso puede tener resultados de distintos testbenches o niveles.
+
+`passed` indica que se comprobó el comportamiento esperado; `failed`, que el testbench detectó una diferencia; `error`, que la prueba no pudo completarse o interpretarse, por ejemplo por un error de compilación, un límite de tiempo excedido o la ausencia de resultado explícito. Los resultados `failed` y `error` requieren un diagnóstico no vacío. Un resultado aprobado admite `message: null`.
+
+La representación JSON consiste en un único documento en la salida estándar; el progreso y los diagnósticos externos al documento corresponden a la salida de errores. La representación legible conserva los mismos resultados y códigos de salida.
+
+El esquema comprueba la estructura y reutiliza las definiciones de ID, módulo y nivel del manifiesto. La coincidencia de los contadores con los resultados y del estado global con sus estados individuales son comprobaciones de coherencia adicionales a JSON Schema.
+
 ## Convenciones comunes
 
 ### Identificación de especificaciones y variantes

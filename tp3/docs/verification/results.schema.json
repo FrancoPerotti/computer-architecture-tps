@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Resultados estructurados de verificación de TP3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "summary",
+    "results",
+    "pending_cases"
+  ],
+  "properties": {
+    "status": {
+      "$ref": "#/$defs/status"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "passed",
+        "failed",
+        "errors"
+      ],
+      "properties": {
+        "total": {
+          "$ref": "#/$defs/count"
+        },
+        "passed": {
+          "$ref": "#/$defs/count"
+        },
+        "failed": {
+          "$ref": "#/$defs/count"
+        },
+        "errors": {
+          "$ref": "#/$defs/count"
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/result"
+      }
+    },
+    "pending_cases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "cases.schema.json#/$defs/caseId"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "error"
+      ]
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "top",
+        "level",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "case_id": {
+          "$ref": "cases.schema.json#/$defs/caseId"
+        },
+        "top": {
+          "$ref": "cases.schema.json#/$defs/execution/properties/top"
+        },
+        "level": {
+          "$ref": "cases.schema.json#/$defs/execution/properties/level"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "cases.schema.json#/$defs/nonEmptyString"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "failed",
+                  "error"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "message": {
+                "$ref": "cases.schema.json#/$defs/nonEmptyString"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
