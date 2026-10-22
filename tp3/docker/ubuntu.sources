@@ -1,0 +1,8 @@
+# Snapshot fijo de los tres repositorios. Las firmas de Ubuntu siguen activas.
+Types: deb
+URIs: https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/
+Suites: noble noble-updates noble-security
+Components: main universe
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+Check-Valid-Until: no

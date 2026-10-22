@@ -1,6 +1,6 @@
 # Guía del estilo de código SystemVerilog
 
-Esta guía describe las convenciones de código SystemVerilog observadas en el repositorio al 30 de septiembre de 2026. Está dirigida a personas y agentes que escriben o revisan módulos RTL y bancos de prueba. Su alcance son los 24 archivos propios implementados de TP1 y TP2; las variaciones locales forman parte del estilo observado. No establece nuevas reglas ni propone reformatear el código.
+Esta guía describe las convenciones de código SystemVerilog observadas en el repositorio en TP1 y TP2. Está dirigida a personas y agentes que escriben o revisan módulos RTL y bancos de prueba. Su alcance son los 24 archivos propios implementados de TP1 y TP2; las variaciones locales forman parte del estilo observado. No establece nuevas reglas ni propone reformatear el código.
 
 El [informe de análisis](code-style-analysis.md) contiene el relevamiento del repositorio y la evidencia que sustenta esta guía. Los identificadores G y SV remiten a los hallazgos de organización y SystemVerilog de su matriz.
 
@@ -101,7 +101,43 @@ Los tres bancos con `$urandom` —las dos pruebas de ALU y [alu_uart_top_tb.sv](
 
 ## Alcance de TP3
 
-[TP3](../tp3/) todavía no aporta fuentes SystemVerilog implementadas: sus directorios [rtl](../tp3/rtl/) y [tb](../tp3/tb/) contienen marcadores `.gitkeep`. El [ejemplo de reset del plan](../tp3/docs/plan.md#L1161) usa `logic` y `always_ff`: expresa una referencia para el diseño futuro y no describe el estilo de las fuentes actuales de TP1/TP2. Esta guía no decide los tipos ni las codificaciones de futuras FSM del TP3; sus contratos y [decisiones pendientes](../tp3/docs/pending_decisions.md) se consultan por separado. (G4)
+[TP3](../tp3/) dispone del paquete compartido `system_pkg` y sus bancos. Para sus
+fuentes propias se adopta la guía [lowRISC Verilog Coding Style](https://github.com/lowRISC/style-guides/blob/9c15ff5dce23eef969e00ab3715153967419eadd/VerilogCodingStyle.md)
+en esa revisión fija, limitada a convenciones de código. El diseño y los contratos
+aprobados de TP3 prevalecen: no se cambian reset, clocks, interfaces, anchos,
+codificaciones, latencias ni recursos para satisfacer una regla de estilo.
+
+Se usan SystemVerilog, dos espacios por nivel, cuatro para continuaciones y un
+objetivo de 100 columnas; se alinean grupos relacionados y se conectan puertos y
+parámetros por nombre. Los identificadores son ASCII en inglés y `snake_case`,
+los tipos terminan en `_t` y las constantes/parámetros conservan `UPPER_SNAKE_CASE`.
+Los comentarios permanecen en español. Se usa un módulo RTL por archivo homónimo;
+los bancos pueden agrupar helpers relacionados. Cada package tiene archivo homónimo.
+Solo se omite `begin/end` si la construcción completa cabe en una línea.
+
+El RTL combinacional usa `always_comb`, asignaciones bloqueantes y asignación
+completa. El secuencial usa `always_ff` y asignaciones no bloqueantes. Se usa `logic`
+para señales y `wire` cuando se necesita una red. Anchos y signo se explicitan antes
+de la operación para evitar overflow o truncamiento; no se agregan casts para
+ocultar diagnósticos. Reset e inicialización siguen los contratos del módulo:
+el reset funcional conserva su polaridad activa alta y sincronismo; la aserción
+asíncrona corresponde a `reset_sync`. No se rediseñan FSM por convenciones de estilo.
+
+Los bancos pueden usar retardos, lectura de archivos y asignaciones bloqueantes
+para estímulos. Las comprobaciones que deben detectar X/Z usan comparaciones
+estrictas. Se conserva el subconjunto compatible con Icarus y XSim y las
+construcciones negativas que verifican ausencia de elaboración de recursos.
+
+Cada grupo de constantes explica su propósito; cada alias de tipo lleva un
+comentario inline breve. Estructuras, funciones, tareas y bancos explican su
+responsabilidad sin remitir desde las fuentes a archivos de documentación.
+
+`make format-check` y `make lint`, dentro del contenedor de TP3, aplican Verible,
+Verilator, Ruff y ShellCheck. Verible controla el estilo configurado y Verilator
+analiza el RTL, sin sustituir simulaciones. Las advertencias técnicas activadas
+fallan; las excepciones son específicas y justificadas. La guía completa, el
+sentido de los comentarios y las convenciones sin regla automática quedan para
+revisión. TP1/TP2 mantienen las convenciones observadas en las secciones anteriores.
 
 ## Consulta breve para escribir y revisar SystemVerilog
 
