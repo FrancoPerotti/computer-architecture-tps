@@ -6,7 +6,9 @@ SHELL := /bin/bash
 SV_DIRS := rtl tb scripts/tests/fixtures
 PY_DIR := scripts
 SH_SOURCES := scripts/run_tests.sh
-RTL_SOURCES := rtl/system_pkg.sv
+RTL_SOURCES := rtl/system_pkg.sv rtl/global_fsm.sv rtl/execution_control.sv rtl/loader.sv \
+  rtl/session_preparation.sv
+RTL_TOPS := execution_control loader session_preparation
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags
@@ -38,7 +40,9 @@ format-check:
 
 lint:
 	find $(SV_DIRS) -type f -name '*.sv' -print0 | xargs -0 -r $(VERIBLE_LINT)
-	verilator --lint-only --language 1800-2012 $(RTL_SOURCES)
+	for top in $(RTL_TOPS); do \
+	  verilator --lint-only --language 1800-2012 --top-module "$$top" $(RTL_SOURCES); \
+	done
 	ruff check $(PY_DIR)
 	shellcheck --shell=bash $(SH_SOURCES)
 

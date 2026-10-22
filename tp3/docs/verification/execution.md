@@ -1,7 +1,7 @@
 # TP3 — Sesión y ejecución
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** catálogo diseñado; ejecución parcial en unidad e integración local de sesión.
 
 ## Propósito y alcance
 
@@ -30,7 +30,7 @@ En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_reque
 
 - **Nivel:** unidad global_fsm e integración execution_control.
 - **Tipo de estímulo:** fixtures de estado y solicitudes locales; cruces simultáneos artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline).
 
@@ -98,7 +98,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad session_preparation e integración CPU.
 - **Tipo de estímulo:** legal con estado previo del fixture.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad e integración local ejecutadas con recursos modelados; CPU y Controller de producción pendientes.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -162,7 +162,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-010](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-011](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-TIM-001](../requirements.md#9-clock-fpga-y-timing).
 
@@ -249,7 +249,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración ID/EX.
 - **Tipo de estímulo:** legal salvo fetch desalineado artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -323,7 +323,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones), [REQ-EXEC-001](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-002](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-005](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -404,7 +404,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU y unidad global_fsm.
 - **Tipo de estímulo:** recorridos legales y fixtures locales artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -475,7 +475,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit).
 
@@ -533,7 +533,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-012](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-014](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DOC-004](../requirements.md#10-documentación-y-trazabilidad), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -615,7 +615,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad contador y CPU.
 - **Tipo de estímulo:** legal; fixture próximo al wrap artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline).
 
@@ -681,7 +681,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración CPU/control.
 - **Tipo de estímulo:** legal y coincidencias locales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -736,3 +736,305 @@ La preparación prevalece sobre WB y el clear prevalece sobre store, según los 
 La aprobación exige la prioridad global correcta sobre estado y commits. Una solicitud rechazada no debe interpretarse como abandono de la sesión.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+## Evidencia local de Global FSM — primer bloque de #8
+
+`rtl/global_fsm.sv` implementa la fase de sesión, selección de comandos y autorización
+sin puertos de prueba. `tb/global_fsm_tb.sv` comprueba los controles antes del flanco,
+la captura del destino, el estado one-hot y su código externo después del flanco.
+La implementación utiliza dos bloques: un único `always_comb` fija valores por
+defecto y calcula salidas Moore, autorización y estado siguiente; un `always_ff`
+actualiza únicamente `global_state` en el flanco. La autorización y las transiciones
+se describen en tablas planas `casez` sobre concatenaciones del estado actual y
+sus entradas relevantes. Los patrones `?` ignoran columnas sin efecto y el orden
+de filas hace explícita la prioridad. Las combinaciones de órdenes usan constantes
+`CTRL_*` con nombre; las máscaras separan sus bits con `_` y tienen encabezados
+junto a cada tabla. Las transiciones se agrupan por estado de origen después de
+las reglas globales de RESET y LOAD, conservando el orden relativo de sus filas.
+Las columnas de ambas tablas se alinean manualmente; directivas locales de
+Verible preservan esa presentación al ejecutar el formatter.
+La autorización usa estado, solicitudes y preparación; las confirmaciones y
+`pipeline_empty_next` solo intervienen en la tabla de destino. La decodificación
+Moore depende únicamente del estado registrado. El único registro de la FSM es
+`global_state`; las acciones sobre los recursos se realizan en sus consumidores.
+
+| IDs | Nivel registrado | Comprobación disponible | Pendiente |
+|---|---|---|---|
+| `TEST-EXEC-001/C001–C153` | Unidad | Las 153 filas originales de elegibilidad, prioridad, autorización, publicación, Moore/Mealy y transición. | Integración de `execution_control`, tamaño confirmado y productores reales. |
+| `TEST-EXEC-005/C001–C004` | Unidad | Proyección de confirmación halt, terminal directo, drain AUTO/STEP y HOLD de 50 clocks en C004. | Programa real, reconocimiento/consumo EX, PC, descarte y commits anteriores/jóvenes en CPU. |
+| `TEST-EXEC-006/C001–C005` | Unidad | Proyección de los drains con resultados de pipeline modelados, HOLD de 50 clocks y cambio STEP a RUN con trabajo restante o último WB. | Recorrido de CPU, precisión de efectos, captura/retención de metadata y respuestas UART. |
+| `TEST-EXEC-006/C006–C007` | Unidad | Los dos vectores artificiales originales; C006 conserva `HALT_DRAIN_AUTO` con `pipeline_empty_next=0`. | No representan recorridos alcanzables de halt; no acreditan integración CPU. |
+| `TEST-EXEC-007/C001–C004` | Unidad | Desde FINISHED/FAULT, aceptación sin ciclo, espera en PREPARING_RUN/STEP, primer ciclo con done y continuidad RUN/retención STEP. | Imagen real retenida, PC/RF/DMEM/pipeline preparados y contador de cero a uno. |
+
+Son **168 IDs con ejecución unitaria**, conservando todos los IDs, entradas y
+expectativas anteriores. `implemented` indica disponibilidad de una ejecución;
+no significa que estén aprobados todos los niveles del caso.
+
+Los vectores de TEST-EXEC-001 y C006–C007 instalan el estado mediante una escritura
+jerárquica exclusiva del banco. Las trece proyecciones restantes conducen una
+secuencia desde reset y suministran resultados modelados de carga, preparación,
+confirmación y vacío. Su setup incluye carga abortada, carga completa, espera y
+publicación. Los nuevos `inputs.fsm_steps` y `expected.fsm_steps` mantienen cada
+estímulo y expectativa en JSON; `clocks` fija los flancos con ese estímulo. Durante
+HOLD no hay ciclos CPU; en RUNNING cada flanco repetido sí autoriza un ciclo.
+El banco interpreta esos datos y realiza las aserciones SystemVerilog; el ejecutor
+Python permanece genérico y sin cambios.
+
+Estas secuencias acreditan la frontera de la FSM. No ejecutan las instrucciones
+que figuran en los casos originales, no producen commits ni modelan como CPU real
+la ubicación o edad de cada instrucción. Loader, preparación y `execution_control`
+se incorporan en los siguientes bloques de #8; la integración con CPU corresponde
+a #9 y UART/sistema a sus entregas posteriores. Los demás IDs y niveles conservan
+su obligación y su estado pendiente; esta unidad no cierra #8.
+
+### Reproducción
+
+Desde la raíz del repositorio, con la imagen exacta de `tp3/docker/image.ref`:
+
+```bash
+TP3_IMAGE="$(cat tp3/docker/image.ref)"
+docker run --rm --network none \
+  --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/workspace" \
+  "$TP3_IMAGE" make check
+```
+
+Dentro del contenedor, desde `/workspace/tp3`, la selección de esta unidad es:
+
+```bash
+bash scripts/run_tests.sh \
+  --test TEST-EXEC-001 \
+  --test TEST-EXEC-005 \
+  --test TEST-EXEC-006 \
+  --test TEST-EXEC-007 \
+  --format json --reports-dir build/reports/global-fsm
+```
+
+La regresión de `make check` conserva resultados y comandos de compilación/simulación
+en `build/reports/results.json`, `build/reports/simulation/` e
+`infrastructure.log`. La evidencia de esta implementación corresponde al árbol
+local sobre `c8ddc08`, con cambios sin commit. `build/reports/global-fsm-context.json`
+registra la referencia Git, la imagen y los hashes de sus fuentes y catálogo.
+Síntesis, timing y placa siguen pendientes.
+
+La comprobación local con la imagen fijada aprobó formato, lint, catálogo,
+**40 pruebas de infraestructura y 187 ejecuciones RTL**: 168 de esta unidad y
+19 de la base compartida de #3, con cero fallos y errores. El catálogo conserva
+1363 casos canónicos: 184 tienen una ejecución disponible y 1179 están pendientes.
+
+
+### Comprobación de la refactorización a tablas casez
+
+La misma imagen fijada ejecutó además una comparación suplementaria de la versión
+previa y la refactorizada: los 14 estados legales y tres representaciones internas
+inválidas (cero, dos bits activos y todos los bits activos), con las 1024
+combinaciones binarias de las diez entradas de control para cada estado. Las
+**17.408 comparaciones** verifican salidas Moore/Mealy, código externo, próximo
+estado y captura registrada. Incluyen combinaciones artificiales; no constituyen
+17.408 casos nuevos del catálogo ni sesiones legales de CPU.
+
+El snapshot previo, el banco de comparación, los comandos y logs quedan en
+`build/reports/global-fsm-casez/`. Esta comparación acredita equivalencia frente
+al snapshot; las expectativas independientes continúan en `cases.json` y se
+comprueban mediante la regresión habitual. La documentación de diseño, los IDs y
+sus expectativas no se modificaron durante esta refactorización.
+
+
+La reorganización posterior en un bloque combinacional y uno secuencial repitió
+las 17.408 comparaciones frente al snapshot de tres bloques combinacionales, con
+las mismas columnas y alcance binario. `build/reports/global-fsm-two-block/`
+conserva ambos modelos, banco, comandos y resultados. También se elaboró con
+Verilator un fixture que produce confirmaciones y vacío a partir de
+`cpu_cycle_fire` y `drain_mode`, para comprobar las dependencias combinacionales;
+no se detectaron lazos y no se agregó ningún puerto al producto.
+
+
+La mejora de legibilidad posterior repitió las mismas 17.408 comparaciones frente
+al snapshot previo, manteniendo los dos bloques y todas las expectativas del
+catálogo. La evidencia más reciente, incluidos comandos, referencia, banco y
+fixture de dependencias, queda en `build/reports/global-fsm-readability/`.
+
+## Evidencia local de Execution Control — segundo bloque de #8
+
+El primer bloque, Global FSM y sus pruebas, quedó consolidado en `82fe145`.
+`rtl/execution_control.sv` instancia esa FSM sin modificarla y agrega los recursos
+locales previstos en Interfaces §6.1–6.3, §7.1 y §9.3–9.4:
+
+- Selección de causa/PC de EX o ID y captura con las acciones de fault confirmadas.
+  Reset inhibe la captura, sin exigir borrar físicamente la metadata; su vigencia
+  continúa determinada por la fase global.
+- Tamaño confirmado con prioridad `reset > load_start > image_publish > retener`.
+  `image_valid` es combinacional; `load_ok` no publica la imagen.
+- Contador de 64 bits con prioridad `reset > prepare_init > cpu_cycle_fire > retener`,
+  wrap módulo `2^64` y sin borrado por la sola aceptación de LOAD.
+- Reducción combinacional de los cuatro próximos `valid`, independiente de
+  `next_state`, para decidir terminal o drain sin un ciclo vacío adicional.
+
+El parámetro `IMEM_CAPACITY_BYTES` determina `IMAGE_SIZE_WIDTH` mediante el paquete
+compartido. Las capacidades inválidas se rechazan antes de elaborar la FSM y los
+recursos registrados; no se agregan memorias ni registros de validez redundantes.
+Loader, preparación, hazards y los registros del pipeline siguen fuera del módulo.
+
+`tb/execution_control_tb.sv` comprueba las salidas antes del flanco y los recursos
+registrados después. Las inyecciones y valores comunes se declaran en
+`inputs.control_fixture`; `resource_defaults` evita duplicar esos datos en cada
+flanco. Los vectores y secuencias de la FSM se leen de sus campos originales;
+`inputs.control_steps` y `expected.control_steps` agregan los recursos del contenedor
+y las secuencias propias. El banco puede repetir una
+expectativa estable durante varios clocks de HOLD; los ciclos que incrementan
+usan una expectativa por flanco. El ejecutor Python y el banco anterior de la FSM
+permanecen sin cambios. No se reemplazan IDs, entradas, expectativas ni ejecuciones
+anteriores del catálogo.
+
+| IDs reutilizados | Comprobación nueva | Límite de la evidencia |
+|---|---|---|
+| `TEST-EXEC-001/C001–C153` | FSM dentro del contenedor, imagen, contador, metadata y reducción desde los cuatro próximos `valid`. | Vectores locales con estado y recursos instalados; no son recorridos de CPU. |
+| `TEST-EXEC-004/C001–C011` | Causa/PC de ID o EX, retención durante 50 clocks de HOLD, drain, terminal y reset. C001 incluye una coincidencia EX/ID forzada para comprobar el multiplexor. | Las causas y acciones llegan modeladas: no se detectan faults ni se ejecutan los programas originales. |
+| `TEST-EXEC-005/C001–C004`, `TEST-EXEC-006/C001–C007` | Secuencias anteriores con imagen y contador reales del contenedor; captura y retención de metadata de fault. | Confirmaciones y próximos `valid` modelados. C006–C007 siguen siendo vectores artificiales de halt. |
+| `TEST-EXEC-007/C001–C004` | Reutilización sin cambiar el tamaño, inicialización del contador y primer ciclo con cuenta uno; metadata residual conservada. | El productor de preparación está modelado; PC/RF/DMEM no participan. |
+| `TEST-EXEC-009/C001–C002`, `C008`, `C011–C012` | Cuenta, HOLD, wrap, ciclo posterior e inicialización. | C011–C012 fuerzan la orden de ciclo para enfrentar reset/preparación al incremento del recurso. C008 acredita el contador y la fase; hazards, PC y comparación integrada con contador 41 siguen pendientes. |
+| `TEST-EXEC-010/C001–C009` | LOAD aceptado/rechazado, reset y preparación frente a los recursos locales. | No acredita supresión o autorización de commits de CPU, última escritura IMEM ni limpieza real de DMEM. |
+| `TEST-PLAT-001/C004–C008` | Publicación de la capacidad inclusive, retención y reset para 4, 1000, 1024, 2048 y `2^32` bytes. | Solo registros de tamaño de hasta 33 bits; no reserva arrays ni acredita realización física. |
+
+Son **198 ejecuciones locales adicionales** sobre los mismos IDs. El catálogo
+conserva 1363 casos canónicos; 209 tienen alguna ejecución disponible y 1154 siguen
+pendientes. La disponibilidad de una proyección local no completa los niveles de
+CPU o sistema exigidos por el caso original.
+
+### Reproducción y alcance
+
+`make check`, con la imagen exacta de `docker/image.ref`, incluye ambos bancos y
+las nuevas ejecuciones. La regresión completa aprobó formato, lint, catálogo,
+**40 pruebas de infraestructura y 385 ejecuciones RTL**, sin fallos ni errores:
+187 ejecuciones anteriores y las 198 del contenedor. Desde `/workspace/tp3`
+también puede seleccionarse:
+
+```bash
+bash scripts/run_tests.sh \
+  --test TEST-EXEC-001 --test TEST-EXEC-004 \
+  --test TEST-EXEC-005 --test TEST-EXEC-006 --test TEST-EXEC-007 \
+  --test TEST-EXEC-009 --test TEST-EXEC-010 --test TEST-PLAT-001 \
+  --format json --reports-dir build/reports/execution-control/selected
+```
+
+`build/reports/execution-control/` conserva el log de regresión, la comprobación de
+preservación del catálogo y verificaciones suplementarias: rechazo de las cinco
+capacidades inválidas de `TEST-PLAT-001/C009–C013` sin elaborar la FSM, y lint de un
+fixture con confirmaciones/próximos `valid` derivados de `cpu_cycle_fire` y
+`drain_mode`. Estas verificaciones no agregan casos canónicos ni sustituyen hazards
+o CPU reales. Los resultados y hashes del árbol comprobado se registran en
+`build/reports/execution-control/context.json`.
+
+Este bloque no cierra #8. Continúan pendientes Loader, Session Preparation y su
+integración; CPU, UART, síntesis, timing y placa conservan sus comprobaciones propias.
+
+## Evidencia local de Session Preparation — cuarto bloque de #8
+
+`rtl/session_preparation.sv` implementa el recorrido de Interfaces §9.2. Su único
+registro es `prepare_index`, cuyo ancho representa también `DMEM_CAPACITY_BYTES`
+como centinela final. No agrega FSM, modo de sesión, copia de bitmap ni registro
+de done. Reset y la salida de preparación rearman el índice en cero.
+
+El primer flanco combina `prepare_init` y la limpieza de la marca cero. Cada
+flanco posterior limpia una dirección distinta; al llegar a C se desactiva el
+mantenimiento y se presenta `prepare_done`. El consumo de done ocupa un flanco
+separado: C limpiezas más uno de finalización, sin espera adicional.
+
+`tb/session_preparation_tb.sv` conecta el módulo con `execution_control` y Loader
+reales. Modela los consumidores de inicialización —PC, RF, flags del pipeline y
+marcas de DMEM— y una IMEM de cuatro palabras con escritura síncrona. Los datos
+físicos de DMEM siguen el patrón `a mod 256` y deben conservarse, al igual que IMEM.
+El contador observado es el recurso real de Execution Control. La captura de
+fetch es un modelo local: no implementa IF, hazards ni ejecución de instrucciones.
+
+Los estímulos y expectativas adicionales están en `inputs.prep_fixture` y
+`expected.preparation`, conservando todos los datos y registros de ejecución
+anteriores del catálogo. Las capacidades, conteos, palabras, residuos y destinos
+proceden de esos campos. El recorrido se comprueba como un rango ordenado, sin
+expandir miles de filas JSON por clock. El lector y ejecutor compartidos permanecen
+sin cambios y se conservan los límites de cinco segundos por ejecución.
+
+| IDs | Ejecución disponible | Alcance pendiente |
+|---|---|---|
+| `TEST-EXEC-002/C001`, `C004`, `C007`, `C010`, `C013`, `C016` | Unidad: 4, 28, 32, 36, 1000 y 2048 marcas, RF completo inicializado en el primer flanco aun con C menor que 32, índice/done y conservación de memorias físicas. | Consumidores de producción y coherencia CPU/Debug. |
+| `TEST-EXEC-002/C016` | Integración local: LOAD de 16 bytes por Loader, última escritura, preparación real y publicación en READY con contador cero. | Controller, UART e IMEM de producción. |
+| `TEST-EXEC-002/C017–C018` | Integración local: primera carga/preparación, terminal FINISHED/FAULT modelado y nueva preparación RUN/STEP conservando imagen; primer fetch modelado desde PC cero, contador uno y continuidad/retención posterior. | Confirmaciones de hazards, fetch y ejecución de CPU reales. No se ejecuta el halt de la imagen. |
+| `TEST-EXEC-002/C019–C021` | Unidad e integración local: reset tras dos clears, supresión de mantenimiento y reinicio desde cero para READY/RUN/STEP. El fixture restaura fase e imagen tras reset sin escribir el índice del servicio. | En C021, las observaciones de Controller `WAIT_STEP_END`, respuesta, Debug y cancelación UART permanecen pendientes. |
+| `TEST-PLAT-001/C004–C008` | Índice inclusivo en capacidades 4, 1000, 1024, 2048 y `2^32`; primer clear, inyección cerca del límite, último clear, done sin escritura y conservación del centinela. | No recorre `2^32` bytes ni reserva una memoria de ese tamaño. |
+
+La inicialización y todos los clears excluyen `cpu_cycle_fire` y las escrituras de
+Loader. En el flanco final, READY publica con contador cero; RUN y STEP permiten
+su primer ciclo con contador uno y sin mantenimiento concurrente. El banco también
+comprueba que done se conserve mientras el servicio siga activo y que la salida
+de preparación rearme el índice para una sesión posterior.
+
+Son **20 ejecuciones adicionales**: nueve de unidad del servicio, seis de
+integración local y cinco de límites. El catálogo conserva 1363 casos canónicos;
+229 tienen alguna ejecución disponible y 1134 permanecen pendientes. Una ejecución
+local disponible no aprueba los niveles CPU/sistema del caso original.
+
+### Reproducción y evidencia
+
+Con la imagen exacta de `docker/image.ref`, `make check` incluye el nuevo módulo y
+sus bancos. Verilator analiza Session Preparation como otra raíz RTL. Desde
+`/workspace/tp3`, la selección local es:
+
+```bash
+bash scripts/run_tests.sh --test TEST-EXEC-002 --test TEST-PLAT-001 \
+  --format json --reports-dir build/reports/session-preparation/selected
+```
+
+La regresión completa aprobó formato, lint, catálogo, **40 pruebas de
+infraestructura y 428 ejecuciones RTL**, sin fallos ni errores: las 408 anteriores
+y las 20 agregadas. REFERENCE y ALT_1000 requieren respectivamente 2049 y 1001
+flancos hasta consumir done; son 40,98 µs y 20,02 µs en la simulación a 50 MHz,
+sin constituir una verificación física de timing.
+
+`build/reports/session-preparation/` conserva logs, comandos, comprobación de
+preservación del catálogo y hashes de las fuentes en `context.json`. La prueba
+suplementaria de las cinco capacidades inválidas de `TEST-PLAT-001/C009–C013`
+exige `CONFIG_INVALID_CAPACITY` sin elaborar el índice de progreso; no agrega IDs.
+
+Los tres módulos de sesión están implementados y conectados en el banco local.
+La conexión en `processor_top`, memorias y CPU reales, transporte, síntesis, timing
+y placa conservan sus obligaciones; esta evidencia no cierra por sí sola #8.
+
+## Evidencia local del ciclo de vida de sesión
+
+`tb/session_lifecycle_tb.sv` conecta Loader, Session Preparation y Execution
+Control con su Global FSM real, sin inyectar estado en esos módulos. El banco
+modela tamaño/progreso del Controller, escrituras síncronas IMEM, marcas/datos
+DMEM, PC y RF. Lee las operaciones de `inputs.session_steps` y las expectativas
+de `expected.session_steps`, conservando los campos originales del catálogo.
+
+| IDs | Comprobación local | Alcance pendiente |
+|---|---|---|
+| `TEST-EXEC-003/C001–C004` | RUN continuo y un ciclo por STEP; contador retenido durante 50 clocks físicos entre pasos. Un stall del PC modelado consume igualmente una cuenta. | Ejecución de los programas lineal/load-use, RF terminal, hazards, snapshots y continuidad UART. |
+| `TEST-EXEC-008/C001–C002` | Veinte ciclos sin confirmación terminal, continuidad de RUN hasta recibir reset y retorno a NO_IMAGE; RUN/STEP posteriores no autorizan ciclos. | Loop ejecutado por CPU, sincronización del botón, bytes y temporización de respuesta UART. |
+| `TEST-EXEC-008/C003–C004` | Acciones de fault confirmadas desde el banco, causa/PC 1/4 y 2/0, transición a FAULT y retención terminal. | Detección de fetch fuera de imagen/instrucción ilegal y efectos precisos sobre RF. |
+
+Las palabras de los programas se entregan por Loader, pero el banco no interpreta
+instrucciones. En EXEC-003 suministra diez autorizaciones y después confirma halt;
+esa traza no predice la latencia de la CPU. `terminal_cycle` entrega directamente
+halt o una acción de fault ID y próximos valid vacíos; este banco no comprueba un
+drain con instrucciones pendientes. Las modalidades de drain conservan sus bancos
+de FSM/Execution Control y sus obligaciones de integración CPU.
+
+En EXEC-008/C001 se modelan tres clocks adicionales antes de entregar el reset
+funcional: RUN debe continuar durante ellos. No representan la duración UART ni
+acreditan la coordinación con el último Stop de `RESET_ACCEPTED`. C002 entrega
+directamente el reset funcional. Los resultados de RF originales, la detección
+de faults y las respuestas de transporte permanecen pendientes en sus niveles.
+
+Son ocho ejecuciones de control de sesión; el mismo banco agrega seis de
+[reemplazo de imagen](memory.md#evidencia-local-del-reemplazo-de-imagen). Para
+reproducir las 14 desde `tp3`, con la imagen de `docker/image.ref`:
+
+```bash
+bash scripts/run_tests.sh --test TEST-EXEC-003 --test TEST-EXEC-008 \
+  --test TEST-MEM-008 --format json --reports-dir build/reports/session-audit/selected
+```
+
+El caso MEM-008/C007 de esa selección es una revisión documental fuera del runner.
+Los resultados por ID/nivel, comandos y hashes están en
+`build/reports/session-audit/`; el resumen de entrega se conserva en el PR.
