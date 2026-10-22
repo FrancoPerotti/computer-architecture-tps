@@ -188,6 +188,7 @@ Make, con `system_pkg` antes de `decoder`, `immediate_generator`, `register_file
 ambigüedad entre raíces independientes. Los tres consumidores de capacidad IMEM se
 analizan con cuatro, 1000 y 1024 bytes. Las simulaciones del comprobador de fetch
 también cubren el extremo aritmético `2^32`, sin elaborar una memoria de ese tamaño.
+También se analizan los cuatro registros interetapa y `pipeline_hazard_control`.
 El catálogo de pruebas conserva sus bancos
 y fuentes de simulación; no define el alcance de lint RTL.
 
