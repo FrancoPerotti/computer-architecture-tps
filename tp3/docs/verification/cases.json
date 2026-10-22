@@ -25950,105 +25950,948 @@
       "source": "memory.md#test-mem-008",
       "case_count": 7,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_lifecycle_tb.sv"
+          ],
+          "top": "session_lifecycle_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-MEM-008/C001",
+            "TEST-MEM-008/C002",
+            "TEST-MEM-008/C003",
+            "TEST-MEM-008/C004",
+            "TEST-MEM-008/C005",
+            "TEST-MEM-008/C006"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-008/C001",
           "inputs": {
             "A_program": "addi x1,x0,7; sw x1,0(x0); addi x2,x0,9; halt",
             "B_program": "halt",
-            "execute_B": "RUN"
+            "execute_B": "RUN",
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "dirty"
+              },
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 1,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              }
+            ]
           },
           "expected": {
             "new_ready_PC": 0,
             "RF_before_B": 0,
             "bitmap_before_B": 0,
-            "size": 4
+            "size": 4,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 16,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 2,
+                "size": 0,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 1,
+                "pc": 4,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 10,
+                "size": 4,
+                "count": 2,
+                "pc": 8,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Reemplazo corto"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C002",
           "inputs": {
             "A_program": "addi x1,x0,7; sw x1,0(x0); addi x2,x0,9; halt",
             "B_program": "halt",
-            "execute_B": "STEP"
+            "execute_B": "STEP",
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "dirty"
+              },
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "STEP",
+                "cycles": 1,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "STEP",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              }
+            ]
           },
           "expected": {
             "new_ready_PC": 0,
             "RF_before_B": 0,
             "bitmap_before_B": 0,
-            "size": 4
+            "size": 4,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 16,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 2,
+                "size": 0,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 5,
+                "size": 4,
+                "count": 1,
+                "pc": 4,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 10,
+                "size": 4,
+                "count": 2,
+                "pc": 8,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Reemplazo corto"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C003",
           "inputs": {
             "old_size": 16,
             "requested_N": 0,
-            "C": 1024
+            "C": 1024,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "dirty"
+              },
+              {
+                "op": "reject",
+                "clocks": 4
+              }
+            ]
           },
           "expected": {
             "size_after": 16,
             "session_preserved": true,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 16,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Rechazo conserva"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C004",
           "inputs": {
             "old_size": 16,
             "requested_N": 1028,
-            "C": 1024
+            "C": 1024,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "dirty"
+              },
+              {
+                "op": "reject",
+                "clocks": 4
+              }
+            ]
           },
           "expected": {
             "size_after": 16,
             "session_preserved": true,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 16,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Rechazo conserva"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C005",
           "inputs": {
             "old_size": 16,
             "requested_N": 6,
-            "C": 1024
+            "C": 1024,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "dirty"
+              },
+              {
+                "op": "reject",
+                "clocks": 4
+              }
+            ]
           },
           "expected": {
             "size_after": 16,
             "session_preserved": true,
             "load_request": false,
             "command_accepted": false,
-            "load_start": false
+            "load_start": false,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 16,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              },
+              {
+                "state": 10,
+                "size": 16,
+                "count": 4,
+                "pc": 16,
+                "rf1": 7,
+                "rf2": 9,
+                "bitmap": 15,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": true
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Rechazo conserva"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C006",
@@ -26057,18 +26900,159 @@
             "new_N": 8,
             "received_bytes": 3,
             "abort": "timeout",
-            "recover_then_N": 4
+            "recover_then_N": 4,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 16,
+                "received": 16,
+                "abort": false,
+                "words": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "load",
+                "size": 8,
+                "received": 3,
+                "abort": true,
+                "words": [
+                  "0x0000000B",
+                  "0x00000013"
+                ]
+              },
+              {
+                "op": "no_image_requests",
+                "clocks": 5
+              },
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              }
+            ]
           },
           "expected": {
             "size_until_valid_commit": 0,
             "RUN_STEP_after_recovery": "NO_IMAGE",
-            "final_ready_size": 4
+            "final_ready_size": 4,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 16,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00700093",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000000B",
+                  "0x00102023",
+                  "0x00900113",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Aceptación parcial falla"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-008/C007",
@@ -39845,7 +40829,28 @@
       "source": "execution.md#test-exec-003",
       "case_count": 4,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_lifecycle_tb.sv"
+          ],
+          "top": "session_lifecycle_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-EXEC-003/C001",
+            "TEST-EXEC-003/C002",
+            "TEST-EXEC-003/C003",
+            "TEST-EXEC-003/C004"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-EXEC-003/C001",
@@ -39854,18 +40859,153 @@
             "mode": "RUN",
             "word0": 8,
             "x2_before": 0,
-            "hold_physical_clocks": 0
+            "hold_physical_clocks": 0,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 28,
+                "received": 28,
+                "abort": false,
+                "words": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 10,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "hold",
+                "clocks": 50
+              }
+            ]
           },
           "expected": {
             "one_cycle_per_accepted_STEP": true,
             "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
-            "hold_counter_increment": 0
+            "hold_counter_increment": 0,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 28,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 28,
+                "count": 10,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 28,
+                "count": 11,
+                "pc": 44,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 28,
+                "count": 11,
+                "pc": 44,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Dosprogramas ymodos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-003/C002",
@@ -39874,18 +41014,153 @@
             "mode": "STEP",
             "word0": 8,
             "x2_before": 0,
-            "hold_physical_clocks": 50
+            "hold_physical_clocks": 50,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 28,
+                "received": 28,
+                "abort": false,
+                "words": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "STEP",
+                "cycles": 10,
+                "hold_clocks": 50,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "STEP",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "hold",
+                "clocks": 50
+              }
+            ]
           },
           "expected": {
             "one_cycle_per_accepted_STEP": true,
             "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
-            "hold_counter_increment": 0
+            "hold_counter_increment": 0,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 28,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 5,
+                "size": 28,
+                "count": 10,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 28,
+                "count": 11,
+                "pc": 44,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 28,
+                "count": 11,
+                "pc": 44,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093",
+                  "0x00200113",
+                  "0x00300193",
+                  "0x00400213",
+                  "0x00500293",
+                  "0x00600313",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Dosprogramas ymodos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-003/C003",
@@ -39894,18 +41169,147 @@
             "mode": "RUN",
             "word0": 0,
             "x2_before": 0,
-            "hold_physical_clocks": 0
+            "hold_physical_clocks": 0,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 24,
+                "received": 24,
+                "abort": false,
+                "words": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 10,
+                "hold_clocks": 0,
+                "stall_at": 3
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "hold",
+                "clocks": 50
+              }
+            ]
           },
           "expected": {
             "one_cycle_per_accepted_STEP": true,
             "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
-            "hold_counter_increment": 0
+            "hold_counter_increment": 0,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 24,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 24,
+                "count": 10,
+                "pc": 36,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 24,
+                "count": 11,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 24,
+                "count": 11,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Dosprogramas ymodos"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-003/C004",
@@ -39914,18 +41318,147 @@
             "mode": "STEP",
             "word0": 0,
             "x2_before": 0,
-            "hold_physical_clocks": 50
+            "hold_physical_clocks": 50,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 24,
+                "received": 24,
+                "abort": false,
+                "words": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "STEP",
+                "cycles": 10,
+                "hold_clocks": 50,
+                "stall_at": 3
+              },
+              {
+                "op": "terminal",
+                "mode": "STEP",
+                "result": "halt",
+                "cause": 0,
+                "fault_pc": 0
+              },
+              {
+                "op": "hold",
+                "clocks": 50
+              }
+            ]
           },
           "expected": {
             "one_cycle_per_accepted_STEP": true,
             "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
-            "hold_counter_increment": 0
+            "hold_counter_increment": 0,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 24,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 5,
+                "size": 24,
+                "count": 10,
+                "pc": 36,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 24,
+                "count": 11,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 10,
+                "size": 24,
+                "count": 11,
+                "pc": 40,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00800093",
+                  "0x00102023",
+                  "0x00300113",
+                  "0x00002083",
+                  "0x002081B3",
+                  "0x0000000B"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Dosprogramas ymodos"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -51195,7 +52728,28 @@
       "source": "execution.md#test-exec-008",
       "case_count": 4,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/global_fsm.sv",
+            "rtl/execution_control.sv",
+            "rtl/loader.sv",
+            "rtl/session_preparation.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/session_lifecycle_tb.sv"
+          ],
+          "top": "session_lifecycle_tb",
+          "level": "Integración local",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-EXEC-008/C001",
+            "TEST-EXEC-008/C002",
+            "TEST-EXEC-008/C003",
+            "TEST-EXEC-008/C004"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-EXEC-008/C001",
@@ -51205,7 +52759,42 @@
             "observe_CPU_cycles": 20,
             "CHECK_READY_during_RUN": false,
             "send_RESET_after_RUN_ACCEPTED_last_Stop": true,
-            "prepare_active_at_RESET": false
+            "prepare_active_at_RESET": false,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x0000006F"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 20,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 3,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "reset"
+              },
+              {
+                "op": "no_image_requests",
+                "clocks": 3
+              }
+            ]
           },
           "expected": {
             "no_FINISHED_before_reset": true,
@@ -51213,13 +52802,93 @@
             "RESET_ACCEPTED": "04 01",
             "global_reset_after_RESET_ACCEPTED_last_Stop": true,
             "CPU_not_paused_for_RESET_ACCEPTED": true,
-            "RUN_terminal_response": null
+            "RUN_terminal_response": null,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 20,
+                "pc": 80,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 23,
+                "pc": 92,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Loop recuperable"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-008/C002",
@@ -51227,50 +52896,309 @@
             "program": "jal x0,0",
             "reset_source": "button",
             "observe_CPU_cycles": 20,
-            "CHECK_READY_during_RUN": false
+            "CHECK_READY_during_RUN": false,
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x0000006F"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 20,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "reset"
+              },
+              {
+                "op": "no_image_requests",
+                "clocks": 3
+              }
+            ]
           },
           "expected": {
             "no_FINISHED_before_reset": true,
             "after_reset": "NO_IMAGE",
-            "button_requires_UART_acceptance": false
+            "button_requires_UART_acceptance": false,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 20,
+                "pc": 80,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 0,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x0000006F"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "scenario",
           "origins": [
             "Loop recuperable"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-008/C003",
           "inputs": {
-            "program": "addi x1,x0,1"
+            "program": "addi x1,x0,1",
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x00100093"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 2,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "fault",
+                "cause": 1,
+                "fault_pc": 4
+              }
+            ]
           },
           "expected": {
             "terminal": "FAULT",
             "cause": 1,
-            "fault_pc": 4
+            "fault_pc": 4,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 2,
+                "pc": 8,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 11,
+                "size": 4,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00100093"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "program",
           "origins": [
             "Ausencia dehalt noesfin"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-EXEC-008/C004",
           "inputs": {
-            "program": "word0"
+            "program": "word0",
+            "session_steps": [
+              {
+                "op": "load",
+                "size": 4,
+                "received": 4,
+                "abort": false,
+                "words": [
+                  "0x00000000"
+                ]
+              },
+              {
+                "op": "prepare"
+              },
+              {
+                "op": "cpu",
+                "mode": "RUN",
+                "cycles": 2,
+                "hold_clocks": 0,
+                "stall_at": -1
+              },
+              {
+                "op": "terminal",
+                "mode": "RUN",
+                "result": "fault",
+                "cause": 2,
+                "fault_pc": 0
+              }
+            ]
           },
           "expected": {
             "terminal": "FAULT",
             "cause": 2,
-            "fault_pc": 0
+            "fault_pc": 0,
+            "session_steps": [
+              {
+                "state": 2,
+                "size": 0,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00000000"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 3,
+                "size": 4,
+                "count": 0,
+                "pc": 0,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00000000"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 4,
+                "size": 4,
+                "count": 2,
+                "pc": 8,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00000000"
+                ],
+                "physical_word_preserved": false
+              },
+              {
+                "state": 11,
+                "size": 4,
+                "count": 3,
+                "pc": 12,
+                "rf1": 0,
+                "rf2": 0,
+                "bitmap": 0,
+                "imem": [
+                  "0x00000000"
+                ],
+                "physical_word_preserved": false
+              }
+            ]
           },
           "kind": "program",
           "origins": [
             "Ausencia dehalt noesfin"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },

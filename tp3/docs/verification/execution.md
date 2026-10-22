@@ -1,7 +1,7 @@
 # TP3 — Sesión y ejecución
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** catálogo diseñado; ejecución parcial en unidad de Global FSM.
+- **Estado documental:** catálogo diseñado; ejecución parcial en unidad e integración local de sesión.
 
 ## Propósito y alcance
 
@@ -162,7 +162,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-010](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-011](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-TIM-001](../requirements.md#9-clock-fpga-y-timing).
 
@@ -249,7 +249,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración ID/EX.
 - **Tipo de estímulo:** legal salvo fetch desalineado artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -533,7 +533,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-EXEC-012](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-014](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DOC-004](../requirements.md#10-documentación-y-trazabilidad), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -615,7 +615,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad contador y CPU.
 - **Tipo de estímulo:** legal; fixture próximo al wrap artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline).
 
@@ -681,7 +681,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración CPU/control.
 - **Tipo de estímulo:** legal y coincidencias locales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** integración local disponible; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -998,3 +998,43 @@ exige `CONFIG_INVALID_CAPACITY` sin elaborar el índice de progreso; no agrega I
 Los tres módulos de sesión están implementados y conectados en el banco local.
 La conexión en `processor_top`, memorias y CPU reales, transporte, síntesis, timing
 y placa conservan sus obligaciones; esta evidencia no cierra por sí sola #8.
+
+## Evidencia local del ciclo de vida de sesión
+
+`tb/session_lifecycle_tb.sv` conecta Loader, Session Preparation y Execution
+Control con su Global FSM real, sin inyectar estado en esos módulos. El banco
+modela tamaño/progreso del Controller, escrituras síncronas IMEM, marcas/datos
+DMEM, PC y RF. Lee las operaciones de `inputs.session_steps` y las expectativas
+de `expected.session_steps`, conservando los campos originales del catálogo.
+
+| IDs | Comprobación local | Alcance pendiente |
+|---|---|---|
+| `TEST-EXEC-003/C001–C004` | RUN continuo y un ciclo por STEP; contador retenido durante 50 clocks físicos entre pasos. Un stall del PC modelado consume igualmente una cuenta. | Ejecución de los programas lineal/load-use, RF terminal, hazards, snapshots y continuidad UART. |
+| `TEST-EXEC-008/C001–C002` | Veinte ciclos sin confirmación terminal, continuidad de RUN hasta recibir reset y retorno a NO_IMAGE; RUN/STEP posteriores no autorizan ciclos. | Loop ejecutado por CPU, sincronización del botón, bytes y temporización de respuesta UART. |
+| `TEST-EXEC-008/C003–C004` | Acciones de fault confirmadas desde el banco, causa/PC 1/4 y 2/0, transición a FAULT y retención terminal. | Detección de fetch fuera de imagen/instrucción ilegal y efectos precisos sobre RF. |
+
+Las palabras de los programas se entregan por Loader, pero el banco no interpreta
+instrucciones. En EXEC-003 suministra diez autorizaciones y después confirma halt;
+esa traza no predice la latencia de la CPU. `terminal_cycle` entrega directamente
+halt o una acción de fault ID y próximos valid vacíos; este banco no comprueba un
+drain con instrucciones pendientes. Las modalidades de drain conservan sus bancos
+de FSM/Execution Control y sus obligaciones de integración CPU.
+
+En EXEC-008/C001 se modelan tres clocks adicionales antes de entregar el reset
+funcional: RUN debe continuar durante ellos. No representan la duración UART ni
+acreditan la coordinación con el último Stop de `RESET_ACCEPTED`. C002 entrega
+directamente el reset funcional. Los resultados de RF originales, la detección
+de faults y las respuestas de transporte permanecen pendientes en sus niveles.
+
+Son ocho ejecuciones de control de sesión; el mismo banco agrega seis de
+[reemplazo de imagen](memory.md#evidencia-local-del-reemplazo-de-imagen). Para
+reproducir las 14 desde `tp3`, con la imagen de `docker/image.ref`:
+
+```bash
+bash scripts/run_tests.sh --test TEST-EXEC-003 --test TEST-EXEC-008 \
+  --test TEST-MEM-008 --format json --reports-dir build/reports/session-audit/selected
+```
+
+El caso MEM-008/C007 de esa selección es una revisión documental fuera del runner.
+Los resultados por ID/nivel, comandos y hashes están en
+`build/reports/session-audit/`; el resumen de entrega se conserva en el PR.

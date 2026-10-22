@@ -1,7 +1,7 @@
 # TP3 — Memorias y accesos
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** catálogo diseñado; ejecución parcial local de Loader y sesión.
 
 ## Propósito y alcance
 
@@ -489,7 +489,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001–C006 con integración local disponible y C007 revisado documentalmente; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-004](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-012](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -623,3 +623,30 @@ La preparación real y la conexión de los tres módulos en el banco local se
 documentan en [la evidencia de Session Preparation](execution.md#evidencia-local-de-session-preparation--cuarto-bloque-de-8).
 Continúan pendientes la conexión en `processor_top`, la verificación con
 IMEM/CPU/UART reales, síntesis, timing y placa. Este bloque no cierra #8.
+
+## Evidencia local del reemplazo de imagen
+
+`tb/session_lifecycle_tb.sv` agrega seis ejecuciones de `TEST-MEM-008` con los
+cuatro módulos de sesión reales. La conexión, los modelos y la reproducción se
+describen en [la evidencia del ciclo de vida](execution.md#evidencia-local-del-ciclo-de-vida-de-sesión).
+
+| IDs | Comprobación local | Alcance pendiente |
+|---|---|---|
+| `TEST-MEM-008/C001–C002` | Reemplazo de 16 por cuatro bytes: invalidez al aceptar LOAD, preparación completa y publicación en READY con PC/RF/marcas modelados limpios; autorización RUN/STEP posterior. Conserva el sufijo físico de IMEM. | Ejecución legal de A/B y exclusión del sufijo por IF con el nuevo tamaño confirmado. |
+| `TEST-MEM-008/C003–C005` | Con el rechazo modelado mediante ausencia de `load_request`, conserva fase, imagen, contador, PC/RF/marcas e IMEM. | Validación Controller de los tamaños N40=0,1028,6 y respuesta de rechazo. |
+| `TEST-MEM-008/C006` | LOAD aceptado invalida la imagen anterior; tres bytes y aborto dejan NO_IMAGE, RUN/STEP se ignoran y una recarga de cuatro bytes llega a READY. | Detección de timeout, recuperación y respuestas de transporte. |
+
+El fixture instala residuos observables de A (`x1=7`, `x2=9`, palabra DMEM cero=7)
+después de un terminal controlado. Esa instalación es artificial y no sustituye
+la ejecución de A. La preparación limpia marcas y conserva el dato físico; la
+recarga de B conserva las tres palabras de IMEM posteriores al prefijo de cuatro
+bytes. El banco comprueba el tamaño publicado, sin ejecutar fetch de producción.
+Loader recibe tamaños ya validados; no se le agrega la política de rechazo del
+Controller. El aborto también se suministra desde el banco, sin medir un timeout.
+
+Para `TEST-MEM-008/C007` se revisaron [Protocol: imagen y tamaño](../protocol.md#imagen-y-tamaño),
+[Loader: posición de bytes](../architecture/session/loader.md#identificación-de-la-posición-de-cada-byte)
+y [su interfaz](../interfaces.md#bloque-8-1). El formato secuencial no representa
+origen configurable ni huecos; no se agregaron campos wire. No hay un paquete
+inválido representativo que simular. El caso permanece `pending` en el runner,
+porque este acredita simulaciones, y su revisión queda registrada aquí.
