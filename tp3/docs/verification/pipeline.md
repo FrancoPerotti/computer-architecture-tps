@@ -1083,6 +1083,8 @@ No se calcula la elegibilidad de WB en el testbench: la habilitación y los sele
 - **Tipo de estímulo:** acciones locales, escritura de IMEM e inyecciones artificiales de PC y tamaño.
 - **Estado:** banco de integración implementado.
 
+**Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline).
+
 **Contratos:** [Etapa IF](../architecture/cpu/stage_if.md); [control del PC](../architecture/cpu/control_and_hazards.md#pc); [composición](../architecture/system_composition.md); [reset](../architecture/platform/reset_integration.md); [preparación](../architecture/session/session_preparation.md).
 
 ### Qué comprueba y por qué
@@ -1381,7 +1383,7 @@ cambiar la FSM para hacerla alcanzable. TEST-PIPE-010 conserva veinte variantes,
 aunque la tabla original de la issue indicaba una; no se sustituyen sus
 secuencias de CPU por candidatos forzados.
 
-Los grupos TEST-PIPE-015–014 conservan sus pruebas individuales de registros.
+Los grupos TEST-PIPE-014–017 conservan sus pruebas individuales de registros.
 I09 se observa aquí como retención local; I11–I13 como selección/exclusión del
 árbitro. La contribución a descarte, antigüedad y disponibilidad de anteriores
 se observa en los registros; los efectos arquitectónicos de I01, I02, I04,
