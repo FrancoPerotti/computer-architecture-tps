@@ -23,10 +23,13 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-008 — Wrong-path y fronteras por antigüedad](#test-pipe-008)
 - [TEST-PIPE-009 — WB final, commits únicos y HOLD](#test-pipe-009)
 - [TEST-PIPE-010 — Fetch candidato, load-use y fronteras anteriores](#test-pipe-010)
-- [TEST-PIPE-011 — Registro IF/ID aislado](#test-pipe-011)
-- [TEST-PIPE-012 — Registro ID/EX aislado](#test-pipe-012)
-- [TEST-PIPE-013 — Registro EX/MEM aislado](#test-pipe-013)
-- [TEST-PIPE-014 — Registro MEM/WB aislado](#test-pipe-014)
+- [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
+- [TEST-PIPE-012 — Composición de ID y payload combinacional](#test-pipe-012)
+- [TEST-PIPE-013 — Composición de IF y actualización del PC](#test-pipe-013)
+- [TEST-PIPE-014 — Registro IF/ID aislado](#test-pipe-014)
+- [TEST-PIPE-015 — Registro ID/EX aislado](#test-pipe-015)
+- [TEST-PIPE-016 — Registro EX/MEM aislado](#test-pipe-016)
+- [TEST-PIPE-017 — Registro MEM/WB aislado](#test-pipe-017)
 - [Acreditación local de #7 y pendientes de integración](#acreditacion-local-7)
 
 <a id="test-pipe-001"></a>
@@ -125,11 +128,19 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad RF/WB e integración ID.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad RF e integración ID implementadas; generación de controles WB pendiente.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [stage_wb](../architecture/cpu/stage_wb.md).
+
+### Ejecución disponible
+
+El banco `register_file_tb` ejecuta 37 variantes en nivel `Unidad`: `C001`–`C003` y `C019`–`C052`. Comprueba las lecturas base, la escritura síncrona, `x0`, reset/preparación y el puerto compartido CPU/Debug. El testbench suministra la habilitación de escritura; no implementa el control WB ni los muxes de bypass de ID.
+
+El banco `id_stage_tb` ejecuta las 52 variantes en nivel `Integración local`. En `C004`–`C018`, el JSON suministra directamente `rf_write_fire` y ambos selectores de bypass para las guardas de cada variante. Se comparan los operandos antes del flanco, el dato base de Debug y la lectura del banco después de la escritura. Estas pruebas acreditan la aplicación de esos controles; su generación se comprobará con el RTL de WB.
+
+La integración de `C001`–`C003` comprueba sus lecturas iniciales; los probes de escritura conservan su ejecución en `register_file_tb`. `C019`–`C020` comprueban la prioridad de inicialización y el estado posterior. `C021`–`C052` observan cada dirección Debug y el retorno a CPU. Todos los casos de integración comparan además el payload completo y los 32 registros finales con las expectativas del JSON.
 
 ### Qué comprueba y por qué
 
@@ -145,9 +156,17 @@ Busca detectar:
 
 ### Condiciones iniciales
 
-Cada variante prepara su estado de manera independiente. Para las lecturas ordinarias y de Debug, se reinstala el patrón `xi=0x01010101*i` en el Register File.
+Cada variante prepara su estado de manera independiente. Para las lecturas ordinarias y de Debug, se reinstala el patrón `xi=0x01010101*i` en el Register File. En las variantes implementadas, `inputs.initial_rf` enumera los 32 valores de ese patrón, de `x0` a `x31`, para cargarlos por el puerto funcional.
+
+Antes del primer reset, las dos lecturas de `x0` y el alias Debug se comparan con `expected.x0_before_init`. Esto comprueba que su valor no dependa de inicializar el banco.
+
+Después de sus lecturas principales, `C001` intenta escribir 7 en `x0`, `C002` presenta una escritura deshabilitada de 7 en `x1` y `C003` escribe 7 en `x31`. `inputs.write_probe` define esos estímulos y `expected.write_probe` sus lecturas preflanco y postflanco; `expected.RF_after_probe` comprueba además que los otros registros se conserven. Son observaciones de esas tres variantes, sin agregar casos canónicos.
 
 Para el bypass, la fuente elegida contiene inicialmente 3 y el valor de WB es 7. Se deshabilita una sola guarda por variante. Cuando se comprueba `rd=0`, tanto la fuente coincidente como el destino se direccionan a `x0` y su valor base es cero.
+
+En unidad RF e integración ID, el testbench suministra las entradas de escritura y los selectores de bypass por sus interfaces. Estas comprobaciones acreditan su aplicación en ID; la generación de esas señales se verifica con WB cuando esté disponible.
+
+En `C019` y `C020`, se reinstala el patrón `xi=0x01010101*i` y se presenta directamente al RF una escritura habilitada de 7 en `x1`, simultánea con reset o `prepare_init`, respectivamente. Es una colisión artificial para comprobar la prioridad local del banco. La exclusión del ciclo CPU durante reset o preparación se comprueba en la integración correspondiente.
 
 Las variantes de Debug no deben heredar el banco puesto en cero por una prueba anterior de reset. DMEM e IMEM no participan en estas comprobaciones.
 
@@ -159,7 +178,7 @@ Los casos comprenden:
 
 - Tres pares de lecturas, con índices iguales, distintos o correspondientes a `x0`.
 - Quince variantes de bypass: coincidencia en `rs1`, en `rs2` o en ambas, con la situación nominal y las cuatro guardas previstas.
-- Dos inicializaciones dominantes, una por reset y otra por `prepare_init`, frente a un WB elegible.
+- Dos inicializaciones dominantes, una por reset y otra por `prepare_init`, frente a una entrada de escritura RF activa suministrada por el testbench.
 - Las 32 direcciones del Register File leídas por Debug, cada una con el patrón inicial reinstalado.
 
 La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye por un caso donde simplemente no coinciden las direcciones.
@@ -172,15 +191,15 @@ La variante de `rd=0` comprueba una coincidencia real con `x0`; no se sustituye 
 
 3. **Aplicar la escritura.** Dar el flanco habilitado y comprobar el valor postflanco del Register File. Durante HOLD o con una guarda deshabilitada, exigir ausencia de escritura.
 
-4. **Aplicar reset o preparación.** En sus dos variantes, comprobar que `x1…x31` se pongan en cero en paralelo, incluso cuando WB sea elegible en ese flanco.
+4. **Aplicar reset o preparación.** En `C019` y `C020`, mantener activa la entrada `write_enable` del RF durante el flanco de inicialización. Antes del flanco, la lectura conserva `expected.before_init`; después se comprueban los 32 registros contra `expected.RF`, de `x0` a `x31`, antes de otro flanco de reloj.
 
-5. **Observar Debug.** Seleccionar cada uno de los 32 registros mediante la primera lectura y comprobar que la segunda continúe leyendo `x2`. Comparar el dato base del banco, antes del bypass.
+5. **Observar Debug.** Seleccionar cada uno de los 32 registros mediante la primera lectura y comprobar que la segunda continúe leyendo `x2`. Comparar el dato base del banco, antes del bypass. Desactivar después el selector y comprobar el retorno combinacional a la dirección CPU con `expected.cpu_read1`.
 
 ### Resultados y criterio de aprobación
 
 Las dos lecturas deben ser combinacionales y simultáneas. El bypass entrega 7 únicamente cuando la fuente coincide con una escritura elegible; en los demás casos se observa el valor actual del Register File. `x0` permanece siempre en cero.
 
-La escritura elegible utiliza el `wb_value` preflanco y ocurre una sola vez. Reset y preparación ponen `x1…x31` en cero e impiden esa escritura coincidente.
+La escritura elegible utiliza el `wb_value` preflanco y ocurre una sola vez. En `C019` y `C020`, reset y preparación ponen `x1…x31` en cero en un único flanco e impiden la escritura coincidente; `x0` sigue leyendo cero. No se exige que el RF desactive la habilitación externa recibida.
 
 Debug debe leer el dato base mediante el puerto existente, sin bypass ni tercer puerto. La aprobación exige que las coincidencias, guardas y 32 direcciones produzcan sus resultados previstos, sin depender de residuos para mantener `x0=0`.
 
@@ -377,13 +396,21 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-PIPE-005 — Load-use en los consumidores efectivos
 
-- **Nivel:** CPU y unidad detector.
+- **Nivel:** unidad detector, integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad e integración local implementadas; programas de CPU pendientes.
 
 **Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [control_and_hazards](../architecture/cpu/control_and_hazards.md); [stage_id](../architecture/cpu/stage_id.md).
+
+### Ejecución disponible
+
+Los nueve IDs se ejecutan con `load_use_detector_tb` en dos niveles. `USE_DECODER=0` comprueba la unidad con índices y usos explícitos; `USE_DECODER=1` conecta el decoder real a la misma instancia del detector y utiliza la palabra de cada consumidor. Cada caso conserva sus datos y expectativas de programa, y agrega `word`, validez, fuentes, usos y productor en `inputs`, junto con la expectativa combinacional en `expected.load_use_stall` y los campos de decodificación esperados.
+
+Las nueve variantes presentan un load válido en ID/EX con destino `x1` y un consumidor válido con dependencia real. El banco compara `load_use_stall=1`; en integración también compara los índices, el uso de fuentes y la legalidad de la palabra. No deriva controles ni expectativas de las cadenas de ensamblador en Python.
+
+La variante STEP reutiliza la misma comprobación local que RUN. Estos 18 resultados no acreditan exactamente un stall, retención de PC/IF/ID, bubble y avance del load, forwarding, resultados arquitectónicos ni consumo de STEP. Esas observaciones requieren CPU y conservan pendientes los nueve programas. El estado `implemented` del manifiesto indica disponibilidad de estas ejecuciones locales y no aprobación del programa completo.
 
 ### Qué comprueba y por qué
 
@@ -441,19 +468,25 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-PIPE-006 — Ausencia de dependencias falsas
 
-- **Nivel:** unidad detector y CPU.
+- **Nivel:** integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal y flags locales controlados.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** nueve variantes locales implementadas; programa de CPU pendiente.
 
 **Requisitos:** [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_id](../architecture/cpu/stage_id.md); [control_and_hazards](../architecture/cpu/control_and_hazards.md).
 
+### Ejecución disponible
+
+El banco `load_use_detector_tb`, con `USE_DECODER=1`, ejecuta `C001`–`C009` en nivel `Integración local`. La palabra explícita de cada caso alimenta al decoder real; sus salidas `uses_rs1` y `uses_rs2` llegan al detector. El banco comprueba también los índices extraídos y los usos esperados para verificar el fixture.
+
+`C006` y `C007` presentan las mismas entradas al detector: ambos tienen `IF/ID.valid=0`. La metadata distingue la burbuja del candidato de fetch, pero no es un puerto del detector ni se comprueba aquí su transporte. El programa `C010` permanece pendiente; esta integración no acredita ejecución de instrucciones, memoria ni acciones del pipeline.
+
 ### Qué comprueba y por qué
 
 Esta prueba comprueba que una coincidencia de bits produzca load-use únicamente cuando representa una fuente realmente consumida por una instrucción válida.
 
-Busca detectar pausas o bypass por campos que no son operandos, por flags inválidos o por un load cuyo destino es `x0`. También comprueba que un candidato de fetch no se interprete como una instrucción consumidora.
+Busca detectar pausas por campos que no son operandos, por flags inválidos o por un load cuyo destino es `x0`. También comprueba que un candidato de fetch no se interprete como una instrucción consumidora.
 
 ### Condiciones iniciales
 
@@ -505,7 +538,7 @@ El manifiesto concreta instrucción, flags y fuentes de cada situación. El prog
 
 2. **Aplicar una sola variación.** Mantener válido el resto del load. En los casos de load inválido o `rd=0`, modificar únicamente la condición indicada.
 
-3. **Observar el detector.** Comparar `load_use_stall` con cero para cada situación y revisar que los campos no utilizados no habiliten bypass.
+3. **Observar el detector.** Comparar `load_use_stall` con cero para cada situación y comprobar que solo las fuentes realmente consumidas participen en la dependencia.
 
 4. **Ejecutar el programa legal.** Seguir el acceso de `lw x0,0(x0)` y el consumidor posterior, hasta `halt`.
 
@@ -517,7 +550,9 @@ Todos los casos locales deben producir `load_use_stall=0`. Solo cuentan las fuen
 
 El programa de CPU conserva `x0=0` y deja `x3=1`, sin stall por dependencia de dato. El load hacia `x0` sigue siendo un acceso de memoria válido sujeto a sus comprobaciones de fault.
 
-La aprobación requiere ausencia de pausas y bypass por campos no utilizados, entradas inválidas o `x0`. Ninguna de esas guardas debe cancelar un fault propio de una operación válida.
+La aprobación requiere ausencia de pausas por campos no utilizados, entradas inválidas o `x0`. Ninguna de esas guardas debe cancelar un fault propio de una operación válida.
+
+Esta prueba no exige que los selectores de bypass WB→ID estén inactivos para campos no consumidos. Las ecuaciones aprobadas comparan los índices con una escritura WB efectiva; seleccionar un dato para un operando no consumido no crea una dependencia ni un efecto arquitectónico. La habilitación de escritura y los selectores de bypass se comprueban en `TEST-PIPE-002`.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
@@ -923,7 +958,156 @@ Para aprobar se requiere la traza y los resultados de los 20 casos propios y las
 
 <a id="test-pipe-011"></a>
 
-## TEST-PIPE-011 — Registro IF/ID aislado
+## TEST-PIPE-011 — Detector load-use aislado
+
+- **Nivel:** unidad `load_use_detector`.
+- **Tipo de estímulo:** vectores directos y códigos reservados artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), con alcance sobre la detección combinacional.
+
+**Contratos:** [detección load-use](../architecture/cpu/control_and_hazards.md#detección); [interfaz 2.8](../interfaces.md#bloque-2-8).
+
+### Qué comprueba y por qué
+
+El detector debe reconocer un load válido cuyo destino distinto de `x0` coincide con una fuente realmente consumida por la instrucción válida de IF/ID. Esta unidad recibe índices y usos explícitos; no decodifica instrucciones ni aplica acciones sobre el pipeline.
+
+La clasificación enumera las cinco operaciones load mediante las constantes compartidas `MEM_OP_*`. Las operaciones store, `MEM_OP_NONE` y los códigos reservados no deben clasificarse como load. Los códigos reservados son entradas artificiales del bloque y no instrucciones admitidas por la CPU.
+
+### Variantes cerradas
+
+Los 25 casos canónicos `TEST-PIPE-011/C001`–`C025` están enumerados en [cases.json](cases.json). Sus entradas y expectativas son explícitas; el testbench no expande combinaciones adicionales.
+
+| Casos     | Estímulo                                              | load_use_stall |
+| --------- | ----------------------------------------------------- | -------------- |
+| C001      | MEM_OP_NONE; ambas fuentes coinciden en x31           | 0              |
+| C002–C006 | LB, LH, LW, LBU y LHU; ambas fuentes coinciden en x31 | 1              |
+| C007–C009 | SB, SH y SW; ambas fuentes coinciden en x31           | 0              |
+| C010–C016 | Códigos reservados 9–15 con coincidencia en x31       | 0              |
+| C017      | IF/ID inválido; LW y ambas fuentes coincidentes       | 0              |
+| C018      | ID/EX inválido; LW y ambas fuentes coincidentes       | 0              |
+| C019      | Destino x0 y ambas fuentes x0 usadas                  | 0              |
+| C020      | Ambas fuentes coinciden, pero ninguna se utiliza      | 0              |
+| C021      | Solo rs1 se utiliza y coincide                        | 1              |
+| C022      | Solo rs2 se utiliza y coincide                        | 1              |
+| C023      | Ambas fuentes se utilizan, pero ninguna coincide      | 0              |
+| C024      | Solo coincide rs1, que no se utiliza                  | 0              |
+| C025      | Solo coincide rs2, que no se utiliza                  | 0              |
+
+C017–C025 usan `MEM_OP_LW`; los destinos y fuentes se especifican individualmente en el manifiesto. Las variantes de clasificación usan registros `x31` para comprobar también el bit alto de los índices.
+
+### Procedimiento y criterio de aprobación
+
+1. Aplicar las ocho entradas del detector desde el caso JSON.
+2. Esperar la estabilización combinacional sin reloj ni flanco.
+3. Comparar `load_use_stall` con su expectativa mediante una aserción SystemVerilog que también rechaza X/Z.
+
+El banco `load_use_detector_tb` usa `USE_DECODER=0` en este grupo y debe aprobar los 25 casos. La conexión al decoder real se comprueba por separado en TEST-PIPE-006. TEST-PIPE-005 conserva pendientes sus nueve programas y la comprobación de exactamente un stall, avance del load, bubble y retención de PC/IF/ID. No se acredita validación física.
+
+<a id="test-pipe-012"></a>
+
+## TEST-PIPE-012 — Composición de ID y payload combinacional
+
+- **Nivel:** integración local `id_stage`.
+- **Tipo de estímulo:** contextos locales de IF/ID, productor ID/EX, WB y RF.
+- **Estado:** banco de integración implementado.
+
+**Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), con alcance parcial sobre la composición de ID.
+
+**Contratos:** [Etapa ID](../architecture/cpu/stage_id.md); [payload ID/EX](../architecture/cpu/cpu_pipeline.md#registro-idex); [composición](../architecture/system_composition.md#fronteras-de-las-cinco-etapas); [interfaz EX de flujo](../interfaces.md#bloque-3-12).
+
+### Qué comprueba y por qué
+
+El banco conecta los cinco submódulos de `id_stage` y sus dos muxes locales de bypass. Comprueba los quince campos del payload combinacional de ID/EX, el candidato de fault con su causa y PC, `load_use_stall` y la lectura base de Debug. La observación ocurre antes del flanco; solo RF conserva estado en esta etapa.
+
+La validez del payload sigue a `IF/ID.valid`, incluso para una palabra ilegal. El candidato de fault informa al arbitraje externo, que deberá insertar la bubble correspondiente; ID no cambia por su cuenta la política de captura. Los controles derivados de una palabra residual pueden conservar sus valores combinacionales, sin producir efectos cuando su entrada es inválida.
+
+**Aclaración documental registrada:** la tabla resumida de fronteras en `system_composition` menciona candidatos «ID/halt/load-use» entre las salidas de ID. Las interfaces de `Flow Control` y el contrato de EX ubican `ex_halt_candidate` en EX. Esta integración sigue esas interfaces: ID transporta `FLOW_OP_HALT` en el payload y no agrega un puerto ni una confirmación de halt. El resumen no se interpreta como un cambio de ese contrato.
+
+### Variantes cerradas
+
+Los 14 casos canónicos `TEST-PIPE-012/C001`–`C014` están enumerados en [cases.json](cases.json). `inputs.initial_rf` define los 32 valores iniciales; `inputs.id_steps` presenta cada contexto y `expected.id_steps` contiene todas sus salidas. Las observaciones de una secuencia conservan un único ID canónico.
+
+| Caso | Contexto                                | Comprobación principal                                    |
+| ---- | --------------------------------------- | --------------------------------------------------------- |
+| C001 | ADD con ambas fuentes dependientes      | Stall, liberación del productor y dato WB de 32 bits      |
+| C002 | ADDI con inmediato negativo             | Extensión de signo y rs2 aparente sin dependencia         |
+| C003 | SW con desplazamiento negativo          | Fuente de dato, control de store y dependencia en rs2     |
+| C004 | BEQ con desplazamiento negativo         | Inmediato B, operación SUB y dependencia en rs1           |
+| C005 | JALR con desplazamiento negativo        | Inmediato I, selección LINK y dependencia en rs1          |
+| C006 | LUI con campos aparentes coincidentes   | Inmediato U y ausencia de dependencia                     |
+| C007 | JAL con campos aparentes coincidentes   | Inmediato J, selección LINK y ausencia de dependencia     |
+| C008 | Halt exacto                             | Transporte de FLOW_OP_HALT sin candidato de fault         |
+| C009 | MUL no soportado                        | Controles neutros, candidato ilegal y PC de 32 bits       |
+| C010 | Burbuja con ADD residual                | Validez cero sin candidato ni dependencia                 |
+| C011 | Fetch desalineado con ADD residual      | Causa cero y PC transportados sin reinterpretación ilegal |
+| C012 | Fetch fuera de acceso con halt residual | Causa uno conservada y payload inválido                   |
+| C013 | LW con base dependiente                 | Controles de load e inmediato negativo                    |
+| C014 | SRAI con rs2 aparente coincidente       | Operación de shift, inmediato y fuente no consumida       |
+
+C001 mantiene la misma instrucción mientras cambia la validez del productor; después presenta un writeback con el bit 31 activo y comprueba el dato antes del flanco y en RF después de escribirlo. Esto verifica tanto el camino combinacional como el puerto de escritura de 32 bits. Los patrones iniciales también contienen palabras con bits altos activos.
+
+### Procedimiento y criterio de aprobación
+
+1. Reiniciar RF y cargar sus valores iniciales por el puerto funcional de escritura.
+2. Aplicar cada contexto entre flancos y esperar la estabilización combinacional.
+3. Comparar las quince salidas del payload y las señales independientes con aserciones SystemVerilog. La causa solo se compara cuando su expectativa no es `null`.
+4. Aplicar el flanco de cada contexto. Al finalizar, leer los 32 registros por Debug y compararlos con `expected.id_rf_after`, sin otro flanco de escritura o inicialización.
+
+No se calcula la elegibilidad de WB en el testbench: la habilitación y los selectores son entradas explícitas del JSON. El banco no implementa el registro ID/EX, el arbitraje, la espera de un ciclo, el forwarding de EX ni la confirmación de halt/fault. La aprobación de estos 14 casos y de TEST-PIPE-002 en integración local no acredita ejecución de CPU ni validación física.
+
+<a id="test-pipe-013"></a>
+
+## TEST-PIPE-013 — Composición de IF y actualización del PC
+
+- **Nivel:** integración local `if_stage`.
+- **Tipo de estímulo:** acciones locales, escritura de IMEM e inyecciones artificiales de PC y tamaño.
+- **Estado:** banco de integración implementado.
+
+**Contratos:** [Etapa IF](../architecture/cpu/stage_if.md); [control del PC](../architecture/cpu/control_and_hazards.md#pc); [composición](../architecture/system_composition.md); [reset](../architecture/platform/reset_integration.md); [preparación](../architecture/session/session_preparation.md).
+
+### Qué comprueba y por qué
+
+El banco conecta el PC, su sumador y mux, IMEM, el comprobador de fetch y la formación del payload combinacional de IF/ID. Comprueba que las acciones recibidas actualicen el PC únicamente en el flanco y que `debug_pc` y el payload describan siempre la búsqueda del PC actual. Reset y `prepare_init` tienen prioridad síncrona sobre el avance y redirect; no borran IMEM.
+
+`PC + 4` opera en 32 bits y puede volver a cero. La validación de fetch conserva por separado su extremo de 33 bits, para impedir que ese mismo desborde legalice una búsqueda fuera de memoria. La retención del PC no oculta el candidato combinacional ni confirma un fault.
+
+### Variantes cerradas
+
+Los 15 casos canónicos `TEST-PIPE-013/C001`–`C015` están enumerados en [cases.json](cases.json). `inputs.C` fija la capacidad, `inputs.if_initial_words` prepara palabras por el puerto funcional y `inputs.if_steps` define las acciones y el número de flancos. `expected.if_steps` contiene observaciones `before_edge` y `after_edge`, con `debug_pc` y los cinco campos de `ifid_input`.
+
+| Caso | Contexto                                       | Comprobación principal                                   |
+| ---- | ---------------------------------------------- | -------------------------------------------------------- |
+| C001 | Avance secuencial con imagen corta             | ADD, halt y candidatos sucesivos sin parada autónoma     |
+| C002 | Redirect a la última palabra de 1024 bytes     | Captura del destino y retención durante 50 flancos       |
+| C003 | Retención y avance con capacidad de 1000 bytes | PC estable durante 50 flancos antes y después del avance |
+| C004 | PC fuera de imagen retenido                    | Candidato estable y avance posterior                     |
+| C005 | Redirect desde un PC inválido a cero           | Recuperación combinacional sin candidato persistente     |
+| C006 | PC `0xFFFFFFFC` seguido de avance              | Fault de acceso y wrap del PC a cero                     |
+| C007 | Reset coincidente con avance o redirect        | Prioridad síncrona y conservación de IMEM                |
+| C008 | Preparación coincidente con avance o redirect  | Inicialización síncrona del PC sin borrar IMEM           |
+| C009 | Tamaño cero, cuatro y cero sin avance          | Validez de imagen derivada del tamaño                    |
+| C010 | Escritura y publicación local de imagen corta  | Palabra nueva visible y sufijo residual enmascarado      |
+| C011 | Escritura de IMEM durante reset                | Escritura bloqueada y palabras anteriores conservadas    |
+| C012 | Escritura de la última palabra en 1000 bytes   | Índice y dato de 32 bits propagados hasta IMEM           |
+| C013 | Memoria de una palabra                         | Anchos mínimos, avance fuera de rango y preparación      |
+| C014 | Cambio de destino sin flanco                   | Ausencia de captura anticipada o diferida del redirect   |
+| C015 | Índice físico y tamaño fuera de capacidad      | Sin alias de escritura ni fetch autorizado por el tamaño |
+
+Las secuencias de 50 flancos conservan un único ID canónico. Los PCs inválidos, las colisiones de reset/preparación y el tamaño mayor que la capacidad son estímulos artificiales locales. Los valores de tamaño se presentan desde el banco; no se implementa ni se acredita la publicación de imagen por Loader o una sesión completa.
+
+### Procedimiento y criterio de aprobación
+
+1. Reiniciar el PC y cargar las palabras iniciales por el puerto de IMEM, con tamaño cero y sin avance.
+2. Aplicar cada paso entre flancos y comparar las seis salidas observables con las expectativas externas.
+3. Aplicar el número de flancos indicado y repetir la comparación después de cada uno. Un paso con cero flancos comprueba exclusivamente el comportamiento combinacional.
+4. Exigir igualdad estricta en las aserciones SystemVerilog, sin aceptar X/Z. Reutilizar además los 22 casos locales de TEST-MEM-004 y los rechazos de TEST-PLAT-001/C009–C013.
+
+El banco presenta acciones ya seleccionadas; no calcula arbitraje ni autoriza destinos de EX. Tampoco implementa el registro IF/ID: su captura del payload preflanco, retención e invalidación requieren la integración correspondiente. La aprobación de estas proyecciones no acredita transporte hasta ID, ejecución de CPU, confirmación de halt/fault, síntesis ni validación física.
+
+<a id="test-pipe-014"></a>
+
+## TEST-PIPE-014 — Registro IF/ID aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -976,9 +1160,9 @@ El HOLD sin ciclo y la retención al aceptar LOAD se representan aquí únicamen
 por ausencia de controles. Su generación real y la preparación posterior
 requieren integración con el control de sesión.
 
-<a id="test-pipe-012"></a>
+<a id="test-pipe-015"></a>
 
-## TEST-PIPE-012 — Registro ID/EX aislado
+## TEST-PIPE-015 — Registro ID/EX aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1032,9 +1216,9 @@ secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La generación real de controles para
 HOLD, LOAD, drain y fronteras de instrucciones corresponde a la integración.
 
-<a id="test-pipe-013"></a>
+<a id="test-pipe-016"></a>
 
-## TEST-PIPE-013 — Registro EX/MEM aislado
+## TEST-PIPE-016 — Registro EX/MEM aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1090,9 +1274,9 @@ estados y configuraciones no cambian. No se atribuye al registro aislado la
 continuidad de trabajo anterior ante redirect/fault ID ni la generación real
 de controles de HOLD, LOAD, halt/fault EX y drain.
 
-<a id="test-pipe-014"></a>
+<a id="test-pipe-017"></a>
 
-## TEST-PIPE-014 — Registro MEM/WB aislado
+## TEST-PIPE-017 — Registro MEM/WB aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1151,6 +1335,19 @@ controles locales y la integración correspondientes.
 
 ## Acreditación local de #7 y pendientes de integración
 
+La rama incorpora las entregas revisadas de #3 y #4 desde la base `13d934b`.
+Se conservan los IDs publicados por #4 para detector load-use e integraciones
+IF/ID (`TEST-PIPE-011–013`). Las cuatro suites de registros de #7 pasan a
+`TEST-PIPE-014–017` para evitar las colisiones del catálogo; sus casos, entradas,
+expectativas y niveles se conservan.
+
+| Registro | ID anterior en la rama de #7 | ID tras integrar la base |
+| -------- | --------------------------- | ------------------------ |
+| IF/ID | TEST-PIPE-011 | TEST-PIPE-014 |
+| ID/EX | TEST-PIPE-012 | TEST-PIPE-015 |
+| EX/MEM | TEST-PIPE-013 | TEST-PIPE-016 |
+| MEM/WB | TEST-PIPE-014 | TEST-PIPE-017 |
+
 El alcance implementado conserva los 34 campos y 504 bits de los cuatro
 registros y el árbitro combinacional sin estado. Los controles de composición,
 el PC y los observadores son exclusivos de testbench. No se modifica
@@ -1178,7 +1375,7 @@ cambiar la FSM para hacerla alcanzable. TEST-PIPE-010 conserva veinte variantes,
 aunque la tabla original de la issue indicaba una; no se sustituyen sus
 secuencias de CPU por candidatos forzados.
 
-Los grupos TEST-PIPE-011–014 conservan sus pruebas individuales de registros.
+Los grupos TEST-PIPE-014–017 conservan sus pruebas individuales de registros.
 I09 se observa aquí como retención local; I11–I13 como selección/exclusión del
 árbitro. La contribución a descarte, antigüedad y disponibilidad de anteriores
 se observa en los registros; los efectos arquitectónicos de I01, I02, I04,
