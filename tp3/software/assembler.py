@@ -9,8 +9,8 @@ código fuente se propaga con ``_AssemblyError`` y se devuelve como diagnóstico
 dentro de ``AssemblyResult``.
 """
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 __all__ = ["assemble", "AssemblyResult", "AssemblyDiagnostic"]
 
@@ -86,6 +86,7 @@ class _AssemblyError(Exception):
     """Error interno que transporta un diagnóstico del código fuente."""
 
     def __init__(self, line: int, message: str):
+        """Conserva la línea y el motivo del error como diagnóstico."""
         super().__init__(message)
         self.diagnostic = AssemblyDiagnostic(line, message)
 
@@ -132,9 +133,7 @@ _REGISTERS.update(
 # mnemónico -> (formato, opcode, funct3, funct7, roles de operando)
 # Los roles son la fuente única para la aridad, la interpretación y la
 # codificación: rd, rs1, rs2, imm12, shamt, imm20, mem y dest.
-_INSTRUCTIONS: dict[
-    str, tuple[str, int, int | None, int | None, tuple[str, ...]]
-] = {
+_INSTRUCTIONS: dict[str, tuple[str, int, int | None, int | None, tuple[str, ...]]] = {
     "add": ("R", 0x33, 0x0, 0x00, ("rd", "rs1", "rs2")),
     "sub": ("R", 0x33, 0x0, 0x20, ("rd", "rs1", "rs2")),
     "sll": ("R", 0x33, 0x1, 0x00, ("rd", "rs1", "rs2")),
@@ -188,13 +187,11 @@ _MAX_LITERAL_DIGITS = {10: 7, 16: 7, 2: 21}
 
 def _abbreviate(token: str, limit: int = 40) -> str:
     """Acorta un token para que un diagnóstico no crezca sin límite."""
-
     return token if len(token) <= limit else token[:limit] + "…"
 
 
 def _read_source(source_text: str) -> list[SourceRecord]:
     """Reconoce las líneas del programa y conserva su numeración original."""
-
     text = source_text
     if text.startswith("\ufeff"):
         text = text[1:]
@@ -203,10 +200,7 @@ def _read_source(source_text: str) -> list[SourceRecord]:
         code = raw_line.split("#", 1)[0].strip(_SEPARATORS)
         if not code:
             continue
-        if any(
-            character.isspace() and character not in _SEPARATORS
-            for character in code
-        ):
+        if any(character.isspace() and character not in _SEPARATORS for character in code):
             raise _AssemblyError(
                 number,
                 "La línea contiene un separador no admitido; solo se permiten "
@@ -224,7 +218,6 @@ def _read_source(source_text: str) -> list[SourceRecord]:
 
 def _split_label(code: str, line: int) -> tuple[str | None, str]:
     """Separa una definición de etiqueta inicial del resto de la línea."""
-
     if ":" not in code:
         return None, code
     head, tail = code.split(":", 1)
@@ -235,9 +228,7 @@ def _split_label(code: str, line: int) -> tuple[str | None, str]:
     if not name:
         raise _AssemblyError(line, "Falta el identificador de la etiqueta antes de ':'.")
     if not _LABEL_PATTERN.fullmatch(name):
-        raise _AssemblyError(
-            line, f"El identificador de etiqueta '{name}' no es válido."
-        )
+        raise _AssemblyError(line, f"El identificador de etiqueta '{name}' no es válido.")
     if name in _RESERVED_NAMES:
         raise _AssemblyError(
             line,
@@ -247,15 +238,12 @@ def _split_label(code: str, line: int) -> tuple[str | None, str]:
     if ":" in rest:
         second = rest.split(":", 1)[0].strip(_SEPARATORS)
         if second and not any(character.isspace() for character in second):
-            raise _AssemblyError(
-                line, "La línea contiene una segunda definición de etiqueta."
-            )
+            raise _AssemblyError(line, "La línea contiene una segunda definición de etiqueta.")
     return name, rest
 
 
 def _split_instruction(text: str, line: int) -> tuple[str, str]:
     """Separa el mnemónico de su texto de operandos."""
-
     match = _INSTRUCTION_PATTERN.fullmatch(text)
     if match is None:
         raise _AssemblyError(line, f"No se pudo reconocer la instrucción '{text}'.")
@@ -263,13 +251,9 @@ def _split_instruction(text: str, line: int) -> tuple[str, str]:
     operand_text = match.group(2) or ""
     if mnemonic not in _INSTRUCTIONS:
         if mnemonic.startswith("."):
-            raise _AssemblyError(
-                line, f"La directiva '{mnemonic}' no pertenece al lenguaje."
-            )
+            raise _AssemblyError(line, f"La directiva '{mnemonic}' no pertenece al lenguaje.")
         if mnemonic.lower() in _INSTRUCTIONS:
-            raise _AssemblyError(
-                line, f"El mnemónico '{mnemonic}' debe escribirse en minúsculas."
-            )
+            raise _AssemblyError(line, f"El mnemónico '{mnemonic}' debe escribirse en minúsculas.")
         raise _AssemblyError(
             line, f"La instrucción '{mnemonic}' no pertenece al subconjunto admitido."
         )
@@ -278,13 +262,10 @@ def _split_instruction(text: str, line: int) -> tuple[str, str]:
 
 def _split_operands(mnemonic: str, operand_text: str, line: int) -> list[str]:
     """Comprueba aridad, comas y forma de los operandos de una instrucción."""
-
     roles = _INSTRUCTIONS[mnemonic][4]
     if not roles:
         if operand_text:
-            raise _AssemblyError(
-                line, "La instrucción 'halt' no admite operandos."
-            )
+            raise _AssemblyError(line, "La instrucción 'halt' no admite operandos.")
         return []
     chunks = [chunk.strip(_SEPARATORS) for chunk in operand_text.split(",")]
     if len(chunks) < len(roles):
@@ -306,16 +287,13 @@ def _split_operands(mnemonic: str, operand_text: str, line: int) -> list[str]:
     operands: list[str] = []
     for position, (role, chunk) in enumerate(zip(roles, chunks), start=1):
         if not chunk:
-            raise _AssemblyError(
-                line, f"El operando {position} de '{mnemonic}' está vacío."
-            )
+            raise _AssemblyError(line, f"El operando {position} de '{mnemonic}' está vacío.")
         if role == "mem":
             operands.append(_normalize_memory(chunk, line))
         elif any(character.isspace() for character in chunk):
             raise _AssemblyError(
                 line,
-                f"El operando '{chunk}' no es un token válido: "
-                "no se admiten espacios internos.",
+                f"El operando '{chunk}' no es un token válido: no se admiten espacios internos.",
             )
         else:
             operands.append(chunk)
@@ -324,7 +302,6 @@ def _split_operands(mnemonic: str, operand_text: str, line: int) -> list[str]:
 
 def _normalize_memory(token: str, line: int) -> str:
     """Normaliza un operando de memoria a la forma ``offset(base)``."""
-
     match = _MEMORY_PATTERN.fullmatch(token)
     if match is not None:
         return f"{match.group(1)}({match.group(2)})"
@@ -344,7 +321,6 @@ def _assign_addresses(
     records: list[SourceRecord],
 ) -> tuple[list[LocatedInstruction], dict[str, LabelDefinition]]:
     """Asigna direcciones contiguas y construye la tabla de etiquetas."""
-
     instructions: list[LocatedInstruction] = []
     labels: dict[str, LabelDefinition] = {}
     pc = 0
@@ -354,15 +330,12 @@ def _assign_addresses(
             if previous is not None:
                 raise _AssemblyError(
                     record.line,
-                    f"La etiqueta '{record.label}' ya fue definida "
-                    f"en la línea {previous.line}.",
+                    f"La etiqueta '{record.label}' ya fue definida en la línea {previous.line}.",
                 )
             labels[record.label] = LabelDefinition(pc, record.line)
         if record.mnemonic is not None:
             instructions.append(
-                LocatedInstruction(
-                    record.line, pc, record.mnemonic, list(record.operands)
-                )
+                LocatedInstruction(record.line, pc, record.mnemonic, list(record.operands))
             )
             pc += 4
     return instructions, labels
@@ -370,7 +343,6 @@ def _assign_addresses(
 
 def _parse_register(token: str, line: int) -> int:
     """Convierte un nombre o alias de registro en su índice."""
-
     index = _REGISTERS.get(token)
     if index is not None:
         return index
@@ -386,8 +358,7 @@ def _parse_register(token: str, line: int) -> int:
         if len(digits) > 2 or int(digits) > 31:
             raise _AssemblyError(
                 line,
-                f"El registro '{_abbreviate(token)}' no existe; "
-                "se admiten x0 a x31 y sus alias.",
+                f"El registro '{_abbreviate(token)}' no existe; se admiten x0 a x31 y sus alias.",
             )
         raise _AssemblyError(
             line,
@@ -401,7 +372,6 @@ def _parse_register(token: str, line: int) -> int:
 
 def _parse_literal(token: str, line: int) -> int:
     """Convierte un literal decimal, hexadecimal o binario en un entero."""
-
     match = _LITERAL_PATTERN.fullmatch(token)
     if match is None:
         raise _AssemblyError(
@@ -424,8 +394,7 @@ def _parse_literal(token: str, line: int) -> int:
     if len(digits) > _MAX_LITERAL_DIGITS[base]:
         raise _AssemblyError(
             line,
-            f"El operando '{_abbreviate(token)}' excede el rango de los "
-            "valores admitidos.",
+            f"El operando '{_abbreviate(token)}' excede el rango de los valores admitidos.",
         )
     value = int(digits, base)
     return -value if token.startswith("-") else value
@@ -433,16 +402,12 @@ def _parse_literal(token: str, line: int) -> int:
 
 def _split_memory(token: str) -> tuple[str, str]:
     """Separa el offset y la base de un operando ya normalizado."""
-
     offset, _, base = token.partition("(")
     return offset, base[:-1]
 
 
-def _check_immediate(
-    instruction: LocatedInstruction, value: int, subject: str
-) -> None:
+def _check_immediate(instruction: LocatedInstruction, value: int, subject: str) -> None:
     """Comprueba rango y paridad del inmediato según la instrucción."""
-
     if instruction.mnemonic in ("beq", "bne"):
         low, high = -4096, 4094
     elif instruction.mnemonic == "jal":
@@ -458,8 +423,7 @@ def _check_immediate(
     if instruction.mnemonic in ("beq", "bne", "jal") and value % 2 != 0:
         raise _AssemblyError(
             instruction.line,
-            f"{subject} {value} de '{instruction.mnemonic}' debe ser par "
-            "para codificarse.",
+            f"{subject} {value} de '{instruction.mnemonic}' debe ser par para codificarse.",
         )
 
 
@@ -467,15 +431,12 @@ def _parse_destination(
     token: str, instruction: LocatedInstruction, labels: dict[str, LabelDefinition]
 ) -> int:
     """Resuelve un destino literal o una etiqueta a un desplazamiento."""
-
     if _LITERAL_PATTERN.fullmatch(token):
         return _parse_literal(token, instruction.line)
     if _LABEL_PATTERN.fullmatch(token):
         definition = labels.get(token)
         if definition is None:
-            raise _AssemblyError(
-                instruction.line, f"La etiqueta '{token}' no está definida."
-            )
+            raise _AssemblyError(instruction.line, f"La etiqueta '{token}' no está definida.")
         return definition.address - instruction.pc
     raise _AssemblyError(
         instruction.line,
@@ -487,7 +448,6 @@ def _interpret_operands(
     instructions: list[LocatedInstruction], labels: dict[str, LabelDefinition]
 ) -> list[InterpretedInstruction]:
     """Convierte registros, literales y destinos a valores comprobados."""
-
     interpreted: list[InterpretedInstruction] = []
     for instruction in instructions:
         roles = _INSTRUCTIONS[instruction.mnemonic][4]
@@ -548,12 +508,9 @@ def _encode_instructions(
     instructions: list[InterpretedInstruction],
 ) -> list[EncodedInstruction]:
     """Forma la palabra de 32 bits de cada instrucción interpretada."""
-
     encoded: list[EncodedInstruction] = []
     for instruction in instructions:
-        format_name, opcode, funct3, funct7, _ = _INSTRUCTIONS[
-            instruction.mnemonic
-        ]
+        format_name, opcode, funct3, funct7, _ = _INSTRUCTIONS[instruction.mnemonic]
         if format_name == "HALT":
             word = 0x0000000B
         elif format_name == "R":
@@ -619,27 +576,19 @@ def _encode_instructions(
             )
         else:
             raise ValueError(f"Formato desconocido: {format_name}")
-        encoded.append(
-            EncodedInstruction(instruction.line, instruction.pc, word)
-        )
+        encoded.append(EncodedInstruction(instruction.line, instruction.pc, word))
     return encoded
 
 
 def _pack_result(instructions: list[EncodedInstruction]) -> AssemblyResult:
     """Forma la imagen little-endian y la relación PC-línea."""
-
-    image = b"".join(
-        instruction.word.to_bytes(4, "little") for instruction in instructions
-    )
-    pc_to_line = {
-        instruction.pc: instruction.line for instruction in instructions
-    }
+    image = b"".join(instruction.word.to_bytes(4, "little") for instruction in instructions)
+    pc_to_line = {instruction.pc: instruction.line for instruction in instructions}
     return AssemblyResult(image, pc_to_line, None)
 
 
 def assemble(source_text: str) -> AssemblyResult:
     """Traduce un programa del lenguaje del TP3 a bytes little-endian."""
-
     try:
         records = _read_source(source_text)
         instructions, labels = _assign_addresses(records)

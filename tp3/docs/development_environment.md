@@ -20,7 +20,7 @@ compilan, simulan y comprueban las fuentes con las mismas herramientas:
 | ShellCheck           | 0.9.0               | Análisis de scripts Bash                   |
 | shfmt                | 3.8.0               | Formato Bash                               |
 
-Python 3.12, Bash y utilidades GNU completan el entorno.
+CPython 3.12.3, Bash y utilidades GNU completan el entorno.
 El [Dockerfile](../docker/Dockerfile) tiene cuatro etapas sobre la misma base:
 
 | Etapa       | Contenido                                                  | Uso                                                      |
@@ -175,15 +175,18 @@ make help
 make check
 ~~~
 
-`make check` comprueba formato, lint, esquemas y catálogo, infraestructura y todos
-los casos de simulación implementados. No modifica fuentes. Para aplicar el formato
-explícitamente se usa `make format`. También están disponibles `format-check`,
-`lint`, `validate`, `test-infra`, `test-rtl` y `test`.
+`make check` comprueba formato, lint, esquemas y catálogo, las pruebas de
+infraestructura y de software de PC, y todos los casos de simulación implementados.
+No modifica fuentes. Para aplicar el formato explícitamente se usa `make format`.
+También están disponibles `format-check`, `lint`, `validate`, `test-infra`,
+`test-software`, `test-rtl` y `test`.
+`make test` reúne infraestructura, software de PC y simulaciones RTL.
 
-El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/` y `scripts/`, incluidos
-fixtures. Verilator analiza exclusivamente el RTL y sus dependencias ordenadas en
-Make, actualmente `rtl/system_pkg.sv`. El catálogo de pruebas conserva sus bancos
-y fuentes de simulación; no define el alcance de lint RTL.
+El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/`, `scripts/` y
+`software/`, incluidos fixtures y pruebas. Verilator analiza exclusivamente el RTL
+y sus dependencias ordenadas en Make, actualmente `rtl/system_pkg.sv`.
+El catálogo de pruebas conserva sus bancos y fuentes de simulación; no define el
+alcance de lint RTL.
 
 Ruff comprueba errores básicos, imports y presencia/formato básico de docstrings.
 La exigencia de documentar también funciones privadas y anidadas se revisa donde
@@ -191,6 +194,43 @@ Ruff no la cubre. Bash utiliza ShellCheck y shfmt; sus comentarios se revisan si
 un validador de documentación adicional. Las reglas están en `ruff.toml`,
 `.rules.verible_lint` y `.verible-format-flags`. Las excepciones son locales y
 justificadas junto a la construcción correspondiente.
+
+`make test-software` ejecuta `python3 -m unittest discover -s software/tests -v`
+desde `tp3`. La búsqueda incluye todos los módulos `test*.py` de ese árbol, para
+incorporar también las futuras pruebas de la aplicación. Actualmente ejecuta 114
+pruebas del assembler: 101 variantes del catálogo y 13 comprobaciones adicionales
+de regresión y cobertura. No requiere dependencias externas, placa ni conexión serie.
+El resultado completo se conserva en `build/reports/software.log`; un fallo se
+propaga a `make test` y `make check`, aunque la salida pase por `tee`.
+
+La imagen de CI comprueba el software con su Python 3.12. La compatibilidad mínima
+del assembler se verifica además con CPython 3.11 y con el intérprete de desarrollo,
+según el [contrato del assembler](software/assembler_environment.md#comprobaciones-de-compatibilidad).
+Desde `tp3`, se registran las versiones y las ejecuciones sin instalar paquetes:
+
+~~~bash
+python3.11 --version
+python3.11 -m unittest discover -s software/tests -v
+python3 --version
+python3 -m unittest discover -s software/tests -v
+~~~
+
+La verificación del 2026-10-24, sobre el assembler de `4d07433` con la normalización
+de estilo de esta integración, conservó las 114 pruebas en los tres intérpretes:
+
+| Entorno | Intérprete | Resultado | Evidencia local |
+| --- | --- | --- | --- |
+| Mínimo del assembler | CPython 3.11.17 | 114/114, OK | `build/reports/software-python311.log` |
+| Imagen fijada en `docker/image.ref` | CPython 3.12.3 | 114/114, OK | `build/reports/software.log` |
+| Desarrollo | CPython 3.14.8 | 114/114, OK | `build/reports/software-python-development.log` |
+
+En esa verificación, `make check` pasó con la imagen fijada y `--network none`:
+40 pruebas de infraestructura, 114 de software y 19 simulaciones RTL, además de
+formato, lint y validación. El registro completo queda en `build/reports/check.log`.
+Una copia temporal de `software/tests/`, montada sobre ese directorio con una
+prueba que falla intencionalmente, hizo que el mismo `make check` terminara con
+código 2 en `test-software`. La evidencia queda en
+`build/reports/failure-propagation/`, sin dejar la prueba fallida en las fuentes.
 
 La [guía de pruebas](verification/test_selection.md) describe selección, estados,
 CLI JSON y reportes en `build/reports/`. Las convenciones de escritura de RTL se
@@ -219,8 +259,8 @@ y nombres de resultado separados; un push no sustituye el resultado `TP3 PR`.
 Cuando aplica, CI selecciona cómo obtener las herramientas antes de ejecutar
 `make check` sin red:
 
-- Si cambian RTL, testbenches, catálogo, scripts, reglas o workflow, y la definición
-  de herramientas permanece igual a la publicada, descarga la referencia exacta
+- Si cambian RTL, testbenches, catálogo, scripts, software de PC, reglas o workflow,
+  y la definición de herramientas permanece igual a la publicada, descarga la referencia exacta
   de `docker/image.ref`. No prepara Buildx ni reconstruye la imagen.
 - Si cambia el contexto `tp3/docker/`, salvo `image.ref`, construye y verifica el
   Dockerfile del checkout con caché de BuildKit. Los archivos nuevos, eliminados

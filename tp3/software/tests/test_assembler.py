@@ -13,35 +13,47 @@ from software.assembler import AssemblyDiagnostic, assemble
 
 
 def _attach(test_class, case_id, test_method):
+    """Registra una variante con su identificador como nombre de prueba."""
     name = "test_" + case_id.replace("-", "_").replace("/", "_")
     setattr(test_class, name, test_method)
 
 
 def _success_case(source, image_hex, pc_to_line):
+    """Crea una prueba con los bytes y el mapa esperados del catálogo."""
+
     def test(self):
+        """Comprueba la traducción de una variante válida del catálogo."""
         self.assert_success(source, image_hex, pc_to_line)
 
     return test
 
 
 def _rejection_case(source, line, fragments):
+    """Crea una prueba con la línea y el diagnóstico de rechazo esperados."""
+
     def test(self):
+        """Comprueba el rechazo de una variante inválida del catálogo."""
         self.assert_rejected(source, line, fragments)
 
     return test
 
 
 class _CatalogCase(unittest.TestCase):
+    """Comparaciones comunes para las variantes y regresiones del assembler."""
+
     def assert_success(self, source, image_hex, pc_to_line):
+        """Ensambla el texto y compara la imagen y el mapa esperados."""
         self.assert_success_result(assemble(source), image_hex, pc_to_line)
 
     def assert_success_result(self, result, image_hex, pc_to_line):
+        """Comprueba un resultado correcto contra expectativas independientes."""
         self.assertIsNone(result.error, msg=result.error)
         self.assertEqual(result.pc_to_line, pc_to_line)
         self.assertIsInstance(result.image, bytes)
         self.assertEqual(result.image, bytes.fromhex(image_hex))
 
     def assert_rejected(self, source, line, fragments):
+        """Comprueba el diagnóstico y la ausencia de resultados parciales."""
         result = assemble(source)
         self.assertIsNone(result.image)
         self.assertEqual(result.pc_to_line, {})
@@ -98,8 +110,7 @@ _TEST_ASM_002 = [
         "jal x0, fin\n"
         "addi x2, x0, 99\n"
         "fin: halt",
-        "93 00 30 00 93 80 F0 FF E3 9E 00 FE "
-        "6F 00 80 00 13 01 30 06 0B 00 00 00",
+        "93 00 30 00 93 80 F0 FF E3 9E 00 FE 6F 00 80 00 13 01 30 06 0B 00 00 00",
         {0: 4, 4: 5, 8: 6, 12: 7, 16: 8, 20: 9},
     ),
     (
@@ -123,11 +134,7 @@ _TEST_ASM_002 = [
 ]
 
 _TEST_ASM_003_TEXT = (
-    "# Inicialización\n"
-    "\n"
-    "inicio : addi x1 , x0 , 5 # acción: , ( )\n"
-    "\tsw x1 , 4 ( x0 )\n"
-    "\thalt"
+    "# Inicialización\n\ninicio : addi x1 , x0 , 5 # acción: , ( )\n\tsw x1 , 4 ( x0 )\n\thalt"
 )
 
 _TEST_ASM_003 = [
@@ -151,19 +158,13 @@ _TEST_ASM_003 = [
         "addi x1, x0, +0B1100\n"
         "addi x1, x0, -0x1\n"
         "addi x1, x0, -0b1",
-        "93 00 C0 00 93 00 C0 00 93 00 C0 00 "
-        "93 00 C0 00 93 00 F0 FF 93 00 F0 FF",
+        "93 00 C0 00 93 00 C0 00 93 00 C0 00 93 00 C0 00 93 00 F0 FF 93 00 F0 FF",
         {0: 1, 4: 2, 8: 3, 12: 4, 16: 5, 20: 6},
     ),
     (
         "TEST-ASM-003/C004",
-        "add t0, ra, sp\n"
-        "add gp, tp, t6\n"
-        "add s0, s11, a0\n"
-        "add fp, a7, zero\n"
-        "add x31, x30, x29",
-        "B3 82 20 00 B3 01 F2 01 33 84 AD 00 "
-        "33 84 08 00 B3 0F DF 01",
+        "add t0, ra, sp\nadd gp, tp, t6\nadd s0, s11, a0\nadd fp, a7, zero\nadd x31, x30, x29",
+        "B3 82 20 00 B3 01 F2 01 33 84 AD 00 33 84 08 00 B3 0F DF 01",
         {0: 1, 4: 2, 8: 3, 12: 4, 16: 5},
     ),
 ]
@@ -271,6 +272,7 @@ class TestAsm006(_CatalogCase):
     """TEST-ASM-006 — traducción y ejecución."""
 
     def test_TEST_ASM_006_C007(self):
+        """Traduce un programa que excede la capacidad de la memoria de la FPGA."""
         source = "\n".join(["addi x1, x1, 1"] * 256 + ["halt"])
         self.assert_success(
             source,
@@ -287,6 +289,7 @@ class TestAsm008(_CatalogCase):
     """TEST-ASM-008 — independencia entre llamadas."""
 
     def test_TEST_ASM_008_C001(self):
+        """Comprueba que las llamadas no comparten etiquetas ni alteran resultados previos."""
         first = assemble("inicio: halt")
         self.assert_success_result(first, "0B 00 00 00", {0: 1})
 
@@ -298,9 +301,7 @@ class TestAsm008(_CatalogCase):
         self.assertIn("inicio", second.error.message.lower())
 
         third = assemble("inicio: addi x1, x0, 5\nhalt")
-        self.assert_success_result(
-            third, "93 00 50 00 0B 00 00 00", {0: 1, 4: 2}
-        )
+        self.assert_success_result(third, "93 00 50 00 0B 00 00 00", {0: 1, 4: 2})
 
         self.assert_success_result(first, "0B 00 00 00", {0: 1})
 
@@ -309,6 +310,7 @@ class TestRegressions(_CatalogCase):
     """Regresiones de entradas fuera de la selección finita del catálogo."""
 
     def test_huge_decimal_with_leading_zeros(self):
+        """Acepta un decimal pequeño con miles de ceros iniciales."""
         self.assert_success(
             "addi x1, x0, " + "0" * 4300 + "1",
             "93 00 10 00",
@@ -316,6 +318,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_hexadecimal_with_leading_zeros(self):
+        """Acepta un hexadecimal pequeño con miles de ceros iniciales."""
         self.assert_success(
             "addi x1, x0, 0x" + "0" * 5000 + "f",
             "93 00 F0 00",
@@ -323,6 +326,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_decimal_out_of_range(self):
+        """Rechaza un decimal enorme mediante un diagnóstico acotado."""
         self.assert_rejected(
             "addi x1, x0, 1" + "0" * 5000,
             1,
@@ -330,6 +334,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_hexadecimal_out_of_range(self):
+        """Rechaza un hexadecimal enorme mediante un diagnóstico acotado."""
         self.assert_rejected(
             "lui x1, 0x" + "f" * 5000,
             1,
@@ -337,6 +342,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_binary_out_of_range(self):
+        """Rechaza un binario enorme mediante un diagnóstico acotado."""
         self.assert_rejected(
             "addi x1, x0, 0b" + "1" * 5000,
             1,
@@ -344,6 +350,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_register_index(self):
+        """Rechaza un índice de registro con miles de dígitos."""
         self.assert_rejected(
             "add x" + "9" * 5000 + ", x0, x1",
             1,
@@ -351,6 +358,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_huge_register_with_leading_zeros(self):
+        """Rechaza un registro escrito con miles de ceros iniciales."""
         self.assert_rejected(
             "add x" + "0" * 5000 + "1, x0, x1",
             1,
@@ -358,6 +366,7 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_hex_and_binary_negative_boundaries(self):
+        """Acepta el límite negativo de JAL en hexadecimal y binario."""
         self.assert_success(
             "jal x1, -0x" + "0" * 5000 + "100000",
             "EF 00 00 80",
@@ -370,15 +379,19 @@ class TestRegressions(_CatalogCase):
         )
 
     def test_non_breaking_space_is_rejected(self):
+        """Rechaza el espacio no separable entre mnemónico y operandos."""
         self.assert_rejected("addi\u00a0x1, x0, 1", 1, ("separador",))
 
     def test_vertical_tab_is_rejected(self):
+        """Rechaza la tabulación vertical como separador."""
         self.assert_rejected("addi\vx1, x0, 1", 1, ("separador",))
 
     def test_form_feed_is_rejected(self):
+        """Rechaza el salto de página como separador."""
         self.assert_rejected("addi\fx1, x0, 1", 1, ("separador",))
 
     def test_trailing_non_breaking_space_is_rejected(self):
+        """Rechaza el espacio no separable al final de la línea."""
         self.assert_rejected("halt\u00a0", 1, ("separador",))
 
 
@@ -386,6 +399,7 @@ class TestCatalogCoverage(unittest.TestCase):
     """Comprueba la cantidad de variantes aprobada por grupo."""
 
     def test_catalog_counts(self):
+        """Comprueba que los ocho grupos conservan sus 101 variantes aprobadas."""
         counts = {
             "TEST-ASM-001": len(_TEST_ASM_001),
             "TEST-ASM-002": len(_TEST_ASM_002),

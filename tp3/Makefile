@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 # Solo fuentes propias; las salidas generadas de Vivado y build quedan fuera.
 SV_DIRS := rtl tb scripts/tests/fixtures
-PY_DIR := scripts
+PY_DIR := scripts software
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv
 REPORTS := build/reports
@@ -12,7 +12,7 @@ VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.veribl
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags
 export TESTS
 
-.PHONY: help format format-check lint validate test-infra test-rtl test check
+.PHONY: help format format-check lint validate test-infra test-software test-rtl test check
 help:
 	@printf '%s\n' \
 	  'make format        Aplicar formato SystemVerilog, Python y Bash' \
@@ -20,9 +20,10 @@ help:
 	  'make lint          Verible, Verilator, Ruff y ShellCheck' \
 	  'make validate      Validar esquemas, catálogo y fuentes registradas' \
 	  'make test-infra    Probar la infraestructura de pruebas' \
+	  'make test-software Probar el software de PC' \
 	  'make test-rtl      Ejecutar todos los casos implementados' \
 	  'make test-rtl TESTS="ID1 ID2"  Seleccionar grupos o casos' \
-	  'make test          Infraestructura y simulaciones RTL' \
+	  'make test          Infraestructura, software de PC y simulaciones RTL' \
 	  'make check         Todas las comprobaciones anteriores'
 
 format:
@@ -50,6 +51,10 @@ test-infra:
 	@mkdir -p $(REPORTS)
 	python3 -m unittest discover -s scripts/tests -v 2>&1 | tee $(REPORTS)/infrastructure.log
 
+test-software:
+	@mkdir -p $(REPORTS)
+	python3 -m unittest discover -s software/tests -v 2>&1 | tee $(REPORTS)/software.log
+
 test-rtl:
 	@mkdir -p $(REPORTS)
 	@selectors=(--all); \
@@ -62,5 +67,5 @@ test-rtl:
 	  2> >(tee $(REPORTS)/simulation.log >&2) | tee $(REPORTS)/results.json | \
 	  PYTHONPATH=scripts python3 -c 'import json, sys; from run_tests import print_report; print_report(json.load(sys.stdin), "text")'
 
-test: test-infra test-rtl
+test: test-infra test-software test-rtl
 check: format-check lint validate test
