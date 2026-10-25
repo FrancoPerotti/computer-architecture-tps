@@ -299,6 +299,8 @@ El banco `decoder_tb` ejecuta las 409 variantes en nivel `Unidad` y compara las 
 
 Una segunda ejecución de esos mismos IDs utiliza `id_stage_tb` con `DECODE_ONLY=1` en nivel `Integración local`. `inputs.id_context` presenta la entrada de IF/ID y mantiene inactivos el productor ID/EX, WB, bypass y Debug. El banco reinicia RF antes de presentar ese contexto. Compara los controles transportados por ID/EX, su validez, instrucción y PC, el candidato de fault, su PC y la causa cuando corresponde. También exige que no aparezca load-use con el productor inválido. Las expectativas de controles y candidato se reutilizan del caso; la causa, PC, validez y ausencia de dependencia están explícitos en `expected`.
 
+`flow_control_tb` agrega una ejecución de unidad para `C372` y `C409`. La primera comprueba el candidato de halt de la palabra exacta; la segunda presenta un control residual `JALR` con payload inválido y exige que no solicite redirect, sin ocultar la selección combinacional del target.
+
 Esta integración no necesita un registro IF/ID real: presenta sus cinco campos desde el banco. No acredita captura de registros interetapa, confirmación de fault/halt, arbitraje ni ejecución de CPU. `expected.halt_candidate` conserva su referencia para EX; en ID se comprueba el control `flow_op`, sin agregar un puerto de halt.
 
 ### Qué comprueba y por qué
@@ -366,11 +368,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad Flow Control implementada; integración EX y CPU pendientes.
 
 **Requisitos:** [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_ex](../architecture/cpu/stage_ex.md); [control_and_hazards](../architecture/cpu/control_and_hazards.md).
+
+### Ejecución disponible
+
+Las ocho variantes se proyectan sobre `flow_control_tb` para comprobar la condición `zero`, la decisión de branch y la ausencia de halt. El cálculo del target, su validación, el descarte de instrucciones jóvenes y los efectos de CPU permanecen pendientes de las integraciones correspondientes.
 
 ### Qué comprueba y por qué
 
@@ -435,11 +441,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad Flow Control implementada; integración EX y CPU pendientes.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_ex](../architecture/cpu/stage_ex.md); [faults_and_termination](../architecture/session/faults_and_termination.md).
+
+### Ejecución disponible
+
+Las diez variantes se proyectan sobre `flow_control_tb` para comprobar que `JAL` y `JALR` soliciten redirect, que sólo `JALR` seleccione el target indirecto y que la decisión no dependa de `rd`. El cálculo de target y link, el forwarding de la base y los efectos de CPU permanecen pendientes.
 
 ### Qué comprueba y por qué
 

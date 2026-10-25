@@ -8,10 +8,10 @@ PY_DIR := scripts
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \
                rtl/register_file.sv rtl/id_fault_check.sv rtl/load_use_detector.sv \
-               rtl/forwarding_unit.sv rtl/alu.sv rtl/id_stage.sv \
+               rtl/forwarding_unit.sv rtl/alu.sv rtl/flow_control.sv rtl/id_stage.sv \
                rtl/fetch_fault_check.sv rtl/instruction_memory.sv rtl/if_stage.sv
 RTL_TOPS := decoder immediate_generator register_file id_fault_check load_use_detector \
-            forwarding_unit alu id_stage
+            forwarding_unit alu flow_control id_stage
 IMEM_RTL_TOPS := fetch_fault_check instruction_memory if_stage
 IMEM_LINT_CAPACITIES := 4 1000 1024
 REPORTS := build/reports

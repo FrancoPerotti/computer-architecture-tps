@@ -1884,6 +1884,21 @@
           "parameters": {
             "DECODE_ONLY": "1'b1"
           }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-ISA-004/C372",
+            "TEST-ISA-004/C409"
+          ]
         }
       ],
       "cases": [
@@ -22877,6 +22892,11 @@
           "inputs": {
             "word": "0x0000000B",
             "ifid_valid": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 5,
+              "zero": 0
+            },
             "id_context": {
               "reset": 0,
               "prepare_init": 0,
@@ -22915,7 +22935,10 @@
             "idex_valid": 1,
             "id_fault_pc": 0,
             "id_fault_cause": null,
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 1
           },
           "kind": "vector",
           "origins": [
@@ -24921,6 +24944,11 @@
           "inputs": {
             "word": "0x00000000",
             "ifid_valid": 0,
+            "flow_control": {
+              "valid": 0,
+              "flow_op": 4,
+              "zero": 0
+            },
             "id_context": {
               "reset": 0,
               "prepare_init": 0,
@@ -24958,7 +24986,10 @@
             "idex_valid": 0,
             "id_fault_pc": 0,
             "id_fault_cause": null,
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "target_sel": 1,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
@@ -24973,7 +25004,19 @@
       "source": "isa.md#test-isa-005",
       "case_count": 8,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-005/C001",
@@ -24982,19 +25025,27 @@
             "x1": 5,
             "x2": 5,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": true,
             "x3": 0,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C002",
@@ -25003,19 +25054,27 @@
             "x1": 5,
             "x2": 6,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": false,
             "x3": 1,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C003",
@@ -25024,19 +25083,27 @@
             "x1": 5,
             "x2": 5,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": false,
             "x3": 1,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C004",
@@ -25045,19 +25112,27 @@
             "x1": 5,
             "x2": 6,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": true,
             "x3": 0,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C005",
@@ -25065,18 +25140,26 @@
             "op": "BEQ",
             "pc": 8,
             "offset": -8,
-            "equal": true
+            "equal": true,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": true,
             "target": 0,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C006",
@@ -25084,17 +25167,25 @@
             "op": "BEQ",
             "pc": 0,
             "offset": 2,
-            "equal": false
+            "equal": false,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": false,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Desalineado no utilizado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C007",
@@ -25102,18 +25193,26 @@
             "op": "BNE",
             "pc": 8,
             "offset": -8,
-            "equal": false
+            "equal": false,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": true,
             "target": 0,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C008",
@@ -25121,17 +25220,25 @@
             "op": "BNE",
             "pc": 0,
             "offset": 2,
-            "equal": true
+            "equal": true,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": false,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Desalineado no utilizado"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -25140,7 +25247,19 @@
       "source": "isa.md#test-isa-006",
       "case_count": 10,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-006/C001",
@@ -25148,18 +25267,26 @@
             "op": "JAL",
             "pc": 0,
             "offset": 8,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JAL"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C002",
@@ -25167,18 +25294,26 @@
             "op": "JAL",
             "pc": 0,
             "offset": 8,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JAL"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C003",
@@ -25187,18 +25322,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C004",
@@ -25207,18 +25350,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C005",
@@ -25227,18 +25378,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 1
+            "rd": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C006",
@@ -25247,18 +25406,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C007",
@@ -25267,18 +25434,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C008",
@@ -25287,18 +25462,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 1
+            "rd": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C009",
@@ -25306,17 +25489,25 @@
             "op": "JAL",
             "pc": 8,
             "offset": -8,
-            "x1": 0
+            "x1": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 0,
-            "link": 12
+            "link": 12,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target local hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C010",
@@ -25324,17 +25515,25 @@
             "op": "JALR",
             "pc": 8,
             "offset": -1,
-            "x1": 1
+            "x1": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 0,
-            "link": 12
+            "link": 12,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target local hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
