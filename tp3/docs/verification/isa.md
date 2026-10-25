@@ -33,7 +33,7 @@ Los contratos enlazados son la fuente autoritativa del comportamiento; este docu
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad ALU implementada; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-008](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-009](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-013](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-014](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-015](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-023](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-024](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-025](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-026](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
@@ -66,6 +66,10 @@ Ninguna variante accede a DMEM.
 La prueba tiene 20 casos canónicos. Cada fila de la tabla de operandos corresponde a una variante y conserva los valores hexadecimales en 32 bits.
 
 El [manifiesto](cases.json) enumera los IDs `TEST-ISA-001/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones fuera de esas 20 variantes.
+
+### Ejecución disponible
+
+Las 20 variantes se ejecutan directamente en `alu_tb` y comparan `alu_result` y `zero` con expectativas externas. La ejecución a nivel CPU y sus efectos arquitectónicos permanecen pendientes de la integración de EX y del pipeline.
 
 ### Datos de referencia
 
@@ -128,7 +132,7 @@ La expectativa específica de cada caso está en el [manifiesto](cases.json) y d
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad ALU implementada; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-010](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-011](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-012](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-016](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-017](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-027](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-028](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-029](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-030](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-031](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
@@ -166,6 +170,10 @@ Los casos se distribuyen de la siguiente manera:
 - Las 16 comparaciones aplican las versiones con signo y sin signo a los cuatro pares de registros y a los cuatro pares con inmediato de la tabla.
 
 Los datos y resultados concretos se presentan a continuación.
+
+### Ejecución disponible
+
+Las 37 variantes se ejecutan directamente en `alu_tb`. El fixture entrega a la ALU el segundo operando de 32 bits ya seleccionado y, para inmediatos, extendido con signo; la comprobación a nivel CPU permanece pendiente.
 
 ### Datos de referencia
 
