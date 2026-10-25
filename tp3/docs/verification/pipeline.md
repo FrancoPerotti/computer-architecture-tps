@@ -195,7 +195,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding/EX y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding implementada; integración EX y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -228,6 +228,12 @@ Se ejecutan ocho selecciones locales: solo coincide EX/MEM, solo coincide MEM/WB
 Los 12 casos de productor no elegible cambian una de tres guardas para cada productor y cada fuente. Se utiliza una configuración que evidencia cada guarda, sin repetirla contra una ausencia de coincidencia.
 
 Los cuatro casos de consumidor no elegible combinan una fuente no utilizada o una entrada inválida con A y B. Los cinco casos restantes son los programas A a E: ALU, fuentes mixtas, store, branch y JALR.
+
+### Ejecución disponible
+
+Los casos `C001` a `C024` se ejecutan en `forwarding_unit_tb` y comprueban los dos selectores directamente contra productores suministrados por el fixture. Los casos `C025` a `C029` quedan pendientes hasta la integración de EX y CPU.
+
+Esta ejecución de unidad acredita la decisión de selección. El dato efectivo y su aplicación en los caminos reales se comprobarán al incorporar los muxes en `ex_stage`; por eso las expectativas `effective_value` permanecen documentadas pero no se atribuyen a este banco aislado.
 
 ### Programas concretos
 
@@ -313,7 +319,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding e integración hazard.
 - **Tipo de estímulo:** artificial local y legal CPU.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding implementada; integración hazard y CPU pendientes.
 
 **Requisitos:** [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -340,6 +346,10 @@ La prueba tiene 3 casos canónicos. El [manifiesto](cases.json) enumera los IDs 
 Los dos vectores locales comprueban las fuentes A y B cuando el productor reciente es un load. El tercer caso ejecuta el programa legal indicado a continuación.
 
 La prueba local y la ejecución legal verifican obligaciones diferentes; la inyección no autoriza agregar un interlock de EX para hacerla ejecutable.
+
+### Ejecución disponible
+
+Los casos artificiales `C001` y `C002` se ejecutan en `forwarding_unit_tb` y comprueban que el load reciente deje ambos selectores en la entrada base, sin habilitar EX/MEM ni el fallback a MEM/WB. El caso legal `C003` queda pendiente de la integración del pipeline.
 
 ### Programas concretos
 

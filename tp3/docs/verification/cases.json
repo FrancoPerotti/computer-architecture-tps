@@ -35318,7 +35318,45 @@
       "source": "pipeline.md#test-pipe-003",
       "case_count": 29,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/forwarding_unit_tb.sv"
+          ],
+          "top": "forwarding_unit_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-003/C001",
+            "TEST-PIPE-003/C002",
+            "TEST-PIPE-003/C003",
+            "TEST-PIPE-003/C004",
+            "TEST-PIPE-003/C005",
+            "TEST-PIPE-003/C006",
+            "TEST-PIPE-003/C007",
+            "TEST-PIPE-003/C008",
+            "TEST-PIPE-003/C009",
+            "TEST-PIPE-003/C010",
+            "TEST-PIPE-003/C011",
+            "TEST-PIPE-003/C012",
+            "TEST-PIPE-003/C013",
+            "TEST-PIPE-003/C014",
+            "TEST-PIPE-003/C015",
+            "TEST-PIPE-003/C016",
+            "TEST-PIPE-003/C017",
+            "TEST-PIPE-003/C018",
+            "TEST-PIPE-003/C019",
+            "TEST-PIPE-003/C020",
+            "TEST-PIPE-003/C021",
+            "TEST-PIPE-003/C022",
+            "TEST-PIPE-003/C023",
+            "TEST-PIPE-003/C024"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-003/C001",
@@ -35329,17 +35367,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C002",
@@ -35350,17 +35399,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 1,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C003",
@@ -35371,17 +35431,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C004",
@@ -35392,17 +35463,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 1,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C005",
@@ -35414,17 +35496,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 0,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C006",
@@ -35436,17 +35529,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 0,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C007",
@@ -35458,17 +35562,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002001B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 0,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C008",
@@ -35480,17 +35595,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 0,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C009",
@@ -35502,17 +35628,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 0
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C010",
@@ -35524,17 +35661,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002001B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 0,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C011",
@@ -35544,17 +35692,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x000081B7",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C012",
@@ -35564,17 +35723,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 0,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C013",
@@ -35585,17 +35755,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C014",
@@ -35606,17 +35787,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 0,
+            "forward_b_sel": 1
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C015",
@@ -35627,17 +35819,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C016",
@@ -35648,17 +35851,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 0,
+            "forward_b_sel": 1
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C017",
@@ -35670,17 +35884,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 0,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C018",
@@ -35692,17 +35917,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 0,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C019",
@@ -35714,17 +35950,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x000101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 0,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C020",
@@ -35736,17 +35983,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 0,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C021",
@@ -35758,17 +36016,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 0
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C022",
@@ -35780,17 +36049,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x000101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 0,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C023",
@@ -35800,17 +36080,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x00110193",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C024",
@@ -35820,17 +36111,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 0,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C025",
@@ -35924,7 +36226,23 @@
       "source": "pipeline.md#test-pipe-004",
       "case_count": 3,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/forwarding_unit_tb.sv"
+          ],
+          "top": "forwarding_unit_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-004/C001",
+            "TEST-PIPE-004/C002"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-004/C001",
@@ -35934,18 +36252,29 @@
             "ex_result": "0x00000100",
             "older_MEMWB_rd": 1,
             "wb_value": 5,
-            "base": 3
+            "base": 3,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 3,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
             "forward_ex": false,
-            "forward_wb": false
+            "forward_wb": false,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "artificial",
           "origins": [
             "Load bloquea fallback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-004/C002",
@@ -35955,18 +36284,29 @@
             "ex_result": "0x00000100",
             "older_MEMWB_rd": 1,
             "wb_value": 5,
-            "base": 3
+            "base": 3,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 3,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
             "forward_ex": false,
-            "forward_wb": false
+            "forward_wb": false,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "artificial",
           "origins": [
             "Load bloquea fallback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-004/C003",
