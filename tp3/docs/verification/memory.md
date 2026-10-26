@@ -168,11 +168,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad fetch/ex_flow_check y CPU.
 - **Tipo de estímulo:** legal salvo entradas locales de PC.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad `ex_flow_check` implementada; memoria física y CPU pendientes.
 
 **Requisitos:** [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-021](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [memory_architecture](../architecture/memory/memory_architecture.md); [faults_and_termination](../architecture/session/faults_and_termination.md); [dmem_access](../architecture/memory/dmem_access.md).
+
+### Ejecución disponible
+
+`ex_flow_check_tb` ejecuta las 78 variantes en nivel `Unidad`. La capacidad se recibe durante la elaboración desde `inputs.C`; el banco traduce la operación y el tamaño del catálogo al `mem_op` correspondiente y presenta la dirección efectiva o el par base/inmediato indicado. Compara el candidato con la presencia de `expected.cause` y, cuando existe, compara también la causa.
+
+Esta ejecución acredita formación modular de dirección, alineación, rango completo en 33 bits y prioridad local de causa. No accede a una DMEM física ni acredita la inhibición de writeback/store, metadatos, `fault_pc` o confirmación del fault en CPU.
 
 ### Qué comprueba y por qué
 

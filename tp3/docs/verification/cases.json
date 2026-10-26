@@ -1899,6 +1899,23 @@
             "TEST-ISA-004/C372",
             "TEST-ISA-004/C409"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_flow_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_flow_check_tb.sv"
+          ],
+          "top": "ex_flow_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          },
+          "case_ids": [
+            "TEST-ISA-004/C409"
+          ]
         }
       ],
       "cases": [
@@ -24944,6 +24961,14 @@
           "inputs": {
             "word": "0x00000000",
             "ifid_valid": 0,
+            "ex_flow_check": {
+              "valid": 0,
+              "mem_op": 3,
+              "rs1_effective": "0xFFFFFFFF",
+              "immediate": "0x00000000",
+              "redirect_requested": 0,
+              "redirect_target": "0x00000000"
+            },
             "flow_control": {
               "valid": 0,
               "flow_op": 4,
@@ -24989,7 +25014,8 @@
             "load_use_stall": 0,
             "target_sel": 1,
             "redirect_requested": 0,
-            "ex_halt_candidate": 0
+            "ex_halt_candidate": 0,
+            "ex_fault_candidate": 0
           },
           "kind": "vector",
           "origins": [
@@ -25951,7 +25977,22 @@
       "reuse_groups": [
         "TEST-ISA-005"
       ],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_flow_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_flow_check_tb.sv"
+          ],
+          "top": "ex_flow_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-008/C001",
@@ -25965,13 +26006,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C002",
@@ -25985,13 +26027,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C003",
@@ -26005,13 +26048,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C004",
@@ -26025,13 +26069,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C005",
@@ -26044,13 +26089,14 @@
             "redirect": true,
             "link": 4,
             "cause": 1,
-            "fault_pc": 16
+            "fault_pc": 16,
+            "ex_fault_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Target alineado fuera de imagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C006",
@@ -26063,13 +26109,14 @@
             "redirect": true,
             "link": 4,
             "cause": 1,
-            "fault_pc": 16
+            "fault_pc": 16,
+            "ex_fault_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Target alineado fuera de imagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C007",
@@ -26081,13 +26128,14 @@
           "expected": {
             "cause": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "vector",
           "origins": [
             "Dos condiciones en misma operación"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -45207,7 +45255,24 @@
       "source": "memory.md#test-mem-003",
       "case_count": 78,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_flow_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_flow_check_tb.sv"
+          ],
+          "top": "ex_flow_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-003/C001",
@@ -45227,7 +45292,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C002",
@@ -45247,7 +45312,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C003",
@@ -45267,7 +45332,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C004",
@@ -45287,7 +45352,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C005",
@@ -45307,7 +45372,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C006",
@@ -45327,7 +45392,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C007",
@@ -45347,7 +45412,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C008",
@@ -45367,7 +45432,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C009",
@@ -45387,7 +45452,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C010",
@@ -45407,7 +45472,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C011",
@@ -45427,7 +45492,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C012",
@@ -45447,7 +45512,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C013",
@@ -45467,7 +45532,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C014",
@@ -45487,7 +45552,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C015",
@@ -45507,7 +45572,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C016",
@@ -45527,7 +45592,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C017",
@@ -45547,7 +45612,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C018",
@@ -45567,7 +45632,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C019",
@@ -45587,7 +45652,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C020",
@@ -45607,7 +45672,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C021",
@@ -45627,7 +45692,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C022",
@@ -45647,7 +45712,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C023",
@@ -45667,7 +45732,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C024",
@@ -45687,7 +45752,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C025",
@@ -45707,7 +45772,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C026",
@@ -45727,7 +45792,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C027",
@@ -45747,7 +45812,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C028",
@@ -45767,7 +45832,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C029",
@@ -45787,7 +45852,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C030",
@@ -45807,7 +45872,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C031",
@@ -45827,7 +45892,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C032",
@@ -45847,7 +45912,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C033",
@@ -45867,7 +45932,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C034",
@@ -45887,7 +45952,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C035",
@@ -45907,7 +45972,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C036",
@@ -45927,7 +45992,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C037",
@@ -45947,7 +46012,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C038",
@@ -45967,7 +46032,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C039",
@@ -45987,7 +46052,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C040",
@@ -46007,7 +46072,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C041",
@@ -46027,7 +46092,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C042",
@@ -46047,7 +46112,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C043",
@@ -46067,7 +46132,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C044",
@@ -46087,7 +46152,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C045",
@@ -46107,7 +46172,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C046",
@@ -46127,7 +46192,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C047",
@@ -46147,7 +46212,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C048",
@@ -46167,7 +46232,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C049",
@@ -46187,7 +46252,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C050",
@@ -46207,7 +46272,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C051",
@@ -46227,7 +46292,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C052",
@@ -46247,7 +46312,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C053",
@@ -46267,7 +46332,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C054",
@@ -46287,7 +46352,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C055",
@@ -46307,7 +46372,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C056",
@@ -46327,7 +46392,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C057",
@@ -46347,7 +46412,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C058",
@@ -46367,7 +46432,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C059",
@@ -46387,7 +46452,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C060",
@@ -46407,7 +46472,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C061",
@@ -46427,7 +46492,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C062",
@@ -46447,7 +46512,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C063",
@@ -46467,7 +46532,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C064",
@@ -46487,7 +46552,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C065",
@@ -46507,7 +46572,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C066",
@@ -46527,7 +46592,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C067",
@@ -46547,7 +46612,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C068",
@@ -46567,7 +46632,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C069",
@@ -46587,7 +46652,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C070",
@@ -46607,7 +46672,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C071",
@@ -46627,7 +46692,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C072",
@@ -46647,7 +46712,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C073",
@@ -46667,7 +46732,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C074",
@@ -46687,7 +46752,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C075",
@@ -46707,7 +46772,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C076",
@@ -46727,7 +46792,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C077",
@@ -46747,7 +46812,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C078",
@@ -46767,7 +46832,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -67542,6 +67607,50 @@
       "case_count": 15,
       "reuse_groups": [],
       "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_flow_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_flow_check_tb.sv"
+          ],
+          "top": "ex_flow_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C009"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_flow_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_flow_check_tb.sv"
+          ],
+          "top": "ex_flow_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C010",
+            "TEST-PLAT-001/C011",
+            "TEST-PLAT-001/C012",
+            "TEST-PLAT-001/C013"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
         {
           "sources": [
             "rtl/system_pkg.sv",

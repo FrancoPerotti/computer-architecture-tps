@@ -572,11 +572,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal, con condición local indicada.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad `ex_flow_check` implementada; integración EX y CPU pendientes.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [faults_and_termination](../architecture/session/faults_and_termination.md); [stage_ex](../architecture/cpu/stage_ex.md).
+
+### Ejecución disponible
+
+Las siete variantes presentan directamente `redirect_requested` y el target a `ex_flow_check_tb`. Los targets con bits bajos distintos de cero producen causa 0; los targets alineados fuera de imagen no producen candidato en EX, porque su eventual causa 1 pertenece al fetch posterior. La confirmación, el bloqueo del enlace y los efectos arquitectónicos permanecen pendientes de la integración.
 
 ### Qué comprueba y por qué
 
