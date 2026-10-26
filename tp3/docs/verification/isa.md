@@ -33,11 +33,13 @@ Los contratos enlazados son la fuente autoritativa del comportamiento; este docu
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad ALU implementada; CPU pendiente.
+- **Estado:** unidad ALU y proyección aritmética de `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-008](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-009](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-013](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-014](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-015](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-023](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-024](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-025](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-026](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [stage_ex](../architecture/cpu/stage_ex.md); [datapath](../architecture/cpu/datapath.md); [stage_id](../architecture/cpu/stage_id.md).
+
+El ejecutor conserva la prueba unitaria de ALU y añade una segunda ejecución de las mismas variantes a través de `ex_stage`. Esa proyección verifica que el resultado ALU llegue a `EX/MEM` y que las salidas de flujo y fault permanezcan inactivas en estas operaciones. No acredita forwarding con productores activos ni integración con CPU.
 
 ### Qué comprueba y por qué
 
@@ -132,11 +134,13 @@ La expectativa específica de cada caso está en el [manifiesto](cases.json) y d
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad ALU implementada; CPU pendiente.
+- **Estado:** unidad ALU y proyección aritmética de `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-010](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-011](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-012](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-016](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-017](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-027](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-028](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-029](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-030](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-031](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [datapath](../architecture/cpu/datapath.md); [stage_ex](../architecture/cpu/stage_ex.md).
+
+El ejecutor conserva la prueba unitaria de ALU y añade una segunda ejecución de las mismas variantes a través de `ex_stage`. Esa proyección comprueba los resultados de shifts/comparaciones en `EX/MEM`; forwarding con productores activos y CPU quedan pendientes.
 
 ### Qué comprueba y por qué
 
@@ -368,7 +372,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad Flow Control implementada; integración EX y CPU pendientes.
+- **Estado:** unidad Flow Control y proyección local de branch en `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -376,7 +380,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-Las ocho variantes se proyectan sobre `flow_control_tb` para comprobar la condición `zero`, la decisión de branch y la ausencia de halt. El cálculo del target, su validación, el descarte de instrucciones jóvenes y los efectos de CPU permanecen pendientes de las integraciones correspondientes.
+Las ocho variantes se proyectan sobre `flow_control_tb` y `ex_stage_tb`. La proyección EX compara destino relativo, solicitud, candidato de halt y fault; en particular, el offset desalineado no produce fault cuando el branch no se toma. El descarte de instrucciones jóvenes y los efectos de CPU permanecen pendientes.
 
 ### Qué comprueba y por qué
 
@@ -441,7 +445,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad Flow Control implementada; integración EX y CPU pendientes.
+- **Estado:** unidad Flow Control y proyección local de jumps en `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -449,7 +453,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-Las diez variantes se proyectan sobre `flow_control_tb` para comprobar que `JAL` y `JALR` soliciten redirect, que sólo `JALR` seleccione el target indirecto y que la decisión no dependa de `rd`. El cálculo de target y link, el forwarding de la base y los efectos de CPU permanecen pendientes.
+Las diez variantes se proyectan sobre `flow_control_tb` y `ex_stage_tb`. La proyección EX compara el target resultante y `PC+4` para el link, incluido el bit 0 de JALR y las variantes con `rd=x0`. El forwarding artificial de la base y los efectos de CPU permanecen pendientes.
 
 ### Qué comprueba y por qué
 
@@ -572,7 +576,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal, con condición local indicada.
-- **Estado:** unidad `ex_flow_check` implementada; integración EX y CPU pendientes.
+- **Estado:** unidad `ex_flow_check` y proyección de targets/faults en `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -580,7 +584,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-Las siete variantes presentan directamente `redirect_requested` y el target a `ex_flow_check_tb`. Los targets con bits bajos distintos de cero producen causa 0; los targets alineados fuera de imagen no producen candidato en EX, porque su eventual causa 1 pertenece al fetch posterior. La confirmación, el bloqueo del enlace y los efectos arquitectónicos permanecen pendientes de la integración.
+Las siete variantes se ejecutan en `ex_flow_check_tb` y `ex_stage_tb`. La proyección comprueba el target que forma EX, la solicitud de redirect y el candidato/causa local. Los targets alineados fuera de imagen no producen candidato en EX; su eventual causa pertenece al fetch posterior. La confirmación y los efectos arquitectónicos permanecen pendientes de CPU.
 
 ### Qué comprueba y por qué
 

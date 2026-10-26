@@ -201,6 +201,24 @@
           "top": "alu_tb",
           "level": "Unidad",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
         }
       ],
       "cases": [
@@ -662,6 +680,24 @@
           "top": "alu_tb",
           "level": "Unidad",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
         }
       ],
       "cases": [
@@ -25041,6 +25077,24 @@
           "top": "flow_control_tb",
           "level": "Unidad",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
         }
       ],
       "cases": [
@@ -25284,6 +25338,24 @@
           "top": "flow_control_tb",
           "level": "Unidad",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
         }
       ],
       "cases": [
@@ -25986,6 +26058,24 @@
             "tb/ex_flow_check_tb.sv"
           ],
           "top": "ex_flow_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "parameters": {
@@ -35911,6 +36001,50 @@
             "TEST-PIPE-003/C023",
             "TEST-PIPE-003/C024"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          },
+          "case_ids": [
+            "TEST-PIPE-003/C001",
+            "TEST-PIPE-003/C002",
+            "TEST-PIPE-003/C003",
+            "TEST-PIPE-003/C004",
+            "TEST-PIPE-003/C005",
+            "TEST-PIPE-003/C006",
+            "TEST-PIPE-003/C007",
+            "TEST-PIPE-003/C008",
+            "TEST-PIPE-003/C009",
+            "TEST-PIPE-003/C010",
+            "TEST-PIPE-003/C011",
+            "TEST-PIPE-003/C012",
+            "TEST-PIPE-003/C013",
+            "TEST-PIPE-003/C014",
+            "TEST-PIPE-003/C015",
+            "TEST-PIPE-003/C016",
+            "TEST-PIPE-003/C017",
+            "TEST-PIPE-003/C018",
+            "TEST-PIPE-003/C019",
+            "TEST-PIPE-003/C020",
+            "TEST-PIPE-003/C021",
+            "TEST-PIPE-003/C022",
+            "TEST-PIPE-003/C023",
+            "TEST-PIPE-003/C024"
+          ]
         }
       ],
       "cases": [
@@ -36793,6 +36927,28 @@
           "top": "forwarding_unit_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-004/C001",
+            "TEST-PIPE-004/C002"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          },
           "case_ids": [
             "TEST-PIPE-004/C001",
             "TEST-PIPE-004/C002"
@@ -45264,6 +45420,26 @@
             "tb/ex_flow_check_tb.sv"
           ],
           "top": "ex_flow_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_flow_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "parameters": {
