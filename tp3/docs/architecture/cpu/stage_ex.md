@@ -39,7 +39,7 @@ La etapa esta compuesta por los siguientes bloques:
 | `forwarding_unit`       | Submódulo                  | `ex_stage`      |
 | `alu`                   | Submódulo                  | `ex_stage`      |
 | `flow_control`          | Submódulo                  | `ex_stage`      |
-| `ex_flow_check`         | Submódulo                  | `ex_stage`      |
+| `ex_fault_check`         | Submódulo                  | `ex_stage`      |
 | `Forward Mux A/B`       | Lógica local               | `ex_stage`      |
 | `ALU Src Mux`           | Lógica local               | `ex_stage`      |
 | `Link Adder`            | Lógica local               | `ex_stage`      |

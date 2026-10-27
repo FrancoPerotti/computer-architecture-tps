@@ -190,347 +190,477 @@
       "source": "isa.md#test-isa-001",
       "case_count": 20,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/alu.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/alu_tb.sv"
+          ],
+          "top": "alu_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-001/C001",
           "inputs": {
             "op": "ADD",
             "rs1": "0x00000005",
-            "rs2_or_imm": "0x00000007"
+            "rs2_or_imm": "0x00000007",
+            "alu_a": "0x00000005",
+            "alu_b": "0x00000007",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x0000000C",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x0000000C",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C002",
           "inputs": {
             "op": "ADD",
             "rs1": "0xFFFFFFFF",
-            "rs2_or_imm": "0x00000001"
+            "rs2_or_imm": "0x00000001",
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0x00000001",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x00000000",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C003",
           "inputs": {
             "op": "ADD",
             "rs1": "0x7FFFFFFF",
-            "rs2_or_imm": "0x00000001"
+            "rs2_or_imm": "0x00000001",
+            "alu_a": "0x7FFFFFFF",
+            "alu_b": "0x00000001",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x80000000",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x80000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C004",
           "inputs": {
             "op": "SUB",
             "rs1": "0x00000009",
-            "rs2_or_imm": "0x00000004"
+            "rs2_or_imm": "0x00000004",
+            "alu_a": "0x00000009",
+            "alu_b": "0x00000004",
+            "alu_op": 34
           },
           "expected": {
             "x3": "0x00000005",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000005",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C005",
           "inputs": {
             "op": "SUB",
             "rs1": "0x00000000",
-            "rs2_or_imm": "0x00000001"
+            "rs2_or_imm": "0x00000001",
+            "alu_a": "0x00000000",
+            "alu_b": "0x00000001",
+            "alu_op": 34
           },
           "expected": {
             "x3": "0xFFFFFFFF",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xFFFFFFFF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C006",
           "inputs": {
             "op": "SUB",
             "rs1": "0x80000000",
-            "rs2_or_imm": "0x00000001"
+            "rs2_or_imm": "0x00000001",
+            "alu_a": "0x80000000",
+            "alu_b": "0x00000001",
+            "alu_op": 34
           },
           "expected": {
             "x3": "0x7FFFFFFF",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x7FFFFFFF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C007",
           "inputs": {
             "op": "AND",
             "rs1": "0xA5A5A5A5",
-            "rs2_or_imm": "0x0F0F0F0F"
+            "rs2_or_imm": "0x0F0F0F0F",
+            "alu_a": "0xA5A5A5A5",
+            "alu_b": "0x0F0F0F0F",
+            "alu_op": 36
           },
           "expected": {
             "x3": "0x05050505",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x05050505",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C008",
           "inputs": {
             "op": "OR",
             "rs1": "0xA5A5A5A5",
-            "rs2_or_imm": "0x0F0F0F0F"
+            "rs2_or_imm": "0x0F0F0F0F",
+            "alu_a": "0xA5A5A5A5",
+            "alu_b": "0x0F0F0F0F",
+            "alu_op": 37
           },
           "expected": {
             "x3": "0xAFAFAFAF",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xAFAFAFAF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C009",
           "inputs": {
             "op": "XOR",
             "rs1": "0xA5A5A5A5",
-            "rs2_or_imm": "0x0F0F0F0F"
+            "rs2_or_imm": "0x0F0F0F0F",
+            "alu_a": "0xA5A5A5A5",
+            "alu_b": "0x0F0F0F0F",
+            "alu_op": 38
           },
           "expected": {
             "x3": "0xAAAAAAAA",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xAAAAAAAA",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C010",
           "inputs": {
             "op": "XOR",
             "rs1": "0xFFFFFFFF",
-            "rs2_or_imm": "0xFFFFFFFF"
+            "rs2_or_imm": "0xFFFFFFFF",
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 38
           },
           "expected": {
             "x3": "0x00000000",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C011",
           "inputs": {
             "op": "ADDI",
             "rs1": "0x0000000A",
-            "rs2_or_imm": 7
+            "rs2_or_imm": 7,
+            "alu_a": "0x0000000A",
+            "alu_b": "0x00000007",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x00000011",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000011",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C012",
           "inputs": {
             "op": "ADDI",
             "rs1": "0x00000000",
-            "rs2_or_imm": -2048
+            "rs2_or_imm": -2048,
+            "alu_a": "0x00000000",
+            "alu_b": "0xFFFFF800",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0xFFFFF800",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xFFFFF800",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C013",
           "inputs": {
             "op": "ADDI",
             "rs1": "0xFFFFFFFF",
-            "rs2_or_imm": 1
+            "rs2_or_imm": 1,
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0x00000001",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x00000000",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C014",
           "inputs": {
             "op": "ADDI",
             "rs1": "0x00000000",
-            "rs2_or_imm": 2047
+            "rs2_or_imm": 2047,
+            "alu_a": "0x00000000",
+            "alu_b": "0x000007FF",
+            "alu_op": 32
           },
           "expected": {
             "x3": "0x000007FF",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x000007FF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C015",
           "inputs": {
             "op": "ANDI",
             "rs1": "0x12345678",
-            "rs2_or_imm": -1
+            "rs2_or_imm": -1,
+            "alu_a": "0x12345678",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 36
           },
           "expected": {
             "x3": "0x12345678",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x12345678",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C016",
           "inputs": {
             "op": "ANDI",
             "rs1": "0x12345678",
-            "rs2_or_imm": 15
+            "rs2_or_imm": 15,
+            "alu_a": "0x12345678",
+            "alu_b": "0x0000000F",
+            "alu_op": 36
           },
           "expected": {
             "x3": "0x00000008",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x00000008",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C017",
           "inputs": {
             "op": "ORI",
             "rs1": "0x12345678",
-            "rs2_or_imm": -2048
+            "rs2_or_imm": -2048,
+            "alu_a": "0x12345678",
+            "alu_b": "0xFFFFF800",
+            "alu_op": 37
           },
           "expected": {
             "x3": "0xFFFFFE78",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xFFFFFE78",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C018",
           "inputs": {
             "op": "ORI",
             "rs1": "0x12345678",
-            "rs2_or_imm": 15
+            "rs2_or_imm": 15,
+            "alu_a": "0x12345678",
+            "alu_b": "0x0000000F",
+            "alu_op": 37
           },
           "expected": {
             "x3": "0x1234567F",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x1234567F",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C019",
           "inputs": {
             "op": "XORI",
             "rs1": "0x12345678",
-            "rs2_or_imm": -1
+            "rs2_or_imm": -1,
+            "alu_a": "0x12345678",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 38
           },
           "expected": {
             "x3": "0xEDCBA987",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0xEDCBA987",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-001/C020",
           "inputs": {
             "op": "XORI",
             "rs1": "0x12345678",
-            "rs2_or_imm": 0
+            "rs2_or_imm": 0,
+            "alu_a": "0x12345678",
+            "alu_b": "0x00000000",
+            "alu_op": 38
           },
           "expected": {
             "x3": "0x12345678",
-            "memory_changed": false
+            "memory_changed": false,
+            "alu_result": "0x12345678",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Tabla de operaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -539,599 +669,814 @@
       "source": "isa.md#test-isa-002",
       "case_count": 37,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/alu.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/alu_tb.sv"
+          ],
+          "top": "alu_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-002/C001",
           "inputs": {
             "op": "SLL",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C002",
           "inputs": {
             "op": "SLLI",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C003",
           "inputs": {
             "op": "SRL",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C004",
           "inputs": {
             "op": "SRLI",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C005",
           "inputs": {
             "op": "SRA",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C006",
           "inputs": {
             "op": "SRAI",
             "a": "0x80000001",
-            "amount": 0
+            "amount": 0,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000000",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0x80000001"
+            "x3": "0x80000001",
+            "alu_result": "0x80000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C007",
           "inputs": {
             "op": "SLL",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x00000002"
+            "x3": "0x00000002",
+            "alu_result": "0x00000002",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C008",
           "inputs": {
             "op": "SLLI",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x00000002"
+            "x3": "0x00000002",
+            "alu_result": "0x00000002",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C009",
           "inputs": {
             "op": "SRL",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x40000000"
+            "x3": "0x40000000",
+            "alu_result": "0x40000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C010",
           "inputs": {
             "op": "SRLI",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x40000000"
+            "x3": "0x40000000",
+            "alu_result": "0x40000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C011",
           "inputs": {
             "op": "SRA",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0xC0000000"
+            "x3": "0xC0000000",
+            "alu_result": "0xC0000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C012",
           "inputs": {
             "op": "SRAI",
             "a": "0x80000001",
-            "amount": 1
+            "amount": 1,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000001",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0xC0000000"
+            "x3": "0xC0000000",
+            "alu_result": "0xC0000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C013",
           "inputs": {
             "op": "SLL",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x80000000"
+            "x3": "0x80000000",
+            "alu_result": "0x80000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C014",
           "inputs": {
             "op": "SLLI",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x80000000"
+            "x3": "0x80000000",
+            "alu_result": "0x80000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C015",
           "inputs": {
             "op": "SRL",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x00000001"
+            "x3": "0x00000001",
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C016",
           "inputs": {
             "op": "SRLI",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x00000001"
+            "x3": "0x00000001",
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C017",
           "inputs": {
             "op": "SRA",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0xFFFFFFFF"
+            "x3": "0xFFFFFFFF",
+            "alu_result": "0xFFFFFFFF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C018",
           "inputs": {
             "op": "SRAI",
             "a": "0x80000001",
-            "amount": 31
+            "amount": 31,
+            "alu_a": "0x80000001",
+            "alu_b": "0x0000001F",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0xFFFFFFFF"
+            "x3": "0xFFFFFFFF",
+            "alu_result": "0xFFFFFFFF",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Shifts 0/1/31"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C019",
           "inputs": {
             "op": "SLL",
             "a": "0x80000001",
-            "amount": 33
+            "amount": 33,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000021",
+            "alu_op": 0
           },
           "expected": {
-            "x3": "0x00000002"
+            "x3": "0x00000002",
+            "alu_result": "0x00000002",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Bits altos de rs2"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C020",
           "inputs": {
             "op": "SRL",
             "a": "0x80000001",
-            "amount": 33
+            "amount": 33,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000021",
+            "alu_op": 2
           },
           "expected": {
-            "x3": "0x40000000"
+            "x3": "0x40000000",
+            "alu_result": "0x40000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Bits altos de rs2"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C021",
           "inputs": {
             "op": "SRA",
             "a": "0x80000001",
-            "amount": 33
+            "amount": 33,
+            "alu_a": "0x80000001",
+            "alu_b": "0x00000021",
+            "alu_op": 3
           },
           "expected": {
-            "x3": "0xC0000000"
+            "x3": "0xC0000000",
+            "alu_result": "0xC0000000",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Bits altos de rs2"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C022",
           "inputs": {
             "op": "SLT",
             "a": "0xFFFFFFFF",
-            "b": "0x00000001"
+            "b": "0x00000001",
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0x00000001",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C023",
           "inputs": {
             "op": "SLTU",
             "a": "0xFFFFFFFF",
-            "b": "0x00000001"
+            "b": "0x00000001",
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0x00000001",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C024",
           "inputs": {
             "op": "SLT",
             "a": "0x80000000",
-            "b": "0x7FFFFFFF"
+            "b": "0x7FFFFFFF",
+            "alu_a": "0x80000000",
+            "alu_b": "0x7FFFFFFF",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C025",
           "inputs": {
             "op": "SLTU",
             "a": "0x80000000",
-            "b": "0x7FFFFFFF"
+            "b": "0x7FFFFFFF",
+            "alu_a": "0x80000000",
+            "alu_b": "0x7FFFFFFF",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C026",
           "inputs": {
             "op": "SLT",
             "a": "0x00000007",
-            "b": "0x00000007"
+            "b": "0x00000007",
+            "alu_a": "0x00000007",
+            "alu_b": "0x00000007",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C027",
           "inputs": {
             "op": "SLTU",
             "a": "0x00000007",
-            "b": "0x00000007"
+            "b": "0x00000007",
+            "alu_a": "0x00000007",
+            "alu_b": "0x00000007",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C028",
           "inputs": {
             "op": "SLT",
             "a": "0x00000001",
-            "b": "0x00000002"
+            "b": "0x00000002",
+            "alu_a": "0x00000001",
+            "alu_b": "0x00000002",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C029",
           "inputs": {
             "op": "SLTU",
             "a": "0x00000001",
-            "b": "0x00000002"
+            "b": "0x00000002",
+            "alu_a": "0x00000001",
+            "alu_b": "0x00000002",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C030",
           "inputs": {
             "op": "SLTI",
             "a": "0x00000000",
-            "b": -1
+            "b": -1,
+            "alu_a": "0x00000000",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C031",
           "inputs": {
             "op": "SLTIU",
             "a": "0x00000000",
-            "b": -1
+            "b": -1,
+            "alu_a": "0x00000000",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C032",
           "inputs": {
             "op": "SLTI",
             "a": "0xFFFFFFFF",
-            "b": -1
+            "b": -1,
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C033",
           "inputs": {
             "op": "SLTIU",
             "a": "0xFFFFFFFF",
-            "b": -1
+            "b": -1,
+            "alu_a": "0xFFFFFFFF",
+            "alu_b": "0xFFFFFFFF",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C034",
           "inputs": {
             "op": "SLTI",
             "a": "0xFFFFF800",
-            "b": -2048
+            "b": -2048,
+            "alu_a": "0xFFFFF800",
+            "alu_b": "0xFFFFF800",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C035",
           "inputs": {
             "op": "SLTIU",
             "a": "0xFFFFF800",
-            "b": -2048
+            "b": -2048,
+            "alu_a": "0xFFFFF800",
+            "alu_b": "0xFFFFF800",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 0
+            "x3": 0,
+            "alu_result": "0x00000000",
+            "zero": 1
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C036",
           "inputs": {
             "op": "SLTI",
             "a": "0x000007FE",
-            "b": 2047
+            "b": 2047,
+            "alu_a": "0x000007FE",
+            "alu_b": "0x000007FF",
+            "alu_op": 42
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-002/C037",
           "inputs": {
             "op": "SLTIU",
             "a": "0x000007FE",
-            "b": 2047
+            "b": 2047,
+            "alu_a": "0x000007FE",
+            "alu_b": "0x000007FF",
+            "alu_op": 43
           },
           "expected": {
-            "x3": 1
+            "x3": 1,
+            "alu_result": "0x00000001",
+            "zero": 0
           },
           "kind": "vector",
           "origins": [
             "Comparaciones"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -1575,6 +1920,38 @@
           "parameters": {
             "DECODE_ONLY": "1'b1"
           }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-ISA-004/C372",
+            "TEST-ISA-004/C409"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_fault_check_tb.sv"
+          ],
+          "top": "ex_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          },
+          "case_ids": [
+            "TEST-ISA-004/C409"
+          ]
         }
       ],
       "cases": [
@@ -22568,6 +22945,11 @@
           "inputs": {
             "word": "0x0000000B",
             "ifid_valid": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 5,
+              "zero": 0
+            },
             "id_context": {
               "reset": 0,
               "prepare_init": 0,
@@ -22606,7 +22988,10 @@
             "idex_valid": 1,
             "id_fault_pc": 0,
             "id_fault_cause": null,
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 1
           },
           "kind": "vector",
           "origins": [
@@ -24612,6 +24997,19 @@
           "inputs": {
             "word": "0x00000000",
             "ifid_valid": 0,
+            "ex_fault_check": {
+              "valid": 0,
+              "mem_op": 3,
+              "rs1_effective": "0xFFFFFFFF",
+              "immediate": "0x00000000",
+              "redirect_requested": 0,
+              "redirect_target": "0x00000000"
+            },
+            "flow_control": {
+              "valid": 0,
+              "flow_op": 4,
+              "zero": 0
+            },
             "id_context": {
               "reset": 0,
               "prepare_init": 0,
@@ -24649,7 +25047,11 @@
             "idex_valid": 0,
             "id_fault_pc": 0,
             "id_fault_cause": null,
-            "load_use_stall": 0
+            "load_use_stall": 0,
+            "target_sel": 1,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0,
+            "ex_fault_candidate": 0
           },
           "kind": "vector",
           "origins": [
@@ -24664,7 +25066,37 @@
       "source": "isa.md#test-isa-005",
       "case_count": 8,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-005/C001",
@@ -24673,19 +25105,27 @@
             "x1": 5,
             "x2": 5,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": true,
             "x3": 0,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C002",
@@ -24694,19 +25134,27 @@
             "x1": 5,
             "x2": 6,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": false,
             "x3": 1,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C003",
@@ -24715,19 +25163,27 @@
             "x1": 5,
             "x2": 5,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": false,
             "x3": 1,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C004",
@@ -24736,19 +25192,27 @@
             "x1": 5,
             "x2": 6,
             "pc": 0,
-            "offset": 8
+            "offset": 8,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": true,
             "x3": 0,
             "x4": 2,
-            "x5": 0
+            "x5": 0,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Programa hacia adelante"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C005",
@@ -24756,18 +25220,26 @@
             "op": "BEQ",
             "pc": 8,
             "offset": -8,
-            "equal": true
+            "equal": true,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": true,
             "target": 0,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C006",
@@ -24775,17 +25247,25 @@
             "op": "BEQ",
             "pc": 0,
             "offset": 2,
-            "equal": false
+            "equal": false,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 1,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": false,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Desalineado no utilizado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C007",
@@ -24793,18 +25273,26 @@
             "op": "BNE",
             "pc": 8,
             "offset": -8,
-            "equal": false
+            "equal": false,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 0
+            }
           },
           "expected": {
             "taken": true,
             "target": 0,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-005/C008",
@@ -24812,17 +25300,25 @@
             "op": "BNE",
             "pc": 0,
             "offset": 2,
-            "equal": true
+            "equal": true,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 2,
+              "zero": 1
+            }
           },
           "expected": {
             "taken": false,
-            "fault": false
+            "fault": false,
+            "target_sel": 0,
+            "redirect_requested": 0,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Desalineado no utilizado"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -24831,7 +25327,37 @@
       "source": "isa.md#test-isa-006",
       "case_count": 10,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/flow_control.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/flow_control_tb.sv"
+          ],
+          "top": "flow_control_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-006/C001",
@@ -24839,18 +25365,26 @@
             "op": "JAL",
             "pc": 0,
             "offset": 8,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JAL"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C002",
@@ -24858,18 +25392,26 @@
             "op": "JAL",
             "pc": 0,
             "offset": 8,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JAL"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C003",
@@ -24878,18 +25420,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C004",
@@ -24898,18 +25448,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C005",
@@ -24918,18 +25476,26 @@
             "pc": 0,
             "x1": 9,
             "imm": 0,
-            "rd": 1
+            "rd": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C006",
@@ -24938,18 +25504,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 5
+            "rd": 5,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C007",
@@ -24958,18 +25532,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 0
+            "rd": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": false
+            "writes_rd": false,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C008",
@@ -24978,18 +25560,26 @@
             "pc": 0,
             "x1": 12,
             "imm": -4,
-            "rd": 1
+            "rd": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 8,
             "link": 4,
-            "writes_rd": true
+            "writes_rd": true,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "program",
           "origins": [
             "JALR"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C009",
@@ -24997,17 +25587,25 @@
             "op": "JAL",
             "pc": 8,
             "offset": -8,
-            "x1": 0
+            "x1": 0,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 3,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 0,
-            "link": 12
+            "link": 12,
+            "target_sel": 0,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target local hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-006/C010",
@@ -25015,17 +25613,25 @@
             "op": "JALR",
             "pc": 8,
             "offset": -1,
-            "x1": 1
+            "x1": 1,
+            "flow_control": {
+              "valid": 1,
+              "flow_op": 4,
+              "zero": 0
+            }
           },
           "expected": {
             "target": 0,
-            "link": 12
+            "link": 12,
+            "target_sel": 1,
+            "redirect_requested": 1,
+            "ex_halt_candidate": 0
           },
           "kind": "vector",
           "origins": [
             "Target local hacia atrás"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -25443,7 +26049,40 @@
       "reuse_groups": [
         "TEST-ISA-005"
       ],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_fault_check_tb.sv"
+          ],
+          "top": "ex_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd2048"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-008/C001",
@@ -25457,13 +26096,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C002",
@@ -25477,13 +26117,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C003",
@@ -25497,13 +26138,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C004",
@@ -25517,13 +26159,14 @@
             "cause": 0,
             "fault_pc": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "program",
           "origins": [
             "Target propio desalineado"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C005",
@@ -25536,13 +26179,14 @@
             "redirect": true,
             "link": 4,
             "cause": 1,
-            "fault_pc": 16
+            "fault_pc": 16,
+            "ex_fault_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Target alineado fuera de imagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C006",
@@ -25555,13 +26199,14 @@
             "redirect": true,
             "link": 4,
             "cause": 1,
-            "fault_pc": 16
+            "fault_pc": 16,
+            "ex_fault_candidate": 0
           },
           "kind": "program",
           "origins": [
             "Target alineado fuera de imagen"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-008/C007",
@@ -25573,13 +26218,14 @@
           "expected": {
             "cause": 0,
             "redirect": false,
-            "link_write": false
+            "link_write": false,
+            "ex_fault_candidate": 1
           },
           "kind": "vector",
           "origins": [
             "Dos condiciones en misma operación"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -35732,7 +36378,89 @@
       "source": "pipeline.md#test-pipe-003",
       "case_count": 29,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/forwarding_unit_tb.sv"
+          ],
+          "top": "forwarding_unit_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-003/C001",
+            "TEST-PIPE-003/C002",
+            "TEST-PIPE-003/C003",
+            "TEST-PIPE-003/C004",
+            "TEST-PIPE-003/C005",
+            "TEST-PIPE-003/C006",
+            "TEST-PIPE-003/C007",
+            "TEST-PIPE-003/C008",
+            "TEST-PIPE-003/C009",
+            "TEST-PIPE-003/C010",
+            "TEST-PIPE-003/C011",
+            "TEST-PIPE-003/C012",
+            "TEST-PIPE-003/C013",
+            "TEST-PIPE-003/C014",
+            "TEST-PIPE-003/C015",
+            "TEST-PIPE-003/C016",
+            "TEST-PIPE-003/C017",
+            "TEST-PIPE-003/C018",
+            "TEST-PIPE-003/C019",
+            "TEST-PIPE-003/C020",
+            "TEST-PIPE-003/C021",
+            "TEST-PIPE-003/C022",
+            "TEST-PIPE-003/C023",
+            "TEST-PIPE-003/C024"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          },
+          "case_ids": [
+            "TEST-PIPE-003/C001",
+            "TEST-PIPE-003/C002",
+            "TEST-PIPE-003/C003",
+            "TEST-PIPE-003/C004",
+            "TEST-PIPE-003/C005",
+            "TEST-PIPE-003/C006",
+            "TEST-PIPE-003/C007",
+            "TEST-PIPE-003/C008",
+            "TEST-PIPE-003/C009",
+            "TEST-PIPE-003/C010",
+            "TEST-PIPE-003/C011",
+            "TEST-PIPE-003/C012",
+            "TEST-PIPE-003/C013",
+            "TEST-PIPE-003/C014",
+            "TEST-PIPE-003/C015",
+            "TEST-PIPE-003/C016",
+            "TEST-PIPE-003/C017",
+            "TEST-PIPE-003/C018",
+            "TEST-PIPE-003/C019",
+            "TEST-PIPE-003/C020",
+            "TEST-PIPE-003/C021",
+            "TEST-PIPE-003/C022",
+            "TEST-PIPE-003/C023",
+            "TEST-PIPE-003/C024"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-003/C001",
@@ -35743,17 +36471,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C002",
@@ -35764,17 +36503,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 1,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C003",
@@ -35785,17 +36535,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C004",
@@ -35806,17 +36567,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 1,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C005",
@@ -35828,17 +36600,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 0,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C006",
@@ -35850,17 +36633,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 0,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 2,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C007",
@@ -35872,17 +36666,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002001B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 0,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C008",
@@ -35894,17 +36699,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 0,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C009",
@@ -35916,17 +36732,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 0
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C010",
@@ -35938,17 +36765,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x002001B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 0,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C011",
@@ -35958,17 +36796,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x000081B7",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C012",
@@ -35978,17 +36827,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x002081B3",
+            "idex_valid": 0,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C013",
@@ -35999,17 +36859,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C014",
@@ -36020,17 +36891,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 0,
+            "forward_b_sel": 1
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C015",
@@ -36041,17 +36923,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C016",
@@ -36062,17 +36955,28 @@
             "source_used": 1,
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "01",
-            "effective_value": 7
+            "effective_value": 7,
+            "forward_a_sel": 0,
+            "forward_b_sel": 1
           },
           "kind": "vector",
           "origins": [
             "Selección disponible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C017",
@@ -36084,17 +36988,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 0,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C018",
@@ -36106,17 +37021,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "MEMWB elegible coincidente"
+            "other_producer": "MEMWB elegible coincidente",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 0,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "10",
-            "effective_value": 5
+            "effective_value": 5,
+            "forward_a_sel": 0,
+            "forward_b_sel": 2
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C019",
@@ -36128,17 +37054,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x000101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 0,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 31,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C020",
@@ -36150,17 +37087,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 0,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C021",
@@ -36172,17 +37120,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 3,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 0
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C022",
@@ -36194,17 +37153,28 @@
             "ex_value": 7,
             "wb_value": 5,
             "base": 0,
-            "other_producer": "sin match"
+            "other_producer": "sin match",
+            "word": "0x000101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 31,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 0,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 0
+            "effective_value": 0,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Productor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C023",
@@ -36214,17 +37184,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x00110193",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C024",
@@ -36234,17 +37215,28 @@
             "producer_matches": "ambos",
             "base": 3,
             "ex_value": 7,
-            "wb_value": 5
+            "wb_value": 5,
+            "word": "0x001101B3",
+            "idex_valid": 0,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 0,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
-            "effective_value": 3
+            "effective_value": 3,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "vector",
           "origins": [
             "Consumidor no elegible"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-003/C025",
@@ -36338,7 +37330,45 @@
       "source": "pipeline.md#test-pipe-004",
       "case_count": 3,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/forwarding_unit_tb.sv"
+          ],
+          "top": "forwarding_unit_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-004/C001",
+            "TEST-PIPE-004/C002"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "2048"
+          },
+          "case_ids": [
+            "TEST-PIPE-004/C001",
+            "TEST-PIPE-004/C002"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-PIPE-004/C001",
@@ -36348,18 +37378,29 @@
             "ex_result": "0x00000100",
             "older_MEMWB_rd": 1,
             "wb_value": 5,
-            "base": 3
+            "base": 3,
+            "word": "0x002081B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 3,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
             "forward_ex": false,
-            "forward_wb": false
+            "forward_wb": false,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "artificial",
           "origins": [
             "Load bloquea fallback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-004/C002",
@@ -36369,18 +37410,29 @@
             "ex_result": "0x00000100",
             "older_MEMWB_rd": 1,
             "wb_value": 5,
-            "base": 3
+            "base": 3,
+            "word": "0x001101B3",
+            "idex_valid": 1,
+            "exmem_valid": 1,
+            "exmem_rd": 1,
+            "exmem_reg_write": 1,
+            "exmem_mem_op": 3,
+            "memwb_valid": 1,
+            "memwb_rd": 1,
+            "memwb_reg_write": 1
           },
           "expected": {
             "selector": "00",
             "forward_ex": false,
-            "forward_wb": false
+            "forward_wb": false,
+            "forward_a_sel": 0,
+            "forward_b_sel": 0
           },
           "kind": "artificial",
           "origins": [
             "Load bloquea fallback"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-PIPE-004/C003",
@@ -50485,7 +51537,44 @@
       "source": "memory.md#test-mem-003",
       "case_count": 78,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_fault_check_tb.sv"
+          ],
+          "top": "ex_fault_check_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/forwarding_unit.sv",
+            "rtl/alu.sv",
+            "rtl/flow_control.sv",
+            "rtl/ex_fault_check.sv",
+            "rtl/ex_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_stage_tb.sv"
+          ],
+          "top": "ex_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-003/C001",
@@ -50505,7 +51594,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C002",
@@ -50525,7 +51614,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C003",
@@ -50545,7 +51634,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C004",
@@ -50565,7 +51654,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C005",
@@ -50585,7 +51674,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C006",
@@ -50605,7 +51694,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C007",
@@ -50625,7 +51714,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C008",
@@ -50645,7 +51734,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C009",
@@ -50665,7 +51754,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C010",
@@ -50685,7 +51774,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C011",
@@ -50705,7 +51794,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C012",
@@ -50725,7 +51814,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C013",
@@ -50745,7 +51834,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C014",
@@ -50765,7 +51854,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C015",
@@ -50785,7 +51874,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C016",
@@ -50805,7 +51894,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C017",
@@ -50825,7 +51914,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C018",
@@ -50845,7 +51934,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C019",
@@ -50865,7 +51954,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C020",
@@ -50885,7 +51974,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C021",
@@ -50905,7 +51994,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C022",
@@ -50925,7 +52014,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C023",
@@ -50945,7 +52034,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C024",
@@ -50965,7 +52054,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C025",
@@ -50985,7 +52074,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C026",
@@ -51005,7 +52094,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C027",
@@ -51025,7 +52114,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C028",
@@ -51045,7 +52134,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C029",
@@ -51065,7 +52154,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C030",
@@ -51085,7 +52174,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C031",
@@ -51105,7 +52194,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C032",
@@ -51125,7 +52214,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C033",
@@ -51145,7 +52234,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C034",
@@ -51165,7 +52254,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C035",
@@ -51185,7 +52274,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C036",
@@ -51205,7 +52294,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C037",
@@ -51225,7 +52314,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C038",
@@ -51245,7 +52334,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C039",
@@ -51265,7 +52354,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C040",
@@ -51285,7 +52374,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C041",
@@ -51305,7 +52394,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C042",
@@ -51325,7 +52414,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C043",
@@ -51345,7 +52434,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C044",
@@ -51365,7 +52454,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C045",
@@ -51385,7 +52474,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C046",
@@ -51405,7 +52494,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C047",
@@ -51425,7 +52514,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C048",
@@ -51445,7 +52534,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C049",
@@ -51465,7 +52554,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C050",
@@ -51485,7 +52574,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C051",
@@ -51505,7 +52594,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C052",
@@ -51525,7 +52614,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C053",
@@ -51545,7 +52634,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C054",
@@ -51565,7 +52654,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C055",
@@ -51585,7 +52674,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C056",
@@ -51605,7 +52694,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C057",
@@ -51625,7 +52714,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C058",
@@ -51645,7 +52734,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C059",
@@ -51665,7 +52754,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C060",
@@ -51685,7 +52774,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C061",
@@ -51705,7 +52794,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C062",
@@ -51725,7 +52814,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C063",
@@ -51745,7 +52834,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C064",
@@ -51765,7 +52854,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C065",
@@ -51785,7 +52874,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C066",
@@ -51805,7 +52894,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C067",
@@ -51825,7 +52914,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C068",
@@ -51845,7 +52934,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C069",
@@ -51865,7 +52954,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C070",
@@ -51885,7 +52974,7 @@
           "origins": [
             "Regiones ylímites"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C071",
@@ -51905,7 +52994,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C072",
@@ -51925,7 +53014,7 @@
           "origins": [
             "Formación modular word"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C073",
@@ -51945,7 +53034,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C074",
@@ -51965,7 +53054,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C075",
@@ -51985,7 +53074,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C076",
@@ -52005,7 +53094,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C077",
@@ -52025,7 +53114,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-003/C078",
@@ -52045,7 +53134,7 @@
           "origins": [
             "Aritmética máxima aislada"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -72820,6 +73909,50 @@
       "case_count": 15,
       "reuse_groups": [],
       "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_fault_check_tb.sv"
+          ],
+          "top": "ex_fault_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C009"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/ex_fault_check.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/ex_fault_check_tb.sv"
+          ],
+          "top": "ex_fault_check_config_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "diagnostic"
+          },
+          "case_ids": [
+            "TEST-PLAT-001/C010",
+            "TEST-PLAT-001/C011",
+            "TEST-PLAT-001/C012",
+            "TEST-PLAT-001/C013"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
+        },
         {
           "sources": [
             "rtl/system_pkg.sv",

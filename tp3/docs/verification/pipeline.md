@@ -211,7 +211,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding/EX y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding y proyección de operandos de `ex_stage` implementadas; integración EX completa y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -244,6 +244,12 @@ Se ejecutan ocho selecciones locales: solo coincide EX/MEM, solo coincide MEM/WB
 Los 12 casos de productor no elegible cambian una de tres guardas para cada productor y cada fuente. Se utiliza una configuración que evidencia cada guarda, sin repetirla contra una ausencia de coincidencia.
 
 Los cuatro casos de consumidor no elegible combinan una fuente no utilizada o una entrada inválida con A y B. Los cinco casos restantes son los programas A a E: ALU, fuentes mixtas, store, branch y JALR.
+
+### Ejecución disponible
+
+Los casos `C001` a `C024` se ejecutan en `forwarding_unit_tb` y en una proyección de `ex_stage`. La segunda ejecución comprueba que el valor seleccionado por cada productor llegue al resultado ALU y, para la fuente B, al dato de store. Los casos `C025` a `C029` quedan pendientes hasta la integración EX/CPU con programas.
+
+La prueba unitaria acredita los selectores y la proyección de `ex_stage` comprueba el dato efectivo en los caminos combinacionales. No acredita todavía la ejecución de los programas ni la integración con el pipeline registrado.
 
 ### Programas concretos
 
@@ -329,7 +335,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding e integración hazard.
 - **Tipo de estímulo:** artificial local y legal CPU.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding y proyección local de `ex_stage` implementadas; integración hazard y CPU pendientes.
 
 **Requisitos:** [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -356,6 +362,10 @@ La prueba tiene 3 casos canónicos. El [manifiesto](cases.json) enumera los IDs 
 Los dos vectores locales comprueban las fuentes A y B cuando el productor reciente es un load. El tercer caso ejecuta el programa legal indicado a continuación.
 
 La prueba local y la ejecución legal verifican obligaciones diferentes; la inyección no autoriza agregar un interlock de EX para hacerla ejecutable.
+
+### Ejecución disponible
+
+Los casos artificiales `C001` y `C002` se ejecutan en `forwarding_unit_tb` y en la proyección de `ex_stage`. Se comprueba que el load reciente deje cada operando en su valor base y que ese sea el valor que alcanza el camino de ejecución. El caso legal `C003` queda pendiente de la integración del pipeline.
 
 ### Programas concretos
 
