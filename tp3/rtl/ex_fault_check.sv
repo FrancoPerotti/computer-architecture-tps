@@ -1,5 +1,5 @@
 // Valida en EX las regiones de DMEM y los targets que solicitan redirect.
-module ex_flow_check #(
+module ex_fault_check #(
     parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 64'd0
 ) (
     input  logic                     valid,

@@ -79,9 +79,9 @@ module ex_stage #(
 
   assign redirect_target = target_sel ? jalr_target : pc_relative_target;
 
-  ex_flow_check #(
+  ex_fault_check #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
-  ) ex_flow_check (
+  ) ex_fault_check (
       .valid             (idex.valid),
       .mem_op            (idex.mem_op),
       .rs1_effective     (rs1_effective),

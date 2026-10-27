@@ -576,7 +576,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal, con condición local indicada.
-- **Estado:** unidad `ex_flow_check` y proyección de targets/faults en `ex_stage` implementadas; CPU pendiente.
+- **Estado:** unidad `ex_fault_check` y proyección de targets/faults en `ex_stage` implementadas; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -584,7 +584,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-Las siete variantes se ejecutan en `ex_flow_check_tb` y `ex_stage_tb`. La proyección comprueba el target que forma EX, la solicitud de redirect y el candidato/causa local. Los targets alineados fuera de imagen no producen candidato en EX; su eventual causa pertenece al fetch posterior. La confirmación y los efectos arquitectónicos permanecen pendientes de CPU.
+Las siete variantes se ejecutan en `ex_fault_check_tb` y `ex_stage_tb`. La proyección comprueba el target que forma EX, la solicitud de redirect y el candidato/causa local. Los targets alineados fuera de imagen no producen candidato en EX; su eventual causa pertenece al fetch posterior. La confirmación y los efectos arquitectónicos permanecen pendientes de CPU.
 
 ### Qué comprueba y por qué
 

@@ -208,7 +208,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -687,7 +687,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -1939,11 +1939,11 @@
         {
           "sources": [
             "rtl/system_pkg.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "tb/common/tp3_case_data.sv",
-            "tb/ex_flow_check_tb.sv"
+            "tb/ex_fault_check_tb.sv"
           ],
-          "top": "ex_flow_check_tb",
+          "top": "ex_fault_check_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "parameters": {
@@ -24997,7 +24997,7 @@
           "inputs": {
             "word": "0x00000000",
             "ifid_valid": 0,
-            "ex_flow_check": {
+            "ex_fault_check": {
               "valid": 0,
               "mem_op": 3,
               "rs1_effective": "0xFFFFFFFF",
@@ -25084,7 +25084,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -25345,7 +25345,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -26053,11 +26053,11 @@
         {
           "sources": [
             "rtl/system_pkg.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "tb/common/tp3_case_data.sv",
-            "tb/ex_flow_check_tb.sv"
+            "tb/ex_fault_check_tb.sv"
           ],
-          "top": "ex_flow_check_tb",
+          "top": "ex_fault_check_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "parameters": {
@@ -26070,7 +26070,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -36008,7 +36008,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -36938,7 +36938,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -45415,11 +45415,11 @@
         {
           "sources": [
             "rtl/system_pkg.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "tb/common/tp3_case_data.sv",
-            "tb/ex_flow_check_tb.sv"
+            "tb/ex_fault_check_tb.sv"
           ],
-          "top": "ex_flow_check_tb",
+          "top": "ex_fault_check_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "parameters": {
@@ -45434,7 +45434,7 @@
             "rtl/forwarding_unit.sv",
             "rtl/alu.sv",
             "rtl/flow_control.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "rtl/ex_stage.sv",
             "tb/common/tp3_case_data.sv",
             "tb/ex_stage_tb.sv"
@@ -67786,11 +67786,11 @@
         {
           "sources": [
             "rtl/system_pkg.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "tb/common/tp3_case_data.sv",
-            "tb/ex_flow_check_tb.sv"
+            "tb/ex_fault_check_tb.sv"
           ],
-          "top": "ex_flow_check_config_tb",
+          "top": "ex_fault_check_config_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "expected_rejection": {
@@ -67804,11 +67804,11 @@
         {
           "sources": [
             "rtl/system_pkg.sv",
-            "rtl/ex_flow_check.sv",
+            "rtl/ex_fault_check.sv",
             "tb/common/tp3_case_data.sv",
-            "tb/ex_flow_check_tb.sv"
+            "tb/ex_fault_check_tb.sv"
           ],
-          "top": "ex_flow_check_config_tb",
+          "top": "ex_fault_check_config_tb",
           "level": "Unidad",
           "timeout_seconds": 5,
           "expected_rejection": {

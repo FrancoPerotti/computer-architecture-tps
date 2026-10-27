@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 // Comprueba faults de datos y targets sin confirmar eventos ni acceder a memoria.
-module ex_flow_check_tb #(
+module ex_fault_check_tb #(
     parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 64'd0
 );
   import system_pkg::*;
@@ -16,7 +16,7 @@ module ex_flow_check_tb #(
   logic         ex_fault_candidate;
   fault_cause_t ex_fault_cause;
 
-  ex_flow_check #(
+  ex_fault_check #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) dut (
       .valid             (valid),
@@ -101,19 +101,19 @@ module ex_flow_check_tb #(
   endtask
 
   task automatic load_explicit_fixture;
-    valid              = 1'(get_unsigned("/inputs/ex_flow_check/valid", 1));
-    mem_op             = mem_op_t'(get_unsigned("/inputs/ex_flow_check/mem_op", 15));
-    rs1_effective      = get_word("/inputs/ex_flow_check/rs1_effective");
-    immediate          = get_word("/inputs/ex_flow_check/immediate");
-    redirect_requested = 1'(get_unsigned("/inputs/ex_flow_check/redirect_requested", 1));
-    redirect_target    = get_word("/inputs/ex_flow_check/redirect_target");
+    valid              = 1'(get_unsigned("/inputs/ex_fault_check/valid", 1));
+    mem_op             = mem_op_t'(get_unsigned("/inputs/ex_fault_check/mem_op", 15));
+    rs1_effective      = get_word("/inputs/ex_fault_check/rs1_effective");
+    immediate          = get_word("/inputs/ex_fault_check/immediate");
+    redirect_requested = 1'(get_unsigned("/inputs/ex_fault_check/redirect_requested", 1));
+    redirect_target    = get_word("/inputs/ex_fault_check/redirect_target");
   endtask
 
   initial begin
     logic expected_candidate;
     data.load();
     valid = 1'b1;
-    if (data.has_path("/inputs/ex_flow_check")) begin
+    if (data.has_path("/inputs/ex_fault_check")) begin
       load_explicit_fixture();
       expected_candidate = 1'(get_unsigned("/expected/ex_fault_candidate", 1));
     end else if (data.has_path("/inputs/operation")) begin
@@ -147,7 +147,7 @@ module ex_flow_check_tb #(
 endmodule
 
 // El DUT debe rechazar una capacidad inválida antes de evaluar accesos.
-module ex_flow_check_config_tb #(
+module ex_fault_check_config_tb #(
     parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 64'd0
 );
   import system_pkg::*;
@@ -156,7 +156,7 @@ module ex_flow_check_config_tb #(
   fault_cause_t unused_cause;
   string        case_id;
 
-  ex_flow_check #(
+  ex_fault_check #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) dut (
       .valid             (1'b0),
