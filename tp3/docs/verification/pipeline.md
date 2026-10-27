@@ -1,7 +1,7 @@
 # TP3 — Pipeline y dependencias
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** diseño vigente; ejecución parcial de unidades.
 
 ## Propósito y alcance
 
@@ -26,6 +26,11 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
 - [TEST-PIPE-012 — Composición de ID y payload combinacional](#test-pipe-012)
 - [TEST-PIPE-013 — Composición de IF y actualización del PC](#test-pipe-013)
+- [TEST-PIPE-014 — Registro IF/ID aislado](#test-pipe-014)
+- [TEST-PIPE-015 — Registro ID/EX aislado](#test-pipe-015)
+- [TEST-PIPE-016 — Registro EX/MEM aislado](#test-pipe-016)
+- [TEST-PIPE-017 — Registro MEM/WB aislado](#test-pipe-017)
+- [Acreditación local de #7 y pendientes de integración](#acreditacion-local-7)
 
 <a id="test-pipe-001"></a>
 
@@ -33,11 +38,22 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 - **Nivel:** CPU y revisión de estructura.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** esquema de tipos y llenado local implementados; CPU pendiente.
 
 **Requisitos:** [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-002](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [cpu_pipeline](../architecture/cpu/cpu_pipeline.md); [system_composition](../architecture/system_composition.md).
+
+### Alcance ejecutable actual
+
+`system_pkg_latches_tb` comprueba el esquema de tipos al nivel Unidad.
+`pipeline_composition_tb`, con `FILL_FIXTURE=1`, observa cinco flancos de
+llenado al nivel Integración local. Inyecta el prefijo de cinco ADDI y los
+payloads de ID/EX/MEM definidos en `inputs.composition`, sin ejecutar Decoder,
+ALU, memorias ni RF. Contrasta los PCs e instrucciones de cada frontera con
+`expected.fill_trace`; la primera entrada elegible de WB aparece en el quinto
+flanco. El programa completo, la escritura real de x1…x6, el halt y la
+estructura de CPU conservan su verificación pendiente en #9.
 
 ### Qué comprueba y por qué
 
@@ -556,11 +572,60 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad hazard y registros interetapa.
 - **Tipo de estímulo:** entradas locales controladas; drain-load-use artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** bancos de árbitro y composición local implementados; CPU pendiente.
 
 **Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [control_and_hazards](../architecture/cpu/control_and_hazards.md); [cpu_pipeline](../architecture/cpu/cpu_pipeline.md).
+
+### Ejecución del árbitro y alcance pendiente
+
+`pipeline_hazard_control_tb` ejecuta los 21 IDs al nivel Unidad. Compara las
+ocho salidas con `selected_action` o `winner` del JSON y comprueba `$onehot0`;
+con ciclo efectivo exige exactamente una acción, y sin ciclo exige cero.
+La máscara esperada traduce el nombre del catálogo, sin recalcular prioridades
+a partir de las entradas ni consultar al DUT.
+
+| Casos       | Alcance del banco del árbitro                                       |
+| ----------- | ------------------------------------------------------------------- |
+| C001–C016   | Ocho acciones habilitadas y ocho testigos sin ciclo efectivo.       |
+| C017        | Ausencia de acción con `cpu_cycle_fire=0` en el fixture terminal.   |
+| C018–C021   | Cuatro pares adyacentes de prioridad con sus ganadores publicados.  |
+
+El manifiesto registra tres configuraciones del mismo banco: vectores ordinarios,
+fixture terminal y pares de prioridad. Sus parámetros `TERMINAL_FIXTURE` y
+`PRIORITY_FIXTURE` seleccionan la forma de leer las entradas y expectativas
+existentes; no agregan variantes ni cambian estímulos o resultados. En C017,
+FINISHED y los cuatro latches inválidos son datos del fixture; el árbitro solo
+recibe la autorización de ciclo suministrada. No se instancia ni acredita la FSM.
+C013/C014 conservan su carácter artificial, sin atribuir alcanzabilidad legal
+a drain-load-use.
+
+`pipeline_composition_tb` agrega una ejecución por ID al nivel Integración
+local. Instancia los cinco módulos RTL, convierte acciones en controles locales
+dentro del banco y utiliza un PC de fixture. C001–C016 y C018–C021 tienen dos
+observaciones explícitas: preload actual/futuro y el intercambio de ambos.
+Así IF/ID comienza una vez con instrucción y otra con candidato de fetch.
+C017 tiene una observación con los cuatro registros inválidos. Estos pasos
+pertenecen al mismo caso; no agregan variantes ni un producto cartesiano.
+
+El fixture actual procede de `latch_fixture`; el alternativo y las órdenes de
+preload/captura están concretados en `inputs.composition`. El preload utiliza
+los puertos de captura, sin `force` ni escrituras jerárquicas. Los campos de
+identidad y control conectados entre registros proceden del estado registrado
+anterior; los demás resultados de etapas ausentes se inyectan en su frontera.
+Una referencia separada usa las copias preflanco y los modos del JSON para
+comprobar productores, `valid_next`, `pipeline_empty_next` y el estado posterior.
+Las capturas y retenciones comparan payloads completos; las invalidaciones
+comparan solo sus flags, sin imponer valores a datos inactivos.
+
+Las expectativas originales se conservan. `expected.composition` concreta la
+acción y los cinco modos, incluida la tabla de actualización para pares de
+prioridad y terminal vacío. El banco acredita esta composición local, con
+fixtures artificiales de payload; no declara una sesión alcanzable de CPU.
+La aplicación real de controles en `processor_top`, la FSM, los metadatos de
+fault y los commits reales de RF/DMEM siguen pendientes en #9. Los resultados
+por ID, banco y nivel se conservan en los reportes del ejecutor común.
 
 ### Qué comprueba y por qué
 
@@ -639,11 +704,28 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración hazard.
 - **Tipo de estímulo:** legal; combinación EX/ID local indicada.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** proyección local C006–C009 implementada; programas y efectos reales pendientes.
 
 **Requisitos:** [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [faults_and_termination](../architecture/session/faults_and_termination.md); [control_and_hazards](../architecture/cpu/control_and_hazards.md).
+
+### Alcance ejecutable actual
+
+`pipeline_composition_tb`, con `FRONTIER_FIXTURE=1`, ejecuta C006–C009 al nivel
+Integración local. Los candidatos EX/ID y los payloads concretos se inyectan
+por las interfaces del árbitro y los registros. Comprueba el ganador EX, la
+supresión de `act_id_fault`, el descarte de IF/ID e ID/EX y el avance o
+invalidación de EX/MEM según la frontera. C008 precarga un candidato de fetch;
+los otros casos precargan una instrucción en IF/ID.
+
+Un observador en el flanco verifica que el dato de store 3 y el valor WB 11
+anteriores siguen disponibles con sus flags de elegibilidad, aunque los
+registros se actualicen después. La expectativa `older_commits` se proyecta
+localmente sobre esa disponibilidad; no se escribe RF ni DMEM y no se acredita
+el commit real o su cuenta. La captura de metadatos y los programas C001–C005
+siguen pendientes de CPU. Los fixtures de candidatos y payloads no acreditan
+alcanzabilidad de esas coincidencias en una sesión legal.
 
 ### Qué comprueba y por qué
 
@@ -699,11 +781,28 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad MEM/WB y CPU.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** frontera MEM/WB C001–C007 implementada; selección MEM, control WB y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo).
 
 **Contratos:** [stage_mem](../architecture/cpu/stage_mem.md); [stage_wb](../architecture/cpu/stage_wb.md); [architectural_invariants](../architecture/architectural_invariants.md).
+
+### Alcance ejecutable actual
+
+`mem_wb_boundary_tb` ejecuta C001–C007 al nivel Unidad. C001/C002 inyectan
+el valor preseleccionado en la entrada de `mem_wb_register` y contrastan su
+almacenamiento con `memwb_next_wb_value`. La selección real entre EX y DMEM
+sigue pendiente del mux de MEM; este fixture no la implementa como RTL del producto.
+
+C003–C007 precargan el valor 7 y presentan la entrada futura 99. Un observador
+WB de testbench muestrea los campos registrados anteriores y su elegibilidad
+`cpu_cycle_fire && valid && reg_write && rd!=0`; compara esa proyección con
+`write_fire` y `written_value`. Comprueba captura o retención de los seis
+campos y detecta el consumo accidental del valor nuevo en el mismo flanco.
+Las guardas del control WB real, la escritura en RF y su cuenta no se acreditan
+con ese observador. Los programas C008–C011 y sus HOLD UART siguen pendientes
+de CPU/sistema. Las expectativas canónicas conservan su significado completo;
+la configuración de Unidad registra solo esta contribución de MEM/WB.
 
 ### Qué comprueba y por qué
 
@@ -825,6 +924,17 @@ Las cuatro variantes restantes utilizan `lw x1,0(x0); add x2,x1,x1`, `word0=7`, 
 | C020 | Ciclo 4                                                               | LOAD aceptado desde STEPPING        | LOADING, tamaño cero, contador 4; candidato registrado retenido, sin ciclo ni commits |
 
 En C019/C020 se completa después una nueva imagen de cuatro bytes que contiene halt y su preparación. La inicialización de preparación limpia PC/RF/latches/contador; completar PREPARING_READY publica la imagen en READY, contador cero y DMEM sin posiciones utilizadas. No se exige borrar el candidato físicamente en el flanco de aceptación de LOAD: queda abandonado con la sesión y se limpia antes de que la nueva imagen pueda ejecutar. Los intercambios usan el contrato existente; no se crea una orden para instalar latches.
+
+En C017–C020, `expected.fault_metadata_valid=false` expresa que el estado global
+no valida un fault vigente; no representa un puerto ni un registro adicional.
+`fault_confirm` y `fault_capture_fire` deben permanecer en cero. Según el
+[contrato de metadatos](../architecture/session/faults_and_termination.md#metadata-persistente-del-fault),
+RESET no exige borrar `fault_cause` ni `fault_pc`: C017/C018 no comparan sus
+valores inactivos con cero. En C019/C020, `fault_metadata_retained=true` exige
+conservar ambos valores preflanco al aceptar LOAD, sin imponer un valor inicial.
+La preparación posterior tampoco exige borrarlos ni vuelve vigente un fault.
+El código de causa cero identifica un fault de alineación de instrucción;
+no significa ausencia de fault.
 
 ### Traza de referencia y procedimiento
 
@@ -1004,3 +1114,292 @@ Las secuencias de 50 flancos conservan un único ID canónico. Los PCs inválido
 4. Exigir igualdad estricta en las aserciones SystemVerilog, sin aceptar X/Z. Reutilizar además los 22 casos locales de TEST-MEM-004 y los rechazos de TEST-PLAT-001/C009–C013.
 
 El banco presenta acciones ya seleccionadas; no calcula arbitraje ni autoriza destinos de EX. Tampoco implementa el registro IF/ID: su captura del payload preflanco, retención e invalidación requieren la integración correspondiente. La aprobación de estas proyecciones no acredita transporte hasta ID, ejecución de CPU, confirmación de halt/fault, síntesis ni validación física.
+
+<a id="test-pipe-014"></a>
+
+## TEST-PIPE-014 — Registro IF/ID aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a IF/ID.
+
+**Contratos:** [registro IF/ID](../architecture/cpu/cpu_pipeline.md#registro-ifid),
+[interfaz](../interfaces.md#bloque-1-9) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `if_id_register_tb` instancia únicamente `if_id_register` y el lector de
+datos externo. El manifiesto define las secuencias, payloads, repeticiones y
+expectativas de los diez casos. Cada paso cambia las entradas en el flanco
+descendente, comprueba que el registro todavía conserve el estado anterior y
+contrasta `valid_next` antes del flanco ascendente. Después del flanco compara
+el estado registrado mediante igualdad estricta para detectar X/Z.
+
+| Caso   | Comprobación                                                     |
+| ------ | ---------------------------------------------------------------- |
+| C001   | Captura y reemplazo de los cinco campos, incluida entrada vacía. |
+| C002   | Captura de candidatos con causas 0 y 1; regreso a instrucción.   |
+| C003   | Hold explícito de instrucción durante tres clocks.               |
+| C004   | Hold explícito de candidato durante tres clocks.                 |
+| C005   | Retención implícita de instrucción sin controles activos.        |
+| C006   | Retención implícita de candidato sin controles activos.          |
+| C007   | Invalidación de instrucción, repetición y nueva captura.         |
+| C008   | Invalidación de candidato, repetición y nueva captura.           |
+| C009   | RESET síncrono sobre captura, hold e invalidación.               |
+| C010   | Inicialización de sesión sobre captura, hold e invalidación.     |
+
+Las capturas comparan los cinco campos contra los valores esperados del JSON.
+La expectativa `retained` compara los 69 bits con su copia preflanco;
+`invalidated` compara solo `valid=0` y `fetch_fault_valid=0`, sin imponer valores
+a los datos inactivos. Todos los casos comprueban el ancho de 69 bits y el reset
+inicial. Las secuencias usan indicadores de instrucción y candidato excluyentes.
+Captura, hold e invalidación son controles locales excluyentes; RESET e
+inicialización de sesión pueden coincidir con ellos y deben prevalecer.
+
+Este grupo acredita exclusivamente el registro. Los controles se inyectan desde
+el banco; no se agrega lógica de IF, arbitraje ni control local al producto.
+No acredita el programa, solapamiento ni estructura completa de
+`TEST-PIPE-001/C001`, las acciones y prioridades de `TEST-PIPE-007/C001–C021`,
+las fronteras en CPU de `TEST-PIPE-008/C001–C009`, los commits de
+`TEST-PIPE-009/C001–C011` ni las secuencias de CPU/control de
+`TEST-PIPE-010/C001–C020`. Sus estados y configuraciones conservan el alcance
+previo; siguen pendientes los niveles de integración y CPU correspondientes.
+El HOLD sin ciclo y la retención al aceptar LOAD se representan aquí únicamente
+por ausencia de controles. Su generación real y la preparación posterior
+requieren integración con el control de sesión.
+
+<a id="test-pipe-015"></a>
+
+## TEST-PIPE-015 — Registro ID/EX aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a ID/EX.
+
+**Contratos:** [registro ID/EX](../architecture/cpu/cpu_pipeline.md#registro-idex),
+[interfaz](../interfaces.md#bloque-2-10) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `id_ex_register_tb` instancia únicamente el registro y el lector de datos
+externo. Los siete casos conservan estímulos y expectativas en el manifiesto.
+Cada paso aplica controles y datos en el flanco descendente, comprueba estabilidad
+del estado registrado y contrasta `valid_next` antes del flanco ascendente.
+Después del flanco compara el estado con igualdad estricta para detectar X/Z.
+
+| Caso   | Comprobación                                                                     |
+| ------ | -------------------------------------------------------------------------------- |
+| C001   | Captura preflanco y reemplazo de los quince campos con patrones complementarios. |
+| C002   | Captura de entrada inválida con controles residuales y de payload cero.          |
+| C003   | Retención de entrada válida durante tres clocks sin acción.                      |
+| C004   | Retención de entrada inválida durante tres clocks sin acción.                    |
+| C005   | Bubble repetida, retención posterior y nueva captura.                            |
+| C006   | RESET síncrono sobre captura, retención y bubble.                                |
+| C007   | Inicialización de sesión sobre captura, retención y bubble.                      |
+
+Las capturas comparan los quince campos contra valores del JSON, incluidos ambos
+operandos base, el inmediato y los seis controles. Los patrones de C001 alternan
+todos los bits del payload salvo `valid`, cuya captura en cero se comprueba en
+C002. Son vectores del registro: sus campos se ejercitan independientemente y
+no se interpretan como instrucciones decodificadas ejecutables. C002 conserva
+controles no nulos bajo `valid=0`, sin convertirlos en trabajo activo.
+
+La expectativa `retained` compara los 193 bits con su copia preflanco;
+`invalidated` exige solo `valid=0`, sin imponer valores a los datos y controles
+inactivos. Todos los casos comprueban el ancho de 193 bits y el reset inicial.
+Captura y bubble son controles locales excluyentes; RESET e inicialización de
+sesión pueden coincidir con ellos y deben prevalecer. Sin controles se retiene.
+
+Este grupo acredita exclusivamente el registro, con los datos y controles
+inyectados desde el banco. El bypass WB→ID y su selección de operandos siguen
+pendientes de integración. El módulo conserva los valores entregados en sus
+puertos, sin incorporar Decoder, bypass, arbitraje ni controles de `processor_top`.
+`TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
+su programa y estructura completa siguen pendientes. También siguen pendientes
+la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
+`TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
+secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
+estados y configuraciones no cambian. La generación real de controles para
+HOLD, LOAD, drain y fronteras de instrucciones corresponde a la integración.
+
+<a id="test-pipe-016"></a>
+
+## TEST-PIPE-016 — Registro EX/MEM aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a EX/MEM.
+
+**Contratos:** [registro EX/MEM](../architecture/cpu/cpu_pipeline.md#registro-exmem),
+[interfaz](../interfaces.md#bloque-3-15) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `ex_mem_register_tb` instancia únicamente el registro y el lector de
+datos externo. Los siete casos conservan estímulos y expectativas en el
+manifiesto. Cada paso aplica controles y datos en el flanco descendente,
+comprueba estabilidad del registro y contrasta `valid_next` antes del flanco
+ascendente. Después del flanco compara el estado con igualdad estricta para
+detectar X/Z.
+
+| Caso   | Comprobación                                                                   |
+| ------ | ------------------------------------------------------------------------------ |
+| C001   | Captura preflanco de los ocho campos, con resultado y dato de store distintos. |
+| C002   | Captura de entrada inválida con controles residuales y de payload cero.        |
+| C003   | Retención de entrada válida durante tres clocks sin acción.                    |
+| C004   | Retención de entrada inválida durante tres clocks sin acción.                  |
+| C005   | Invalidación repetida, retención posterior y nueva captura.                    |
+| C006   | RESET síncrono sobre captura, retención e invalidación.                        |
+| C007   | Inicialización de sesión sobre captura, retención e invalidación.              |
+
+Las capturas comparan los ocho campos contra el JSON. C001 utiliza patrones
+complementarios en los bits del payload salvo `valid`; `ex_result` y
+`store_data` tienen valores diferentes para detectar sustituciones entre
+resultado/dirección y dato de store. C002 comprueba captura de `valid=0`,
+incluidos controles no nulos, y luego reemplazo por payload cero. Son vectores
+del registro; sus campos se ejercitan independientemente y no representan
+instrucciones ejecutables ni accesos autorizados a memoria.
+
+La expectativa `retained` compara los 139 bits con su copia preflanco;
+`invalidated` exige solo `valid=0`, sin fijar valores para datos y controles
+inactivos. Todos los casos comprueban el ancho de 139 bits y el reset inicial.
+Captura e invalidación son controles locales excluyentes; RESET e inicialización
+de sesión pueden coincidir con ellos y deben prevalecer. Sin controles se retiene.
+
+Este grupo acredita exclusivamente el registro. El dato de store y el resultado
+EX se inyectan por sus puertos; su selección real mediante forwarding y Result
+MUX, la autorización de DMEM y las fronteras de instrucciones siguen pendientes
+de integración. `TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos
+al nivel Unidad; su programa y estructura completa siguen pendientes. También
+siguen pendientes la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
+`TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
+secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
+estados y configuraciones no cambian. No se atribuye al registro aislado la
+continuidad de trabajo anterior ante redirect/fault ID ni la generación real
+de controles de HOLD, LOAD, halt/fault EX y drain.
+
+<a id="test-pipe-017"></a>
+
+## TEST-PIPE-017 — Registro MEM/WB aislado
+
+- **Nivel:** Unidad.
+- **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
+- **Estado:** banco implementado; los resultados se registran por separado.
+
+**Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline) y
+[REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), limitados a MEM/WB.
+
+**Contratos:** [registro MEM/WB](../architecture/cpu/cpu_pipeline.md#registro-memwb),
+[interfaz](../interfaces.md#bloque-4-7) y
+[reset funcional síncrono](../architecture/platform/reset_integration.md#efectos-del-reset-sobre-el-sistema).
+
+El banco `mem_wb_register_tb` instancia únicamente el registro y el lector de
+datos externo. Los seis casos conservan estímulos y expectativas en el
+manifiesto. Cada paso aplica controles y datos en el flanco descendente,
+comprueba estabilidad del registro y contrasta `valid_next` antes del flanco
+ascendente. Después del flanco compara el estado con igualdad estricta para
+detectar X/Z.
+
+| Caso   | Comprobación                                                                  |
+| ------ | ----------------------------------------------------------------------------- |
+| C001   | Captura preflanco y reemplazo de los seis campos, incluido wb_value completo. |
+| C002   | Captura de entrada inválida con reg_write residual y de payload cero.         |
+| C003   | Retención de entrada válida durante tres clocks sin captura.                  |
+| C004   | Retención de entrada inválida durante tres clocks sin captura.                |
+| C005   | RESET síncrono sobre captura y retención, seguido de nueva captura.           |
+| C006   | Inicialización de sesión sobre captura y retención, seguida de nueva captura. |
+
+Las capturas comparan los seis campos contra el JSON. C001 utiliza patrones
+complementarios en los bits del payload salvo `valid`; `wb_value` alterna sus
+32 bits y difiere de PC e instrucción. La segunda captura conserva `valid=1`
+con `rd=0` y `reg_write=0`: el registro transporta esos campos sin decidir la
+autorización del writeback. C002 comprueba captura de `valid=0`, incluido
+`reg_write=1` inactivo, y luego reemplazo por payload cero. Son vectores del
+registro; no representan instrucciones ejecutables ni commits de RF.
+
+La expectativa `retained` compara los 103 bits con su copia preflanco;
+`invalidated` exige solo `valid=0`, sin fijar valores para datos y controles
+inactivos. Todos los casos comprueban el ancho de 103 bits y el reset inicial.
+RESET e inicialización de sesión prevalecen sobre captura. Sin controles se
+retiene; la interfaz no agrega bubble ni invalidación local.
+
+Este grupo acredita exclusivamente el registro. La selección del valor final en
+MEM, las guardas de writeback, el consumo de la entrada anterior en un commit
+simultáneo y su cuenta por instancia siguen pendientes de integración.
+`TEST-PIPE-001/C001` conserva su ejecución de esquema de tipos al nivel Unidad;
+su programa y estructura completa siguen pendientes. También siguen pendientes
+la integración real en CPU de `TEST-PIPE-007/C001–C021`, las fronteras de
+`TEST-PIPE-008/C001–C009`, los commits de `TEST-PIPE-009/C001–C011` y las
+secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
+estados y configuraciones no cambian. La captura de MEM para las ocho acciones,
+incluida una frontera EX joven o el último avance de drain, requiere los
+controles locales y la integración correspondientes.
+
+<a id="acreditacion-local-7"></a>
+
+## Acreditación local de #7 y pendientes de integración
+
+La rama incorpora las entregas revisadas de #3 y #4 desde la base `13d934b`.
+Se conservan los IDs publicados por #4 para detector load-use e integraciones
+IF/ID (`TEST-PIPE-011–013`). Las cuatro suites de registros de #7 pasan a
+`TEST-PIPE-014–017` para evitar las colisiones del catálogo; sus casos, entradas,
+expectativas y niveles se conservan.
+
+| Registro | ID anterior en la rama de #7 | ID tras integrar la base |
+| -------- | --------------------------- | ------------------------ |
+| IF/ID | TEST-PIPE-011 | TEST-PIPE-014 |
+| ID/EX | TEST-PIPE-012 | TEST-PIPE-015 |
+| EX/MEM | TEST-PIPE-013 | TEST-PIPE-016 |
+| MEM/WB | TEST-PIPE-014 | TEST-PIPE-017 |
+
+El alcance implementado conserva los 34 campos y 504 bits de los cuatro
+registros y el árbitro combinacional sin estado. Los controles de composición,
+el PC y los observadores son exclusivos de testbench. No se modifica
+`processor_top`, la FSM ni la lógica de las etapas ausentes. Registrar una
+proyección con `status=implemented` significa que existe ese banco y nivel;
+no aprueba los niveles ni las partes pendientes de la especificación completa.
+
+| IDs                     | Contribución ejecutable en #7                                                             | Pendiente de integración/aceptación                                                  |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| TEST-PIPE-001/C001      | Unidad: tipos; integración local: cinco flancos de llenado e identidad.                   | Programa completo, RF, halt y estructura real de CPU.                                |
+| TEST-PIPE-007/C001–C016 | Unidad e integración local: ocho acciones, ocho HOLD, payloads y próximos valid.          | Generación y aplicación real de controles en processor_top.                          |
+| TEST-PIPE-007/C017      | Unidad e integración local: ausencia de acción, PC/registros retenidos y vacío próximo.   | Alcanzar FINISHED con FSM real y ausencia de commits reales.                         |
+| TEST-PIPE-007/C018–C021 | Unidad e integración local: prioridades y actualizaciones de sus fronteras.               | Secuencia de CPU y metadatos persistentes; los pares son fixtures artificiales.      |
+| TEST-PIPE-008/C001–C005 | Sin ejecución CPU; variantes conservadas pendientes.                                      | Branch/wrong-path, loop y orden halt/ilegal en CPU.                                  |
+| TEST-PIPE-008/C006–C009 | Integración local: EX/ID, descarte y disponibilidad/elegibilidad preflanco de anteriores. | Escrituras reales de store/WB, su cuenta y metadatos de fault.                       |
+| TEST-PIPE-009/C001–C002 | Unidad: registro del valor preseleccionado de MEM.                                        | Selección RTL del mux de MEM y revisión de decisión única.                           |
+| TEST-PIPE-009/C003–C007 | Unidad: consumo preflanco 7 frente a 99, retención y observador de elegibilidad.          | Control WB real, escritura y cuenta de commits en RF.                                |
+| TEST-PIPE-009/C008–C011 | Sin ejecución CPU; variantes conservadas pendientes.                                      | Programas, RUN/STEP, HOLD UART y commits únicos.                                     |
+| TEST-PIPE-010/C001–C020 | Sin ejecución CPU/control; las veinte variantes permanecen pendientes.                    | Secuencias legales de fetch/load-use, fronteras, RESET y LOAD con etapas/FSM reales. |
+
+La integración real de controles y CPU corresponde a #9. La aceptación física
+requiere sus niveles de sistema/placa; ninguna de estas corridas acredita FPGA.
+C013/C014 de TEST-PIPE-007 conservan la rama artificial drain-load-use, sin
+cambiar la FSM para hacerla alcanzable. TEST-PIPE-010 conserva veinte variantes,
+aunque la tabla original de la issue indicaba una; no se sustituyen sus
+secuencias de CPU por candidatos forzados.
+
+Los grupos TEST-PIPE-014–017 conservan sus pruebas individuales de registros.
+I09 se observa aquí como retención local; I11–I13 como selección/exclusión del
+árbitro. La contribución a descarte, antigüedad y disponibilidad de anteriores
+se observa en los registros; los efectos arquitectónicos de I01, I02, I04,
+I06, I07, I16, I17 e I18 mantienen su comprobación global pendiente.
+
+La selección usa `--test` repetible y `--all`, sin añadir `--issue`. Con la
+imagen exacta de `docker/image.ref`, desde el entorno de desarrollo:
+
+~~~bash
+make test-rtl TESTS="TEST-PIPE-001 TEST-PIPE-007 TEST-PIPE-008 TEST-PIPE-009 TEST-PIPE-010"
+make check
+~~~
+
+La primera selección informa también los IDs pendientes; no los convierte en
+aprobaciones. `build/reports/results.json` registra cada ejecución con banco y
+nivel, y `build/reports/simulation/` conserva los diagnósticos. Los reportes son
+evidencia generada de la corrida y no forman parte de los vectores canónicos.

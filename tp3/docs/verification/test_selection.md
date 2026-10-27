@@ -45,6 +45,18 @@ bash scripts/run_tests.sh \
 Estas ejecuciones comprueban la API al nivel `Unidad`, con el
 [alcance descrito en configuración común](../architecture/common_configuration.md#comprobación-rtl-del-paquete).
 
+Para comprobar el árbitro combinacional:
+
+~~~bash
+bash scripts/run_tests.sh --test TEST-PIPE-007
+~~~
+
+El grupo ejecuta el árbitro al nivel `Unidad` y su composición con los cuatro
+registros al nivel `Integración local`. La [especificación](pipeline.md#test-pipe-007)
+delimita el PC de fixture y las comprobaciones pendientes en processor_top/CPU.
+Los grupos TEST-PIPE-001, 008 y 009 agregan las proyecciones locales que figuran
+en la [tabla de acreditación](pipeline.md#acreditacion-local-7).
+
 Para listar un grupo completo:
 
 ~~~bash
