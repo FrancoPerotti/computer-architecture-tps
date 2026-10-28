@@ -172,7 +172,7 @@ La integración final conecta el assembler real con la aplicación real y el sis
 
 Cada entrega incluye su implementación y las comprobaciones que permiten revisarla. Las pruebas locales se desarrollan junto a los módulos, y las pruebas de integración se agregan cuando existen las partes reales que deben interactuar. La IA puede ayudar a generar código y variantes; el responsable conserva la revisión de contratos, comportamiento temporal y expectativas independientes de la implementación.
 
-El [plan de verificación](verification/verification_plan.md) y sus catálogos determinan los casos, niveles y reglas de comparación. El [manifiesto](verification/cases.json) contiene **1357 variantes canónicas distribuidas en 56 grupos**, más **151 reejecuciones físicas** de casos seleccionados. Deben realizarse todas las comprobaciones estipuladas en sus niveles correspondientes. Ejecutar una variante representativa no aprueba un grupo que tiene otras pendientes.
+El [plan de verificación](verification/verification_plan.md) y sus catálogos determinan los casos, niveles y reglas de comparación. El [manifiesto](verification/cases.json) enumera las variantes canónicas por grupo y las reejecuciones físicas de casos seleccionados; el [plan de verificación](verification/verification_plan.md#selección-finita-de-casos) mantiene el recuento vigente. Deben realizarse todas las comprobaciones estipuladas en sus niveles correspondientes. Ejecutar una variante representativa no aprueba un grupo que tiene otras pendientes.
 
 La distribución siguiente indica dónde se consolida la evidencia. Los responsables de las entregas anteriores ya aportan sus comprobaciones unitarias y locales; la integración añade los resultados que solo se pueden observar con módulos reales.
 

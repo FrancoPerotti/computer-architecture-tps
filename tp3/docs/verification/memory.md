@@ -19,6 +19,8 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 - [TEST-MEM-006 — Ownership y colisiones internas](#test-mem-006)
 - [TEST-MEM-007 — Loader por cuarto byte y aborto](#test-mem-007)
 - [TEST-MEM-008 — Publicación de imagen y reemplazo más corto](#test-mem-008)
+- [TEST-MEM-009 — Extremos aritméticos de fetch](#test-mem-009)
+- [TEST-MEM-010 — IMEM, índices físicos y conservación](#test-mem-010)
 
 <a id="test-mem-001"></a>
 
@@ -164,13 +166,21 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-MEM-003 — Región completa, alineación y aritmética ensanchada
 
-- **Nivel:** unidad fetch/ex_flow_check y CPU.
+- **Nivel:** unidad fetch/ex_fault_check, proyección EX y CPU.
 - **Tipo de estímulo:** legal salvo entradas locales de PC.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad `ex_fault_check` y proyección de dirección/fault en `ex_stage` implementadas; memoria física y CPU pendientes.
 
 **Requisitos:** [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-021](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [memory_architecture](../architecture/memory/memory_architecture.md); [faults_and_termination](../architecture/session/faults_and_termination.md); [dmem_access](../architecture/memory/dmem_access.md).
+
+### Ejecución disponible
+
+`ex_fault_check_tb` ejecuta las 78 variantes en nivel `Unidad`. La capacidad se recibe durante la elaboración desde `inputs.C`; el banco traduce la operación y el tamaño del catálogo al `mem_op` correspondiente y presenta la dirección efectiva o el par base/inmediato indicado. Compara el candidato con la presencia de `expected.cause` y, cuando existe, compara también la causa.
+
+`ex_stage_tb` proyecta las mismas variantes a través de la ALU, el mux de resultado y `EX Fault Check`; compara la dirección efectiva transportada a `EX/MEM` y el candidato/causa de fault.
+
+Esta ejecución acredita formación modular de dirección, alineación, rango completo en 33 bits y prioridad local de causa. No accede a una DMEM física ni acredita la inhibición de writeback/store, metadatos, `fault_pc` o confirmación del fault en CPU.
 
 ### Qué comprueba y por qué
 
@@ -230,11 +240,19 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad IMEM/IF y CPU.
 - **Tipo de estímulo:** legal y PCs locales artificiales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** validación unitaria de fetch e integración local de IF implementadas; Loader y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
 **Contratos:** [stage_if](../architecture/cpu/stage_if.md); [memory_architecture](../architecture/memory/memory_architecture.md).
+
+### Ejecución disponible
+
+El banco `fetch_fault_check_tb` ejecuta `C001`–`C022` en nivel `Unidad`. La capacidad se recibe como parámetro de elaboración desde `inputs.C`; el PC, el tamaño y `image_valid` son entradas explícitas del JSON. El banco compara el candidato y, cuando está activo, su causa. `expected.instruction_valid` también sirve de referencia para la integración de IF; no se interpreta como un puerto adicional del comprobador.
+
+La proyección unitaria no lee IMEM. Una segunda ejecución de los mismos 22 casos utiliza `if_stage_tb` en nivel `Integración local`: carga palabras completas por el puerto de escritura de IMEM, establece el PC mediante redirect y compara `debug_pc` y los cinco campos del payload antes y después del flanco. Las entradas y expectativas adicionales están en `inputs.if_initial_words`, `inputs.if_steps` y `expected.if_steps`. Un fetch inválido entrega instrucción cero y conserva el PC y la causa correspondientes.
+
+Los redirects a PCs inválidos son inyecciones locales; no acreditan aceptación de esos destinos por EX. La carga de palabras completas tampoco acredita reconstrucción little-endian por Loader. El registro IF/ID real y el transporte a ID siguen pendientes, al igual que el programa de CPU `C023`. Los extremos aritméticos adicionales se ejecutan en TEST-MEM-009, sin modificar los 23 casos originales de este grupo.
 
 ### Qué comprueba y por qué
 
@@ -290,11 +308,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad memorias y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** temporización unitaria de IMEM implementada; DMEM y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas).
 
 **Contratos:** [memory_architecture](../architecture/memory/memory_architecture.md); [stage_mem](../architecture/cpu/stage_mem.md).
+
+### Ejecución disponible
+
+`instruction_memory_tb` ejecuta `C001` y `C002` en nivel `Unidad`, con capacidades explícitas de 1024 y 1000 bytes, respectivamente. El primer caso cambia la dirección con el reloj detenido. El segundo presenta una escritura y compara la salida antes y después del flanco, además de comprobar que una escritura deshabilitada conserve el valor anterior.
+
+Las palabras iniciales, las transacciones y las expectativas están en `inputs.initial_words`, `inputs.imem_steps` y `expected.imem_steps`. Las dos variantes acreditan IMEM; la temporización de DMEM y el programa `C003` siguen pendientes. Observar la salida durante una escritura local no representa un fetch activo de CPU concurrente con Loader.
 
 ### Qué comprueba y por qué
 
@@ -650,3 +674,105 @@ y [su interfaz](../interfaces.md#bloque-8-1). El formato secuencial no represent
 origen configurable ni huecos; no se agregaron campos wire. No hay un paquete
 inválido representativo que simular. El caso permanece `pending` en el runner,
 porque este acredita simulaciones, y su revisión queda registrada aquí.
+
+<a id="test-mem-009"></a>
+
+## TEST-MEM-009 — Extremos aritméticos de fetch
+
+- **Nivel:** unidad `fetch_fault_check`.
+- **Tipo de estímulo:** extremos aritméticos y estados locales artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), con alcance sobre la validación combinacional del fetch.
+
+**Contratos:** [validación de fetch](../architecture/memory/memory_architecture.md#validación-de-fetch); [interfaz 1.6](../interfaces.md#bloque-1-6); [tipos de configuración](../architecture/common_configuration.md#tipos-y-aritmética-de-configuración).
+
+### Qué comprueba y por qué
+
+La suma `PC + 4` debe conservar 33 bits antes de compararse con la capacidad y la imagen. El límite `2^32` es una capacidad válida: la última instrucción alineada puede terminar exactamente allí. En una memoria pequeña, esa misma dirección no puede reaparecer como cero por truncamiento.
+
+El puerto de tamaño utiliza `capacity_inclusive_width(C)`, derivado localmente y sin un parámetro de ancho independiente. La capacidad entra como entero unsigned de 64 bits, se valida y después se representa con 33 bits. El banco comprueba el candidato y la causa mediante aserciones SystemVerilog; `null` indica que la causa no se consume para un fetch válido.
+
+### Variantes cerradas
+
+Los 18 casos canónicos `TEST-MEM-009/C001`–`C018` tienen entradas y expectativas explícitas en [cases.json](cases.json). La tabla no define combinaciones adicionales.
+
+| Caso | C      | PC         | Tamaño de imagen | image_valid | Resultado              |
+| ---- | ------ | ---------- | ---------------- | ----------- | ---------------------- |
+| C001 | 4      | 0          | 4                | 1           | Válido                 |
+| C002 | 4      | 4          | 4                | 1           | Access, causa 1        |
+| C003 | 4      | 1          | 4                | 1           | Desalineación, causa 0 |
+| C004 | 4      | 0          | 0                | 0           | Access, causa 1        |
+| C005 | 1024   | 0xFFFFFFFC | 1024             | 1           | Access, causa 1        |
+| C006 | 1024   | 0xFFFFFFFF | 1024             | 1           | Desalineación, causa 0 |
+| C007 | 2^32   | 0xFFFFFFFC | 2^32             | 1           | Válido                 |
+| C008 | 2^32   | 0xFFFFFFF8 | 0xFFFFFFFC       | 1           | Válido                 |
+| C009 | 2^32   | 0xFFFFFFFC | 0xFFFFFFFC       | 1           | Access, causa 1        |
+| C010 | 2^32   | 0          | 2^32             | 1           | Válido                 |
+| C011 | 2^32   | 0xFFFFFFFF | 2^32             | 1           | Desalineación, causa 0 |
+| C012 | 2^32-4 | 0xFFFFFFF8 | 2^32-4           | 1           | Válido                 |
+| C013 | 2^32-4 | 0xFFFFFFFC | 2^32-4           | 1           | Access, causa 1        |
+| C014 | 1024   | 0          | 8                | 0           | Access, causa 1        |
+| C015 | 1024   | 0          | 0                | 1           | Access, causa 1        |
+| C016 | 1024   | 4          | 7                | 1           | Access, causa 1        |
+| C017 | 1024   | 0          | 3                | 1           | Access, causa 1        |
+| C018 | 1000   | 1000       | 1004             | 1           | Access, causa 1        |
+
+C014–C018 son entradas artificiales del bloque: banderas contradictorias con el tamaño, imágenes parciales o un tamaño superior a la capacidad física. Sirven para comprobar las guardas por separado; no representan estados publicados por Loader. En la integración normal, `image_valid` se deriva del tamaño confirmado.
+
+### Procedimiento y criterio de aprobación
+
+1. Elaborar el comprobador con `IMEM_CAPACITY_BYTES` tomado de `inputs.C`.
+2. Presentar PC, tamaño e `image_valid` sin reducir el PC a un índice de memoria.
+3. Esperar la estabilización combinacional y comparar candidato y causa con el catálogo.
+
+Los 18 casos deben pasar junto con la proyección unitaria de TEST-MEM-004. Las configuraciones inválidas se comprueban mediante las ejecuciones adicionales de TEST-PLAT-001/C009–C013. El banco solo elabora señales y aritmética; no reserva arrays de tamaño `2^32`. La aprobación no acredita lectura de IMEM, transporte por IF/ID, confirmación de faults, síntesis ni placa.
+
+<a id="test-mem-010"></a>
+
+## TEST-MEM-010 — IMEM, índices físicos y conservación
+
+- **Nivel:** unidad `instruction_memory`.
+- **Tipo de estímulo:** transacciones locales, índices inválidos y colisiones artificiales.
+- **Estado:** banco unitario implementado.
+
+**Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), con alcance parcial sobre IMEM.
+
+**Contratos:** [organización de IMEM](../architecture/memory/memory_architecture.md#organización-y-fetch); [temporización](../architecture/memory/memory_architecture.md#temporización-de-las-memorias); [interfaz 1.5](../interfaces.md#bloque-1-5); [escritura de Loader](../architecture/session/loader.md#escritura-de-imem).
+
+### Qué comprueba y por qué
+
+El banco escribe palabras completas por la interfaz que recibirá Loader y consulta la salida combinacional mediante direcciones de byte. El módulo deriva el ancho del índice de escritura y la profundidad desde `IMEM_CAPACITY_BYTES`; el caso de cuatro bytes conserva un índice de al menos un bit. Ningún caso inicializa el array mediante accesos jerárquicos o una limpieza global.
+
+La lectura valida alineación y región física en 33 bits antes de reducir la dirección al índice. Una dirección físicamente inválida entrega cero en el bus sin consultar el array. Ese valor es una política local de salida: no representa una instrucción aceptada, una causa de fault ni una validación de la imagen. La pertenencia a la imagen confirmada corresponde a `fetch_fault_check`.
+
+La escritura exige `imem_write_enable`, índice dentro de las palabras existentes y reset inactivo. El enable llega de Loader con la autorización de fase ya resuelta; la unidad no agrega puertos de ownership. Reset bloquea la actualización y conserva los datos físicos.
+
+### Variantes cerradas
+
+Los nueve casos canónicos `TEST-MEM-010/C001`–`C009` se enumeran en [cases.json](cases.json). Cada paso fija reset, dirección, índice, palabra, enable y presencia o ausencia de un flanco. Las expectativas incluyen lecturas antes y después del paso y palabras finales de control.
+
+| Caso | Capacidad | Comprobación                                                                |
+| ---- | --------- | --------------------------------------------------------------------------- |
+| C001 | 4         | Única palabra, escritura válida, índice 1 inválido y direcciones inválidas  |
+| C002 | 1024      | Primera palabra y última palabra 255, sin alias entre ellas                 |
+| C003 | 1000      | Última palabra 249 válida; escrituras en 250 y 255 descartadas              |
+| C004 | 1024      | Desalineación y direcciones fuera de capacidad o con bits altos activos     |
+| C005 | 1000      | Desalineación, huecos del índice y direcciones altas fuera de capacidad     |
+| C006 | 1024      | Reset frente a escritura en palabra cero; datos anteriores conservados      |
+| C007 | 1000      | Reset frente a escritura en la última palabra; datos anteriores conservados |
+| C008 | 1024      | Enable inactivo conserva primera y última palabra pese al dato presentado   |
+| C009 | 1000      | Enable inactivo conserva primera y última palabra pese al dato presentado   |
+
+Los índices o direcciones inválidos y las escrituras forzadas durante reset son estímulos artificiales de la interfaz local. No se presentan como transferencias generadas por un Loader legal. Las palabras incluyen `0x00A585B3`, `0x0000000B`, `0x12345678` y `0x89ABCDEF`; el banco comprueba sus 32 bits sin invertir bytes.
+
+### Procedimiento y criterio de aprobación
+
+1. Elaborar el módulo con la capacidad explícita de cada caso y cargar `inputs.initial_words` por su puerto funcional.
+2. Aplicar cada transacción de `inputs.imem_steps` con el clock bajo. Comparar la lectura con `expected.imem_steps.before_edge` antes de un posible flanco.
+3. Generar un flanco solo cuando lo indique el JSON y comparar `after_edge`. Los pasos sin flanco comprueban la respuesta combinacional a cambios de dirección.
+4. Deshabilitar escritura y reset y leer las direcciones de `expected.words_after` sin nuevos flancos, para verificar datos conservados y escrituras descartadas.
+
+Los nueve casos deben pasar junto con las dos proyecciones IMEM de TEST-MEM-005. Los rechazos de capacidad se comprueban en TEST-PLAT-001/C009–C013 con `instruction_memory_config_tb`, sin elaborar el array para capacidades inválidas.
+
+Esta evidencia no incluye el ensamblado little-endian desde bytes, el ownership global, la publicación de imagen, la integración de IF ni la ejecución de CPU. La salida se observa durante la carga local sin representar un fetch activo. La síntesis, el mapeo de memoria y el timing permanecen pendientes de validación física.

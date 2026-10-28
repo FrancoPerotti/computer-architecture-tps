@@ -57,6 +57,18 @@ module tp3_case_data #(
     end
   endfunction
 
+  // Permite que un banco distinga variantes con campos opcionales sin acceder al lector interno.
+  function automatic bit has_path(input string path);
+    integer index;
+    begin
+      if (!loaded) $fatal(1, "CASE_DATA: call load() before accessing data");
+      has_path = 1'b0;
+      for (index = 0; index < record_count; index = index + 1) begin
+        if (paths[index] == path) has_path = 1'b1;
+      end
+    end
+  endfunction
+
   // Devuelve el tipo JSON del registro identificado por la ruta.
   function automatic string get_type(input string path);
     get_type = kinds[find(path)];
