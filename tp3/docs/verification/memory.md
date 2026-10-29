@@ -1,7 +1,7 @@
 # TP3 — Memorias y accesos
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** catálogo diseñado; ejecución parcial local de Loader y sesión.
 
 ## Propósito y alcance
 
@@ -456,7 +456,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad Loader e integración IMEM.
 - **Tipo de estímulo:** legal y guardas locales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad y conexión con Execution Control ejecutadas con un fixture IMEM; integración con IMEM de producción y sistema pendiente.
 
 **Requisitos:** [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-003](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-UART-002](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-002](../requirements.md#7-uart-y-debug-unit).
 
@@ -525,7 +525,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001–C006 con integración local disponible y C007 revisado documentalmente; CPU y sistema pendientes.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-004](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-012](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -580,6 +580,112 @@ B debe ejecutarse independientemente de los datos y del sufijo físico de A. El 
 La aprobación exige distinguir rechazo, aborto y publicación, y conservar las condiciones esperadas en cada fase.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+## Evidencia local de Loader — tercer bloque de #8
+
+`rtl/loader.sv` implementa el ensamblado little-endian y la frontera de escritura
+de Interfaces §9.1. El único registro propio es `partial_word[23:0]`; no incorpora
+FSM, contador de progreso ni copia registrada del tamaño. `load_start` conserva
+su puerto contractual, pero no necesita borrar el parcial: las primeras tres
+entregas reemplazan sus segmentos antes de escribir.
+
+El cuarto byte se combina directamente con el parcial y habilita la escritura en
+ese mismo flanco. Reset y aborto impiden capturas y escrituras; reset también
+suprime `load_fail`. `pending_image_size_bytes` es el alias combinacional del tamaño
+validado y `load_ok` coincide con la última escritura, sin publicar aún la imagen.
+Los anchos derivan de `IMEM_CAPACITY_BYTES` mediante `system_pkg`.
+
+`tb/loader_tb.sv` ejecuta los nueve IDs originales de `TEST-MEM-007` en dos modos:
+unidad, con controles modelados, e integración local con `execution_control` y su
+FSM reales. Un fixture síncrono observa dos ubicaciones de IMEM y conserva sus
+centinelas y escrituras durante reset. No es el módulo de memoria de producción
+ni reserva un array proporcional a la capacidad configurada.
+
+Todos los estímulos y expectativas adicionales están en `cases.json`, mediante
+`loader_fixture`, `loader_steps` y `expected.loader_steps`. Los valores comunes se
+declaran una sola vez. El banco calcula el offset como tamaño menos faltantes en
+ancho de tamaño, antes de reducirlo al ancho de dirección; modela así la conexión
+del Controller sin agregar progreso privado al Loader. Comprueba los buses antes
+del flanco, que los recursos no cambien anticipadamente y las capturas/escrituras
+después. El lector y ejecutor compartidos permanecen sin cambios, al igual que los
+IDs, entradas, expectativas y ejecuciones anteriores.
+
+| IDs | Comprobación disponible | Alcance pendiente |
+|---|---|---|
+| `TEST-MEM-007/C001` | Dos palabras, bytes consecutivos, pausa con dato residual inválido, escrituras solo en offsets 3/7 y éxito con la última escritura. | Transporte UART e IMEM de producción. |
+| `TEST-MEM-007/C002–C004` | Aborto después de uno, dos o tres bytes, ninguna escritura parcial y nueva carga de halt que reemplaza residuos. | Detección del error/timeout y recuperación del Controller. |
+| `TEST-MEM-007/C005–C006` | Aborto frente al cuarto byte; reset frente al último byte y aborto coincidente. No hay escritura ni éxito; reset suprime también el resultado de aborto. | Integración de reset y efectos globales del sistema completo. |
+| `TEST-MEM-007/C007–C008` | Última palabra en filas 255/249 de REFERENCE/ALT_1000. | El prefijo de la imagen no se transfiere en este fixture de frontera. |
+| `TEST-MEM-007/C009` | Byte válido artificial con Loader inactivo: ninguna escritura ni éxito. | No representa una entrega normal de UART. |
+| `TEST-PLAT-001/C004–C008` | Última palabra e índices para 4, 1000, 1024, 2048 y `2^32` bytes; alias y publicación del tamaño inclusive. | Sin arrays gigantes, lectura IF ni realización física. |
+
+En integración local, la última escritura y `load_ok` llevan a
+`PREPARING_READY` con tamaño confirmado cero. La preparación permanece modelada;
+solo al presentar `prepare_done` se publica el tamaño y se alcanza `READY`, sin
+ciclo CPU. Los abortos llevan a `NO_IMAGE`; una nueva carga válida vuelve a
+preparar y publicar su propio tamaño. Estas comprobaciones no acreditan la
+ejecución de instrucciones ni la inicialización real de PC, RF, pipeline o DMEM.
+
+Son **23 ejecuciones adicionales**: nueve de unidad, nueve con Execution Control
+y cinco de límites. El catálogo conserva 1363 casos canónicos; 218 tienen alguna
+ejecución disponible y 1145 continúan pendientes. `TEST-MEM-008` conserva sus
+obligaciones de CPU/sistema y permanece pendiente.
+
+### Reproducción y evidencia
+
+Con la imagen exacta de `docker/image.ref`, `make check` incluye Loader. Verilator
+comprueba `execution_control` y `loader` como raíces separadas; la FSM se analiza
+dentro del primero, sin desactivar advertencias de múltiples tops.
+
+La regresión completa aprobó formato, lint, catálogo, **40 pruebas de
+infraestructura y 408 ejecuciones RTL**, sin fallos ni errores: las 385 anteriores
+y las 23 agregadas para Loader. También aprobaron los cinco rechazos
+suplementarios de capacidades inválidas.
+
+Desde `/workspace/tp3`, la selección local puede ejecutarse con:
+
+```bash
+bash scripts/run_tests.sh --test TEST-MEM-007 --test TEST-PLAT-001 \
+  --format json --reports-dir build/reports/loader/selected
+```
+
+`build/reports/loader/` conserva diagnósticos, comandos y hashes de las fuentes
+comprobadas en `context.json`. Una verificación suplementaria usa las cinco
+capacidades inválidas de `TEST-PLAT-001/C009–C013`: exige rechazo con
+`CONFIG_INVALID_CAPACITY` y ausencia de elaboración del buffer parcial. No agrega
+casos canónicos ni reemplaza la ejecución funcional del catálogo.
+
+La preparación real y la conexión de los tres módulos en el banco local se
+documentan en [la evidencia de Session Preparation](execution.md#evidencia-local-de-session-preparation--cuarto-bloque-de-8).
+Continúan pendientes la conexión en `processor_top`, la verificación con
+IMEM/CPU/UART reales, síntesis, timing y placa. Este bloque no cierra #8.
+
+## Evidencia local del reemplazo de imagen
+
+`tb/session_lifecycle_tb.sv` agrega seis ejecuciones de `TEST-MEM-008` con los
+cuatro módulos de sesión reales. La conexión, los modelos y la reproducción se
+describen en [la evidencia del ciclo de vida](execution.md#evidencia-local-del-ciclo-de-vida-de-sesión).
+
+| IDs | Comprobación local | Alcance pendiente |
+|---|---|---|
+| `TEST-MEM-008/C001–C002` | Reemplazo de 16 por cuatro bytes: invalidez al aceptar LOAD, preparación completa y publicación en READY con PC/RF/marcas modelados limpios; autorización RUN/STEP posterior. Conserva el sufijo físico de IMEM. | Ejecución legal de A/B y exclusión del sufijo por IF con el nuevo tamaño confirmado. |
+| `TEST-MEM-008/C003–C005` | Con el rechazo modelado mediante ausencia de `load_request`, conserva fase, imagen, contador, PC/RF/marcas e IMEM. | Validación Controller de los tamaños N40=0,1028,6 y respuesta de rechazo. |
+| `TEST-MEM-008/C006` | LOAD aceptado invalida la imagen anterior; tres bytes y aborto dejan NO_IMAGE, RUN/STEP se ignoran y una recarga de cuatro bytes llega a READY. | Detección de timeout, recuperación y respuestas de transporte. |
+
+El fixture instala residuos observables de A (`x1=7`, `x2=9`, palabra DMEM cero=7)
+después de un terminal controlado. Esa instalación es artificial y no sustituye
+la ejecución de A. La preparación limpia marcas y conserva el dato físico; la
+recarga de B conserva las tres palabras de IMEM posteriores al prefijo de cuatro
+bytes. El banco comprueba el tamaño publicado, sin ejecutar fetch de producción.
+Loader recibe tamaños ya validados; no se le agrega la política de rechazo del
+Controller. El aborto también se suministra desde el banco, sin medir un timeout.
+
+Para `TEST-MEM-008/C007` se revisaron [Protocol: imagen y tamaño](../protocol.md#imagen-y-tamaño),
+[Loader: posición de bytes](../architecture/session/loader.md#identificación-de-la-posición-de-cada-byte)
+y [su interfaz](../interfaces.md#bloque-8-1). El formato secuencial no representa
+origen configurable ni huecos; no se agregaron campos wire. No hay un paquete
+inválido representativo que simular. El caso permanece `pending` en el runner,
+porque este acredita simulaciones, y su revisión queda registrada aquí.
 
 <a id="test-mem-009"></a>
 
