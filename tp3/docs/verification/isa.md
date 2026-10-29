@@ -512,13 +512,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-ISA-007 — Loads y stores de la ISA
 
-- **Nivel:** CPU.
+- **Nivel:** integración MEM y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** 22 variantes implementadas en integración MEM; CPU pendiente.
 
 **Requisitos:** [REQ-ISA-002](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-003](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-004](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-018](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-019](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-020](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-021](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-022](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [stage_mem](../architecture/cpu/stage_mem.md); [dmem_access](../architecture/memory/dmem_access.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 22 casos con los ocho `mem_op` de la ISA. Comprueba lanes, extensión signed/unsigned, selección del valor hacia MEM/WB y los accesos con base 4 y offset -4. Esta proyección comienza en EX/MEM: no acredita todavía decoder, cálculo de dirección en EX, Register File, `halt` ni una CPU completa.
 
 ### Qué comprueba y por qué
 
