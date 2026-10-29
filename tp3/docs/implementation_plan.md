@@ -38,7 +38,7 @@ El acuerdo de trabajo del 14 de octubre permite implementar FPGA mientras se com
 
 El cierre del diseño del assembler está previsto para el mismo 14 de octubre. Cuando su especificación final esté revisada, incluidas su interfaz, organización y pruebas, puede comenzar su implementación. No necesita esperar al cierre del diseño de la aplicación de PC. El estado de ese acuerdo se consulta en [DEC-SYS-009](decisions/DEC-SYS-009.md) y sus documentos de [software](software/assembler_interface.md).
 
-La aplicación conserva su propio trabajo de diseño: elegir el formato de interacción, concretar las capas y definir cómo se presentan el estado y los errores. Ese cierre se realiza conforme a [DEC-SYS-008](decisions/pending_decisions.md#dec-sys-008--formato-de-la-aplicación-de-pc). El protocolo y la imagen de instrucciones ya definidos permiten avanzar con hardware y assembler mientras se resuelve esa parte.
+La aplicación de PC tiene requisitos, arquitectura, contratos e integración especificados en la [documentación de viewrv](software/viewrv/README.md). Su implementación se organiza mediante las [entregas de aplicación de PC](#entregas-de-viewrv), en paralelo con hardware y assembler según sus dependencias. Las definiciones documentales y los hitos de revisión no acreditan software construido ni pruebas ejecutadas.
 
 ## Organización del trabajo
 
@@ -162,11 +162,85 @@ Las pruebas de hardware conservan sus imágenes de codificación comprobada aunq
 
 ### Aplicación de PC
 
-El diseño de la aplicación se cierra durante el desarrollo del CPU y de comunicación. Ambos acuerdan el formato de interacción y las responsabilidades de transporte, protocolo, sesión y presentación. También definen sus pruebas antes de implementar las capas, de acuerdo con los [requisitos de software](requirements.md#8-software-de-pc) y el [protocolo](protocol.md).
+La implementación de viewrv materializa sus [requisitos](software/viewrv/requisitos.md), [arquitectura](software/viewrv/arquitectura.md), [contratos](software/viewrv/contratos.md), [GUI y visor](software/viewrv/gui_y_visor.md) e [integración y distribución](software/viewrv/integracion_y_distribucion.md). La [verificación de la aplicación](software/viewrv/verificacion.md) define los casos y las expectativas. El plan organiza el trabajo sin sustituir esas fuentes ni introducir nuevas tecnologías.
 
-B implementa la aplicación y la prueba con transporte simulado y una salida de assembler controlada. Puede hacerlo en paralelo con la implementación del assembler. La aplicación debe permitir cargar, ejecutar, avanzar por ciclos, recuperar errores y presentar de manera interpretable registros, pipeline y memoria utilizada, distinguiendo una observación completa de una transferencia incompleta.
+Los [comandos de prueba](software/viewrv/verificacion.md#ejecución-de-pruebas-automatizadas) definen la regresión Python completa y sus ejecuciones por área desde tp3. Cada entrega implementa las comprobaciones de su alcance; los procedimientos visuales, de paquetes y de placa mantienen sus niveles propios.
 
-La integración final conecta el assembler real con la aplicación real y el sistema FPGA. En ese momento se comprueba que fuente, imagen cargada, ejecución y observación correspondan al mismo programa y sesión. Los rechazos de capacidad siguen perteneciendo a la FPGA y son interpretados por la aplicación.
+Se trabaja por entregas funcionales. Los adaptadores controlados permiten probar el core y los clientes mientras se construyen el assembler y la FPGA. Son recursos de prueba; no constituyen un simulador incorporado al producto. La integración del assembler real conserva su interfaz y su catálogo independiente, sin modificar su diseño dentro de estas entregas.
+
+#### Entregas de viewrv
+
+Las dependencias de la tabla indican qué hace falta para cerrar la integración de cada entrega. No impiden preparar sus componentes y pruebas en paralelo.
+
+| ID | Entrega funcional | Dependencias para cerrar | Resultado comprobable |
+|----|-------------------|--------------------------|------------------------|
+| PC-I01 | Construcción y comunicación local inicial | Contratos y herramientas definidos. | Core Python, CLI y ventana Electron construibles; descubrimiento y validación de instancia, registro de trabajos, consulta de estado y suscripción SSE conectados. La CLI funciona sin iniciar Electron y la GUI conserva recursos locales de Monaco, FlexLayout y el visor. Se comprueba tempranamente el empaquetado del tramo implementado en Linux y Windows, sin confundirlo con la distribución final. |
+| PC-I02 | Programas, editor y conservación del código | PC-I01; assembler real disponible para cerrar su integración. | Crear, abrir y copiar ejemplos; editar, ensamblar y presentar diagnóstico o traducción con versión exacta. Funcionan autoguardado, archivos Assembly, recuperación interna, reapertura, guardado explícito y cierre. La coordinación de texto impide retrocesos y permite editar durante operaciones largas. Se incorporan preferencias y sus fallos sin alterar el contrato del assembler. |
+| PC-I03 | Transporte UART y recuperación | PC-I01. | El adaptador serial ejecuta los intercambios de LOAD, RUN, STEP, CHECK_READY y RESET con bytes y plazos correctos en ambos perfiles. Decodifica capturas completas, conserva validez y valores, informa incertidumbre y aplica la recuperación correspondiente a cada fase. Las pruebas controlan fragmentación, demora, truncamiento y desconexión. |
+| PC-I04 | Preparación de la placa desde el producto | PC-I03; binarios de programador y bitstream compatibles disponibles. | Programador incluido, enumeración y selección de JTAG y UART, programación y comprobación de comunicación por fases. Se comprueban permisos o controladores y acceso a la misma Basys 3 en los sistemas de aceptación, sin exigir Vivado ni sustituir silenciosamente dispositivos. |
+| PC-I05 | Operación compartida del procesador y CLI completa | PC-I02 y PC-I03. | Carga y RUN, depuración por pasos, Continuar/Pausar, breakpoints, reinicio y cierre con control exclusivo. GUI y CLI utilizan la misma lógica de sesiones. Están disponibles las 25 operaciones CLI y las consultas locales de ayuda y versión, con sus formatos y códigos. Se conservan registros JSONL y se consultan resultados y pasos sin generar ciclos adicionales. |
+| PC-I06 | Flujos completos de la IDE | PC-I02 y PC-I05. | La GUI ofrece edición y acciones de carga, ejecución y depuración, resultados convencionales, tabs y splits y el atajo combinado conforme a Penpot. Aplica las reglas de foco, revisión, protección de edición, cierre y recuperación, mantiene respuesta durante esperas y permite observar una sesión controlada por CLI. |
+| PC-I07 | Visor educativo y depuración interactiva | PC-I01; PC-I05 para la integración con sesiones. | Visor existente integrado con recursos locales y adaptador gráfico; explicación conceptual sin placa, catálogo y banco completo de ejemplos. Capturas, cambios, participación funcional y seguimiento de una aparición respetan el perfil y las transiciones del pipeline. Código, debugger y diagrama utilizan la misma observación; las inferencias se distinguen de los datos medidos. |
+| PC-I08 | Distribución y aceptación integrada | PC-I04, PC-I06 y PC-I07; assembler y FPGA reales disponibles. | tar.gz y NSIS por usuario, instalación y desinstalación, inventario y licencias completos. El flujo real funciona en Arch, Ubuntu y Windows con las configuraciones registradas, incluida la observación GUI/CLI en ambos sentidos, conservación, calidad visual y funcionamiento sin red externa. Se completa la evidencia de los 30 casos y los 74 requisitos. |
+
+#### Dependencias y avance en paralelo
+
+```mermaid
+flowchart TD
+    I01["PC-I01: construcción y canal local"]
+    I02["PC-I02: programas y conservación"]
+    I03["PC-I03: UART y recuperación"]
+    I04["PC-I04: preparación de placa"]
+    I05["PC-I05: sesiones y CLI"]
+    I06["PC-I06: IDE completa"]
+    I07["PC-I07: visor y contenido"]
+    I08["PC-I08: distribución y aceptación"]
+    I01 --> I02
+    I01 --> I03
+    I01 --> I07
+    I02 --> I05
+    I03 --> I05
+    I03 --> I04
+    I02 --> I06
+    I05 --> I06
+    I05 -->|"Integración con depuración"| I07
+    I04 --> I08
+    I06 --> I08
+    I07 --> I08
+```
+
+Después de PC-I01 pueden avanzar en paralelo los programas y la conservación, el transporte y la exploración educativa del visor. Los recursos visuales, las explicaciones y los programas de ejemplo pueden prepararse antes de disponer de sesiones reales. PC-I05 conecta esas piezas con los controles de depuración; PC-I06 y PC-I07 incorporan las presentaciones de una misma sesión.
+
+La preparación de binarios, permisos y recursos de programación se adelanta mientras se desarrolla el resto. PC-I04 solo se da por terminada al demostrar la programación y la comunicación reales con el bitstream correspondiente. La disponibilidad de la placa no bloquea las comprobaciones locales del core, los clientes y los archivos; las pruebas físicas conservan su nivel y su evidencia propios.
+
+La distribución se comprueba desde PC-I01 y se amplía con cada entrega. No se posponen hasta PC-I08 los problemas de arranque de ejecutables, bibliotecas nativas o recursos locales. Los artefactos parciales de comprobación no se presentan como una distribución completa: la entrega final debe contener todos los recursos obligatorios y superar su validación.
+
+#### Comprobación y cierre de entregas
+
+La relación siguiente orienta qué evidencia prepara cada entrega. Los casos conservan sus variantes y criterios en el catálogo; enlazar un caso no lo declara aprobado ni reduce su alcance.
+
+| Entrega | Casos de aplicación relacionados | Evidencia que aporta |
+|---------|---------------------------------|---------------------|
+| PC-I01 | [TEST-PC-012](software/viewrv/verificacion.md#test-pc-012), [TEST-PC-013](software/viewrv/verificacion.md#test-pc-013), [TEST-PC-015](software/viewrv/verificacion.md#test-pc-015), [TEST-PC-029](software/viewrv/verificacion.md#test-pc-029) y [TEST-PC-030](software/viewrv/verificacion.md#test-pc-030). | Construcción, arranque, acceso local, primeras consultas y canales de observación, con clientes separados y fallos controlados. |
+| PC-I02 | [TEST-PC-002](software/viewrv/verificacion.md#test-pc-002), [TEST-PC-010](software/viewrv/verificacion.md#test-pc-010), [TEST-PC-017](software/viewrv/verificacion.md#test-pc-017), [TEST-PC-020](software/viewrv/verificacion.md#test-pc-020) y [TEST-PC-026](software/viewrv/verificacion.md#test-pc-026). | Texto, versiones, traducciones, archivos, recuperación y resolución de conservación al cerrar. |
+| PC-I03 | [TEST-PC-003](software/viewrv/verificacion.md#test-pc-003), [TEST-PC-007](software/viewrv/verificacion.md#test-pc-007), [TEST-PC-016](software/viewrv/verificacion.md#test-pc-016), [TEST-PC-023](software/viewrv/verificacion.md#test-pc-023), [TEST-PC-024](software/viewrv/verificacion.md#test-pc-024) y [TEST-PC-025](software/viewrv/verificacion.md#test-pc-025). | Bytes literales, límites de fase, decodificación, interrupciones y recuperación mediante transporte controlado. |
+| PC-I04 | [TEST-PC-014](software/viewrv/verificacion.md#test-pc-014) y [TEST-PC-025](software/viewrv/verificacion.md#test-pc-025). | Programación real, selección de dispositivos, permisos, controladores y comprobación UART desde el paquete. |
+| PC-I05 | [TEST-PC-003](software/viewrv/verificacion.md#test-pc-003) a [TEST-PC-009](software/viewrv/verificacion.md#test-pc-009), [TEST-PC-013](software/viewrv/verificacion.md#test-pc-013), [TEST-PC-015](software/viewrv/verificacion.md#test-pc-015) a [TEST-PC-017](software/viewrv/verificacion.md#test-pc-017), [TEST-PC-021](software/viewrv/verificacion.md#test-pc-021) a [TEST-PC-024](software/viewrv/verificacion.md#test-pc-024), [TEST-PC-029](software/viewrv/verificacion.md#test-pc-029) y [TEST-PC-030](software/viewrv/verificacion.md#test-pc-030). | Reglas compartidas, exclusión, comandos CLI, resultados, evidencia y observación por consultas, incluidas condiciones de fallo. |
+| PC-I06 | [TEST-PC-002](software/viewrv/verificacion.md#test-pc-002) a [TEST-PC-007](software/viewrv/verificacion.md#test-pc-007), [TEST-PC-010](software/viewrv/verificacion.md#test-pc-010) a [TEST-PC-012](software/viewrv/verificacion.md#test-pc-012), [TEST-PC-017](software/viewrv/verificacion.md#test-pc-017), [TEST-PC-020](software/viewrv/verificacion.md#test-pc-020), [TEST-PC-026](software/viewrv/verificacion.md#test-pc-026), [TEST-PC-027](software/viewrv/verificacion.md#test-pc-027), [TEST-PC-029](software/viewrv/verificacion.md#test-pc-029) y [TEST-PC-030](software/viewrv/verificacion.md#test-pc-030). | Flujos de usuario, correspondencia de versiones, presentación convencional, continuidad y observación en GUI. |
+| PC-I07 | [TEST-PC-001](software/viewrv/verificacion.md#test-pc-001), [TEST-PC-004](software/viewrv/verificacion.md#test-pc-004), [TEST-PC-018](software/viewrv/verificacion.md#test-pc-018), [TEST-PC-019](software/viewrv/verificacion.md#test-pc-019) y [TEST-PC-028](software/viewrv/verificacion.md#test-pc-028). | Correspondencia de bloques, interpretación temporal, seguimiento, cobertura educativa y comportamiento visual. |
+| PC-I08 | [TEST-PC-001](software/viewrv/verificacion.md#test-pc-001) a [TEST-PC-030](software/viewrv/verificacion.md#test-pc-030). | Recorridos completos con componentes reales, paquetes por plataforma, mediciones y evidencia final de aceptación. |
+
+Una entrega se cierra cuando su código compila, pasan las comprobaciones aplicables a su alcance, se revisa su correspondencia con los contratos y queda evidencia reproducible. Un caso que atraviesa varias entregas acumula evidencia y solo se cierra al completar sus niveles y variantes. Los resultados de un doble no acreditan funcionamiento físico, y las mediciones de una plataforma no acreditan las demás.
+
+Si una prueba contradice el contrato, se distingue un defecto de implementación de una necesidad de revisar el diseño. Las correcciones no cambian silenciosamente los requisitos ni retiran capacidades. La validación visual de posiciones y proporciones se realiza con contenido representativo dentro de las entregas de GUI y visor. Los detalles visuales sujetos a esa comprobación no se convierten en decisiones de lógica compartida.
+
+#### Primera entrega de trabajo
+
+El primer trabajo concreto es PC-I01. Se preparan las ubicaciones de fuentes ya definidas y comandos reproducibles para construir y comprobar Python y Electron con las versiones seleccionadas. Se resuelve y fija el árbol de dependencias y se comprueba la carga local de los componentes gráficos.
+
+El recorrido mínimo conecta la CLI y la GUI con un core iniciado bajo demanda: validar identidad y acceso, registrar el trabajo necesario, consultar estado conocido, abrir la suscripción de GUI y finalizar los trabajos conforme a su ciclo de vida. Se comprueban también el inicio concurrente de clientes y la permanencia del core cuando se cierra solo un observador. No necesita ejecutar el procesador para demostrar esa comunicación.
+
+La comprobación de empaquetado utiliza las entradas reales de CLI y core preparadas con PyInstaller y la aplicación Electron, desde un directorio diferente y sin depender de los runtimes de desarrollo en el equipo de prueba. El objetivo de esta primera entrega es demostrar que la separación elegida funciona también distribuida, antes de completar los controles del procesador y la interfaz.
 
 ## Verificación y criterios de avance
 

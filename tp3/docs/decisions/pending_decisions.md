@@ -28,23 +28,9 @@ Las comprobaciones que detecten un defecto deben corregir la especificación y s
 
 ## 3. Software de PC
 
-### DEC-SYS-008 — Formato de la aplicación de PC
+<a id="dec-sys-008--formato-de-la-aplicación-de-pc"></a>
 
-**Estado:** Pendiente
-
-**Dominio:** Software / Interfaz
-
-**Debe resolverse antes de:** Implementar la interfaz de usuario.
-
-**Depende de:** `DEC-SYS-006`, ya aprobada, y flujos de operación definidos por Debug y el protocolo.
-
-**Contexto:** Debe seleccionarse una CLI, TUI, GUI o combinación para operar el sistema y presentar el snapshot aprobado sin acoplar la interfaz a señales combinacionales internas. La aplicación deberá mostrar un fault de memoria como ejecución anormal y no como finalización normal.
-
-**Contrato de operación:** La admisión UART y la recuperación de comunicación se definen en [DEC-PROTO-001](DEC-PROTO-001.md), [DEC-PROTO-002](DEC-PROTO-002.md) y [DEC-PROTO-003](DEC-PROTO-003.md). Fuera de LOAD, PC intenta CHECK_READY y, si falla, un único RESET automático que debe confirmarse; no reintenta un RESET fallido ni reanuda automáticamente LOAD/RUN/STEP. Esa política está definida y su implementación y verificación siguen pendientes; no resuelve la elección de interfaz de esta decisión.
-
-**Opciones a analizar:** CLI inicial; TUI; GUI; capas reutilizables con más de una interfaz.
-
-**Requisitos afectados:** `REQ-SW-001`, `REQ-SW-005` a `REQ-SW-010`, `REQ-DBG-013` a `REQ-DBG-017`, `REQ-EXEC-018`.
+El diseño de la aplicación se define en [DEC-SYS-008 — Aplicación de PC](DEC-SYS-008.md), incluida en el [índice de decisiones aprobadas](decisions.md). No hay decisiones de diseño de software de PC abiertas registradas en este documento. La implementación y las comprobaciones de producto conservan sus [criterios de verificación](../software/viewrv/verificacion.md).
 
 <a id="5-cpu-y-arquitectura"></a>
 
