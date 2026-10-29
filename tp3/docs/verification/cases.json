@@ -1,8 +1,8 @@
 {
   "$schema": "./cases.schema.json",
   "schema": "tp3-verification-cases",
-  "status": "designed-not-executed",
-  "date": "2026-10-20",
+  "status": "partially-executed",
+  "date": "2026-10-29",
   "scope": "finite logical cases; replays listed separately",
   "latch_fixture": {
     "ifid": [
@@ -25640,7 +25640,26 @@
       "source": "isa.md#test-isa-007",
       "case_count": 22,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_decode.sv",
+            "rtl/dmem_write_control.sv",
+            "rtl/load_select_extend.sv",
+            "rtl/data_memory.sv",
+            "rtl/mem_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_stage_tb.sv"
+          ],
+          "top": "mem_stage_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd4"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-ISA-007/C001",
@@ -25658,7 +25677,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C002",
@@ -25676,7 +25695,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C003",
@@ -25694,7 +25713,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C004",
@@ -25712,7 +25731,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C005",
@@ -25730,7 +25749,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C006",
@@ -25748,7 +25767,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C007",
@@ -25766,7 +25785,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C008",
@@ -25784,7 +25803,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C009",
@@ -25802,7 +25821,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C010",
@@ -25820,7 +25839,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C011",
@@ -25838,7 +25857,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C012",
@@ -25856,7 +25875,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C013",
@@ -25874,7 +25893,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C014",
@@ -25892,7 +25911,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C015",
@@ -25910,7 +25929,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C016",
@@ -25928,7 +25947,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C017",
@@ -25946,7 +25965,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C018",
@@ -25964,7 +25983,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C019",
@@ -25982,7 +26001,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C020",
@@ -26000,7 +26019,7 @@
           "origins": [
             "Accesos ISA"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C021",
@@ -26019,7 +26038,7 @@
           "origins": [
             "Offset negativo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-ISA-007/C022",
@@ -26038,7 +26057,7 @@
           "origins": [
             "Offset negativo"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -26808,6 +26827,34 @@
           "top": "id_stage_tb",
           "level": "Integración local",
           "timeout_seconds": 5
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/wb_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/wb_stage_tb.sv"
+          ],
+          "top": "wb_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-002/C004",
+            "TEST-PIPE-002/C005",
+            "TEST-PIPE-002/C006",
+            "TEST-PIPE-002/C007",
+            "TEST-PIPE-002/C008",
+            "TEST-PIPE-002/C009",
+            "TEST-PIPE-002/C010",
+            "TEST-PIPE-002/C011",
+            "TEST-PIPE-002/C012",
+            "TEST-PIPE-002/C013",
+            "TEST-PIPE-002/C014",
+            "TEST-PIPE-002/C015",
+            "TEST-PIPE-002/C016",
+            "TEST-PIPE-002/C017",
+            "TEST-PIPE-002/C018"
+          ]
         }
       ],
       "cases": [
@@ -40903,6 +40950,24 @@
             "TEST-PIPE-009/C006",
             "TEST-PIPE-009/C007"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/wb_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/wb_stage_tb.sv"
+          ],
+          "top": "wb_stage_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-PIPE-009/C003",
+            "TEST-PIPE-009/C004",
+            "TEST-PIPE-009/C005",
+            "TEST-PIPE-009/C006",
+            "TEST-PIPE-009/C007"
+          ]
         }
       ],
       "cases": [
@@ -50704,7 +50769,26 @@
       "source": "memory.md#test-mem-001",
       "case_count": 18,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_decode.sv",
+            "rtl/dmem_write_control.sv",
+            "rtl/load_select_extend.sv",
+            "rtl/data_memory.sv",
+            "rtl/mem_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_stage_tb.sv"
+          ],
+          "top": "mem_stage_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd4"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-001/C001",
@@ -50724,7 +50808,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C002",
@@ -50744,7 +50828,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C003",
@@ -50764,7 +50848,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C004",
@@ -50784,7 +50868,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C005",
@@ -50804,7 +50888,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C006",
@@ -50824,7 +50908,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C007",
@@ -50844,7 +50928,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C008",
@@ -50864,7 +50948,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C009",
@@ -50884,7 +50968,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C010",
@@ -50904,7 +50988,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C011",
@@ -50924,7 +51008,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C012",
@@ -50944,7 +51028,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C013",
@@ -50964,7 +51048,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C014",
@@ -50984,7 +51068,7 @@
           "origins": [
             "Lanes ymarcas"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C015",
@@ -51006,7 +51090,7 @@
           "origins": [
             "Store de cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C016",
@@ -51027,7 +51111,7 @@
           "origins": [
             "Guardas sobre SW"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C017",
@@ -51048,7 +51132,7 @@
           "origins": [
             "Guardas sobre SW"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-001/C018",
@@ -51069,7 +51153,7 @@
           "origins": [
             "Guardas sobre SW"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -51078,7 +51162,26 @@
       "source": "memory.md#test-mem-002",
       "case_count": 25,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/mem_decode.sv",
+            "rtl/dmem_write_control.sv",
+            "rtl/load_select_extend.sv",
+            "rtl/data_memory.sv",
+            "rtl/mem_stage.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/mem_stage_tb.sv"
+          ],
+          "top": "mem_stage_tb",
+          "level": "Integración local",
+          "timeout_seconds": 10,
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd4"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-002/C001",
@@ -51096,7 +51199,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C002",
@@ -51114,7 +51217,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C003",
@@ -51132,7 +51235,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C004",
@@ -51150,7 +51253,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C005",
@@ -51168,7 +51271,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C006",
@@ -51186,7 +51289,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C007",
@@ -51204,7 +51307,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C008",
@@ -51222,7 +51325,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C009",
@@ -51240,7 +51343,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C010",
@@ -51258,7 +51361,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C011",
@@ -51276,7 +51379,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C012",
@@ -51294,7 +51397,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C013",
@@ -51312,7 +51415,7 @@
           "origins": [
             "Tabla nominal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C014",
@@ -51330,7 +51433,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C015",
@@ -51348,7 +51451,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C016",
@@ -51366,7 +51469,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C017",
@@ -51384,7 +51487,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C018",
@@ -51402,7 +51505,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C019",
@@ -51420,7 +51523,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C020",
@@ -51438,7 +51541,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C021",
@@ -51456,7 +51559,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C022",
@@ -51474,7 +51577,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C023",
@@ -51492,7 +51595,7 @@
           "origins": [
             "Sustitución por cero"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C024",
@@ -51510,7 +51613,7 @@
           "origins": [
             "Signo positivo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-002/C025",
@@ -51528,7 +51631,7 @@
           "origins": [
             "Signo positivo"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
@@ -55585,6 +55688,26 @@
             "TEST-MEM-005/C001",
             "TEST-MEM-005/C002"
           ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/data_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/data_memory_timing_tb.sv"
+          ],
+          "top": "data_memory_timing_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-MEM-005/C001",
+            "TEST-MEM-005/C002"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": {
+              "input": "C"
+            }
+          }
         }
       ],
       "cases": [
@@ -55770,7 +55893,50 @@
       "source": "memory.md#test-mem-006",
       "case_count": 10,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/data_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/data_memory_ownership_tb.sv"
+          ],
+          "top": "data_memory_ownership_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-MEM-006/C003",
+            "TEST-MEM-006/C005",
+            "TEST-MEM-006/C006",
+            "TEST-MEM-006/C007",
+            "TEST-MEM-006/C008"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd4"
+          }
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/data_memory.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/data_memory_ownership_tb.sv"
+          ],
+          "top": "data_memory_ownership_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-MEM-006/C010"
+          ],
+          "parameters": {
+            "DMEM_CAPACITY_BYTES": "64'd4"
+          },
+          "expected_rejection": {
+            "exit_code": 1,
+            "diagnostic_key": "result"
+          }
+        }
+      ],
       "cases": [
         {
           "id": "TEST-MEM-006/C001",
@@ -55815,7 +55981,7 @@
           "origins": [
             "Ownership legal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-006/C004",
@@ -55845,7 +56011,7 @@
           "origins": [
             "Ownership legal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-006/C006",
@@ -55860,7 +56026,7 @@
           "origins": [
             "Ownership legal"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-006/C007",
@@ -55874,7 +56040,7 @@
           "origins": [
             "Coincidencia artificial"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-006/C008",
@@ -55888,7 +56054,7 @@
           "origins": [
             "Coincidencia artificial"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-MEM-006/C009",
@@ -55916,7 +56082,7 @@
           "origins": [
             "Coincidencia artificial"
           ],
-          "status": "pending"
+          "status": "implemented"
         }
       ]
     },
