@@ -2,7 +2,7 @@
 
 - **Tipo:** plan de verificación.
 - **Estado documental:** plan vigente; ejecución parcial de unidades y fixtures locales.
-- **Fecha:** 2026-10-21.
+- **Fecha:** 2026-10-24.
 
 ## Propósito y alcance
 

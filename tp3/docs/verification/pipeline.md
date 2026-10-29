@@ -11,25 +11,6 @@ Los resultados arquitectónicos se comparan con las expectativas escritas para c
 
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
 
-## Reconciliación de IDs al integrar #4 y #7
-
-Las ramas publicadas de #4 (`b7b6ce2`) y #7 (`0ab579d`) asignaban
-`TEST-PIPE-011`–`013` a comprobaciones distintas. La composición en #9 conserva
-los IDs de #4 y traslada únicamente los tres grupos en colisión de #7:
-
-| Grupo en la rama de #7 | Grupo en la composición | Comprobación |
-| --- | --- | --- |
-| TEST-PIPE-011 | TEST-PIPE-015 | Registro IF/ID |
-| TEST-PIPE-012 | TEST-PIPE-016 | Registro ID/EX |
-| TEST-PIPE-013 | TEST-PIPE-017 | Registro EX/MEM |
-
-Los sufijos Cnnn, estímulos, expectativas, niveles y bancos se conservan.
-`TEST-PIPE-014` (MEM/WB) mantiene su ID. Las referencias del catálogo, los
-anchors y los bancos de #7 utilizan los IDs de esta composición; los números
-anteriores identifican exclusivamente su procedencia en la rama publicada.
-Esta resolución deberá conservarse al integrar esas entregas en la rama base.
-No acredita sesiones reales de CPU ni modifica contratos arquitectónicos.
-
 ## Índice
 
 - [TEST-PIPE-001 — Avance normal, solapamiento y esquema de latches](#test-pipe-001)
@@ -45,10 +26,10 @@ No acredita sesiones reales de CPU ni modifica contratos arquitectónicos.
 - [TEST-PIPE-011 — Detector load-use aislado](#test-pipe-011)
 - [TEST-PIPE-012 — Composición de ID y payload combinacional](#test-pipe-012)
 - [TEST-PIPE-013 — Composición de IF y actualización del PC](#test-pipe-013)
-- [TEST-PIPE-015 — Registro IF/ID aislado](#test-pipe-015)
-- [TEST-PIPE-016 — Registro ID/EX aislado](#test-pipe-016)
-- [TEST-PIPE-017 — Registro EX/MEM aislado](#test-pipe-017)
-- [TEST-PIPE-014 — Registro MEM/WB aislado](#test-pipe-014)
+- [TEST-PIPE-014 — Registro IF/ID aislado](#test-pipe-014)
+- [TEST-PIPE-015 — Registro ID/EX aislado](#test-pipe-015)
+- [TEST-PIPE-016 — Registro EX/MEM aislado](#test-pipe-016)
+- [TEST-PIPE-017 — Registro MEM/WB aislado](#test-pipe-017)
 - [Acreditación local de #7 y pendientes de integración](#acreditacion-local-7)
 
 <a id="test-pipe-001"></a>
@@ -230,7 +211,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding/EX y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding y proyección de operandos de `ex_stage` implementadas; integración EX completa y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -263,6 +244,12 @@ Se ejecutan ocho selecciones locales: solo coincide EX/MEM, solo coincide MEM/WB
 Los 12 casos de productor no elegible cambian una de tres guardas para cada productor y cada fuente. Se utiliza una configuración que evidencia cada guarda, sin repetirla contra una ausencia de coincidencia.
 
 Los cuatro casos de consumidor no elegible combinan una fuente no utilizada o una entrada inválida con A y B. Los cinco casos restantes son los programas A a E: ALU, fuentes mixtas, store, branch y JALR.
+
+### Ejecución disponible
+
+Los casos `C001` a `C024` se ejecutan en `forwarding_unit_tb` y en una proyección de `ex_stage`. La segunda ejecución comprueba que el valor seleccionado por cada productor llegue al resultado ALU y, para la fuente B, al dato de store. Los casos `C025` a `C029` quedan pendientes hasta la integración EX/CPU con programas.
+
+La prueba unitaria acredita los selectores y la proyección de `ex_stage` comprueba el dato efectivo en los caminos combinacionales. No acredita todavía la ejecución de los programas ni la integración con el pipeline registrado.
 
 ### Programas concretos
 
@@ -348,7 +335,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding e integración hazard.
 - **Tipo de estímulo:** artificial local y legal CPU.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** unidad forwarding y proyección local de `ex_stage` implementadas; integración hazard y CPU pendientes.
 
 **Requisitos:** [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -375,6 +362,10 @@ La prueba tiene 3 casos canónicos. El [manifiesto](cases.json) enumera los IDs 
 Los dos vectores locales comprueban las fuentes A y B cuando el productor reciente es un load. El tercer caso ejecuta el programa legal indicado a continuación.
 
 La prueba local y la ejecución legal verifican obligaciones diferentes; la inyección no autoriza agregar un interlock de EX para hacerla ejecutable.
+
+### Ejecución disponible
+
+Los casos artificiales `C001` y `C002` se ejecutan en `forwarding_unit_tb` y en la proyección de `ex_stage`. Se comprueba que el load reciente deje cada operando en su valor base y que ese sea el valor que alcanza el camino de ejecución. El caso legal `C003` queda pendiente de la integración del pipeline.
 
 ### Programas concretos
 
@@ -1126,9 +1117,9 @@ Las secuencias de 50 flancos conservan un único ID canónico. Los PCs inválido
 
 El banco presenta acciones ya seleccionadas; no calcula arbitraje ni autoriza destinos de EX. Tampoco implementa el registro IF/ID: su captura del payload preflanco, retención e invalidación requieren la integración correspondiente. La aprobación de estas proyecciones no acredita transporte hasta ID, ejecución de CPU, confirmación de halt/fault, síntesis ni validación física.
 
-<a id="test-pipe-015"></a>
+<a id="test-pipe-014"></a>
 
-## TEST-PIPE-015 — Registro IF/ID aislado
+## TEST-PIPE-014 — Registro IF/ID aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1181,9 +1172,9 @@ El HOLD sin ciclo y la retención al aceptar LOAD se representan aquí únicamen
 por ausencia de controles. Su generación real y la preparación posterior
 requieren integración con el control de sesión.
 
-<a id="test-pipe-016"></a>
+<a id="test-pipe-015"></a>
 
-## TEST-PIPE-016 — Registro ID/EX aislado
+## TEST-PIPE-015 — Registro ID/EX aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1237,9 +1228,9 @@ secuencias de CPU/control de `TEST-PIPE-010/C001–C020`. Sus IDs, cantidades,
 estados y configuraciones no cambian. La generación real de controles para
 HOLD, LOAD, drain y fronteras de instrucciones corresponde a la integración.
 
-<a id="test-pipe-017"></a>
+<a id="test-pipe-016"></a>
 
-## TEST-PIPE-017 — Registro EX/MEM aislado
+## TEST-PIPE-016 — Registro EX/MEM aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1295,9 +1286,9 @@ estados y configuraciones no cambian. No se atribuye al registro aislado la
 continuidad de trabajo anterior ante redirect/fault ID ni la generación real
 de controles de HOLD, LOAD, halt/fault EX y drain.
 
-<a id="test-pipe-014"></a>
+<a id="test-pipe-017"></a>
 
-## TEST-PIPE-014 — Registro MEM/WB aislado
+## TEST-PIPE-017 — Registro MEM/WB aislado
 
 - **Nivel:** Unidad.
 - **Tipo de estímulo:** vectores de payload y controles locales aplicados a los puertos del registro.
@@ -1355,6 +1346,19 @@ controles locales y la integración correspondientes.
 <a id="acreditacion-local-7"></a>
 
 ## Acreditación local de #7 y pendientes de integración
+
+La rama incorpora las entregas revisadas de #3 y #4 desde la base `13d934b`.
+Se conservan los IDs publicados por #4 para detector load-use e integraciones
+IF/ID (`TEST-PIPE-011–013`). Las cuatro suites de registros de #7 pasan a
+`TEST-PIPE-014–017` para evitar las colisiones del catálogo; sus casos, entradas,
+expectativas y niveles se conservan.
+
+| Registro | ID anterior en la rama de #7 | ID tras integrar la base |
+| -------- | --------------------------- | ------------------------ |
+| IF/ID | TEST-PIPE-011 | TEST-PIPE-014 |
+| ID/EX | TEST-PIPE-012 | TEST-PIPE-015 |
+| EX/MEM | TEST-PIPE-013 | TEST-PIPE-016 |
+| MEM/WB | TEST-PIPE-014 | TEST-PIPE-017 |
 
 El alcance implementado conserva los 34 campos y 504 bits de los cuatro
 registros y el árbitro combinacional sin estado. Los controles de composición,

@@ -81,7 +81,7 @@ El dato WB y las coincidencias de forwarding siguen tomando `MEM/WB` previo al f
 | Parámetro             | Hijos de `processor_top`                        | Propagación interna                                                                                                                     |
 |-----------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
 | `IMEM_CAPACITY_BYTES` | `if_stage`, `execution_control` y `loader`      | `if_stage` lo pasa a `instruction_memory` y `fetch_fault_check`. `execution_control` deriva localmente los anchos de tamaño confirmado. |
-| `DMEM_CAPACITY_BYTES` | `ex_stage`, `mem_stage` y `session_preparation` | `ex_stage` lo pasa a `ex_flow_check` y `mem_stage` a `data_memory`.                                                                     |
+| `DMEM_CAPACITY_BYTES` | `ex_stage`, `mem_stage` y `session_preparation` | `ex_stage` lo pasa a `ex_fault_check` y `mem_stage` a `data_memory`.                                                                     |
 
 `id_stage`/`wb_stage` no requieren capacidades de memoria. Los tamaños/índices se derivan de los parámetros según `system_pkg`, sin defaults o perfiles independientes.
 
@@ -360,7 +360,7 @@ Los 51 IDs de `interfaces.md` aparecen una sola vez en la tabla, con su ubicaci�
 | [3.10](../interfaces.md#bloque-3-10) | `Clear bit 0`                             | EX / forwarding / EX-MEM           | `ex_stage` (lógica/estado local)          |
 | [3.11](../interfaces.md#bloque-3-11) | `Target MUX`                              | EX / forwarding / EX-MEM           | `ex_stage` (lógica/estado local)          |
 | [3.12](../interfaces.md#bloque-3-12) | `Flow Control`                            | EX / forwarding / EX-MEM           | `ex_stage.flow_control`                   |
-| [3.13](../interfaces.md#bloque-3-13) | `EX Fault Check`                          | EX / forwarding / EX-MEM           | `ex_stage.ex_flow_check`                  |
+| [3.13](../interfaces.md#bloque-3-13) | `EX Fault Check`                          | EX / forwarding / EX-MEM           | `ex_stage.ex_fault_check`                  |
 | [3.14](../interfaces.md#bloque-3-14) | `EX/MEM Update Control`                   | EX / forwarding / EX-MEM           | `processor_top` (lógica/estado local)     |
 | [3.15](../interfaces.md#bloque-3-15) | Registro `EX/MEM`                         | EX / forwarding / EX-MEM           | `processor_top.ex_mem_register`           |
 | [4.1](../interfaces.md#bloque-4-1)   | `MEM Decode`                              | MEM / DMEM / MEM-WB                | `mem_stage.mem_decode`                    |
