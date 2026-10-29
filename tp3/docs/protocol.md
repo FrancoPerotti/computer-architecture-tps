@@ -1400,7 +1400,7 @@ Las especificaciones de bloques detallan:
 
 [DEC-SYS-007](decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart) está aprobada; [interfaces](interfaces.md#152-estado-de-los-detalles-de-realización-por-módulo) reúne las concreciones vigentes. La implementación y la validación RTL, de timing y de placa siguen pendientes. El plan de verificación y los criterios de comparación con resultados esperados se consultan en el [Plan de verificación](verification/verification_plan.md); el cierre documental del diseño FPGA, en [Diseño FPGA consolidado](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue).
 
-DEC-SYS-008 y DEC-SYS-009 completan aplicación PC y assembler.
+[DEC-SYS-008](decisions/DEC-SYS-008.md) y [DEC-SYS-009](decisions/DEC-SYS-009.md) definen la aplicación de PC y el assembler, respectivamente.
 
 El cierre del protocolo no completa D0 del sistema ni adelanta implementación.
 

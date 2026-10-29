@@ -33,7 +33,7 @@ El alcance comprende:
 
 La [tabla de perfiles](memory/memory_architecture.md#perfiles-definidos) es la fuente oficial de capacidades. [Composición](system_composition.md) define el empaquetado de puertos y registros interetapa. Los pines y constraints de placa permanecen en el XDC ya especificado: no se trasladan a constantes HDL ni se duplican como una segunda autoridad.
 
-El formato de configuración de la aplicación PC se concretará junto con su diseño y tomará el mismo perfil de esa tabla. UART no transporta un puerto de perfil ni un generador de software.
+La aplicación PC toma el mismo perfil mediante memory_profile en su [descriptor de procesador e inventario](../software/viewrv/gui_y_visor.md#separación-de-datos-contenido-y-dibujo), con [capacidades y ventanas derivadas](../software/viewrv/integracion_y_distribucion.md#configuración-de-hardware-y-adaptación-uart). UART no transporta un puerto de perfil ni un generador de software.
 
 <a id="fuente-y-selección-propuestas"></a>
 

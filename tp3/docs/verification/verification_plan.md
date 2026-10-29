@@ -72,7 +72,7 @@ Los objetos `inputs` y `expected` conservan los campos específicos de cada caso
 
 El esquema valida la estructura. La coincidencia entre `case_count` y la cantidad de casos, la unicidad por ID, la pertenencia de cada caso a su grupo, las referencias entre grupos/casos y la existencia de las fuentes son comprobaciones de coherencia adicionales a JSON Schema.
 
-La validación del esquema se ejecuta con `check-jsonschema`, incluido en la imagen compartida. La [guía del entorno](../development_environment.md#validación-del-manifiesto) contiene los comandos de validación del manifiesto y del propio esquema.
+La validación del esquema se ejecuta con `check-jsonschema`, incluido en la imagen compartida. La [guía del entorno](../development_environment.md#comprobaciones-locales) describe las comprobaciones locales, incluida validate; la [guía de pruebas](test_selection.md) documenta la selección y validación del catálogo.
 
 ### Formato estructurado de resultados
 
@@ -281,6 +281,12 @@ Para cada instancia, la expectativa determina si debe existir una escritura y qu
 
 Comparar únicamente el estado final no permite detectar un store repetido que escriba el mismo valor ni una escritura indebida cuyo dato sea sobrescrito después. La observación de commits comprueba esos efectos durante la ejecución, mientras que las expectativas temporales comprueban las condiciones bajo las que deben ocurrir.
 
+## Relación con la verificación de la aplicación
+
+El [diseño de verificación de viewrv](../software/viewrv/verificacion.md) concreta 30 escenarios y cobertura de los 74 requisitos de la SRS de viewrv. La [matriz del sistema](coverage.md) enlaza esos casos con REQ-SW-001 a REQ-SW-012 y conserva las pruebas del assembler. Los 56 grupos y 1363 casos del manifiesto de hardware mantienen sus IDs y alcance; las pruebas de PC no se cuentan como ejecuciones RTL.
+
+Los vectores compartidos de UART, memoria y transiciones se usan como expectativas literales para comprobar el cliente y el visor. La recepción en PC no valida por sí sola el serializador FPGA, ni un fixture de bytes demuestra la plataforma física. La aceptación conjunta exige contrastar los dos extremos con el mismo programa, perfil, bitstream y evidencia.
+
 ## Organización de la verificación
 
 La verificación se divide en niveles porque cada nivel permite observar propiedades diferentes. Las pruebas de unidad comprueban bloques aislados; las de integración local comprueban etapas o combinaciones de bloques; las de CPU comprueban `processor_top` sin el enlace físico; y las de sistema comprueban la interacción entre UART, protocolo, CPU y serializador.
@@ -305,7 +311,7 @@ El cierre documental de FPGA-07 y FPGA-08 comprende el diseño de las pruebas y 
 ## Pendientes y límites
 
 - **LIM-01:** los contratos exigen valores definidos ante estados internos ilegales, pero no fijan un byte numérico del encoder para zero-hot/multi-hot. La revisión solo exige ausencia de `X`, control seguro y ausencia de un nuevo fault; no se inventa un código UART. Ese valor deberá documentarse al concretar el RTL. Las ejecuciones legales sí tienen los 14 códigos fijados.
-- **LIM-02:** algunas fuentes actuales contienen referencias a documentos ausentes en el worktree. Este entregable utiliza los requisitos y contratos presentes; esas referencias no se consideran evidencia disponible.
+- **LIM-02:** las fuentes normativas deben estar disponibles mediante los enlaces locales de esta documentación. Una referencia externa o una especificación no sustituye evidencia de ejecución.
 - **LIM-03:** las interfaces exactas del banco de pruebas, las consultas jerárquicas XDC y los comandos de regresión se concretarán cuando existan RTL y netlist. Aquí se fijan observaciones y criterios, sin afirmar que esas herramientas ya estén disponibles.
 
 ## Referencias y trazabilidad

@@ -34,6 +34,13 @@ Después de esa lectura, los documentos de consulta permiten profundizar en un t
 | Compilación y simulación                 | [Entorno de desarrollo](development_environment.md)                     | Describe la imagen Docker compartida, sus entradas fijadas, su construcción y su uso.                                               |
 | Definiciones compartidas del RTL         | [Configuración común](architecture/common_configuration.md)             | Define la configuración compartida y documenta la API implementada del paquete y sus comprobaciones locales.                        |
 | Obligaciones y aceptación                | [Requisitos](requirements.md)                                           | Relaciona cada requisito con su fuente, aceptación y decisión de origen.                                                            |
+| Aplicación de PC | [Documentación de viewrv](software/viewrv/README.md) | Índice y autoridad de las definiciones de la aplicación. |
+| Producto de PC | [Requisitos](software/viewrv/requisitos.md) | Alcance, usuarios y criterios de aceptación. |
+| Arquitectura de PC | [Arquitectura](software/viewrv/arquitectura.md) | Core, GUI, CLI, procesos y coordinación. |
+| Operación de PC | [Contratos y funcionamiento](software/viewrv/contratos.md) | CLI, HTTP, JSON, SSE, sesiones, errores y conservación. |
+| Presentación de PC | [GUI y visor](software/viewrv/gui_y_visor.md) | Interacción, contenido educativo y visualización de capturas. |
+| Entrega de PC | [Integración y distribución](software/viewrv/integracion_y_distribucion.md) | Recursos, dependencias, hardware e instalación. |
+| Verificación de PC | [Verificación](software/viewrv/verificacion.md) | Casos, expectativas, cobertura y evidencia de aceptación. |
 | Arquitectura del sistema                 | [Diseño FPGA consolidado](architecture/system_overview.md)              | Presenta el funcionamiento e identifica los contratos especializados de etapas, control, memoria, sesión, UART, Debug y plataforma. |
 | Bloques y agrupación RTL                 | [Inventario de módulos](architecture/module_inventory.md)               | Relaciona los bloques funcionales con módulos, archivos y ubicación en la jerarquía.                                                |
 | Integración del sistema                  | [Composición del sistema](architecture/system_composition.md)           | Define la topología, los puertos de los tops y los aliases de integración.                                                          |

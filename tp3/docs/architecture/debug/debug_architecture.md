@@ -635,4 +635,4 @@ Estas propiedades corresponden a `I25` y a las invariantes relacionadas de [Inva
 - [Protocolo definitivo](../../protocol.md) y [DEC-PROTO-001](../../decisions/DEC-PROTO-001.md#dec-proto-001--formato-detallado-del-protocolo): decisión aprobada y consolidada.
 - [DEC-SYS-007](../../decisions/DEC-SYS-007.md#dec-sys-007--servicios-y-parámetros-generales-de-uart): servicios UART aprobados.
 - [DEC-SYS-009](../../decisions/DEC-SYS-009.md): diseño del assembler aprobado.
-- [DEC-SYS-008](../../decisions/pending_decisions.md#7-software-de-pc): aplicación PC pendiente.
+- [DEC-SYS-008](../../decisions/DEC-SYS-008.md): aplicación de PC, presentación y lógica compartida de GUI y CLI.
