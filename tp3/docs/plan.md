@@ -3,7 +3,7 @@
 - **Tipo:** plan.
 - **Estado documental:** documentación vigente.
 
-**Prioridad vigente:** completar el diseño de la aplicación de PC y el cierre conjunto del sistema antes de D0/M6 y de la implementación. El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). Las decisiones abiertas y sus condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
+**Prioridad vigente:** aceptar y registrar el cierre conjunto del sistema antes de implementar. El diseño y los casos de verificación de viewrv están especificados en su [documentación](software/viewrv/README.md). El diseño del assembler está aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). Las decisiones abiertas y sus condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
 
 **Índice**
 
@@ -103,7 +103,7 @@ La implementación debe materializar una arquitectura previamente definida, no c
 
 Antes de escribir RTL, software o testbenches deben estar definidos y revisados:
 
-- la decisión de aplicación PC `DEC-SYS-008` abierta en [Decisiones pendientes](decisions/pending_decisions.md) y el diseño aprobado del assembler en [DEC-SYS-009](decisions/DEC-SYS-009.md), los entregables del [plan de verificación](verification/verification_plan.md), los [criterios de comparación](verification/verification_plan.md#resultados-esperados-y-criterios-de-comparación) y la revisión final del [diseño FPGA](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue), respetando sus dependencias;
+- el diseño de aplicación PC aprobado en [DEC-SYS-008](decisions/DEC-SYS-008.md) y el diseño aprobado del assembler en [DEC-SYS-009](decisions/DEC-SYS-009.md), los entregables del [plan de verificación](verification/verification_plan.md), los [criterios de comparación](verification/verification_plan.md#resultados-esperados-y-criterios-de-comparación) y la revisión final del [diseño FPGA](architecture/system_overview.md#fuentes-de-detalle-y-trabajo-que-sigue), respetando sus dependencias;
 - el criterio de DMEM utilizada, contenido observable y mecanismo de captura coherente;
 - los servicios UART, comandos, paquetes, respuestas, errores, timeouts y recuperación;
 - la microarquitectura de Debug, recepción/carga y preparación: estados privados, eventos, secuencias, ownership y relación con la FSM global;
@@ -713,7 +713,7 @@ Definir el protocolo antes de implementarlo.
 
 Las solicitudes, respuestas, códigos, formatos, errores y recuperación se consultan en [Protocolo](protocol.md). [Debug](architecture/debug/debug_architecture.md) define el contenido y la coherencia de la observación; [Ejecución](architecture/session/execution_control.md) define la semántica interna. [DEC-PROTO-001](decisions/DEC-PROTO-001.md), [DEC-PROTO-002](decisions/DEC-PROTO-002.md) y [DEC-PROTO-003](decisions/DEC-PROTO-003.md) conservan las aprobaciones y sus revisiones.
 
-Las decisiones de diseño PC se registran en [Decisiones pendientes](decisions/pending_decisions.md). Las condiciones de cierre conjunto se consultan en [Hitos formales del proyecto](#28-hitos-formales-del-proyecto).
+La decisión de diseño PC se define en [DEC-SYS-008](decisions/DEC-SYS-008.md). Las condiciones de cierre conjunto se consultan en [Hitos formales del proyecto](#28-hitos-formales-del-proyecto).
 
 <a id="gate-de-salida-15"></a>
 
@@ -757,13 +757,15 @@ UART y Debug deben funcionar independientemente del CPU antes de integrarlos con
 
 ## 21. Fase 18 — Software de PC
 
-**Diseño previo obligatorio:** `DEC-SYS-009` está aprobada. Antes de D0 se resuelve `DEC-SYS-008`, se especifican las capas e interfaces siguientes y se documentan los flujos y errores conforme al protocolo. La implementación de esas capas comienza después de D0 y M6.
+**Diseño de referencia:** [DEC-SYS-008](decisions/DEC-SYS-008.md) define la aplicación y [DEC-SYS-009](decisions/DEC-SYS-009.md) conserva el diseño del assembler. Las capas, interfaces, flujos y errores se especifican conforme al protocolo; la implementación se organiza mediante las [entregas de viewrv](implementation_plan.md#entregas-de-viewrv).
 
 ### Actividades de diseño
 
 Especificar las responsabilidades e interfaces de assembler, transporte serie, protocolo, lógica de aplicación e interfaz de usuario. Definir los flujos de carga, ejecución, lectura de estado y tratamiento de errores antes de implementar esas capas.
 
-El alcance se consulta en [Requisitos de software](requirements.md#8-software-de-pc), los intercambios en [Protocolo](protocol.md) y las decisiones de assembler/aplicación en [Pendientes](decisions/pending_decisions.md#7-software-de-pc).
+El alcance se consulta en [Requisitos de software](requirements.md#8-software-de-pc) y en la [SRS de la aplicación de PC](software/viewrv/requisitos.md), versión 0.4. La aplicación ofrece GUI y CLI sobre un core local compartido. Los intercambios se consultan en [Protocolo](protocol.md) y la decisión de aplicación en [DEC-SYS-008](decisions/DEC-SYS-008.md).
+
+La [documentación de viewrv](software/viewrv/README.md) especifica requisitos, arquitectura, contratos, presentación, integración y verificación de la aplicación.
 
 ### Regla
 
@@ -771,7 +773,7 @@ La interfaz visual no debe contener la lógica del protocolo ni del assembler.
 
 ### Estrategia recomendada
 
-El formato de aplicación se selecciona al cerrar `DEC-SYS-008`; CLI, TUI o GUI deben integrarse con las mismas capas funcionales especificadas. El orden de implementación se fija después de esa elección y del cierre global del diseño.
+La forma de entrega y la solución técnica se definen en [DEC-SYS-008](decisions/DEC-SYS-008.md) y en la documentación de viewrv: core local compartido, GUI y CLI, con sus integraciones y pruebas previstas. El [plan de implementación](implementation_plan.md#entregas-de-viewrv) organiza entregas y dependencias. La aprobación del diseño no acredita software construido ni pruebas ejecutadas.
 
 ---
 
@@ -1038,7 +1040,7 @@ El origen y alcance del cierre UART se consultan en [DEC-SYS-007](decisions/DEC-
 
 ### Prioridad vigente — FPGA primero, 2026-10-05
 
-El assembler está diseñado y aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md). Concretar la aplicación de PC y completar el cierre conjunto del sistema antes de D0/M6 y de la implementación. Las decisiones abiertas, sus fuentes y condiciones de cierre se consultan en [Decisiones pendientes](decisions/pending_decisions.md).
+El assembler está diseñado y aprobado en [DEC-SYS-009](decisions/DEC-SYS-009.md) y la aplicación de PC en [DEC-SYS-008](decisions/DEC-SYS-008.md). Las entregas de implementación siguen sus dependencias y pueden avanzar en paralelo según la [guía de implementación](implementation_plan.md). La aceptación del sistema requiere las comprobaciones y la evidencia definidas en los catálogos.
 
 ## Referencias y trazabilidad
 
