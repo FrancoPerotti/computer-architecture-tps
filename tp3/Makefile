@@ -11,18 +11,23 @@ RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \
                rtl/forwarding_unit.sv rtl/alu.sv rtl/flow_control.sv rtl/ex_fault_check.sv \
                rtl/id_stage.sv rtl/ex_stage.sv \
                rtl/fetch_fault_check.sv rtl/instruction_memory.sv rtl/if_stage.sv \
+               rtl/mem_decode.sv rtl/dmem_write_control.sv rtl/load_select_extend.sv \
+               rtl/data_memory.sv rtl/mem_stage.sv rtl/wb_stage.sv \
                rtl/if_id_register.sv rtl/id_ex_register.sv rtl/ex_mem_register.sv \
                rtl/mem_wb_register.sv rtl/pipeline_hazard_control.sv \
                rtl/global_fsm.sv rtl/execution_control.sv rtl/loader.sv \
                rtl/session_preparation.sv
 RTL_TOPS := decoder immediate_generator register_file id_fault_check load_use_detector \
-            forwarding_unit alu flow_control id_stage ex_stage \
+            forwarding_unit alu flow_control id_stage ex_stage mem_decode \
+            dmem_write_control load_select_extend wb_stage \
             if_id_register id_ex_register ex_mem_register mem_wb_register pipeline_hazard_control \
             execution_control loader session_preparation
 IMEM_RTL_TOPS := fetch_fault_check instruction_memory if_stage
 IMEM_LINT_CAPACITIES := 4 1000 1024
 EX_FAULT_RTL_TOPS := ex_fault_check
-DMEM_LINT_CAPACITIES := 4 1000 2048 4294967296
+EX_FAULT_LINT_CAPACITIES := 4 1000 2048 4294967296
+DMEM_RTL_TOPS := data_memory mem_stage
+DMEM_LINT_CAPACITIES := 4 1000 2048
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags
@@ -64,6 +69,12 @@ lint:
 	  done; \
 	done
 	@for top in $(EX_FAULT_RTL_TOPS); do \
+	  for capacity in $(EX_FAULT_LINT_CAPACITIES); do \
+	    verilator --lint-only --language 1800-2012 --top-module "$$top" \
+	      "-GDMEM_CAPACITY_BYTES=64'd$$capacity" $(RTL_SOURCES); \
+	  done; \
+	done
+	@for top in $(DMEM_RTL_TOPS); do \
 	  for capacity in $(DMEM_LINT_CAPACITIES); do \
 	    verilator --lint-only --language 1800-2012 --top-module "$$top" \
 	      "-GDMEM_CAPACITY_BYTES=64'd$$capacity" $(RTL_SOURCES); \
