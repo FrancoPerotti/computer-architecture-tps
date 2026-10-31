@@ -1,7 +1,7 @@
 # TP3 — Matriz de cobertura de verificación
 
 - **Tipo:** matriz de verificación.
-- **Estado documental:** matriz vigente; ejecución RTL pendiente.
+- **Estado documental:** matriz vigente; ejecución RTL parcial registrada en el catálogo.
 - **Base:** requisitos y contratos vigentes.
 
 ## Propósito y alcance
@@ -21,6 +21,8 @@ Cada prueba se describe una sola vez, incluso cuando cubre varios requisitos. La
 La matriz también incluye comprobaciones documentales, de timing y de placa. Estas aportan evidencia sobre esos aspectos, pero no se consideran simulaciones funcionales de la CPU.
 
 Las filas de hardware indican el estado de sus pruebas RTL. Los [modelos abstractos y cálculos reproducibles](../../tools/verification/README.md) aportan evidencia parcial de control y recuperación, sin aprobar esos requisitos. Los niveles y pendientes se distinguen en el [plan](verification_plan.md#evidencia-disponible-y-pendiente).
+
+La evidencia actual de MEM/WB cubre `TEST-ISA-007` en integración MEM, todos los casos de `TEST-MEM-001` y `TEST-MEM-002`, la temporización local de ambas memorias en `TEST-MEM-005/C001–C002`, seis proyecciones DMEM de `TEST-MEM-006`, y el control WB de `TEST-PIPE-002/C004–C018` y `TEST-PIPE-009/C003–C007`. Los casos que requieren CPU, control global, ownership IMEM o placa conservan estado pendiente en `cases.json`; esta evidencia local no los sustituye.
 
 ## Requisitos
 

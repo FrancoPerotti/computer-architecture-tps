@@ -28,11 +28,15 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 - **Nivel:** unidad DMEM e integración MEM.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** 18 variantes implementadas en integración MEM.
 
 **Requisitos:** [REQ-MEM-005](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-006](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-ISA-002](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-003](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-004](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [dmem_access](../architecture/memory/dmem_access.md); [stage_mem](../architecture/cpu/stage_mem.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 18 casos con una DMEM de cuatro bytes. Instala los residuos físicos mediante el puerto de store, aplica `prepare_dmem_clear` para formar el bitmap inicial y comprueba por Debug el dato lógico y la marca de cada lane después del flanco. Las guardas de validez, ciclo efectivo y reset se ejercitan sin acceder jerárquicamente al almacenamiento.
 
 ### Qué comprueba y por qué
 
@@ -98,11 +102,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad DMEM/load_select_extend e integración MEM.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** 25 variantes implementadas en integración MEM.
 
 **Requisitos:** [REQ-MEM-005](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-006](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-ISA-018](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-019](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-020](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-021](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-022](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [dmem_access](../architecture/memory/dmem_access.md); [stage_mem](../architecture/cpu/stage_mem.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 25 casos a través de `Data Memory`, `MEM Decode`, `Load Select/Extend` y el mux que forma `MEM/WB.wb_value`. Compara signo, cero lógico y selección little-endian, y vuelve a observar los cuatro bytes para exigir que el load conserve datos y marcas.
 
 ### Qué comprueba y por qué
 
@@ -308,7 +316,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad memorias y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** temporización unitaria de IMEM implementada; DMEM y CPU pendientes.
+- **Estado:** temporización unitaria de IMEM y DMEM implementada; CPU pendiente.
 
 **Requisitos:** [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -316,9 +324,9 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-`instruction_memory_tb` ejecuta `C001` y `C002` en nivel `Unidad`, con capacidades explícitas de 1024 y 1000 bytes, respectivamente. El primer caso cambia la dirección con el reloj detenido. El segundo presenta una escritura y compara la salida antes y después del flanco, además de comprobar que una escritura deshabilitada conserve el valor anterior.
+`instruction_memory_tb` y `data_memory_timing_tb` ejecutan `C001` y `C002` en nivel `Unidad`, con capacidades explícitas de 1024 y 1000 bytes, respectivamente. El primer caso cambia la dirección con el reloj detenido. El segundo presenta una escritura y compara la salida antes y después del flanco, además de comprobar que una escritura deshabilitada conserve el valor anterior.
 
-Las palabras iniciales, las transacciones y las expectativas están en `inputs.initial_words`, `inputs.imem_steps` y `expected.imem_steps`. Las dos variantes acreditan IMEM; la temporización de DMEM y el programa `C003` siguen pendientes. Observar la salida durante una escritura local no representa un fetch activo de CPU concurrente con Loader.
+Las palabras iniciales, las transacciones y las expectativas están en `inputs.initial_words`, `inputs.imem_steps` y `expected.imem_steps`. Las dos variantes acreditan ambas memorias físicas; el programa `C003` y la coexistencia IF/MEM siguen pendientes de CPU. Observar la salida durante una escritura local no representa un fetch activo de CPU concurrente con Loader.
 
 ### Qué comprueba y por qué
 
@@ -384,11 +392,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración memorias/sistema y revisión.
 - **Tipo de estímulo:** legal y colisión artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** seis proyecciones locales DMEM implementadas; ownership global e IMEM pendientes.
 
 **Requisitos:** [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [memory_architecture](../architecture/memory/memory_architecture.md); [dmem_access](../architecture/memory/dmem_access.md); [execution_control](../architecture/session/execution_control.md).
+
+### Ejecución disponible
+
+`data_memory_ownership_tb` ejecuta `C003`, `C005`–`C008` y `C010`. Comprueba mantenimiento exclusivo, lectura Debug, espera estable y las prioridades reset > clear > store. `C010` es un rechazo esperado que exige la assertion `DMEM_OWNERSHIP_CONFLICT`. Las fases RUNNING, LOADING y STEP, y la colisión IMEM fetch/Loader, permanecen pendientes de integración global.
 
 ### Qué comprueba y por qué
 
