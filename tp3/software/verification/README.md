@@ -13,7 +13,7 @@ Los informes registran lo comprobado en su fecha y con sus versiones. Sus recuen
 | PC-I05 | [Sesiones y CLI](PC-I05.md) | Operaciones y coordinación del core y sus clientes. |
 | PC-I06 | [IDE](PC-I06.md) | Flujo de edición y depuración convencional. |
 | PC-I07 | [Visor y contenido educativo](PC-I07.md) | Implementación local y verificación del tramo. |
-| PC-I08 | [Plan de implementación](../../docs/implementation_plan.md#entregas-de-viewrv) | Distribución y aceptación integrada pendientes. |
+| PC-I08 | [Paquete Linux de verificación](PC-I08-LINUX-VERIFICATION-2026-11-04.md) · [Plan de implementación](../../docs/implementation_plan.md#entregas-de-viewrv) | Archivo Linux 0.7.0 y comprobación nativa parcial; distribución con hardware y aceptación integrada pendientes. |
 
 ## Mantenimiento y revisiones posteriores
 
@@ -26,6 +26,6 @@ Los informes `VISUAL-REVIEW-*` y `DEBUG-VISUAL-REVIEW-*` anteriores conservan la
 
 ## Pendientes de aceptación
 
-Faltan el bitstream aprobado, la programación/comunicación con Basys 3 real, las verificaciones de Windows solicitadas como pendientes y la aceptación integrada de PC-I08. Los paquetes anteriores y los montajes de verificación tienen el alcance indicado en su informe; no constituyen una distribución final actualizada.
+Faltan el bitstream aprobado, la programación/comunicación con Basys 3 real, las verificaciones de Windows solicitadas como pendientes y la aceptación integrada de PC-I08. El archivo Linux actualizado de verificación y los paquetes anteriores tienen el alcance indicado en su informe; no constituyen una distribución final con hardware.
 
 La comprobación actual de la GUI se ejecuta con `npm run check` desde `software/gui`. El [mapa de módulos y pruebas](../gui/README.md) describe su organización. El catálogo completo de requisitos y escenarios permanece en la [especificación de verificación](../../docs/software/viewrv/verificacion.md).

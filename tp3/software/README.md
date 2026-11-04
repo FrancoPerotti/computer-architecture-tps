@@ -148,19 +148,34 @@ El script construye ambos conjuntos Python onedir en la base Ubuntu 24.04 fijada
 
 El código actual es 0.7.0. La construcción de distribución exige programador nativo y bitstream válidos: con el bitstream ausente termina con error y no genera `stage-release.json`. El hook de electron-builder también rechaza inventarios viejos, plataformas distintas y recursos alterados. `build_linux.sh --native-only` construye únicamente CLI/core para pruebas locales, sin inventario ni distribución.
 
-El último paquete de comprobación conservado es 0.3.0, en `software/gui/dist/viewrv-gui-0.3.0.tar.gz` y `software/build/extracted/viewrv-gui-0.3.0`; las extracciones 0.1.0 y 0.2.0 siguen separadas. Ese paquete anterior no contiene PC-I04 a PC-I07. No hay un tar.gz de hardware 0.4.0/0.5.0/0.6.0/0.7.0 ni una distribución final PC-I08. La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
+Los paquetes anteriores se conservan: 0.3.0 está en `software/gui/dist/viewrv-gui-0.3.0.tar.gz` y `software/build/extracted/viewrv-gui-0.3.0`; las extracciones 0.1.0 y 0.2.0 siguen separadas. Esos paquetes no contienen PC-I04 a PC-I07. La comprobación parcial de PC-I08 incorpora un [archivo de verificación Linux 0.7.0](verification/PC-I08-LINUX-VERIFICATION-2026-11-04.md) actualizado. No hay una distribución final PC-I08 con hardware. La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
 
 Para comprobar solo los ejecutables nativos 0.7.0 y su programador en un host sin placa, desde `tp3`, ejecutar `software/.venv/bin/python software/packaging/smoke_preparation_native.py software --sessions`. También comprueba el assembler real incluido y las consultas de registros históricos. El verificador arma una disposición temporal, sin `release.json` ni bitstream, y no la presenta como distribución.
 
 Para verificar el host Electron y ASAR actuales con esos runtimes nativos, después de `npm run build`, desde `software/gui`:
 
 ```sh
-node ../packaging/build_gui_verification.cjs ..
-VIEWRV_PRODUCT=/ruta/impresa/por/el/constructor node tests/native-ide-smoke.cjs
-VIEWRV_PRODUCT=/ruta/impresa/por/el/constructor node tests/sandbox-smoke.cjs
+node ../packaging/build_gui_verification.cjs .. --archive
+# Verificar el .sha256 junto al archivo generado y extraerlo completo:
+cd /directorio/que/contiene/el/archivo
+sha256sum -c native-gui-0.7.0-XXXXXX.tar.gz.sha256
+tar -xzf native-gui-0.7.0-XXXXXX.tar.gz
+cd viewrv-0.7.0-linux-x64-verification
+./viewrv-gui
+# CLI independiente:
+./viewrv --help
 ```
 
-Esta disposición Linux x86_64 se guarda en un directorio único `software/build/native-gui-<versión>-*`, marcado `VERIFICATION-ONLY.txt` y con hashes de los ejecutables y ASAR. Verifica arranque empaquetado, core nativo compartido con CLI, assembler real, edición y cierre; recorre además las 33 instrucciones y 165 etapas con recursos locales, sin placa y conservando grafo, modelo y geometría. No contiene bitstream ni inventario de distribución y no sustituye la construcción de hardware.
+El constructor imprime JSON con las rutas de la disposición, el archivo comprimido, la raíz de extracción y su SHA-256. Sin `--archive` conserva el comportamiento anterior e imprime solo la disposición nativa. Cada construcción usa un directorio único `software/build/native-gui-<versión>-*`, marcado `VERIFICATION-ONLY.txt`. Incluye `verification-sha256.json` y `verification-manifest.json`, que identifica el commit, el estado de fuentes, las huellas de locks y todos los archivos con tamaño, modo y SHA-256; el manifiesto no se incluye a sí mismo. El campo `licenses` enumera los avisos encontrados, sin acreditar una auditoría completa de licencias. El archivo comprimido conserva permisos y una raíz estable; no se agregan enlaces simbólicos. No contiene bitstream ni `release.json` y no sustituye la construcción de hardware.
+
+Desde `software/gui`, con `VIEWRV_PRODUCT` apuntando a la **raíz extraída**, ejecutar:
+
+```sh
+VIEWRV_PRODUCT=/ruta/extraída/viewrv-0.7.0-linux-x64-verification node tests/native-ide-smoke.cjs
+VIEWRV_PRODUCT=/ruta/extraída/viewrv-0.7.0-linux-x64-verification node tests/sandbox-smoke.cjs
+```
+
+El primer ensayo comprueba el core nativo compartido con CLI, assembler real, edición dividida, guardado y recuperación de cambios sin guardar después de reiniciar GUI/core. Recorre además las 33 instrucciones y 165 etapas del visor con recursos locales, conserva grafo/modelo/geometría y abre el banco de 59 ejemplos y su guía. Tras el arranque configura un proxy externo inaccesible y conserva loopback directo durante el recorrido. No equivale a desconectar la red del host. El segundo ensayo prueba por separado el arranque con el sandbox nativo y un renderer sin Node.
 
 Para ejecutar las 25 operaciones con la CLI nativa contra el core de pruebas y el assembler real, desde `tp3`:
 

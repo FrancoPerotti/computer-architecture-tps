@@ -53,7 +53,7 @@ function cli(...args) {
   )
 }
 ;(async () => {
-  let instance, corePid
+  let instance, corePid, page
   const errors = [],
     external = []
   async function openGui() {
@@ -74,16 +74,25 @@ function cli(...args) {
     page.on('request', (req) => {
       if (!/^(viewrv:|blob:|data:|http:\/\/127\.0\.0\.1:)/.test(req.url())) external.push(req.url())
     })
-    const proxy = await instance.evaluate(async ({ session }) => ({
-      external: await session.defaultSession.resolveProxy('https://example.com'),
-      local: await session.defaultSession.resolveProxy('http://127.0.0.1:12345'),
-    }))
+    await waitForCore(page)
+    // The host configures a direct loopback connection during bootstrap. Apply
+    // the verification restriction afterwards, before exercising local assets.
+    const proxy = await instance.evaluate(async ({ session }) => {
+      await session.defaultSession.setProxy({
+        mode: 'fixed_servers',
+        proxyRules: 'http://127.0.0.1:1',
+        proxyBypassRules: '127.0.0.1;localhost',
+      })
+      return {
+        external: await session.defaultSession.resolveProxy('https://example.com'),
+        local: await session.defaultSession.resolveProxy('http://127.0.0.1:12345'),
+      }
+    })
     assert.ok(
       proxy.external.includes('127.0.0.1:1'),
       'External network is not blocked by the test proxy',
     )
     assert.equal(proxy.local, 'DIRECT')
-    await waitForCore(page)
     const parent = instance.process().pid
     for (const value of readFileSync(`/proc/${parent}/task/${parent}/children`, 'utf8')
       .trim()
@@ -107,10 +116,20 @@ function cli(...args) {
     assert.equal(process.exitCode, 0)
     instance = null
   }
+  async function editorFor(tab) {
+    await tab.click()
+    const panelId = await tab.getAttribute('aria-controls')
+    assert.ok(panelId, 'Program tab has no associated panel')
+    const panel = page.locator(`[id=${JSON.stringify(panelId)}]`)
+    const textbox = panel.locator('.monaco-editor [role="textbox"]')
+    await textbox.waitFor()
+    await textbox.focus()
+    return panel
+  }
   try {
     assert.equal(existsSync(resolve(product, 'release.json')), false)
     assert.equal(existsSync(resolve(product, 'resources/hardware/processor.bit')), false)
-    let page = await openGui()
+    page = await openGui()
     assert.ok(corePid, 'Packaged host did not start its native core')
     const info = await instance.evaluate(({ app }) => ({
       packaged: app.isPackaged,
@@ -198,6 +217,7 @@ function cli(...args) {
         `../build/${process.env.VIEWRV_EVIDENCE_PREFIX || 'gui-pc-i06'}-native-conceptual.png`,
       ),
     })
+    await page.keyboard.press('Escape')
     await page.getByRole('button', { name: 'IDE', exact: true }).click()
     await menuCommand(page, 'Archivo', 'Abrir ejemplo…')
     const bank = page.getByRole('dialog', { name: 'Abrir ejemplo', exact: true })
@@ -246,10 +266,17 @@ function cli(...args) {
     await menuCommand(page, 'Archivo', 'Guardar')
     await until(() => readFileSync(source, 'utf8').includes('# native ASAR edit'))
     const savedText = readFileSync(source, 'utf8')
-    const expectedDraft = savedText + '# recoverable native draft\n'
+    const automaticText = savedText + '# automatic native save\n'
     await page.locator('.monaco-editor:visible [role="textbox"]').last().focus()
     await page.keyboard.press('Control+End')
-    await page.keyboard.insertText('# recoverable native draft\n')
+    await page.keyboard.insertText('# automatic native save\n')
+    await until(() => readFileSync(source, 'utf8') === automaticText)
+    // Associated files autosave by contract. Exercise recovery separately with
+    // a new document that has never been assigned a filesystem destination.
+    await menuCommand(page, 'Archivo', 'Crear programa')
+    const expectedDraft = '# recoverable native draft'
+    await editorFor(page.getByRole('tab', { name: /^Sin título \d+$/, exact: true }).first())
+    await page.keyboard.insertText(expectedDraft)
     await until(() =>
       readdirSync(resolve(root, 'data/viewrv/recovery')).some((name) => {
         const snapshot = JSON.parse(
@@ -274,19 +301,26 @@ function cli(...args) {
     await until(() => !existsSync(`/proc/${corePid}`))
     page = await openGui()
     await page.getByRole('button', { name: 'IDE', exact: true }).click()
-    await page.getByRole('tab', { name: 'native program.s ●', exact: true }).first().waitFor()
+    const recoveredTab = page.getByRole('tab', { name: /^Sin título \d+ ●$/ }).first()
+    await recoveredTab.waitFor()
+    const recoveredPanel = await editorFor(recoveredTab)
     await until(async () =>
-      (await page.locator('.monaco-editor:visible .view-lines').first().innerText()).includes(
-        '# recoverable native draft',
-      ),
+      (await recoveredPanel.locator('.monaco-editor .view-lines').innerText())
+        .replace(/\u00a0/g, ' ')
+        .includes('# recoverable native draft'),
     )
     assert.equal(
       readFileSync(source, 'utf8'),
-      savedText,
-      'Recovery unexpectedly overwrote the source file',
+      automaticText,
+      'Recovering a new document changed the associated source file',
     )
+    const recoveredPath = resolve(root, 'recovered program.s')
+    assert.equal(existsSync(recoveredPath), false)
+    await instance.evaluate(({ dialog }, destination) => {
+      dialog.showSaveDialog = async () => ({ canceled: false, filePath: destination })
+    }, recoveredPath)
     await menuCommand(page, 'Archivo', 'Guardar')
-    await until(() => readFileSync(source, 'utf8') === expectedDraft)
+    await until(() => readFileSync(recoveredPath, 'utf8') === expectedDraft)
     await page.screenshot({
       path: resolve(
         gui,
@@ -297,11 +331,37 @@ function cli(...args) {
     await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     assert.deepEqual(external, [])
     assert.deepEqual(errors, [])
-    return 'Native verification: 33 instructions / 165 stages, 59 examples and original guide; native core/CLI and real assembler; split/save, unsaved draft recovered after fresh core/GUI restart, source preserved until explicit save, external HTTP(S) blocked, independent GUI/CLI close and native final shutdown passed. No FPGA execution or final hardware distribution claimed.\n'
+    return 'Native verification: 33 instructions / 165 stages, 59 examples and original guide; native core/CLI and real assembler; split/save and associated-file autosave, unassociated draft recovered after fresh core/GUI restart and saved to a chosen destination, external HTTP(S) blocked during the flows, independent GUI/CLI close and native final shutdown passed. No FPGA execution or final hardware distribution claimed.\n'
+  } catch (error) {
+    if (page && !page.isClosed()) {
+      console.error('Native renderer errors:', errors)
+      console.error(
+        'Native failure body:',
+        await page
+          .locator('body')
+          .innerText()
+          .catch(() => ''),
+      )
+      await page
+        .screenshot({
+          path: resolve(
+            gui,
+            `../build/${process.env.VIEWRV_EVIDENCE_PREFIX || 'gui-pc-i06'}-native-failure.png`,
+          ),
+        })
+        .catch(() => {})
+    }
+    throw error
   } finally {
     if (instance) {
       const child = instance.process()
-      if (child.exitCode === null && child.signalCode === null) child.kill('SIGTERM')
+      await Promise.race([instance.evaluate(({ app }) => app.exit()).catch(() => {}), delay(3000)])
+      if (child.exitCode === null && child.signalCode === null) {
+        child.kill('SIGTERM')
+        await until(() => child.exitCode !== null || child.signalCode !== null, 5000).catch(() =>
+          child.kill('SIGKILL'),
+        )
+      }
     }
     if (corePid) {
       try {
