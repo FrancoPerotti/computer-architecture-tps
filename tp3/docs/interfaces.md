@@ -2226,13 +2226,15 @@ Esta sección agrupa las fronteras de integración y sus fuentes de comportamien
 
 Operaciones, resultados, códigos de estado, orden de intercambios, errores, plazos y perfiles se consultan en [Protocolo](protocol.md). Significado e instante de observación corresponden a [Debug](architecture/debug/debug_architecture.md); producción y fin físico a [Serializador](architecture/debug/response_serializer.md); coordinación a [Controlador](architecture/debug/protocol_controller.md). Las aprobaciones son DEC-PROTO-001/002/003, DEC-ARCH-009 y DEC-SYS-007, enlazadas desde el [mapa de autoridad](architecture/system_overview.md#autoridad-documental-por-tema).
 
-### 15.1 Decisiones que siguen abiertas
+<a id="151-decisiones-que-siguen-abiertas"></a>
 
-| Decisión    | Interfaz / entregable afectado | Alcance abierto                      |
+### 15.1 Decisiones de software de PC
+
+| Decisión | Interfaz / entregable afectado | Contrato |
 |-------------|--------------------------------|--------------------------------------|
-| DEC-SYS-008 | aplicación PC                  | CLI/TUI/GUI y presentación de estado |
+| [DEC-SYS-008](decisions/DEC-SYS-008.md) | Aplicación de PC | GUI y CLI sobre un core local compartido, con presentación y conservación del estado. |
 
-El diseño del assembler se define en [DEC-SYS-009](decisions/DEC-SYS-009.md). La selección de CLI/TUI/GUI y presentación de estado se registra en [Decisiones pendientes](decisions/pending_decisions.md). Las condiciones de implementación y verificación del sistema se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto).
+El diseño del assembler se define en [DEC-SYS-009](decisions/DEC-SYS-009.md). La GUI, la CLI y la presentación del estado se definen en [DEC-SYS-008](decisions/DEC-SYS-008.md) y sus contratos de aplicación. Las condiciones de implementación y verificación del sistema se consultan en [Hitos formales del proyecto](plan.md#28-hitos-formales-del-proyecto).
 
 <a id="152-detalles-de-realización-que-deben-concretarse-por-módulo"></a>
 

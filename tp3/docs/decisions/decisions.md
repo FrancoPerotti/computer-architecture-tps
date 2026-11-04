@@ -89,6 +89,14 @@ Cada decisión aprobada contiene:
 
 ---
 
+### DEC-SYS-008 — Aplicación de PC
+
+**Estado:** Aprobada.
+
+[DEC-SYS-008](DEC-SYS-008.md)
+
+---
+
 ### DEC-SYS-009 — Estrategia del assembler
 
 **Estado:** Aprobada.
