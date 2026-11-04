@@ -1,7 +1,14 @@
 const { waitForCore } = require('./ui-commands.cjs')
 // TEST-PC-002/012/013/017/026: actual ASAR GUI + native core/CLI, no hardware fixtures.
 const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync } = require('node:fs')
+const {
+  mkdtempSync,
+  readFileSync,
+  writeFileSync,
+  readdirSync,
+  existsSync,
+  rmSync,
+} = require('node:fs')
 const { tmpdir } = require('node:os')
 const { resolve } = require('node:path')
 const { execFileSync } = require('node:child_process')
@@ -18,6 +25,9 @@ const environment = {
   XDG_STATE_HOME: resolve(root, 'state'),
   XDG_CONFIG_HOME: resolve(root, 'config'),
   XDG_DATA_HOME: resolve(root, 'data'),
+  HTTP_PROXY: 'http://127.0.0.1:1',
+  HTTPS_PROXY: 'http://127.0.0.1:1',
+  ALL_PROXY: 'http://127.0.0.1:1',
 }
 for (const name of ['PYTHONPATH', 'PYTHONHOME', 'LD_LIBRARY_PATH', 'LD_PRELOAD'])
   delete environment[name]
@@ -44,26 +54,35 @@ function cli(...args) {
 }
 ;(async () => {
   let instance, corePid
-  try {
-    assert.equal(existsSync(resolve(product, 'release.json')), false)
-    assert.equal(existsSync(resolve(product, 'resources/hardware/processor.bit')), false)
+  const errors = [],
+    external = []
+  async function openGui() {
     instance = await electron.launch({
       executablePath: resolve(product, 'viewrv-gui'),
       args: [
         '--disable-gpu',
         '--ozone-platform=x11',
+        '--proxy-server=http://127.0.0.1:1',
+        '--proxy-bypass-list=127.0.0.1;localhost',
         `--user-data-dir=${resolve(root, 'profile')}`,
       ],
       env: environment,
     })
     const page = await instance.firstWindow()
     await page.setViewportSize({ width: 1366, height: 768 })
-    const errors = [],
-      external = []
     page.on('pageerror', (error) => errors.push(String(error)))
     page.on('request', (req) => {
       if (!/^(viewrv:|blob:|data:|http:\/\/127\.0\.0\.1:)/.test(req.url())) external.push(req.url())
     })
+    const proxy = await instance.evaluate(async ({ session }) => ({
+      external: await session.defaultSession.resolveProxy('https://example.com'),
+      local: await session.defaultSession.resolveProxy('http://127.0.0.1:12345'),
+    }))
+    assert.ok(
+      proxy.external.includes('127.0.0.1:1'),
+      'External network is not blocked by the test proxy',
+    )
+    assert.equal(proxy.local, 'DIRECT')
     await waitForCore(page)
     const parent = instance.process().pid
     for (const value of readFileSync(`/proc/${parent}/task/${parent}/children`, 'utf8')
@@ -77,6 +96,21 @@ function cli(...args) {
           corePid = Number(value)
       } catch {}
     }
+    return page
+  }
+  async function closeGui(page) {
+    const closed = page.waitForEvent('close', { timeout: 15000 })
+    await page.evaluate(() => window.viewrvDesktop.requestWindowClose())
+    await closed
+    const process = instance.process()
+    await until(() => process.exitCode !== null || process.signalCode !== null, 10000)
+    assert.equal(process.exitCode, 0)
+    instance = null
+  }
+  try {
+    assert.equal(existsSync(resolve(product, 'release.json')), false)
+    assert.equal(existsSync(resolve(product, 'resources/hardware/processor.bit')), false)
+    let page = await openGui()
     assert.ok(corePid, 'Packaged host did not start its native core')
     const info = await instance.evaluate(({ app }) => ({
       packaged: app.isPackaged,
@@ -164,6 +198,22 @@ function cli(...args) {
         `../build/${process.env.VIEWRV_EVIDENCE_PREFIX || 'gui-pc-i06'}-native-conceptual.png`,
       ),
     })
+    await page.getByRole('button', { name: 'IDE', exact: true }).click()
+    await menuCommand(page, 'Archivo', 'Abrir ejemplo…')
+    const bank = page.getByRole('dialog', { name: 'Abrir ejemplo', exact: true })
+    await bank.getByText('59 de 59 ejemplos', { exact: true }).waitFor()
+    await bank.getByRole('button', { name: 'Sumar dos números', exact: true }).click()
+    await page.getByRole('tab', { name: 'addition.s', exact: true }).waitFor()
+    await page.getByRole('button', { name: 'Acerca del ejemplo', exact: true }).click()
+    await page.getByText(/Al finalizar, x1=8, x2=2 y x3=10/).waitFor()
+    await page
+      .getByRole('tab', { name: 'Acerca del ejemplo', exact: true })
+      .getByTitle('Cerrar tab')
+      .click()
+    await page
+      .getByRole('tab', { name: 'addition.s', exact: true })
+      .getByTitle('Cerrar tab')
+      .click()
     const source = resolve(root, 'native program.s')
     writeFileSync(source, 'addi x1,x0,5\nhalt\n')
     const translation = cli('program', 'assemble', source)
@@ -195,6 +245,19 @@ function cli(...args) {
     await page.keyboard.insertText('# native ASAR edit\n')
     await menuCommand(page, 'Archivo', 'Guardar')
     await until(() => readFileSync(source, 'utf8').includes('# native ASAR edit'))
+    const savedText = readFileSync(source, 'utf8')
+    const expectedDraft = savedText + '# recoverable native draft\n'
+    await page.locator('.monaco-editor:visible [role="textbox"]').last().focus()
+    await page.keyboard.press('Control+End')
+    await page.keyboard.insertText('# recoverable native draft\n')
+    await until(() =>
+      readdirSync(resolve(root, 'data/viewrv/recovery')).some((name) => {
+        const snapshot = JSON.parse(
+          readFileSync(resolve(root, 'data/viewrv/recovery', name), 'utf8'),
+        )
+        return snapshot.text === expectedDraft && snapshot.is_open
+      }),
+    )
     await page.screenshot({
       path: resolve(
         gui,
@@ -204,19 +267,37 @@ function cli(...args) {
     assert.equal(cli('board', 'status').result.preparation_required, true)
     assert.deepEqual(external, [])
     assert.deepEqual(errors, [])
-    const closed = page.waitForEvent('close', { timeout: 15000 })
-    await page.evaluate(() => window.viewrvDesktop.requestWindowClose())
-    await closed
-    const guiProcess = instance.process()
-    await until(() => guiProcess.exitCode !== null || guiProcess.signalCode !== null, 10000)
-    assert.equal(guiProcess.exitCode, 0)
-    // The packaged app has exited normally; do not send another app.quit RPC
-    // through its now-dead Node inspector connection.
-    instance = null
+    await closeGui(page)
     assert.ok(cli('work', 'status').result.work_id, 'Closing GUI terminated the CLI work')
     cli('work', 'finish')
     await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
-    return 'Native verification: 33 conceptual instructions / 165 stages with stable graph/model/geometry; packaged ASAR host started native core; native CLI and real assembler, GUI assembly view, shared editor split/save, local resources and independent close passed. No hardware distribution or FPGA execution claimed.\n'
+    await until(() => !existsSync(`/proc/${corePid}`))
+    page = await openGui()
+    await page.getByRole('button', { name: 'IDE', exact: true }).click()
+    await page.getByRole('tab', { name: 'native program.s ●', exact: true }).first().waitFor()
+    await until(async () =>
+      (await page.locator('.monaco-editor:visible .view-lines').first().innerText()).includes(
+        '# recoverable native draft',
+      ),
+    )
+    assert.equal(
+      readFileSync(source, 'utf8'),
+      savedText,
+      'Recovery unexpectedly overwrote the source file',
+    )
+    await menuCommand(page, 'Archivo', 'Guardar')
+    await until(() => readFileSync(source, 'utf8') === expectedDraft)
+    await page.screenshot({
+      path: resolve(
+        gui,
+        `../build/${process.env.VIEWRV_EVIDENCE_PREFIX || 'gui-pc-i06'}-native-recovered.png`,
+      ),
+    })
+    await closeGui(page)
+    await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
+    assert.deepEqual(external, [])
+    assert.deepEqual(errors, [])
+    return 'Native verification: 33 instructions / 165 stages, 59 examples and original guide; native core/CLI and real assembler; split/save, unsaved draft recovered after fresh core/GUI restart, source preserved until explicit save, external HTTP(S) blocked, independent GUI/CLI close and native final shutdown passed. No FPGA execution or final hardware distribution claimed.\n'
   } finally {
     if (instance) {
       const child = instance.process()
