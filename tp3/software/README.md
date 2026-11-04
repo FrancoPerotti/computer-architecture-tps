@@ -58,6 +58,8 @@ El adaptador y el servicio interno sostienen Preparación y Sesiones; todas las 
 
 ## Entorno de desarrollo
 
+El [mapa de módulos de GUI](gui/README.md) describe la separación del editor, los estilos y las fixtures de pruebas. El [índice de evidencia](verification/README.md) reúne las entregas, las revisiones posteriores y los pendientes de aceptación.
+
 Usar CPython **3.14.9**, Node.js **24.22.1** y las versiones fijadas en los archivos de bloqueo. Los siguientes comandos parten de `tp3`; `python3.14` debe resolver ese CPython:
 
 ```sh
