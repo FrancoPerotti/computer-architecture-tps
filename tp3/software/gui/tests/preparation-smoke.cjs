@@ -1,52 +1,16 @@
+// Actual Electron/CLI/core; only USB and programmer are injected in the test entry.
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
 const { openConnection, closeConnection } = require('./ui-commands.cjs')
 const { menuCommand } = require('./ui-commands.cjs')
-// Actual Electron/CLI/core; only USB and programmer are injected in the test entry.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn, spawnSync } = require('node:child_process')
-const {
-  mkdtempSync,
-  existsSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-  unlinkSync,
-} = require('node:fs')
-const { tmpdir } = require('node:os')
+const { spawnSync } = require('node:child_process')
+const { existsSync, readFileSync, writeFileSync, unlinkSync } = require('node:fs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..')
-const root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc04-gui-'))
-const env = {
-  ...process.env,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  PYTHONPATH: tp3,
-  VIEWRV_TEST_CONTROL: root,
-}
-const python = resolve(gui, '../.venv/bin/python')
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function eventually(predicate, timeout = 15000) {
-  const deadline = Date.now() + timeout
-  while (Date.now() < deadline) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await delay(30)
-  }
-  throw new Error('Condition was not satisfied within timeout')
-}
-;(async () => {
-  const core = spawn(python, ['-m', 'software.tests.viewrv.preparation_core'], {
-    cwd: tp3,
-    env,
-    stdio: ['ignore', 'ignore', 'pipe'],
-  })
-  let instance
-  try {
-    await eventually(() => existsSync(resolve(root, 'viewrv/core.json')))
+const eventually = (predicate, timeout = 15000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'preparation',
+  async ({ root, gui, python, env, launch }) => {
     const discovery = JSON.parse(readFileSync(resolve(root, 'viewrv/core.json'), 'utf8'))
     const api = async (route, body, work) => {
       const response = await fetch(discovery.base_url + '/api/v1/' + route, {
@@ -78,20 +42,10 @@ async function eventually(predicate, timeout = 15000) {
         registration_id: '11111111-2222-4333-8444-555555555555',
       })
     ).work_id
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1600, height: 1100 },
+      gpu: false,
     })
-    const page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1600, height: 1100 })
-    const errors = []
-    page.on('pageerror', (error) => errors.push(String(error)))
     await openConnection(page)
     await page.getByRole('button', { name: 'Actualizar destinos', exact: true }).click()
     await eventually(
@@ -182,23 +136,12 @@ async function eventually(predicate, timeout = 15000) {
     assert.equal(cli('work', 'status').owns_board, true)
     cli('work', 'finish')
     await api('work/finish', {}, observer)
-    await eventually(() => !existsSync(resolve(root, 'viewrv/core.json')))
     console.log(
       'PC-I04 GUI: selection, preparation while editing, phase confirmations, reconnect without programming, offline guide, foreign CLI ownership and close passed.',
     )
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) => {
-      if (core.exitCode !== null || core.signalCode !== null) resolve()
-      else core.once('exit', resolve)
-    })
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((error) => {
+  },
+  { coreModule: 'preparation_core' },
+).catch((error) => {
   console.error(error)
   process.exitCode = 1
 })

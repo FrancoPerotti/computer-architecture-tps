@@ -1,46 +1,17 @@
+// PC-I05: real GUI and CLI share core sessions; controlled UART is test-only.
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
 const { openConnection, closeConnection } = require('./ui-commands.cjs')
 const { menuCommand } = require('./ui-commands.cjs')
-// PC-I05: real GUI and CLI share core sessions; controlled UART is test-only.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const { spawn, spawnSync } = require('node:child_process')
-const { mkdtempSync, existsSync, readFileSync, writeFileSync, rmSync } = require('node:fs')
-const { tmpdir } = require('node:os')
+const { readFileSync, writeFileSync } = require('node:fs')
 const { resolve } = require('node:path')
 const { randomUUID } = require('node:crypto')
 const assert = require('node:assert/strict')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..')
-const root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc05-window-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  VIEWRV_TEST_CONTROL: root,
-}
-const python = resolve(gui, '../.venv/bin/python')
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 18000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await delay(25)
-  }
-  throw new Error('Condition timed out')
-}
-;(async () => {
-  const core = spawn(python, ['-m', 'software.tests.viewrv.session_core'], {
-    cwd: tp3,
-    env,
-    stdio: ['ignore', 'ignore', 'pipe'],
-  })
-  let instance, continuing
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
+const until = (predicate, timeout = 18000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'sessions',
+  async ({ root, gui, python, env, launch }) => {
     const discovery = JSON.parse(readFileSync(resolve(root, 'viewrv/core.json'), 'utf8'))
     const source = resolve(root, 'exact source.s')
     writeFileSync(source, 'addi x1,x0,5\nhalt\n')
@@ -80,20 +51,10 @@ async function until(predicate, timeout = 18000) {
     cli('debug', 'breakpoint', 'add', '--pc', '0', '--latch', 'IF/ID')
     const first = cli('debug', 'continue')
     assert.equal(first.last_step.step_index, 1)
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1440, height: 1000 },
+      gpu: false,
     })
-    const page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1440, height: 1000 })
-    const errors = []
-    page.on('pageerror', (error) => errors.push(String(error)))
     await openConnection(page)
     await page
       .getByText('La placa está controlada por otro trabajo. Podés consultar su estado.', {
@@ -213,26 +174,13 @@ async function until(predicate, timeout = 18000) {
     const logs = cli('session', 'logs')
     assert.equal(logs.record_status, 'complete')
     cli('work', 'finish')
-    await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     assert.deepEqual(errors, [])
     console.log(
       'PC-I05 GUI: CLI controls, SSE/HTTP preserve source and capture, protected source and independent editing work, closing GUI leaves CLI continue active, pause/stop/evidence/finish passed.',
     )
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (continuing && continuing.exitCode === null && continuing.signalCode === null)
-      continuing.kill('SIGTERM')
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) => {
-      if (core.exitCode !== null || core.signalCode !== null) resolve()
-      else core.once('exit', resolve)
-    })
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((error) => {
+  },
+  { coreModule: 'session_core' },
+).catch((error) => {
   console.error(error)
   process.exitCode = 1
 })

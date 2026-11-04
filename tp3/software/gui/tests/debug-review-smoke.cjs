@@ -1,59 +1,17 @@
 // Debug visual review, comments 1–4: actual renderer and isolated core; no hardware acceptance.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn } = require('node:child_process')
-const { mkdtempSync, existsSync, rmSync, readFileSync } = require('node:fs')
-const { tmpdir } = require('node:os')
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
 const { menuCommand, openConnection, closeConnection } = require('./ui-commands.cjs')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..'),
-  root = mkdtempSync(resolve(tmpdir(), 'viewrv-debug-review-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  VIEWRV_TEST_CONTROL: root,
-  VIEWRV_EDUCATIONAL_TRACE: 'addition',
-}
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 10000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await delay(30)
-  }
-  throw Error('Visual condition timed out')
-}
-;(async () => {
-  const core = spawn(
-    resolve(gui, '../.venv/bin/python'),
-    ['-m', 'software.tests.viewrv.educational_core'],
-    { cwd: tp3, env, stdio: ['ignore', 'ignore', 'pipe'] },
-  )
-  let instance, page
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+const until = (predicate, timeout = 10000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'debug-review',
+  async ({ gui, core, launch }) => {
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1528, height: 771 },
+      gpu: false,
     })
-    page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1528, height: 771 })
-    const errors = []
-    page.on('pageerror', (error) => errors.push(String(error)))
-    await page.getByLabel('viewrv', { exact: true }).waitFor()
     await page.getByRole('button', { name: 'IDE', exact: true }).click()
     await menuCommand(page, 'Archivo', 'Abrir ejemplo…')
     await page
@@ -258,24 +216,9 @@ async function until(predicate, timeout = 10000) {
     console.log(
       'Debug review passed: register bank collapsed, always-visible latches, instruction then source number, global state first and always visible, minimal chevrons, compact breakpoint choices with keyboard/outside dismissal and actual add/remove, semantic guide hierarchy and five activity stages. No fabricated initial capture. Isolated Electron/core and literal addition trace.',
     )
-  } catch (e) {
-    if (page && !page.isClosed())
-      await page
-        .screenshot({ path: resolve(gui, '../build/debug-review-failure.png') })
-        .catch(() => {})
-    throw e
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) =>
-      core.exitCode !== null || core.signalCode !== null ? resolve() : core.once('exit', resolve),
-    )
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((e) => {
-  console.error(e)
+  },
+  { coreModule: 'educational_core', trace: 'addition' },
+).catch((error) => {
+  console.error(error)
   process.exitCode = 1
 })

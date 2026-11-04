@@ -1,58 +1,17 @@
 // Second visual review, comments 1–8: actual renderer and isolated core; no hardware acceptance.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn } = require('node:child_process')
-const { mkdtempSync, existsSync, rmSync, readFileSync } = require('node:fs')
-const { tmpdir } = require('node:os')
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
 const { menuCommand, openConnection, closeConnection } = require('./ui-commands.cjs')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..'),
-  root = mkdtempSync(resolve(tmpdir(), 'viewrv-visual-round2-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  VIEWRV_TEST_CONTROL: root,
-}
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 10000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await delay(30)
-  }
-  throw Error('Visual condition timed out')
-}
-;(async () => {
-  const core = spawn(
-    resolve(gui, '../.venv/bin/python'),
-    ['-m', 'software.tests.viewrv.session_core'],
-    { cwd: tp3, env, stdio: ['ignore', 'ignore', 'pipe'] },
-  )
-  let instance, page
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+const until = (predicate, timeout = 10000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'visual-round2',
+  async ({ gui, launch }) => {
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1301, height: 639 },
+      gpu: false,
     })
-    page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1301, height: 639 })
-    const errors = []
-    page.on('pageerror', (error) => errors.push(String(error)))
-    await page.getByLabel('viewrv', { exact: true }).waitFor()
     await openConnection(page)
     const connection = page.getByRole('dialog', { name: 'Conexión con la placa', exact: true })
     await connection.getByRole('heading', { name: 'Destinos de conexión', exact: true }).waitFor()
@@ -162,7 +121,7 @@ async function until(predicate, timeout = 10000) {
     assert.deepEqual(await first.getByRole('cell').allTextContents(), [
       '0x00000000',
       '2',
-      'addi x1, x0, 8',
+      '    addi x1, x0, 8',
       '0x00800093',
     ])
     await page.screenshot({ path: resolve(gui, '../build/visual-round2-assembly.png') })
@@ -247,24 +206,9 @@ async function until(predicate, timeout = 10000) {
     console.log(
       'Round 2 visual feedback passed: unboxed compact Run, gutter/text hover, connection styling, pinned completion docs without redundant scroll at 1528/1301/615, centered search, untouched examples excluded from recovery, changed source recovered intact, corner info and compact stale indication, dedicated source-line column. Real Electron/core in an isolated profile.',
     )
-  } catch (e) {
-    if (page && !page.isClosed())
-      await page
-        .screenshot({ path: resolve(gui, '../build/visual-round2-failure.png') })
-        .catch(() => {})
-    throw e
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) =>
-      core.exitCode !== null || core.signalCode !== null ? resolve() : core.once('exit', resolve),
-    )
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((e) => {
-  console.error(e)
+  },
+  { coreModule: 'session_core' },
+).catch((error) => {
+  console.error(error)
   process.exitCode = 1
 })

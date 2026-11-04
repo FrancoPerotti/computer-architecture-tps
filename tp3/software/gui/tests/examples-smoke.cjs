@@ -1,59 +1,19 @@
 // PC-I07: bank navigation and original-source guides, with a named literal UART trace.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn } = require('node:child_process')
-const { mkdtempSync, readFileSync, existsSync, rmSync } = require('node:fs')
-const { tmpdir } = require('node:os')
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
+const { readFileSync } = require('node:fs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
 const { menuCommand, openConnection, closeConnection } = require('./ui-commands.cjs')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..'),
-  root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc07-examples-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  VIEWRV_TEST_CONTROL: root,
-  VIEWRV_EDUCATIONAL_TRACE: 'addition',
-}
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 20000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await wait(30)
-  }
-  throw Error('Condition timed out')
-}
-;(async () => {
-  const core = spawn(
-    resolve(gui, '../.venv/bin/python'),
-    ['-m', 'software.tests.viewrv.educational_core'],
-    { cwd: tp3, env, stdio: ['ignore', 'ignore', 'pipe'] },
-  )
-  let instance, page
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+const until = (predicate, timeout = 20000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'examples',
+  async ({ root, gui, launch }) => {
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1440, height: 1000 },
+      gpu: false,
     })
-    page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1440, height: 1000 })
-    const errors = [],
-      external = []
-    page.on('pageerror', (error) => errors.push(String(error)))
+    const external = []
     page.on('request', (request) => {
       if (!/^(viewrv:|blob:|data:|http:\/\/127\.0\.0\.1:)/.test(request.url()))
         external.push(request.url())
@@ -173,29 +133,12 @@ async function until(predicate, timeout = 20000) {
     await closed
     await instance.close()
     instance = null
-    await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     console.log(
       'PC-I07 example bank: 59 searchable programs, 33 individual instruction entries, boundary group, original guide, edited-source warning/restoration, no fabricated initial capture, seven received cycles and independent expected/received presentation passed. UART is the named literal addition fixture; no FPGA acceptance.',
     )
-  } catch (error) {
-    if (page && !page.isClosed())
-      await page
-        .screenshot({ path: resolve(gui, '../build/gui-pc-i07-example-failure.png') })
-        .catch(() => {})
-    throw error
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) => {
-      if (core.exitCode !== null || core.signalCode !== null) resolve()
-      else core.once('exit', resolve)
-    })
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((error) => {
+  },
+  { coreModule: 'educational_core', trace: 'addition' },
+).catch((error) => {
   console.error(error)
   process.exitCode = 1
 })

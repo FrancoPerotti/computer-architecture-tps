@@ -1,67 +1,21 @@
-const { openConnection, closeConnection } = require('./ui-commands.cjs')
 // TEST-PC-003/005/011/017/026/029: real Electron interaction; hardware replies are controlled.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn } = require('node:child_process')
-const {
-  mkdtempSync,
-  existsSync,
-  readFileSync,
-  writeFileSync,
-  unlinkSync,
-  rmSync,
-} = require('node:fs')
-const { tmpdir } = require('node:os')
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
+const { openConnection, closeConnection } = require('./ui-commands.cjs')
+const { existsSync, readFileSync, writeFileSync, unlinkSync } = require('node:fs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..')
-const root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc06-ide-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  VIEWRV_TEST_CONTROL: root,
-}
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 18000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await delay(30)
-  }
-  throw Error('Condition timed out')
-}
-;(async () => {
-  const core = spawn(
-    resolve(gui, '../.venv/bin/python'),
-    ['-m', 'software.tests.viewrv.session_core'],
-    { cwd: tp3, env, stdio: ['ignore', 'ignore', 'pipe'] },
-  )
-  let instance, page
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
+const until = (predicate, timeout = 18000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'ide',
+  async ({ root, gui, launch }) => {
     const discovery = JSON.parse(readFileSync(resolve(root, 'viewrv/core.json'), 'utf8'))
     const source = resolve(root, 'exact source.s')
     writeFileSync(source, 'addi x1,x0,5\nhalt\n')
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1366, height: 768 },
+      gpu: false,
     })
-    page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1366, height: 768 })
-    const errors = []
-    page.on('pageerror', (error) => errors.push(String(error)))
     await openConnection(page)
     await page.getByRole('button', { name: 'Preparar Basys 3', exact: true }).waitFor()
     await page.getByRole('button', { name: 'Preparar Basys 3', exact: true }).click()
@@ -428,29 +382,12 @@ async function until(predicate, timeout = 18000) {
     await close
     await instance.close()
     instance = null
-    await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     console.log(
       'PC-I06 GUI: menus, welcome hover, real assembly/view, exact LOAD, initial debug without STEP, one-step capture, breakpoint selector/hit, independent formats, split, editing another program, restart without STEP, RUN/RESET, automatic terminal results, combined sequence with editing during LOAD, settings and close passed.',
     )
-  } catch (error) {
-    if (page)
-      await page
-        .screenshot({ path: resolve(gui, '../build/gui-pc-i06-failure.png') })
-        .catch(() => {})
-    throw error
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) => {
-      if (core.exitCode !== null || core.signalCode !== null) resolve()
-      else core.once('exit', resolve)
-    })
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((error) => {
+  },
+  { coreModule: 'session_core' },
+).catch((error) => {
   console.error(error)
   process.exitCode = 1
 })

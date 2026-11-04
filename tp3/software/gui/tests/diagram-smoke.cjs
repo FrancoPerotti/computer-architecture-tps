@@ -1,65 +1,26 @@
-const { openConnection, closeConnection } = require('./ui-commands.cjs')
 // PC-I07: real GraphViewer + Electron/core, with a fixed test-only UART trace.
-const { _electron: electron } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
-const { spawn } = require('node:child_process')
-const { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync } = require('node:fs')
-const { tmpdir } = require('node:os')
+const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
+const { openConnection, closeConnection } = require('./ui-commands.cjs')
+const { readFileSync, writeFileSync } = require('node:fs')
 const { resolve } = require('node:path')
 const assert = require('node:assert/strict')
 const { menuCommand } = require('./ui-commands.cjs')
-const gui = resolve(__dirname, '..'),
-  tp3 = resolve(gui, '../..'),
-  root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc07-graph-'))
-const env = {
-  ...process.env,
-  PYTHONPATH: tp3,
-  XDG_RUNTIME_DIR: root,
-  XDG_STATE_HOME: resolve(root, 'state'),
-  XDG_DATA_HOME: resolve(root, 'data'),
-  XDG_CONFIG_HOME: resolve(root, 'config'),
-  VIEWRV_TEST_CONTROL: root,
-}
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(predicate, timeout = 20000) {
-  const end = Date.now() + timeout
-  while (Date.now() < end) {
-    try {
-      if (await predicate()) return
-    } catch {}
-    await wait(30)
-  }
-  throw Error('Condition timed out')
-}
-;(async () => {
-  const core = spawn(
-    resolve(gui, '../.venv/bin/python'),
-    ['-m', 'software.tests.viewrv.educational_core'],
-    { cwd: tp3, env, stdio: ['ignore', 'ignore', 'pipe'] },
-  )
-  let instance, page
-  try {
-    await until(() => existsSync(resolve(root, 'viewrv/core.json')))
+const until = (predicate, timeout = 20000) => waitUntil(predicate, timeout)
+
+withGuiEnvironment(
+  'diagram',
+  async ({ root, gui, launch }) => {
     const source = resolve(root, 'seven captures.s')
     writeFileSync(source, 'addi x1,x0,5\naddi x2,x0,2\nadd x2,x1,x1\nhalt\n')
     const steps = () =>
       readFileSync(resolve(root, 'uart.tx'), 'utf8')
         .split('\n')
         .filter((line) => line === '03').length
-    instance = await electron.launch({
-      executablePath: resolve(gui, 'node_modules/electron/dist/electron'),
-      args: [
-        gui,
-        '--disable-gpu',
-        '--ozone-platform=x11',
-        `--user-data-dir=${resolve(root, 'profile')}`,
-      ],
-      env,
+    let { instance, page, errors } = await launch({
+      viewport: { width: 1600, height: 1000 },
+      gpu: false,
     })
-    page = await instance.firstWindow()
-    await page.setViewportSize({ width: 1600, height: 1000 })
-    const errors = [],
-      external = []
-    page.on('pageerror', (error) => errors.push(String(error)))
+    const external = []
     page.on('request', (request) => {
       if (!/^(viewrv:|blob:|data:|http:\/\/127\.0\.0\.1:)/.test(request.url()))
         external.push(request.url())
@@ -320,29 +281,12 @@ async function until(predicate, timeout = 20000) {
     await closed
     await instance.close()
     instance = null
-    await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     console.log(
       'PC-I07 GUI: complete native GraphViewer, no initial snapshot/STEP, inferred activity, source/latch/diagram correlation, explicit occurrence follow/retirement, unchanged graph geometry/model, independent formats, dispose/reopen and no external resources passed. UART data is a fixed test-only trace.',
     )
-  } catch (error) {
-    if (page && !page.isClosed())
-      await page
-        .screenshot({ path: resolve(gui, '../build/gui-pc-i07-failure.png') })
-        .catch(() => {})
-    throw error
-  } finally {
-    if (instance) {
-      await instance.evaluate(({ app }) => app.exit()).catch(() => {})
-      await instance.close().catch(() => {})
-    }
-    if (core.exitCode === null && core.signalCode === null) core.kill('SIGTERM')
-    await new Promise((resolve) => {
-      if (core.exitCode !== null || core.signalCode !== null) resolve()
-      else core.once('exit', resolve)
-    })
-    rmSync(root, { recursive: true, force: true })
-  }
-})().catch((error) => {
+  },
+  { coreModule: 'educational_core' },
+).catch((error) => {
   console.error(error)
   process.exitCode = 1
 })
