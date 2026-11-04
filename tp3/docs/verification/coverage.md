@@ -1,7 +1,7 @@
 # TP3 — Matriz de cobertura de verificación
 
 - **Tipo:** matriz de verificación.
-- **Estado documental:** matriz vigente; ejecución RTL pendiente.
+- **Estado documental:** matriz vigente; ejecución RTL parcial registrada en el catálogo.
 - **Base:** requisitos y contratos vigentes.
 
 ## Propósito y alcance
@@ -23,6 +23,8 @@ La matriz enlaza además el [catálogo de aceptación de viewrv](../software/vie
 La matriz también incluye comprobaciones documentales, de timing y de placa. Estas aportan evidencia sobre esos aspectos, pero no se consideran simulaciones funcionales de la CPU.
 
 Las filas de hardware indican el estado de sus pruebas RTL. Los [modelos abstractos y cálculos reproducibles](../../tools/verification/README.md) aportan evidencia parcial de control y recuperación, sin aprobar esos requisitos. Los niveles y pendientes se distinguen en el [plan](verification_plan.md#evidencia-disponible-y-pendiente).
+
+La evidencia actual de MEM/WB cubre `TEST-ISA-007` en integración MEM, todos los casos de `TEST-MEM-001` y `TEST-MEM-002`, la temporización local de ambas memorias en `TEST-MEM-005/C001–C002`, seis proyecciones DMEM de `TEST-MEM-006`, y el control WB de `TEST-PIPE-002/C004–C018` y `TEST-PIPE-009/C003–C007`. Los casos que requieren CPU, control global, ownership IMEM o placa conservan estado pendiente en `cases.json`; esta evidencia local no los sustituye.
 
 ## Requisitos
 
@@ -205,7 +207,7 @@ Las filas de hardware indican el estado de sus pruebas RTL. Los [modelos abstrac
 |---------------------------------------------------|--------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------|----------------------------------------------|
 | [REQ-SW-001](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-003, TEST-PC-008, TEST-PC-011 y TEST-PC-013](../software/viewrv/verificacion.md#casos-de-aceptación). | Core, GUI, CLI y placa | Diseñada; aplicación y pruebas físicas sin ejecutar. |
 | [REQ-SW-002](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-002 y TEST-PC-017](../software/viewrv/verificacion.md#casos-de-aceptación). | Programas y GUI/CLI | Diseñada; aplicación y pruebas físicas sin ejecutar. |
-| [REQ-SW-003](../requirements.md#8-software-de-pc) | [Interfaz del assembler](../software/assembler_interface.md) y [lenguaje](../software/assembler_language.md) | [TEST-ASM-001 a TEST-ASM-008](../software/assembler_tests.md#cobertura-y-condición-de-aprobación).                                  | PC/assembler  | Catálogo de software aprobado; sin ejecutar. |
+| [REQ-SW-003](../requirements.md#8-software-de-pc) | [Interfaz del assembler](../software/assembler_interface.md) y [lenguaje](../software/assembler_language.md) | [TEST-ASM-001 a TEST-ASM-008](../software/assembler_tests.md#cobertura-y-condición-de-aprobación).                                  | PC/assembler  | Ejecutado: 101/101 en CPython 3.11 y 3.14.8. |
 | [REQ-SW-004](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-003 y TEST-PC-017](../software/viewrv/verificacion.md#casos-de-aceptación); [TEST-UART-004](uart_debug.md#test-uart-004). | Cliente y UART/FPGA | Diseñada; aplicación y pruebas físicas sin ejecutar. |
 | [REQ-SW-005](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-003 y TEST-PC-016](../software/viewrv/verificacion.md#casos-de-aceptación); [TEST-UART-010](uart_debug.md#test-uart-010). | Cliente y UART/FPGA | Diseñada; aplicación y pruebas físicas sin ejecutar. |
 | [REQ-SW-006](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-004 y TEST-PC-005](../software/viewrv/verificacion.md#casos-de-aceptación); [TEST-UART-010](uart_debug.md#test-uart-010). | Cliente y UART/FPGA | Diseñada; aplicación y pruebas físicas sin ejecutar. |
@@ -214,7 +216,7 @@ Las filas de hardware indican el estado de sus pruebas RTL. Los [modelos abstrac
 | [REQ-SW-009](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-004 y TEST-PC-013](../software/viewrv/verificacion.md#casos-de-aceptación); [TEST-UART-008](uart_debug.md#test-uart-008). | Decodificación, GUI y CLI | Diseñada; aplicación y pruebas físicas sin ejecutar. |
 | [REQ-SW-010](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-007, TEST-PC-015, TEST-PC-016 y TEST-PC-023; RecoveryChecks como evidencia abstracta previa](../software/viewrv/verificacion.md#casos-de-aceptación). | Cliente, protocolo y comunicación | Diseñada; aplicación y pruebas físicas sin ejecutar. |
 | [REQ-SW-011](../requirements.md#8-software-de-pc) | [Diseño de viewrv](../software/viewrv/arquitectura.md), [protocolo](../protocol.md) | [TEST-PC-007, TEST-PC-023 y TEST-PC-024; variantes de recuperación LOAD y restante; RecoveryChecks como evidencia abstracta previa](../software/viewrv/verificacion.md#casos-de-aceptación). | Cliente y transporte | Diseñada; aplicación y pruebas físicas sin ejecutar. |
-| [REQ-SW-012](../requirements.md#8-software-de-pc) | [DEC-SYS-001](../decisions/DEC-SYS-001.md) y [lenguaje](../software/assembler_language.md)                   | [TEST-ASM-001/C033](../software/assembler_tests.md#test-asm-001), [TEST-ASM-005/C003](../software/assembler_tests.md#test-asm-005). | PC/assembler  | Catálogo de software aprobado; sin ejecutar. |
+| [REQ-SW-012](../requirements.md#8-software-de-pc) | [DEC-SYS-001](../decisions/DEC-SYS-001.md) y [lenguaje](../software/assembler_language.md)                   | [TEST-ASM-001/C033](../software/assembler_tests.md#test-asm-001), [TEST-ASM-005/C003](../software/assembler_tests.md#test-asm-005). | PC/assembler  | Ejecutado: 101/101 en CPython 3.11 y 3.14.8. |
 
 ### TIM
 

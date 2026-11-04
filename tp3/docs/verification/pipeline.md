@@ -128,7 +128,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad RF/WB e integración ID.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** unidad RF e integración ID implementadas; generación de controles WB pendiente.
+- **Estado:** unidad RF/WB e integración ID implementadas.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit).
 
@@ -138,7 +138,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 El banco `register_file_tb` ejecuta 37 variantes en nivel `Unidad`: `C001`–`C003` y `C019`–`C052`. Comprueba las lecturas base, la escritura síncrona, `x0`, reset/preparación y el puerto compartido CPU/Debug. El testbench suministra la habilitación de escritura; no implementa el control WB ni los muxes de bypass de ID.
 
-El banco `id_stage_tb` ejecuta las 52 variantes en nivel `Integración local`. En `C004`–`C018`, el JSON suministra directamente `rf_write_fire` y ambos selectores de bypass para las guardas de cada variante. Se comparan los operandos antes del flanco, el dato base de Debug y la lectura del banco después de la escritura. Estas pruebas acreditan la aplicación de esos controles; su generación se comprobará con el RTL de WB.
+El banco `id_stage_tb` ejecuta las 52 variantes en nivel `Integración local`. En `C004`–`C018`, se comparan los operandos antes del flanco, el dato base de Debug y la lectura del banco después de la escritura. `wb_stage_tb` ejecuta además esas 15 variantes sobre el RTL de WB y contrasta la generación de `rf_write_fire` y ambos selectores de bypass para cada guarda.
 
 La integración de `C001`–`C003` comprueba sus lecturas iniciales; los probes de escritura conservan su ejecución en `register_file_tb`. `C019`–`C020` comprueban la prioridad de inicialización y el estado posterior. `C021`–`C052` observan cada dirección Debug y el retorno a CPU. Todos los casos de integración comparan además el payload completo y los 32 registros finales con las expectativas del JSON.
 
@@ -781,7 +781,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad MEM/WB y CPU.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** frontera MEM/WB C001–C007 implementada; selección MEM, control WB y CPU pendientes.
+- **Estado:** frontera MEM/WB C001–C007 y control WB C003–C007 implementados; selección MEM y CPU pendientes.
 
 **Requisitos:** [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -794,15 +794,13 @@ el valor preseleccionado en la entrada de `mem_wb_register` y contrastan su
 almacenamiento con `memwb_next_wb_value`. La selección real entre EX y DMEM
 sigue pendiente del mux de MEM; este fixture no la implementa como RTL del producto.
 
-C003–C007 precargan el valor 7 y presentan la entrada futura 99. Un observador
-WB de testbench muestrea los campos registrados anteriores y su elegibilidad
-`cpu_cycle_fire && valid && reg_write && rd!=0`; compara esa proyección con
-`write_fire` y `written_value`. Comprueba captura o retención de los seis
-campos y detecta el consumo accidental del valor nuevo en el mismo flanco.
-Las guardas del control WB real, la escritura en RF y su cuenta no se acreditan
-con ese observador. Los programas C008–C011 y sus HOLD UART siguen pendientes
-de CPU/sistema. Las expectativas canónicas conservan su significado completo;
-la configuración de Unidad registra solo esta contribución de MEM/WB.
+C003–C007 precargan el valor 7 y presentan la entrada futura 99. El observador
+de frontera comprueba captura o retención de los seis campos y detecta el
+consumo accidental del valor nuevo en el mismo flanco. `wb_stage_tb` aplica
+además el payload MEM/WB anterior al RTL de WB y comprueba las cuatro guardas de
+`rf_write_fire`; la escritura integrada en RF y su cuenta permanecen fuera de
+esta unidad. Los programas C008–C011 y sus HOLD UART siguen pendientes de
+CPU/sistema. Las expectativas canónicas conservan su significado completo.
 
 ### Qué comprueba y por qué
 
