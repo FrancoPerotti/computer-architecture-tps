@@ -92,7 +92,7 @@ El estado global persistente incluye `global_state` (14 bits one-hot, interno de
 |-----------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | `if_stage.sv`   | `instruction_memory`, `fetch_fault_check`                                                | `PC Update Control`, `Next PC MUX`, PC, `PC Adder`, `IF/ID` Input Logic                                                |
 | `id_stage.sv`   | `decoder`, `register_file`, `immediate_generator`, `id_fault_check`, `load_use_detector` | `RS1 Bypass MUX`, `RS2 Bypass MUX`                                                                                     |
-| `ex_stage.sv`   | `forwarding_unit`, `alu`, `flow_control`, `ex_flow_check`                                | `Forward MUX A`/B, `ALUSrc MUX`, `Link Adder`, `Result MUX`, `Target Adder`, `JALR` Adder, `Clear bit 0`, `Target MUX` |
+| `ex_stage.sv`   | `forwarding_unit`, `alu`, `flow_control`, `ex_fault_check`                                | `Forward MUX A`/B, `ALUSrc MUX`, `Link Adder`, `Result MUX`, `Target Adder`, `JALR` Adder, `Clear bit 0`, `Target MUX` |
 | `mem_stage.sv`  | `mem_decode`, `data_memory`, `load_select_extend`, `dmem_write_control`                  | `WB Value MUX`                                                                                                         |
 | `wb_stage.sv`   | La responsabilidad se realiza en el propio archivo                                       | **`WB Bypass Control`**, incluida escritura RF y controles de bypass WB→ID                                             |
 

@@ -184,7 +184,14 @@ También están disponibles `format-check`, `lint`, `validate`, `test-infra`,
 
 El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/`, `scripts/` y
 `software/`, incluidos fixtures y pruebas. Verilator analiza exclusivamente el RTL
-y sus dependencias ordenadas en Make, actualmente `rtl/system_pkg.sv`.
+y sus dependencias ordenadas en Make, con `system_pkg` antes de los consumidores
+de ID, EX, MEM y WB, las memorias, los cuatro registros interetapa y
+`pipeline_hazard_control`. Cada módulo se
+selecciona como top para analizarlo sin ambigüedad entre raíces independientes. Los
+tres consumidores de capacidad IMEM se analizan con cuatro, 1000 y 1024 bytes;
+`data_memory` y `mem_stage`, con cuatro, 1000 y 2048 bytes. Los comprobadores
+aritméticos de fetch y acceso de datos también cubren el extremo `2^32`, sin
+elaborar una memoria física de ese tamaño.
 El catálogo de pruebas conserva sus bancos y fuentes de simulación; no define el
 alcance de lint RTL.
 

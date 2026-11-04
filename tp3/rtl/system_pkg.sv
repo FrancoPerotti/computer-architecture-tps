@@ -18,6 +18,7 @@ package system_pkg;
       FUNCTIONAL_CLOCK_HZ * PROTOCOL_RECOVERY_SILENCE_MS / 64'd1000;
 
   typedef logic [31:0] word_t;  // Palabra de datos, instrucción o dirección.
+  typedef logic [6:0] opcode_t;  // Clase de instrucción codificada en los siete bits bajos.
   typedef logic [4:0] register_index_t;  // Índice del banco de registros.
   typedef logic [5:0] alu_op_t;  // Operación de la ALU.
   typedef logic alu_src_t;  // Origen del segundo operando de la ALU.
@@ -191,6 +192,17 @@ package system_pkg;
   localparam int unsigned DEBUG_MEMORY_VALUE_OFFSET = PROTOCOL_WORD_BYTES;
   localparam
       int unsigned DEBUG_MEMORY_ENTRY_BYTES = DEBUG_MEMORY_VALUE_OFFSET + PROTOCOL_CODE_BYTES;
+
+  // Opcodes compartidos por la decodificación y la selección del formato de inmediato.
+  localparam opcode_t OPCODE_ALU_REG  = 7'b0110011;
+  localparam opcode_t OPCODE_ALU_IMM  = 7'b0010011;
+  localparam opcode_t OPCODE_LOAD     = 7'b0000011;
+  localparam opcode_t OPCODE_STORE    = 7'b0100011;
+  localparam opcode_t OPCODE_BRANCH   = 7'b1100011;
+  localparam opcode_t OPCODE_JAL      = 7'b1101111;
+  localparam opcode_t OPCODE_JALR     = 7'b1100111;
+  localparam opcode_t OPCODE_LUI      = 7'b0110111;
+  localparam opcode_t OPCODE_CUSTOM_0 = 7'b0001011;
 
   // Operaciones que seleccionan el cálculo de la ALU.
   localparam alu_op_t ALU_OP_SLL  = 6'b000000;
