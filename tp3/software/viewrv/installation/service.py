@@ -334,6 +334,8 @@ def maintain(operation, source=None):
                 raise MaintenanceError("Un acceso cambió durante la preparación.")
         rename(stage, root, exchange=previous is not None)
         root_committed = True
+        if previous:
+            _regular_directory(stage)
         if previous and (
             read_json(stage / MANIFEST) != previous
             or inventory(stage, (MANIFEST,), confined=False) != old_tree

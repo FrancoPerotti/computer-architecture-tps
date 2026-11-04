@@ -144,11 +144,11 @@ npm run package:linux -- --config.compression=store
 
 La ejecución verificada utilizó CPython 3.14.9 convencional de python-build-standalone, instalado mediante `uv`; el script monta esa instalación de desarrollo en `/opt/python`. No debe usarse para introducir bibliotecas de un CPython construido contra una glibc posterior a la base objetivo.
 
-El script construye ambos conjuntos Python onedir en la base Ubuntu 24.04 fijada del TP3, usando el CPython 3.14.9 convencional indicado. Descarga las herramientas de binutils del snapshot Ubuntu de esa imagen y las extrae dentro de `software/build`; no instala paquetes en el equipo ni cambia el rootfs del contenedor. Los bloqueos de dependencias se verifican mediante hashes.
+El script construye ambos conjuntos Python onedir en la base Ubuntu 24.04 fijada del TP3, usando el CPython 3.14.9 convencional indicado. También compila el launcher Linux con el GCC y sysroot fijados del programador. Descarga las herramientas de binutils del snapshot Ubuntu de esa imagen y las extrae dentro de `software/build`; no instala paquetes en el equipo ni cambia el rootfs del contenedor. Los bloqueos de dependencias se verifican mediante hashes.
 
 El código actual es 0.7.0. La construcción de distribución exige programador nativo y bitstream válidos: con el bitstream ausente termina con error y no genera `stage-release.json`. El hook de electron-builder también rechaza inventarios viejos, plataformas distintas y recursos alterados. `build_linux.sh --native-only` construye únicamente CLI/core para pruebas locales, sin inventario ni distribución.
 
-Los paquetes anteriores se conservan: 0.3.0 está en `software/gui/dist/viewrv-gui-0.3.0.tar.gz` y `software/build/extracted/viewrv-gui-0.3.0`; las extracciones 0.1.0 y 0.2.0 siguen separadas. Esos paquetes no contienen PC-I04 a PC-I07. La comprobación parcial de PC-I08 incorpora un [archivo de verificación Linux 0.7.0 actualizado](verification/PC-I08-ENVIRONMENTS-LICENSES-2026-11-04.md#corrección-de-metadatos-y-archivo-actualizado), con metadatos del lock corregidos y carga útil idéntica al producto probado en Arch y userland Ubuntu. La [matriz de aceptación](verification/PC-I08-ACCEPTANCE-2026-11-04.md) identifica los 30 casos, 74 requisitos, 16 grupos de variantes y sus pendientes; incluye los faltantes de mantenimiento Linux y revisión de avisos. No hay una distribución final PC-I08 con hardware. La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
+Los paquetes anteriores se conservan: 0.3.0 está en `software/gui/dist/viewrv-gui-0.3.0.tar.gz` y `software/build/extracted/viewrv-gui-0.3.0`; las extracciones 0.1.0 y 0.2.0 siguen separadas. Esos paquetes no contienen PC-I04 a PC-I07. El [informe de entornos y avisos](verification/PC-I08-ENVIRONMENTS-LICENSES-2026-11-04.md) conserva la verificación anterior del lock y del paquete. La [matriz de aceptación original](verification/PC-I08-ACCEPTANCE-2026-11-04.md) identifica los 30 casos, 74 requisitos y 16 grupos de variantes en ese punto. El [suplemento de mantenimiento Linux](verification/PC-I08-LINUX-MAINTENANCE-2026-11-04.md) registra la implementación y comprobación posteriores de instalación, actualización y desinstalación. Siguen pendientes los avisos de distribución y la aceptación física/Windows. No hay una distribución final PC-I08 con hardware. La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
 
 Para comprobar solo los ejecutables nativos 0.7.0 y su programador en un host sin placa, desde `tp3`, ejecutar `software/.venv/bin/python software/packaging/smoke_preparation_native.py software --sessions`. También comprueba el assembler real incluido y las consultas de registros históricos. El verificador arma una disposición temporal, sin `release.json` ni bitstream, y no la presenta como distribución.
 
@@ -166,7 +166,7 @@ cd viewrv-0.7.0-linux-x64-verification
 ./viewrv --help
 ```
 
-El constructor imprime JSON con las rutas de la disposición, el archivo comprimido, la raíz de extracción y su SHA-256. Sin `--archive` conserva el comportamiento anterior e imprime solo la disposición nativa. Cada construcción usa un directorio único `software/build/native-gui-<versión>-*`, marcado `VERIFICATION-ONLY.txt`. Incluye `verification-sha256.json` y `verification-manifest.json`, que identifica el commit, el estado de fuentes, las huellas de locks y todos los archivos con tamaño, modo y SHA-256; el manifiesto no se incluye a sí mismo. El campo `licenses` enumera los avisos encontrados, sin acreditar una auditoría completa de licencias. El archivo comprimido conserva permisos y una raíz estable; no se agregan enlaces simbólicos. No contiene bitstream ni `release.json` y no sustituye la construcción de hardware.
+El constructor imprime JSON con las rutas de la disposición, el archivo comprimido, la raíz de extracción y su SHA-256. Sin `--archive` conserva el comportamiento anterior e imprime solo la disposición nativa. Cada construcción usa un directorio único `software/build/native-gui-<versión>-*`, marcado `VERIFICATION-ONLY.txt`. Incluye `verification-sha256.json` y `verification-manifest.json`, que identifica el commit, el estado de fuentes, las huellas de locks y todos los archivos con tamaño, modo y SHA-256; el manifiesto no se incluye a sí mismo. El campo `licenses` enumera los avisos encontrados, sin acreditar una auditoría completa de licencias. El archivo comprimido conserva permisos y una raíz estable; no se agregan enlaces simbólicos. Incluye los launchers coordinados, los scripts de mantenimiento y sus inventarios Linux. No contiene bitstream ni `release.json` y no sustituye la construcción de hardware.
 
 Desde `software/gui`, con `VIEWRV_PRODUCT` apuntando a la **raíz extraída**, ejecutar:
 
@@ -189,6 +189,42 @@ Para comprobar un producto extraído, desde `tp3`:
 
 ```sh
 software/.venv/bin/python software/packaging/smoke_package.py /ruta/al/producto/extraído
+```
+
+## Instalación por usuario Linux
+
+Desde la raíz del paquete extraído, sin `sudo`:
+
+```sh
+./install.sh
+~/.local/bin/viewrv --help
+~/.local/opt/viewrv/viewrv-gui
+```
+
+La instalación usa `~/.local/opt/viewrv`, un acceso CLI en `~/.local/bin/viewrv` y una entrada de escritorio en `${XDG_DATA_HOME:-$HOME/.local/share}/applications/viewrv.desktop`. Informa si falta el directorio de CLI en `PATH`; no edita la configuración de la shell. La GUI, CLI, core y ayudante conservan sus runtimes incluidos. El paquete extraído también puede usarse directamente.
+
+Para actualizar, cerrar la GUI, finalizar explícitamente los trabajos CLI con `viewrv work finish` y ejecutar `install.sh` desde el paquete nuevo. Para reinstalar la misma versión o desinstalar, los scripts siguen disponibles en la instalación:
+
+```sh
+~/.local/opt/viewrv/install.sh
+~/.local/opt/viewrv/uninstall.sh
+```
+
+El mantenimiento conserva un bloqueo exclusivo y comprueba el bloqueo real del core y los ejecutables en uso. Rechaza el producto ocupado y las aperturas durante la sustitución; no termina trabajos. Valida inventarios y archivos propios, prepara una copia y revierte los reemplazos ante errores. Si también falla la reversión, conserva el respaldo y muestra su ruta. Los accesos ajenos o modificados no se sobrescriben. La desinstalación conserva Assembly, borradores, registros, preferencias y archivos ajenos; si existen dentro de la instalación, deja su directorio con un manifiesto de datos retenidos. No cambia permisos USB, controladores ni componentes del sistema.
+
+Los launchers requieren las primitivas Linux disponibles en las bases aprobadas (`flock`, `pidfd` y `renameat2`); una sustitución no soportada se rechaza. Las huellas acreditan consistencia del paquete, no autenticidad del editor ni resistencia a un corte eléctrico.
+
+Para comprobar instalación y CLI/core nativos en un `HOME` temporal, desde `tp3`:
+
+```sh
+software/.venv/bin/python software/packaging/smoke_linux_installation.py /ruta/al/paquete/extraído
+software/.venv/bin/python -m unittest software.tests.viewrv.test_linux_installation -v
+```
+
+El recorrido de la GUI instalada y sandbox se repite en el userland Ubuntu preparado según el [informe de entornos](verification/PC-I08-ENVIRONMENTS-LICENSES-2026-11-04.md):
+
+```sh
+software/packaging/check_ubuntu_gui.sh software/build/ubuntu-gui-root /ruta/al/paquete/extraído installation
 ```
 
 ## Windows pendiente

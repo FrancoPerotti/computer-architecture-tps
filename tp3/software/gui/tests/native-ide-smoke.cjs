@@ -75,6 +75,17 @@ function cli(...args) {
       if (!/^(viewrv:|blob:|data:|http:\/\/127\.0\.0\.1:)/.test(req.url())) external.push(req.url())
     })
     await waitForCore(page)
+    if (process.env.VIEWRV_TEST_MAINTENANCE === '1') {
+      assert.equal(resolve(product), resolve(environment.HOME, '.local/opt/viewrv'))
+      assert.ok(environment.HOME.startsWith(resolve(tmpdir(), 'viewrv install ')))
+      for (const script of ['install.sh', 'uninstall.sh']) {
+        assert.throws(
+          () => execFileSync(resolve(product, script), { env: environment, stdio: 'pipe' }),
+          (error) => error.status === 1 && error.stderr.toString().includes('Cerrá la GUI'),
+        )
+      }
+      console.log('Native maintenance: update/uninstall refused while GUI is open.')
+    }
     // The host configures a direct loopback connection during bootstrap. Apply
     // the verification restriction afterwards, before exercising local assets.
     const proxy = await instance.evaluate(async ({ session }) => {

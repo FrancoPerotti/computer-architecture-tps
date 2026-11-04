@@ -20,6 +20,8 @@ def main():
         help="Ejecutar además GUI/CLI nativas en Xvfb desde la instalación.",
     )
     args = parser.parse_args()
+    if args.gui and not Path("/usr/bin/xvfb-run").is_file():
+        raise SystemExit("La prueba --gui requiere Xvfb; usá check_ubuntu_gui.sh con installation.")
     source = args.product.resolve()
     with tempfile.TemporaryDirectory(prefix='viewrv install $literal % " ') as directory:
         home = Path(directory)
@@ -77,12 +79,27 @@ def main():
             assert (home / "data/applications/viewrv.desktop").is_file()
             assert "0.7.0" in run(cli, "--version").stdout
             assert not discovery.exists(), "--version no debe arrancar el core"
+            with (home / "state/viewrv/maintenance.lock").open("r+") as lease:
+                fcntl.flock(lease, fcntl.LOCK_EX)
+                for entry in ("viewrv", "viewrv-gui", "resources/core/viewrv-core"):
+                    arguments = [root / entry]
+                    if entry == "viewrv":
+                        arguments += ["--output", "json", "work", "status"]
+                    blocked = run(*arguments, expected=1)
+                    if entry == "viewrv":
+                        assert (
+                            json.loads(blocked.stdout)["error"]["details"]["reason"]
+                            == "PRODUCT_MAINTENANCE"
+                        )
+                    else:
+                        assert "mantenimiento" in blocked.stderr
             if args.gui:
                 software = Path(__file__).resolve().parents[1]
                 gui_environment = {
                     **environment,
                     "VIEWRV_PRODUCT": str(root),
                     "VIEWRV_EVIDENCE_PREFIX": "linux-installed",
+                    "VIEWRV_TEST_MAINTENANCE": "1",
                 }
                 for scenario in ("native-ide-smoke.cjs", "sandbox-smoke.cjs"):
                     subprocess.run(
@@ -151,7 +168,9 @@ def main():
             )
         finally:
             if installed and cli.exists():
-                run(cli, "--output", "json", "work", "finish")
+                status = json.loads(run(cli, "--output", "json", "work", "status").stdout)
+                if status["result"]["work_id"] is not None:
+                    run(cli, "--output", "json", "work", "finish")
                 quiet()
                 run(root / "uninstall.sh")
 

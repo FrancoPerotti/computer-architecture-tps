@@ -224,6 +224,45 @@ class LinuxInstallationTests(unittest.TestCase):
         maintain("uninstall")
         self.assertTrue(raw.exists())
 
+    def test_initial_replacement_failure_leaves_no_product_or_shortcuts(self):
+        """Abort the first rename without publishing partial product accesses."""
+        with patch(
+            "software.viewrv.installation.service.rename", side_effect=PermissionError("occupied")
+        ):
+            with self.assertRaises(PermissionError):
+                maintain("install", self.source)
+        self.assertFalse(self.root.exists())
+        self.assertFalse(self.cli.exists())
+        self.assertFalse(self.desktop.exists())
+        self.assertFalse(list(self.root.parent.glob(".viewrv-stage-*")))
+
+    def test_failed_rollback_preserves_the_previous_tree_as_a_named_backup(self):
+        """Never clean the sole old copy when an operating-system rollback fails."""
+        from software.viewrv.installation import service
+
+        maintain("install", self.source)
+        (self.root / "retained.s").write_text("halt\n")
+        before = self.tree()
+        original = service.rename
+        root_replacements = []
+
+        def fail_commit_and_rollback(source, destination, **kwargs):
+            if destination == self.root:
+                root_replacements.append(1)
+                if len(root_replacements) == 2:
+                    raise PermissionError("rollback blocked")
+            if destination == self.desktop:
+                raise PermissionError("desktop blocked")
+            return original(source, destination, **kwargs)
+
+        with patch.object(service, "rename", side_effect=fail_commit_and_rollback):
+            with self.assertRaisesRegex(MaintenanceError, "respaldo"):
+                maintain("install", self.source)
+        backups = list(self.root.parent.glob(".viewrv-stage-*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(inventory(backups[0], confined=False), before)
+        self.assertEqual((self.root / "retained.s").read_text(), "halt\n")
+
     def test_all_public_starts_reject_exclusive_maintenance_and_cli_json_is_one_envelope(self):
         """Reject every public entry while maintenance owns the exclusive lease."""
         lock = self.home / "state/viewrv/maintenance.lock"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Run the unchanged native product in an isolated Ubuntu userland and private Xvfb.
 set -euo pipefail
-if [[ $# != 3 || ( "$3" != ide && "$3" != sandbox ) ]]; then
-  echo 'Uso: check_ubuntu_gui.sh ROOTFS_UBUNTU PRODUCTO_EXTRAIDO ide|sandbox' >&2
+if [[ $# != 3 || ( "$3" != ide && "$3" != sandbox && "$3" != installation ) ]]; then
+  echo 'Uso: check_ubuntu_gui.sh ROOTFS_UBUNTU PRODUCTO_EXTRAIDO ide|sandbox|installation' >&2
   exit 2
 fi
 ubuntu_root=$(realpath "$1")
@@ -13,8 +13,9 @@ node_runtime="$software_root/build/toolchain/node_modules/node/bin/node"
 [[ -x "$ubuntu_root/usr/bin/xvfb-run" && -x "$node_runtime" ]]
 [[ -f "$product_root/VERIFICATION-ONLY.txt" ]]
 case "$3" in
-  ide) scenario=tests/native-ide-smoke.cjs ;;
-  sandbox) scenario=tests/sandbox-smoke.cjs ;;
+  ide) command=("$node_runtime" tests/native-ide-smoke.cjs) ;;
+  sandbox) command=("$node_runtime" tests/sandbox-smoke.cjs) ;;
+  installation) command=(/usr/bin/python3 "$software_root/packaging/smoke_linux_installation.py" "$product_root" --gui) ;;
 esac
 # Bubblewrap cannot create bind mount parents after the root is made read-only.
 # These directories belong only to the generated Ubuntu rootfs.
@@ -29,4 +30,4 @@ exec bwrap --unshare-user --unshare-pid --unshare-net --unshare-ipc --unshare-ut
   --setenv LIBGL_ALWAYS_SOFTWARE 1 \
   /bin/bash -euo pipefail -c \
   'mkdir -p "$HOME" "$XDG_CACHE_HOME"; exec xvfb-run -a -s "-screen 0 1366x768x24" "$@"' \
-  viewrv-ubuntu-check "$node_runtime" "$scenario"
+  viewrv-ubuntu-check "${command[@]}"
