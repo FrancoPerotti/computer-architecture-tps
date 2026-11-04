@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "example_id": "load-out-of-range",
+  "source_sha256": "6ac16342432c53ece46bf9370abf3b39ebfb668acfbe8d6f9a488567fe608ecd",
+  "memory_profiles": [
+    "REFERENCE"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "La causante está en ID/EX y el HALT joven queda en IF/ID. El próximo ciclo arbitra el fault antes de que HALT pueda terminar la sesión."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "Fault propio de EX confirmado en PC=8, causa 5; se descartan la causante y las más jóvenes."
+    },
+    {
+      "cycle": 6,
+      "positions": [],
+      "explanation": "Pipeline vacío y FAULT; conservar causa y PC recibidos."
+    }
+  ],
+  "terminal": {
+    "cycle": 6,
+    "execution_status": "fault",
+    "fault_cause": 5,
+    "fault_pc": 8
+  },
+  "prefix_only": false
+}

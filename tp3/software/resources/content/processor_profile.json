@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "profile_id": "tp3-riscv",
+  "revision": 1,
+  "memory_profile": "REFERENCE",
+  "architecture_source": "f0c05f6d938bc9fb44ee3ead31db143d4ca9dda8",
+  "diagram_sha256": "a506b6892151a6d452b61e3167a830bd3edf5365bf608b55f402a58cf2a405bf",
+  "bindings_sha256": "bc548536fae6ec45da1c2dd202ddea3f9b456b471c7f7cd5711b37221e2843e1",
+  "instruction_ids": [
+    "ADD",
+    "ADDI",
+    "AND",
+    "ANDI",
+    "BEQ",
+    "BNE",
+    "HALT",
+    "JAL",
+    "JALR",
+    "LB",
+    "LBU",
+    "LH",
+    "LHU",
+    "LUI",
+    "LW",
+    "OR",
+    "ORI",
+    "SB",
+    "SH",
+    "SLL",
+    "SLLI",
+    "SLT",
+    "SLTI",
+    "SLTIU",
+    "SLTU",
+    "SRA",
+    "SRAI",
+    "SRL",
+    "SRLI",
+    "SUB",
+    "SW",
+    "XOR",
+    "XORI"
+  ],
+  "observable_fields": {
+    "if.pc": [
+      {
+        "path": "pc",
+        "bits": 32
+      }
+    ],
+    "latch.if_id": [
+      {
+        "path": "if_id.valid",
+        "bits": 1
+      },
+      {
+        "path": "if_id.pc",
+        "bits": 32
+      },
+      {
+        "path": "if_id.instruction",
+        "bits": 32
+      },
+      {
+        "path": "if_id.fetch_fault_valid",
+        "bits": 1
+      },
+      {
+        "path": "if_id.fetch_fault_cause",
+        "bits": 3
+      }
+    ],
+    "latch.id_ex": [
+      {
+        "path": "id_ex.valid",
+        "bits": 1
+      },
+      {
+        "path": "id_ex.pc",
+        "bits": 32
+      },
+      {
+        "path": "id_ex.instruction",
+        "bits": 32
+      },
+      {
+        "path": "id_ex.rs1",
+        "bits": 5
+      },
+      {
+        "path": "id_ex.rs2",
+        "bits": 5
+      },
+      {
+        "path": "id_ex.rd",
+        "bits": 5
+      },
+      {
+        "path": "id_ex.rs1_value",
+        "bits": 32
+      },
+      {
+        "path": "id_ex.rs2_value",
+        "bits": 32
+      },
+      {
+        "path": "id_ex.immediate",
+        "bits": 32
+      },
+      {
+        "path": "id_ex.alu_op",
+        "bits": 6
+      },
+      {
+        "path": "id_ex.alu_src",
+        "bits": 1
+      },
+      {
+        "path": "id_ex.result_sel",
+        "bits": 2
+      },
+      {
+        "path": "id_ex.flow_op",
+        "bits": 3
+      },
+      {
+        "path": "id_ex.mem_op",
+        "bits": 4
+      },
+      {
+        "path": "id_ex.reg_write",
+        "bits": 1
+      }
+    ],
+    "latch.ex_mem": [
+      {
+        "path": "ex_mem.valid",
+        "bits": 1
+      },
+      {
+        "path": "ex_mem.pc",
+        "bits": 32
+      },
+      {
+        "path": "ex_mem.instruction",
+        "bits": 32
+      },
+      {
+        "path": "ex_mem.rd",
+        "bits": 5
+      },
+      {
+        "path": "ex_mem.reg_write",
+        "bits": 1
+      },
+      {
+        "path": "ex_mem.mem_op",
+        "bits": 4
+      },
+      {
+        "path": "ex_mem.ex_result",
+        "bits": 32
+      },
+      {
+        "path": "ex_mem.store_data",
+        "bits": 32
+      }
+    ],
+    "latch.mem_wb": [
+      {
+        "path": "mem_wb.valid",
+        "bits": 1
+      },
+      {
+        "path": "mem_wb.pc",
+        "bits": 32
+      },
+      {
+        "path": "mem_wb.instruction",
+        "bits": 32
+      },
+      {
+        "path": "mem_wb.rd",
+        "bits": 5
+      },
+      {
+        "path": "mem_wb.reg_write",
+        "bits": 1
+      },
+      {
+        "path": "mem_wb.wb_value",
+        "bits": 32
+      }
+    ],
+    "rf.register_file": [
+      {
+        "path": "registers.0",
+        "bits": 32
+      },
+      {
+        "path": "registers.1",
+        "bits": 32
+      },
+      {
+        "path": "registers.2",
+        "bits": 32
+      },
+      {
+        "path": "registers.3",
+        "bits": 32
+      },
+      {
+        "path": "registers.4",
+        "bits": 32
+      },
+      {
+        "path": "registers.5",
+        "bits": 32
+      },
+      {
+        "path": "registers.6",
+        "bits": 32
+      },
+      {
+        "path": "registers.7",
+        "bits": 32
+      },
+      {
+        "path": "registers.8",
+        "bits": 32
+      },
+      {
+        "path": "registers.9",
+        "bits": 32
+      },
+      {
+        "path": "registers.10",
+        "bits": 32
+      },
+      {
+        "path": "registers.11",
+        "bits": 32
+      },
+      {
+        "path": "registers.12",
+        "bits": 32
+      },
+      {
+        "path": "registers.13",
+        "bits": 32
+      },
+      {
+        "path": "registers.14",
+        "bits": 32
+      },
+      {
+        "path": "registers.15",
+        "bits": 32
+      },
+      {
+        "path": "registers.16",
+        "bits": 32
+      },
+      {
+        "path": "registers.17",
+        "bits": 32
+      },
+      {
+        "path": "registers.18",
+        "bits": 32
+      },
+      {
+        "path": "registers.19",
+        "bits": 32
+      },
+      {
+        "path": "registers.20",
+        "bits": 32
+      },
+      {
+        "path": "registers.21",
+        "bits": 32
+      },
+      {
+        "path": "registers.22",
+        "bits": 32
+      },
+      {
+        "path": "registers.23",
+        "bits": 32
+      },
+      {
+        "path": "registers.24",
+        "bits": 32
+      },
+      {
+        "path": "registers.25",
+        "bits": 32
+      },
+      {
+        "path": "registers.26",
+        "bits": 32
+      },
+      {
+        "path": "registers.27",
+        "bits": 32
+      },
+      {
+        "path": "registers.28",
+        "bits": 32
+      },
+      {
+        "path": "registers.29",
+        "bits": 32
+      },
+      {
+        "path": "registers.30",
+        "bits": 32
+      },
+      {
+        "path": "registers.31",
+        "bits": 32
+      }
+    ],
+    "mem.data_memory": [
+      {
+        "path": "used_count",
+        "bits": 40
+      },
+      {
+        "path": "memory.*.address",
+        "bits": 32
+      },
+      {
+        "path": "memory.*.value",
+        "bits": 8
+      }
+    ],
+    "session.execution_control": [
+      {
+        "path": "global_state",
+        "bits": 8
+      },
+      {
+        "path": "image_valid",
+        "bits": 1
+      },
+      {
+        "path": "cycle_count",
+        "bits": 64
+      },
+      {
+        "path": "fault_cause",
+        "bits": 3
+      },
+      {
+        "path": "fault_pc",
+        "bits": 32
+      }
+    ]
+  }
+}

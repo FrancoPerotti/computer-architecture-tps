@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "example_id": "loop-self",
+  "source_sha256": "549b39f3121594801e44c95ffd2962092b6f255a06694b3b7aa48ac9a62cdfae",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Redirect a PC=0. El candidato de fetch de PC=4 es más joven y se descarta."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Primera aparición en MEM; segunda aparición en IF/ID con el mismo PC."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 6,
+      "positions": [
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "Segundo redirect a PC=0. No se reasigna el seguimiento de la primera aparición."
+    },
+    {
+      "cycle": 7,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "Segunda aparición en MEM; tercera en IF/ID."
+    },
+    {
+      "cycle": 8,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-3"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 9,
+      "positions": [
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-3"
+        }
+      ],
+      "explanation": "Tercer redirect. La guía muestra un prefijo; el bucle continúa."
+    }
+  ],
+  "terminal": null,
+  "prefix_only": true
+}

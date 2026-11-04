@@ -1,0 +1,6 @@
+# LH: cargar y extender.
+    lui x1, 0x8
+    addi x1, x1, 255
+    sw x1, 0(x0)
+    lh x3, 0(x0)
+    halt

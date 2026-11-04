@@ -1,0 +1,8 @@
+{
+  "file": "viewer-static.min.js",
+  "sha256": "32c73b8e42e784d0ace7d59754cbea6c2a78a0f506d390e2a3870546b9242f7c",
+  "source": "https://viewer.diagrams.net/js/viewer-static.min.js",
+  "project": "https://github.com/jgraph/drawio",
+  "license": "Apache-2.0",
+  "note": "Copia exacta del runtime incrustado en el visor V2 anterior a la refactorización. No se conoce el commit de upstream; no se actualizó."
+}

@@ -1,0 +1,6 @@
+# Preserve the bytes covered by resource provenance and processor-profile hashes.
+tp3/software/resources/content/** -text
+# Third-party snapshots and licenses retain their upstream whitespace verbatim.
+tp3/software/resources/content/viewer/index.html -whitespace
+tp3/software/resources/content/viewer/viewer-static.min.js -whitespace
+tp3/software/resources/content/fonts/*OFL.txt -whitespace

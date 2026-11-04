@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "example_id": "forward-youngest",
+  "source_sha256": "acd1da01aeada06c5559bede56f9c5a38b3240a47baea27d2c5ec5ce2efafa94",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "EX/MEM y MEM/WB coinciden en rd=x1. Gana EX/MEM con 5 para ambas fuentes de ADD."
+    },
+    {
+      "cycle": 6,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 7,
+      "positions": [],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    }
+  ],
+  "terminal": {
+    "cycle": 7,
+    "execution_status": "finished"
+  },
+  "prefix_only": false
+}

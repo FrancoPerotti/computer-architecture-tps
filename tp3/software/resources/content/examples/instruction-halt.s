@@ -1,0 +1,2 @@
+# HALT como programa.
+    halt

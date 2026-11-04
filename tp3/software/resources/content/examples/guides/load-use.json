@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "example_id": "load-use",
+  "source_sha256": "d5add33698c964cc76c02859dec6f2ded40349d3b474b6b16fe99078169cd8f9",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "Load-use: LW completa EX y avanza. ADD se retiene en IF/ID y entra bubble a ID/EX. El store anterior confirma memoria."
+    },
+    {
+      "cycle": 6,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 16,
+          "occurrence": "occurrence-5"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        }
+      ],
+      "explanation": "LW completa MEM; ADD finalmente se decodifica y el fetch reanuda."
+    },
+    {
+      "cycle": 7,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 16,
+          "occurrence": "occurrence-5"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        }
+      ],
+      "explanation": "ADD completa EX usando el load desde MEM/WB; x2 confirma su WB."
+    },
+    {
+      "cycle": 8,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 9,
+      "positions": [],
+      "explanation": "x3=18 confirma WB y termina el drenado."
+    }
+  ],
+  "terminal": {
+    "cycle": 9,
+    "execution_status": "finished"
+  },
+  "prefix_only": false
+}

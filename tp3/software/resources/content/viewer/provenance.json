@@ -1,0 +1,72 @@
+{
+  "source_revision": "1b409f30f166b94683db317324a7e302b4bda27f",
+  "files": [
+    {
+      "source": "riscv-pipeline-viewer.html",
+      "path": "viewer/index.html",
+      "sha256": "bf53bcd986ddd78b85aeef70bbfba81440f9493f4a90d0a01118f7672564eb39"
+    },
+    {
+      "source": "diagramas/TP3_PIPELINE_COMPLETO.drawio.xml",
+      "path": "viewer/source-diagram.drawio.xml",
+      "sha256": "5b94e1ee33ccf9e618121b2747d5665646c4e6c2f65d9678dee5c06725f0ca59"
+    },
+    {
+      "source": "vendor/viewer-static.min.js",
+      "path": "viewer/viewer-static.min.js",
+      "sha256": "32c73b8e42e784d0ace7d59754cbea6c2a78a0f506d390e2a3870546b9242f7c"
+    },
+    {
+      "source": "vendor/manifest.json",
+      "path": "viewer/runtime-manifest.json",
+      "sha256": "620494468ff224db4485fa97eecb45697be1381de9001e47cb6a7433032b9790"
+    },
+    {
+      "source": "assets/inter-400.ttf",
+      "path": "fonts/inter-400.ttf",
+      "sha256": "1b08e7fc267a5c7e1d614100f604b83e7e8a0be241f0f288faa2b3ac93a683ba"
+    },
+    {
+      "source": "assets/inter-500.ttf",
+      "path": "fonts/inter-500.ttf",
+      "sha256": "8c883f63b2c4157d997319f2c8bc6995ed4357ef371940d31ca159004a4aae63"
+    },
+    {
+      "source": "assets/inter-600.ttf",
+      "path": "fonts/inter-600.ttf",
+      "sha256": "e7a1aaf7eda9f2fad4131725fa556265ec75ca7b2d756260173a040363e8d4f7"
+    },
+    {
+      "source": "assets/ibm-plex-mono-400.ttf",
+      "path": "fonts/ibm-plex-mono-400.ttf",
+      "sha256": "a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2"
+    },
+    {
+      "source": "assets/ibm-plex-mono-500.ttf",
+      "path": "fonts/ibm-plex-mono-500.ttf",
+      "sha256": "4fc14a73ca53ba9d32fd759ae1ca1a3133326035d0dd337862b3ee1633cc156e"
+    },
+    {
+      "source": "assets/ibm-plex-mono-600.ttf",
+      "path": "fonts/ibm-plex-mono-600.ttf",
+      "sha256": "754dfc9d50cf7aabfb6b108d2c2f7d20a3f1f2cc6f6c01640c6728091272cec0"
+    },
+    {
+      "source": "assets/inter-OFL.txt",
+      "path": "fonts/inter-OFL.txt",
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "source": "assets/ibm-plex-mono-OFL.txt",
+      "path": "fonts/ibm-plex-mono-OFL.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    }
+  ],
+  "derived": [
+    {
+      "source": "viewer/index.html#diagram-data.xml",
+      "path": "diagram.drawio.xml",
+      "sha256": "a506b6892151a6d452b61e3167a830bd3edf5365bf608b55f402a58cf2a405bf"
+    }
+  ]
+}
