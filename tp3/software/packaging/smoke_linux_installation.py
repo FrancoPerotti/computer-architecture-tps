@@ -4,6 +4,7 @@ import argparse
 import fcntl
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -72,13 +73,16 @@ def main():
 
         installed = False
         try:
-            result = run(source / "install.sh")
+            download = home / "original download"
+            shutil.copytree(source, download, symlinks=True)
+            result = run(download / "install.sh")
             installed = True
             assert "no está en PATH" in result.stdout
             assert cli.is_symlink()
             assert (home / "data/applications/viewrv.desktop").is_file()
             assert "0.7.0" in run(cli, "--version").stdout
             assert not discovery.exists(), "--version no debe arrancar el core"
+            shutil.rmtree(download)
             with (home / "state/viewrv/maintenance.lock").open("r+") as lease:
                 fcntl.flock(lease, fcntl.LOCK_EX)
                 for entry in ("viewrv", "viewrv-gui", "resources/core/viewrv-core"):
