@@ -18,13 +18,10 @@ import {
   setExampleTitles,
   useDocuments,
 } from './documents'
-import {
-  disposeProgramModel,
-  editorCommand,
-  focusProgramEditor,
-  formatProgramEditor,
-  ProgramEditor,
-} from './editor'
+import { ProgramEditor } from './editor'
+import { disposeProgramModel } from './editor-models'
+import { editorCommand, focusProgramEditor, formatProgramEditor } from './editor-commands'
+
 import { ProcessorToolbar } from './processor-toolbar'
 import { AssemblyResults, Results } from './results'
 import { SessionDiagram } from './diagram'

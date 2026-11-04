@@ -12,148 +12,14 @@ import { followOccurrence, stopFollowing } from './inspection'
 import { SourceFollowActions } from './source-follow'
 import { useExampleReference } from './example-guide'
 import * as styles from './theme.css'
-import { pinCompletionDetails } from './monaco-completion'
+import { ensureProgramModel } from './editor-models'
+import { registerProgramEditor } from './editor-commands'
+import { installEditorInteractions } from './editor-interactions'
+import { useEditorDiagnostics } from './editor-diagnostics'
 import { useSourceDecorations } from './source-decorations'
 import { BreakpointActions } from './breakpoint-actions'
 import { useBreakpointPosition } from './breakpoint-position'
 
-const models = new Map<string, { model: monaco.editor.ITextModel; dispose: () => void }>()
-let focusedEditor: monaco.editor.IStandaloneCodeEditor | null = null
-const views = new Map<string, Set<monaco.editor.IStandaloneCodeEditor>>()
-let focusIntent: string | null = null
-export function focusProgramEditor(id: string): void {
-  focusIntent = id
-  requestAnimationFrame(() => {
-    const candidates = [...(views.get(id) ?? [])]
-    if (focusedEditor && candidates.includes(focusedEditor)) candidates.unshift(focusedEditor)
-    const target = candidates.find((editor) => {
-      const node = editor.getDomNode()
-      return (
-        node && node.getBoundingClientRect().width > 0 && node.getBoundingClientRect().height > 0
-      )
-    })
-    if (target && focusIntent === id) {
-      focusIntent = null
-      target.focus()
-    }
-  })
-}
-export function editorCommand(command: string, programId?: string | null): void {
-  const actions: Record<string, string> = {
-    undo: 'undo',
-    redo: 'redo',
-    cut: 'editor.action.clipboardCutAction',
-    copy: 'editor.action.clipboardCopyAction',
-    paste: 'editor.action.clipboardPasteAction',
-    'select-all': 'editor.action.selectAll',
-    find: 'actions.find',
-    format: 'editor.action.formatDocument',
-  }
-  if (!actions[command]) return
-  const candidates = programId ? [...(views.get(programId) ?? [])] : []
-  const target =
-    focusedEditor && (!programId || candidates.includes(focusedEditor))
-      ? focusedEditor
-      : candidates.find((editor) => !!editor.getDomNode()?.getBoundingClientRect().width)
-  if (!target) return
-  // Restore the editor after the menu's focus manager has finished.
-  requestAnimationFrame(() => {
-    if (!target.getDomNode()?.isConnected) return
-    if (command === 'format' && target.getOption(monaco.editor.EditorOption.readOnly)) return
-    target.focus()
-    if (command === 'cut' || command === 'copy' || command === 'paste') {
-      const model = target.getModel()
-      if (!model) return
-      if (command !== 'copy' && target.getOption(monaco.editor.EditorOption.readOnly)) return
-      const version = model.getVersionId()
-      if (command === 'paste') {
-        void window.viewrvDesktop
-          .editCommand('paste')
-          .then((text) => {
-            if (
-              typeof text === 'string' &&
-              target.getModel() === model &&
-              !target.getOption(monaco.editor.EditorOption.readOnly)
-            )
-              target.trigger('menu', 'paste', { text })
-          })
-          .catch(reportError)
-      } else {
-        const selections = target.getSelections() ?? []
-        const text = selections
-          .map((selection) =>
-            selection.isEmpty()
-              ? model.getLineContent(selection.startLineNumber) + model.getEOL()
-              : model.getValueInRange(selection),
-          )
-          .join(model.getEOL())
-        void window.viewrvDesktop
-          .editCommand(command, text)
-          .then(() => {
-            if (
-              command === 'cut' &&
-              target.getModel() === model &&
-              model.getVersionId() === version &&
-              !target.getOption(monaco.editor.EditorOption.readOnly)
-            )
-              target.trigger('menu', 'cut', null)
-          })
-          .catch(reportError)
-      }
-      return
-    }
-    if (command === 'select-all') {
-      const model = target.getModel()
-      if (model) target.setSelection(model.getFullModelRange())
-      return
-    }
-    target.trigger('menu', actions[command], null)
-  })
-}
-export async function formatProgramEditor(programId: string): Promise<void> {
-  const candidates = [...(views.get(programId) ?? [])]
-  const target =
-    focusedEditor && candidates.includes(focusedEditor)
-      ? focusedEditor
-      : candidates.find((editor) => editor.getDomNode()?.isConnected)
-  if (!target || target.getOption(monaco.editor.EditorOption.readOnly)) return
-  await target.getAction('editor.action.formatDocument')?.run()
-}
-function ensureModel(document: DocumentSync): monaco.editor.ITextModel {
-  const id = document.snapshot().program.program_id
-  const existing = models.get(id)
-  if (existing) return existing.model
-  const model = monaco.editor.createModel(
-    document.snapshot().capture.source_text,
-    'viewrv-assembly',
-    monaco.Uri.parse(`viewrv://program/${id}.s`),
-  )
-  let applying = false
-  const content = model.onDidChangeContent(() => {
-    if (!applying) document.edit(model.getValue())
-  })
-  const unsubscribe = document.subscribe(() => {
-    const current = document.snapshot().capture.source_text
-    if (model.getValue() !== current) {
-      applying = true
-      model.setValue(current)
-      applying = false
-    }
-  })
-  models.set(id, {
-    model,
-    dispose: () => {
-      unsubscribe()
-      content.dispose()
-      model.dispose()
-    },
-  })
-  return model
-}
-export function disposeProgramModel(id: string): void {
-  models.get(id)?.dispose()
-  models.delete(id)
-}
 export function ProgramEditor({
   document,
   onFocus,
@@ -203,7 +69,7 @@ export function ProgramEditor({
     window.document.body.appendChild(overlays)
     return () => overlays.remove()
   }, [overlays])
-  const model = ensureModel(document)
+  const model = ensureProgramModel(document)
   const canManageBreakpoints =
     !!belongs && !!session?.debug_open && !!own && synchronized && !closingApp && !state.closing
   const breakpointAccess = useRef(false)
@@ -266,54 +132,7 @@ export function ProgramEditor({
     assembling.error?.code === 'ASSEMBLY_SOURCE_ERROR'
       ? assembling.error
       : null
-  useEffect(() => {
-    const line = activeDiagnostic?.details?.line
-    monaco.editor.setModelMarkers(
-      model,
-      'viewrv',
-      line
-        ? [
-            {
-              severity: monaco.MarkerSeverity.Error,
-              startLineNumber: line,
-              endLineNumber: line,
-              startColumn: 1,
-              endColumn: model.getLineMaxColumn(Math.min(line, model.getLineCount())),
-              message: activeDiagnostic.message,
-            },
-          ]
-        : [],
-    )
-    if (!editor.current) return
-    const decoration = editor.current.createDecorationsCollection(
-      line
-        ? [
-            {
-              range: new monaco.Range(
-                line,
-                1,
-                line,
-                model.getLineMaxColumn(Math.min(line, model.getLineCount())),
-              ),
-              options: { inlineClassName: 'viewrv-source-error' },
-            },
-          ]
-        : [],
-    )
-    if (!line) return () => decoration.clear()
-    let zone: string
-    editor.current.changeViewZones((accessor) => {
-      const content = window.document.createElement('div')
-      content.className = styles.diagnostic
-      content.textContent = activeDiagnostic.message
-      content.setAttribute('role', 'alert')
-      zone = accessor.addZone({ afterLineNumber: line, heightInLines: 2, domNode: content })
-    })
-    return () => {
-      decoration.clear()
-      editor.current?.changeViewZones((accessor) => accessor.removeZone(zone))
-    }
-  }, [model, activeDiagnostic, mounted])
+  useEditorDiagnostics(mounted ? editor.current : null, model, activeDiagnostic)
   useSourceDecorations({
     instance: mounted ? editor.current : null,
     model,
@@ -326,112 +145,19 @@ export function ProgramEditor({
     editor.current = instance
     instance.setModel(model)
     setMounted((value) => value + 1)
-    const id = state.program.program_id
-    if (!views.has(id)) views.set(id, new Set())
-    views.get(id)!.add(instance)
-    if (focusIntent === id) focusProgramEditor(id)
-    instance.onDidFocusEditorText(() => {
-      focusedEditor = instance
-      focusCallback.current?.()
-    })
-    const hovered = instance.createDecorationsCollection()
-    let hoverLine: number | null = null
-    instance.onMouseMove((event) => {
-      const buttonLine = Number(
-        event.target.element?.closest<HTMLElement>('[data-breakpoint-line]')?.dataset
-          .breakpointLine,
-      )
-      const line = event.target.position?.lineNumber ?? (buttonLine || null)
-      if (line === hoverLine) return
-      hoverLine = line
-      hovered.set(
-        line
-          ? [
-              {
-                range: new monaco.Range(line, 1, line, model.getLineMaxColumn(line)),
-                options: {
-                  isWholeLine: true,
-                  className: 'viewrv-hover-line',
-                  marginClassName: 'viewrv-hover-margin',
-                  lineNumberClassName: 'viewrv-hover-line-number',
-                  glyphMarginClassName:
-                    breakpointAccess.current &&
-                    !breakpointLines.current.has(line) &&
-                    !!model.getLineContent(line).split('#')[0].trim() &&
-                    !model.getLineContent(line).split('#')[0].trim().endsWith(':')
-                      ? 'viewrv-breakpoint-hover'
-                      : undefined,
-                  glyphMargin: { position: monaco.editor.GlyphMarginLane.Left },
-                  zIndex: 0,
-                },
-              },
-            ]
-          : [],
-      )
-    })
-    instance.onMouseLeave(() => {
-      hoverLine = null
-      hovered.clear()
-    })
-    instance.onDidScrollChange(() => {
-      hoverLine = null
-      hovered.clear()
-    })
-    const completionDetails = pinCompletionDetails(instance, [
-      monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space,
-      monaco.KeyMod.WinCtrl | monaco.KeyCode.Space,
-      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI,
-    ])
-    instance.onDidDispose(() => {
-      completionDetails.dispose()
-      hovered.clear()
-    })
-
-    instance.onMouseDown((event) => {
-      if (
-        event.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN &&
-        !event.target.element?.closest('button') &&
-        event.target.position &&
-        breakpointAccess.current
-      ) {
+    registerProgramEditor(state.program.program_id, instance, () => focusCallback.current?.())
+    installEditorInteractions(instance, model, {
+      canManageBreakpoints: () => breakpointAccess.current,
+      hasBreakpoint: (line) => breakpointLines.current.has(line),
+      chooseBreakpoint: (line) => {
         setPickLine(null)
-        setBreakLine(event.target.position.lineNumber)
-      }
-      if (event.target.position && event.target.element?.closest('.viewrv-stage-badge')) {
+        setBreakLine(line)
+      },
+      chooseAppearance: (line) => {
         setBreakLine(null)
         setPickMode('inspect')
-        setPickLine(event.target.position.lineNumber)
-      }
-    })
-    instance.addAction({
-      id: 'viewrv.source.appearances',
-      label: 'Apariciones de la instrucción',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.F9],
-      contextMenuGroupId: 'navigation',
-      contextMenuOrder: 2,
-      run: (target) => {
-        setBreakLine(null)
-        setPickMode('inspect')
-        setPickLine(target.getPosition()?.lineNumber ?? 1)
+        setPickLine(line)
       },
-    })
-    instance.addAction({
-      id: 'viewrv.source.breakpoints',
-      label: 'Breakpoints…',
-      keybindings: [monaco.KeyCode.F9],
-      contextMenuGroupId: 'navigation',
-      contextMenuOrder: 3,
-      run: (target) => {
-        if (breakpointAccess.current) {
-          setPickLine(null)
-          setBreakLine(target.getPosition()?.lineNumber ?? 1)
-        }
-      },
-    })
-    instance.onDidDispose(() => {
-      if (focusedEditor === instance) focusedEditor = null
-      views.get(id)?.delete(instance)
-      if (!views.get(id)?.size) views.delete(id)
     })
   }
   async function toggleBreakpoint(latch: LatchName) {
