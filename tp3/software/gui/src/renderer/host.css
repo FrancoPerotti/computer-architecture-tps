@@ -1,0 +1,7 @@
+.window-drag {
+  -webkit-app-region: drag;
+}
+.window-drag button,
+.window-drag nav {
+  -webkit-app-region: no-drag;
+}

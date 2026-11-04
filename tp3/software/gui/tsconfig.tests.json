@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "outDir": ".test-build",
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/shared/contracts.ts",
+    "src/renderer/live-state.ts",
+    "src/renderer/document-sync.ts",
+    "src/renderer/ide-workflow.ts",
+    "src/renderer/inspection.ts",
+    "src/renderer/desktop.d.ts",
+    "src/renderer/examples.ts",
+    "src/renderer/instruction-resource.ts",
+    "src/renderer/monaco-completion.ts",
+    "src/renderer/assembly-format.ts"
+  ]
+}
