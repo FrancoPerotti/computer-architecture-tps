@@ -59,6 +59,8 @@ La barra superior de acciones permanece visible durante el modo IDE, por encima 
 
 El área de trabajo se organiza en grupos de tabs. Cada grupo permite seleccionar cuál de sus tabs se ve; los splits permiten ver varios grupos al mismo tiempo, a izquierda-derecha o arriba-abajo. Esto sirve tanto para trabajar con varios programas como para combinar código, documentación e información de depuración.
 
+La tab seleccionada se integra visualmente con su panel mediante curvas en la base y el mismo fondo. Los controles de maximizar y restaurar usan iconos de trazo redondeado. Estas capas visuales quedan contenidas en el área de trabajo para no interferir con los menús flotantes.
+
 Las tabs también pueden arrastrarse hacia los bordes izquierdo, derecho, superior o inferior de un área de trabajo para colocarlas allí mediante un split, siguiendo la referencia de interacción de VS Code. Esta interacción complementa las opciones del menú **Ver**.
 
 La barra lateral general sirve para navegar entre secciones. La presentación de los valores y explicaciones de un componente del circuito sigue siendo una decisión independiente, pendiente de evaluación visual.
@@ -372,6 +374,10 @@ Pausar detiene el envío de nuevos pasos después de completar el paso y la resp
 
 Un breakpoint se define mediante una instrucción y un registro interetapa. Al marcar una línea, se abre un menú similar al de autocompletado para elegir `IF/ID`, `ID/EX`, `EX/MEM` o `MEM/WB`.
 
+Durante la depuración, la flecha del margen de cada instrucción abre el selector de registro y también admite foco y activación por teclado. Los círculos vacíos solo se muestran al pasar el cursor sobre una instrucción sin breakpoint; los puntos de breakpoints definidos permanecen visibles. Al salir de depuración se retiran tanto las marcas como estas flechas.
+
+El selector se alinea con su flecha y se abre debajo de ella con una separación de 4 px. Sigue su posición al desplazar o redimensionar el editor; se cierra si la instrucción deja de estar visible. Si no hay espacio suficiente debajo, se acomoda arriba y limita su altura para conservar las opciones accesibles.
+
 La condición consiste en que el registro seleccionado tenga una entrada válida con el PC de la instrucción buscada. Esto se corresponde directamente con los campos recibidos en el snapshot y las tarjetas del debugger.
 
 Cuando la condición se cumple, se detiene el avance y se muestra el estado observable completo del sistema, incluidas las demás instrucciones en vuelo. Los efectos que otras instrucciones ya realizaron permanecen visibles.
@@ -428,6 +434,8 @@ No se incorpora una edición paralela de la versión de trabajo del programa dep
 ### Detener la depuración y volver a editar
 
 Se ofrece **Detener depuración** para terminar la sesión de debug y volver a la edición, desbloqueando el programa. Si hay una secuencia de pasos activa, se deja de enviar nuevos `STEP` y se completa la captura pendiente antes de terminar la transición.
+
+Al volver a Edición se ocultan en el editor los puntos y destinos de breakpoint, sus posiciones disponibles y las marcas de instrucciones de la captura anterior; también se restablece el ancho normal del margen. Las definiciones de breakpoint se conservan para la misma versión y vuelven a mostrarse al abrir su depuración. Pausar o recibir una captura terminal no equivale a salir del modo debug: mientras este siga abierto, las marcas se mantienen para la inspección.
 
 Detener termina la sesión lógica: al volver a iniciar una ejecución o depuración se prepara una sesión nueva, sin reanudar silenciosamente el estado anterior. Entrar de nuevo en debug sigue esperando la primera orden de avance, sin ejecutar un primer ciclo. **Pausar** conserva la sesión y permite continuarla; **Reiniciar depuración** comienza de nuevo permaneciendo en modo debug.
 
@@ -561,18 +569,19 @@ El debugger convencional debe permitir entender el pipeline mediante una jerarqu
 
 La información se organiza con la siguiente jerarquía:
 
-- Encabezado compacto con ciclo observado, estado de ejecución y PC global de fetch.
+- Encabezado compacto con icono de reloj y ciclo observado; el tooltip identifica el ciclo. El estado de ejecución permanece en la barra de acciones, sin repetir la etiqueta «Pausado» en el panel.
+- Estado global siempre visible, con su título y el PC global de fetch entre sus campos.
 - Área principal para los registros interetapa.
 - Área complementaria para el banco de registros.
 - Memoria consultable, con mayor protagonismo al analizar cargas y stores.
 
-Para entender el avance del pipeline, la prioridad es registros interetapa, PC de fetch y banco de registros. Para revisar el resultado final, registros y memoria adquieren mayor protagonismo. La prioridad de la información no exige que el PC tenga un panel grande: puede permanecer siempre visible en el encabezado.
+Para entender el avance del pipeline, la prioridad es registros interetapa, PC de fetch y banco de registros. Para revisar el resultado final, registros y memoria adquieren mayor protagonismo. El PC permanece en el estado global, sin repetir una celda de PC en el encabezado.
 
 Los PCs de las instrucciones en vuelo se distinguen del PC global de fetch. El banco de registros muestra efectos ya efectivos, mientras los registros interetapa pueden contener resultados todavía pendientes de writeback.
 
-### Tarjetas desplegables con celdas
+### Tarjetas con celdas
 
-Los registros interetapa se presentan como cuatro tarjetas desplegables con celdas, ordenadas según el recorrido: `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB`. Cada una permite identificar su validez, PC e instrucción y consultar sus demás campos.
+Los registros interetapa se presentan como cuatro tarjetas siempre abiertas, ordenadas según el recorrido: `IF/ID`, `ID/EX`, `EX/MEM` y `MEM/WB`. Cada una permite identificar su validez, PC e instrucción y consultar sus demás campos. El indicador de validez distingue instrucción válida, ausencia de instrucción activa y fallo de fetch; no se repite una explicación permanente de `valid=0` en cada tarjeta. Los bits recibidos permanecen consultables. En paneles angostos se distribuyen en dos columnas para evitar comprimir o recortar los campos.
 
 Los registros dibujados en el visor actual sirven como referencia conceptual por su organización en bloques con campos internos. La apariencia, proporciones y distribución de las celdas siguen abiertas; las tarjetas no requieren copiar literalmente las formas del diagrama.
 
@@ -581,6 +590,14 @@ El PC global se identifica por separado como frente de fetch. Una entrada invál
 ### Destacar cambios entre ciclos
 
 Se destacan las celdas cuyos valores cambiaron respecto de la captura anterior para facilitar la lectura del efecto de cada avance. Este énfasis indica una diferencia de valores; por sí solo no explica su causa ni implica un error. La comparación entre capturas sucesivas no requiere navegación histórica ni cambia la experiencia principal en vivo.
+
+Al alternar entre gris y amarillo se realiza un barrido de color plano desde la izquierda con un rebote leve al completar el recorrido. El texto y los valores se actualizan de inmediato y permanecen quietos. Los cambios del indicador de validez usan una transición breve de opacidad y escala. Las transiciones se cancelan ante actualizaciones nuevas y se omiten, o interrumpen de inmediato, si está activada la preferencia de movimiento reducido.
+
+### Información complementaria
+
+La memoria agrupa el contador de bytes observados, el filtro de dirección y las celdas recibidas. Distingue una captura sin datos de una búsqueda sin coincidencias y permite limpiar el filtro; nunca presupone que una dirección no observada contiene cero. El banco de registros, la memoria, la guía y la actividad conservan controles de expansión; el estado global y las tarjetas interetapa no se colapsan.
+
+La guía separa el resultado esperado al finalizar, la referencia de diseño para el ciclo y la captura realmente recibida. En paneles angostos los bloques se apilan. La explicación del ciclo y la guía completa se consultan mediante expansión progresiva. La actividad inferida usa una lista por etapa con nombre, estado y bloques participantes; se mantiene la distinción entre inferencia educativa y medición de señales.
 
 ### Colores: alcance actual
 
@@ -592,7 +609,7 @@ Un valor inesperado, un bit `valid=0` o un stall no son por sí mismos errores. 
 
 ### Vínculo entre código y pipeline
 
-Se muestran junto a las líneas del editor indicadores de las etapas ocupadas por sus instrucciones, actualizados con cada captura. Esto permite seguir la depuración desde el código aunque la pestaña de información de debug esté oculta. La apariencia exacta de las marcas queda pendiente.
+Se muestran junto a las líneas del editor indicadores de las etapas ocupadas por sus instrucciones, actualizados con cada captura. Esto permite seguir la depuración desde el código aunque la pestaña de información de debug esté oculta. El fondo de las instrucciones en vuelo o seleccionadas se extiende a toda la línea, incluyendo números y margen de breakpoints. Los destinos de breakpoint y las etapas observadas conservan su identificación independiente.
 
 La interacción con cada celda y el comportamiento exacto del desplegado todavía no están definidos.
 

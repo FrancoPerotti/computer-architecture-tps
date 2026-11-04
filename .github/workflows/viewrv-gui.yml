@@ -1,0 +1,56 @@
+name: viewrv GUI quality
+
+on:
+  pull_request:
+    paths: ["tp3/software/**", ".github/workflows/viewrv-gui.yml"]
+  push:
+    branches: ["feature/tp3-*", "codex/**"]
+    paths: ["tp3/software/**", ".github/workflows/viewrv-gui.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: viewrv-gui-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: tp3/software/gui
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: tp3/software/gui/.node-version
+          cache: npm
+          cache-dependency-path: tp3/software/gui/package-lock.json
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version-file: tp3/software/.python-version
+      - name: Install graphical host libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1
+      - name: Install pinned core dependencies
+        run: |
+          python -m venv ../.venv
+          ../.venv/bin/python -m pip install --require-hashes -r ../requirements-linux.lock
+      - name: Install pinned GUI dependencies
+        run: npm ci
+      - name: Format, types, build, unit and graphical checks
+        run: xvfb-run -a npm run check
+      - name: Preserve GUI check evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: viewrv-gui-quality
+          path: |
+            tp3/software/build/gui-check/
+            tp3/software/build/*.png
+          if-no-files-found: ignore
+          retention-days: 7
