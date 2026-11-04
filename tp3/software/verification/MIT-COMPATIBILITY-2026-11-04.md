@@ -1,5 +1,7 @@
 # Compatibilidad de MIT para el código propio de viewrv
 
+Estado posterior: se aplicó MIT al código propio con los titulares indicados por el usuario y se implementó el [material de distribución Linux](../packaging/LICENSES.md). El contenido siguiente conserva la revisión preliminar y sus pendientes en aquel momento.
+
 Revisión técnica del 4 de noviembre de 2026. **MIT es una opción viable para el código propio con las condiciones identificadas; la revisión de redistribución del paquete completo sigue abierta.** No se encontró una exigencia incompatible entre los términos revisados. Los componentes todavía pendientes impiden extender esa conclusión a toda la entrega. Este informe no constituye asesoramiento jurídico ni cambia la licencia del proyecto.
 
 El alcance es la aplicación PC y sus recursos distribuidos en Linux. No adjudica titularidad ni licencia el RTL, la documentación, los dibujos o las contribuciones de otras personas. Antes de aplicar MIT deben acordarse titulares y alcance. El propósito educativo no elimina las condiciones de las licencias de terceros.

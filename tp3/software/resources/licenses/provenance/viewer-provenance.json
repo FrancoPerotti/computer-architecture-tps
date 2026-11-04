@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "component": "draw.io viewer-static",
+  "version": "32.0.2",
+  "tag": "v32.0.2",
+  "commit": "2201e54124bfbbf09d8addec60e6f8d73eed6f92",
+  "path": "src/main/webapp/js/viewer-static.min.js",
+  "git_blob_sha1": "bcc038e8fc4b101d64724c3be1b3b33bdb2954a4",
+  "sha256": "32c73b8e42e784d0ace7d59754cbea6c2a78a0f506d390e2a3870546b9242f7c",
+  "exact_bytes_match": true,
+  "upstream_url": "https://raw.githubusercontent.com/jgraph/drawio/2201e54124bfbbf09d8addec60e6f8d73eed6f92/src/main/webapp/js/viewer-static.min.js",
+  "primary_license": "Apache-2.0",
+  "additional_embedded_headers": [
+    {
+      "name": "spin.js",
+      "version": "2.0.0",
+      "license": "MIT",
+      "source": "https://github.com/fgnass/spin.js/blob/0271cbb28ac9a4be3910df937a586380ec25235e/spin.js"
+    },
+    {
+      "name": "DOMPurify",
+      "version": "3.4.16",
+      "license": "Apache-2.0 OR MPL-2.0"
+    },
+    {
+      "name": "regenerator-runtime",
+      "version": "not stated in header",
+      "license": "MIT"
+    },
+    {
+      "name": "pako",
+      "version": "2.2.0",
+      "license": "MIT AND Zlib"
+    }
+  ],
+  "initial_import_manifest_unchanged": true
+}

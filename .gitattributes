@@ -4,3 +4,4 @@ tp3/software/resources/content/** -text
 tp3/software/resources/content/viewer/index.html -whitespace
 tp3/software/resources/content/viewer/viewer-static.min.js -whitespace
 tp3/software/resources/content/fonts/*OFL.txt -whitespace
+tp3/software/resources/licenses/** -text -whitespace

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Run the unchanged native product in an isolated Ubuntu userland and private Xvfb.
 set -euo pipefail
-if [[ $# != 3 || ( "$3" != ide && "$3" != sandbox && "$3" != installation ) ]]; then
-  echo 'Uso: check_ubuntu_gui.sh ROOTFS_UBUNTU PRODUCTO_EXTRAIDO ide|sandbox|installation' >&2
+if [[ $# != 3 || ( "$3" != ide && "$3" != sandbox && "$3" != installation && "$3" != licenses ) ]]; then
+  echo 'Uso: check_ubuntu_gui.sh ROOTFS_UBUNTU PRODUCTO_EXTRAIDO ide|sandbox|installation|licenses' >&2
   exit 2
 fi
 ubuntu_root=$(realpath "$1")
@@ -15,6 +15,7 @@ node_runtime="$software_root/build/toolchain/node_modules/node/bin/node"
 case "$3" in
   ide) command=("$node_runtime" tests/native-ide-smoke.cjs) ;;
   sandbox) command=("$node_runtime" tests/sandbox-smoke.cjs) ;;
+  licenses) command=("$node_runtime" tests/licenses-smoke.cjs) ;;
   installation) command=(/usr/bin/python3 "$software_root/packaging/smoke_linux_installation.py" "$product_root" --gui) ;;
 esac
 # Bubblewrap cannot create bind mount parents after the root is made read-only.

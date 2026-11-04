@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('viewrvDesktop', {
   windowControl: (action: 'minimize' | 'maximize') => ipcRenderer.invoke('viewrv:window', action),
   chooseProgramFile: () => ipcRenderer.invoke('viewrv:file:open'),
   chooseSavePath: (name?: string) => ipcRenderer.invoke('viewrv:file:save', name),
+  openLicenses: () => ipcRenderer.invoke('viewrv:licenses'),
   openExternal: (url: string) => ipcRenderer.invoke('viewrv:external', url),
   getZoomFactor: () => ipcRenderer.invoke('viewrv:zoom:get'),
   setZoomFactor: (factor: number) => ipcRenderer.invoke('viewrv:zoom:set', factor),

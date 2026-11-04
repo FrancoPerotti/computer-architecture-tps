@@ -43,6 +43,7 @@ function bridge(connection, registration) {
       windowControl: async () => nativeOnly(),
       chooseProgramFile: async () => nativeOnly(),
       chooseSavePath: async () => nativeOnly(),
+      openLicenses: async () => { window.open('/licenses/index.html', '_blank', 'noopener,noreferrer'); },
       openExternal: async url => { if(!/^https?:\\/\\//.test(url)) throw Error('URL no admitida'); window.open(url, '_blank', 'noopener,noreferrer'); },
       getZoomFactor: async () => zoom,
       setZoomFactor: async factor => { if(!Number.isFinite(factor) || factor < .5 || factor > 2) throw Error('Escala inválida'); zoom = factor; document.documentElement.style.zoom = String(factor); document.body.style.width = 'calc(100vw / ' + factor + ')'; document.body.style.height = 'calc(100vh / ' + factor + ')'; },
@@ -229,7 +230,11 @@ function bridge(connection, registration) {
         return
       }
       const resource = url.pathname.startsWith('/content/')
-      const root = resource ? path.join(software, 'resources') : path.join(gui, 'out/renderer')
+      const root = url.pathname.startsWith('/licenses/')
+        ? path.join(software, 'build')
+        : resource
+          ? path.join(software, 'resources')
+          : path.join(gui, 'out/renderer')
       const file = path.resolve(
         root,
         '.' + decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname),

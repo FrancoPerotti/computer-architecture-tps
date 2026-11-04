@@ -17,6 +17,7 @@ import {
   Search,
   List,
   AlignLeft,
+  Scale,
 } from 'lucide-react'
 import { useRef, type ComponentType } from 'react'
 import { useCore } from './core-client'
@@ -45,6 +46,7 @@ export type MenuCommand =
   | 'assembly'
   | 'connection'
   | 'recovery'
+  | 'licenses'
 import * as styles from './theme.css'
 export function sendMenu(command: MenuCommand): void {
   window.dispatchEvent(new CustomEvent('viewrv:menu', { detail: command }))
@@ -126,7 +128,13 @@ export function MenuBar() {
         ['assembly', 'Vista ensamblada', List, !program],
       ],
     ],
-    ['Ayuda', [['catalog', 'Catálogo de instrucciones', BookOpen]]],
+    [
+      'Ayuda',
+      [
+        ['catalog', 'Catálogo de instrucciones', BookOpen],
+        ['licenses', 'Avisos y licencias', Scale],
+      ],
+    ],
   ]
   return (
     <nav className={styles.actionGroup} aria-label="Menú de la aplicación">

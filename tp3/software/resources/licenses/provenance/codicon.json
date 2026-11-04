@@ -1,0 +1,9 @@
+{
+  "asset": "monaco-editor 0.57.0 / esm/vs/base/browser/ui/codicons/codicon/codicon.ttf",
+  "sha256": "77f902557231f95c4c71ae517d09a1a842753656f5f665086b3e5ad8095538da",
+  "author": "Microsoft Corporation",
+  "modified": false,
+  "license": "CC-BY-4.0, with the additional upstream Git icon attribution retained",
+  "publisher_license_blob": "35b538308f557d8eadbd38eb35269294cbea21c7",
+  "publisher": "https://github.com/microsoft/vscode-codicons#legal-notices"
+}

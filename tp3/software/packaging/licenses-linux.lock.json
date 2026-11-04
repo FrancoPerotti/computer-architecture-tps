@@ -1,0 +1,4500 @@
+{
+  "schema_version": 1,
+  "platform": "linux-x86_64",
+  "review_date": "2026-11-04",
+  "own_license": "MIT",
+  "copyright_holders": [
+    "Franco Perotti",
+    "Federico Arnaudo"
+  ],
+  "assessment": "technical_distribution_material_reviewed; not a legal certification",
+  "reviewed_inputs": [
+    {
+      "path": ".python-version",
+      "sha256": "7651ce7dab58e5733ba35597459414699ca339dde25a68aac3d8a89a0c89e5c6"
+    },
+    {
+      "path": "requirements-linux.lock",
+      "sha256": "eab8c9280fe844a292b1961587bc17ec5a4a631efff11a48d620ffb99a99f445"
+    },
+    {
+      "path": "gui/package-lock.json",
+      "sha256": "5a1cf91cbaf4f08a3d30550149de23e68243713c79432d6690ca1ca1a7a4c439"
+    },
+    {
+      "path": "resources/programmer/manifest.json",
+      "sha256": "9ebec674c08081e9a58adbe488f8cdbd4ea8773562145ae3a3b453eaa19c5516"
+    },
+    {
+      "path": "resources/content/viewer/viewer-static.min.js",
+      "sha256": "32c73b8e42e784d0ace7d59754cbea6c2a78a0f506d390e2a3870546b9242f7c"
+    },
+    {
+      "path": "gui/node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/codicon/codicon.ttf",
+      "sha256": "77f902557231f95c4c71ae517d09a1a842753656f5f665086b3e5ad8095538da"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "c5bd8aed47de32693e741c38f8c917b8fd9d59e9902acf738bcb700fa8949377"
+    },
+    {
+      "path": "LICENSING.md",
+      "sha256": "2f0aace34f48e711574f22dcea93a5ea87c718a6c467a03afbe9d6a51e6c955f"
+    },
+    {
+      "path": "build/pyinstaller/viewrv/viewrv/Analysis-00.toc",
+      "sha256": "09be99d7ae590d711e55a7c84f105113a4c3773d6fdaf546e6ad1bb813a45954"
+    },
+    {
+      "path": "build/pyinstaller/viewrv-core/viewrv-core/Analysis-00.toc",
+      "sha256": "0b84d26316c05681c97e46d78505a306552db4da6b025a06b154a0df0fcb13b8"
+    },
+    {
+      "path": "build/ubuntu-venv/lib/python3.14/site-packages/pydantic_core-2.50.2.dist-info/sboms/pydantic-core.cyclonedx.json",
+      "sha256": "fef600af2bdde2c353c09e9f828937990243d78bbaa03f6e2e5c82c86028cf65"
+    }
+  ],
+  "notices": [
+    {
+      "path": "REBUILDING.md",
+      "sha256": "6bdeb6c58823e8eb5c92e398e0d42072480107fc3d66a4de7193ee83fcc88fe1"
+    },
+    {
+      "path": "notices/assets/codicon/LICENSE.txt",
+      "sha256": "246b0a6d8ca71e569c23c4c3417a5b063017df2a25c26fd2f7e160d16294d2ed"
+    },
+    {
+      "path": "notices/assets/draw.io-GraphViewer/LICENSE.txt",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "notices/assets/draw.io-GraphViewer/embedded-headers.txt",
+      "sha256": "4bb44096918af3a32a34030f522857d482f303fb6578222f3e2e928afee22b0c"
+    },
+    {
+      "path": "notices/content/ibm-plex-mono/00-ibm-plex-mono-OFL.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "path": "notices/content/inter/00-inter-OFL.txt",
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "notices/embedded/DOMPurify/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "notices/embedded/DOMPurify/LICENSE-MPL",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "path": "notices/embedded/pako/LICENSE-MIT.txt",
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+    },
+    {
+      "path": "notices/embedded/pako/LICENSE-Zlib.txt",
+      "sha256": "170d7d544d380b38d5f76ab5eda29475b44ef537f4564163d6d9bece85c51c13"
+    },
+    {
+      "path": "notices/embedded/regenerator-runtime/LICENSE.txt",
+      "sha256": "4be9d87b56a306293223b490c0d0b245e9e94f39884147bf051a6c7b825aeb30"
+    },
+    {
+      "path": "notices/embedded/spin.js/LICENSE.txt",
+      "sha256": "9810deb15286d3b25c5bfdb4628e58f88bb8a7d0b46d90bbfccca298f5f58ca9"
+    },
+    {
+      "path": "notices/npm/@base-ui_react/00-LICENSE",
+      "sha256": "07fc1b39d69d14bc7d40482a628f47226258eb01265db68ae684944b916beb2a"
+    },
+    {
+      "path": "notices/npm/@base-ui_utils/00-LICENSE",
+      "sha256": "07fc1b39d69d14bc7d40482a628f47226258eb01265db68ae684944b916beb2a"
+    },
+    {
+      "path": "notices/npm/@floating-ui_core/00-LICENSE",
+      "sha256": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce"
+    },
+    {
+      "path": "notices/npm/@floating-ui_dom/00-LICENSE",
+      "sha256": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce"
+    },
+    {
+      "path": "notices/npm/@floating-ui_react-dom/00-LICENSE",
+      "sha256": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce"
+    },
+    {
+      "path": "notices/npm/@floating-ui_utils/00-LICENSE",
+      "sha256": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce"
+    },
+    {
+      "path": "notices/npm/@microsoft_fetch-event-source/00-LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "notices/npm/@monaco-editor_loader/00-LICENSE",
+      "sha256": "4798fdbac1cbcc37a0261bf164271dfd742eb79dbc13d9e33ad1f2b234c33cc3"
+    },
+    {
+      "path": "notices/npm/@monaco-editor_react/00-LICENSE",
+      "sha256": "da0f19a87a0a014e0f6e1de99bff8073771b5b6204d8b2671d2648ab8b32cf01"
+    },
+    {
+      "path": "notices/npm/flexlayout-react/00-LICENSE",
+      "sha256": "59391baaf80d3af529e3f08adffc813fe54373e6365a2ae5ba3a991e9c25d16f"
+    },
+    {
+      "path": "notices/npm/lucide-react/00-LICENSE",
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "path": "notices/npm/lucide-react/01-copyright.mjs",
+      "sha256": "93d7ecd6f1152e052185751d930a998d0008ea59824a05d830d69da7e1e1cf9a"
+    },
+    {
+      "path": "notices/npm/lucide-react/02-copyright.mjs.map",
+      "sha256": "e76a3007f3232ceab27c936e80a40031141d8969b53e3db1da647f8fb2ecd436"
+    },
+    {
+      "path": "notices/npm/monaco-editor/00-LICENSE",
+      "sha256": "33e4ff1a06ef62ba21788ea162564ee8165269a24a9ce6ef301837447eab0ac6"
+    },
+    {
+      "path": "notices/npm/monaco-editor/01-ThirdPartyNotices.txt",
+      "sha256": "790537262fc78a764e121e6b92b959bcd3f5c310b47d9d9b9e92e17fe0af5336"
+    },
+    {
+      "path": "notices/npm/react/00-LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "notices/npm/react-dom/00-LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "notices/npm/scheduler/00-LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "notices/npm/state-local/00-LICENSE",
+      "sha256": "3154651e339acde2858130fb40566eb80ced1b03508c57fcb52bb709ab0a0cea"
+    },
+    {
+      "path": "notices/npm/use-sync-external-store/00-LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "path": "notices/npm/zustand/00-LICENSE",
+      "sha256": "c1e6e266563517467b1bf874817d23e426f3149252bd7d42758cd697514b8417"
+    },
+    {
+      "path": "notices/programmer/gcc-runtime/00-gcc-runtime.txt",
+      "sha256": "08c6f3dee4c19aa1e57eb7d4ad45829b2e99656313bd07fa0922e2553f500be5"
+    },
+    {
+      "path": "notices/programmer/libcap2/00-libcap2.txt",
+      "sha256": "e60a5642e12e340060e4e519a65b2eb0330be2917854841c644e36268f607d54"
+    },
+    {
+      "path": "notices/programmer/libftdi1-2/00-libftdi1-2.txt",
+      "sha256": "a4362ff39cd5b92c4080d53abd68c7758790caaf6cc21a489f763d9a3405fc19"
+    },
+    {
+      "path": "notices/programmer/libudev1/00-libudev1.txt",
+      "sha256": "a7d06854714a1ca99f6dbd1a1641dde5bcf28635be149f6554449618f8f427f3"
+    },
+    {
+      "path": "notices/programmer/libusb-1.0-0/00-libusb-1.0-0.txt",
+      "sha256": "22184ce520ea729f24fb9ec9ee0849c9c7c6828cb796fe2cd174a480ce806420"
+    },
+    {
+      "path": "notices/programmer/openFPGALoader/00-openFPGALoader.txt",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "notices/python/annotated-doc/00-LICENSE",
+      "sha256": "fff170779a6acbf65abdb405c087f1cee1786691e4a96a4034517e4a504a0cdf"
+    },
+    {
+      "path": "notices/python/annotated-types/00-LICENSE",
+      "sha256": "fe1049884b1a0d9342901e88e07f32925d24b3121d9972b6a6805fb9824b095d"
+    },
+    {
+      "path": "notices/python/anyio/00-LICENSE",
+      "sha256": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0"
+    },
+    {
+      "path": "notices/python/certifi/00-LICENSE",
+      "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+    },
+    {
+      "path": "notices/python/click/00-LICENSE.txt",
+      "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+    },
+    {
+      "path": "notices/python/fastapi/00-LICENSE",
+      "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+    },
+    {
+      "path": "notices/python/h11/00-LICENSE.txt",
+      "sha256": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361"
+    },
+    {
+      "path": "notices/python/httpcore/00-LICENSE.md",
+      "sha256": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5"
+    },
+    {
+      "path": "notices/python/httpx/00-LICENSE.md",
+      "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+    },
+    {
+      "path": "notices/python/idna/00-LICENSE.md",
+      "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+    },
+    {
+      "path": "notices/python/opentelemetry-api/00-LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "notices/python/packaging/00-LICENSE",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "path": "notices/python/packaging/01-LICENSE.APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "notices/python/packaging/02-LICENSE.BSD",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "path": "notices/python/pydantic/00-LICENSE",
+      "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+    },
+    {
+      "path": "notices/python/pydantic_core/00-LICENSE",
+      "sha256": "2afdd30d54b4d62b6f488a6bcc1546e84ec5061f13f4209c03d012348783795a"
+    },
+    {
+      "path": "notices/python/pyinstaller/00-COPYING.txt",
+      "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64"
+    },
+    {
+      "path": "notices/python/pyserial/LICENSE.txt",
+      "sha256": "f91cb9813de6a5b142b8f7f2dede630b5134160aedaeaf55f4d6a7e2593ca3f3"
+    },
+    {
+      "path": "notices/python/pyserial/pyserial-3.5-LICENSE.txt",
+      "sha256": "f91cb9813de6a5b142b8f7f2dede630b5134160aedaeaf55f4d6a7e2593ca3f3"
+    },
+    {
+      "path": "notices/python/setuptools/00-LICENSE",
+      "sha256": "ade78d04982d69972d444a8e14a94f87a2334dd3855cc80348ea8e240aa0df2d"
+    },
+    {
+      "path": "notices/python/setuptools/01-LICENSE",
+      "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+    },
+    {
+      "path": "notices/python/setuptools/02-LICENSE",
+      "sha256": "458502e12d97bbf64438606a20044aa85eb05fb0a8a807bb35dbec253fd1fc04"
+    },
+    {
+      "path": "notices/python/setuptools/03-LICENSE",
+      "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+    },
+    {
+      "path": "notices/python/setuptools/04-LICENSE",
+      "sha256": "9755a18519666e5f0f4cae3daad3d7012bcae48a600b31237d75e9fe134e6683"
+    },
+    {
+      "path": "notices/python/setuptools/05-LICENSE",
+      "sha256": "5a57cb4db85e2a2dd88c290628908add57e3451449e0a9a71fdfb38776fd759d"
+    },
+    {
+      "path": "notices/python/setuptools/06-LICENSE",
+      "sha256": "09f1c8c9e941af3e584d59641ea9b87d83c0cb0fd007eb5ef391a7e2643c1a46"
+    },
+    {
+      "path": "notices/python/setuptools/07-LICENSE",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "path": "notices/python/setuptools/08-LICENSE.APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "notices/python/setuptools/09-LICENSE.BSD",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "path": "notices/python/setuptools/10-LICENSE",
+      "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+    },
+    {
+      "path": "notices/python/setuptools/11-LICENSE",
+      "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+    },
+    {
+      "path": "notices/python/setuptools/12-LICENSE.txt",
+      "sha256": "30c23618679108f3e8ea1d2a658c7ca417bdfc891c98ef1a89fa4ff0c9828654"
+    },
+    {
+      "path": "notices/python/setuptools/13-LICENSE",
+      "sha256": "5a57cb4db85e2a2dd88c290628908add57e3451449e0a9a71fdfb38776fd759d"
+    },
+    {
+      "path": "notices/python/setuptools/14-NOTICE",
+      "sha256": "2dddf08818297a3b89d43d95ff659d8da85741108c9136dfa3a4d856c0623bd8"
+    },
+    {
+      "path": "notices/python/setuptools/15-NOTICE",
+      "sha256": "09c9bcea95ca086f8bc5bed174e40bc835b297d40fb5f86bbbb570fe0a5581a7"
+    },
+    {
+      "path": "notices/python/setuptools/16-LICENSE",
+      "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+    },
+    {
+      "path": "notices/python/starlette/00-LICENSE.md",
+      "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
+    },
+    {
+      "path": "notices/python/typing-inspection/00-LICENSE",
+      "sha256": "804b59b25f2c31bd278f9202a19ae49a3945aa2664387e2d0a128c7cacc61ec3"
+    },
+    {
+      "path": "notices/python/typing_extensions/00-LICENSE",
+      "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+    },
+    {
+      "path": "notices/python/uvicorn/00-LICENSE.md",
+      "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+    },
+    {
+      "path": "notices/runtime/CPython/00-LICENSE.txt",
+      "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.bzip2.txt",
+      "sha256": "1f38bbc7caacafd65169276d759c0d88c991b753b643ce35d0e45ea1971dd441"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.cpython.txt",
+      "sha256": "86e61415828a8b5b06ec8d024e6f086ce155a8b85fd0c419c0ba4dc004e74fdd"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.expat.txt",
+      "sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.libedit.txt",
+      "sha256": "29cea33c32bbc9785142386377915612a2fa786482c46843383384aded2e09b1"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.libffi.txt",
+      "sha256": "deaf3a42effb551a5b140fa9afefed183a27f1341c6d1bf430d106a5e6931fc0"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.liblzma.txt",
+      "sha256": "9a4062de0a2c388a98cf35a35d348b62fa97c838a71c3c28ee1a2d7d0a565b02"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.libuuid.txt",
+      "sha256": "122ee1f7e258f2c3c0e538a75c037684f420454bf3850ddc74ce750bbf5fe86b"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.mpdecimal.txt",
+      "sha256": "669512af7219f58be03a398766d7c9da11a3b3df9d3f05cb74c5ceca25c8da3b"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.ncurses.txt",
+      "sha256": "87a4c4442337b8968ef956031c406b74f9cb7149b7ba87311bdaba534816201c"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.openssl-3.txt",
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.sqlite.txt",
+      "sha256": "38bef3d28b24f145ea293bd3b6eb4b20396982abc8303128fb493986ea5bc719"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.zlib-ng.txt",
+      "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.zlib.txt",
+      "sha256": "818922b2620f12801a12bf78e399644a30990e66824abd8ca8ec24d451d6f92c"
+    },
+    {
+      "path": "notices/runtime/CPython-static/LICENSE.zstd.txt",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
+    },
+    {
+      "path": "notices/runtime/FFmpeg/COPYING.GPLv2",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "path": "notices/runtime/FFmpeg/COPYING.LGPLv2.1",
+      "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+    },
+    {
+      "path": "notices/runtime/FFmpeg/LICENSE.md",
+      "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af"
+    },
+    {
+      "path": "notices/runtime/Rust/COPYRIGHT",
+      "sha256": "172020dbfd5b53a226dfde77616190a48dcff519b0bc0e6deb91a8450782c4af"
+    },
+    {
+      "path": "notices/runtime/Rust/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/runtime/Rust/LICENSE-MIT",
+      "sha256": "b71bd43a069ca0641a9ecfe585ca7b3c53b5cc1608f8b68321168698e28b5ea1"
+    },
+    {
+      "path": "notices/runtime/libgcc-s1/COPYRIGHT.txt",
+      "sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79"
+    },
+    {
+      "path": "notices/rust/ahash-0.8.12/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/ahash-0.8.12/LICENSE-MIT",
+      "sha256": "0444c6991eead6822f7b9102e654448d51624431119546492e8b231db42c48bb"
+    },
+    {
+      "path": "notices/rust/aho-corasick-1.1.3/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+    },
+    {
+      "path": "notices/rust/aho-corasick-1.1.3/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+    },
+    {
+      "path": "notices/rust/arrayvec-0.7.8/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/arrayvec-0.7.8/LICENSE-MIT",
+      "sha256": "4da95ec4ecb65b738d470b7d762894ad9c97da93e6cbfb18b570fc2c96f4b871"
+    },
+    {
+      "path": "notices/rust/autocfg-1.3.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/autocfg-1.3.0/LICENSE-MIT",
+      "sha256": "27995d58ad5c1145c1a8cd86244ce844886958a35eb2b78c6b772748669999ac"
+    },
+    {
+      "path": "notices/rust/base64-0.23.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/base64-0.23.1/LICENSE-MIT",
+      "sha256": "ab499c75a0f0da8e0fe83bf9ba3a27e5c39705310f07107c6c66b69958d2401c"
+    },
+    {
+      "path": "notices/rust/bitflags-2.9.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/bitflags-2.9.1/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/bitvec-1.0.1/LICENSE.txt",
+      "sha256": "411781fd38700f2357a14126d0ab048164ab881f1dcb335c1bb932e232c9a2f5"
+    },
+    {
+      "path": "notices/rust/bumpalo-3.19.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/bumpalo-3.19.0/LICENSE-MIT",
+      "sha256": "65f94e99ddaf4f5d1782a6dae23f35d4293a9a01444a13135a6887017d353cee"
+    },
+    {
+      "path": "notices/rust/cfg-if-1.0.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/cfg-if-1.0.0/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/displaydoc-0.2.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/displaydoc-0.2.5/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/enum_dispatch-0.3.13/LICENSE",
+      "sha256": "1e5d3ddaf5cbc111c8517df39e6f252e4c16dbda26b7cc1ad54c9e3efb0586be"
+    },
+    {
+      "path": "notices/rust/equivalent-1.0.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/equivalent-1.0.3/LICENSE-MIT",
+      "sha256": "7365cc8878a1d7ce155a58c4ca09c3d7a6be413efa5334a80ea842912b669349"
+    },
+    {
+      "path": "notices/rust/foldhash-0.2.0/LICENSE",
+      "sha256": "b1181a40b2a7b25cf66fd01481713bc1005df082c53ef73e851e55071b102744"
+    },
+    {
+      "path": "notices/rust/form_urlencoded-1.2.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/form_urlencoded-1.2.2/LICENSE-MIT",
+      "sha256": "20c7855c364d57ea4c97889a5e8d98470a9952dade37bd9248b9a54431670e5e"
+    },
+    {
+      "path": "notices/rust/funty-2.0.0/LICENSE.txt",
+      "sha256": "f790cc576999f5998c766d3d26d7d64dc368e805a98461484f65e8d961ec6d9f"
+    },
+    {
+      "path": "notices/rust/getrandom-0.3.3/LICENSE-APACHE",
+      "sha256": "aaff376532ea30a0cd5330b9502ad4a4c8bf769c539c87ffe78819d188a18ebf"
+    },
+    {
+      "path": "notices/rust/getrandom-0.3.3/LICENSE-MIT",
+      "sha256": "29e9fe5074bd27e0e5d5d110394fbbcd841baee2651a3c4b4560a632702cede4"
+    },
+    {
+      "path": "notices/rust/hashbrown-0.17.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/hashbrown-0.17.1/LICENSE-MIT",
+      "sha256": "ff8f68cb076caf8cefe7a6430d4ac086ce6af2ca8ce2c4e5a2004d4552ef52a2"
+    },
+    {
+      "path": "notices/rust/heck-0.5.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/heck-0.5.0/LICENSE-MIT",
+      "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+    },
+    {
+      "path": "notices/rust/hex-0.4.3/LICENSE-APACHE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+    },
+    {
+      "path": "notices/rust/hex-0.4.3/LICENSE-MIT",
+      "sha256": "f7bdb3426d045cd50efd4953026e3eb5a83d0199f458a075602611b9344da5b9"
+    },
+    {
+      "path": "notices/rust/icu_collections-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_locid-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_locid_transform-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_locid_transform_data-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_normalizer-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_normalizer_data-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_properties-1.5.1/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_properties_data-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_provider-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/icu_provider_macros-1.5.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/idna-1.1.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/idna-1.1.0/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5"
+    },
+    {
+      "path": "notices/rust/idna_adapter-1.2.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/idna_adapter-1.2.0/LICENSE-MIT",
+      "sha256": "8b43ce8accd61e9d370b5ca9e9c4f953279b5c239926c62315b40e24df51b726"
+    },
+    {
+      "path": "notices/rust/indexmap-2.14.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/indexmap-2.14.0/LICENSE-MIT",
+      "sha256": "ecc269ef87fd38a1d98e30bfac9ba964a9dbd9315c3770fed98d4d7cb5882055"
+    },
+    {
+      "path": "notices/rust/itoa-1.0.11/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/itoa-1.0.11/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/jiter-0.18.0/LICENSE",
+      "sha256": "7c7134b9f7b978c03fca875517cf398db91f19bbb8109b6685e742aa3f57468e"
+    },
+    {
+      "path": "notices/rust/js-sys-0.3.77/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/js-sys-0.3.77/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/lexical-parse-float-1.0.6/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+    },
+    {
+      "path": "notices/rust/lexical-parse-float-1.0.6/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/lexical-parse-float-1.0.6/LICENSE.md",
+      "sha256": "99aab70a96f3ecab683d8a319d9070af2213ae4c1601fb053fbe85e1361e32fe"
+    },
+    {
+      "path": "notices/rust/lexical-parse-integer-1.0.6/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+    },
+    {
+      "path": "notices/rust/lexical-parse-integer-1.0.6/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/lexical-parse-integer-1.0.6/LICENSE.md",
+      "sha256": "99aab70a96f3ecab683d8a319d9070af2213ae4c1601fb053fbe85e1361e32fe"
+    },
+    {
+      "path": "notices/rust/lexical-util-1.0.7/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+    },
+    {
+      "path": "notices/rust/lexical-util-1.0.7/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/libc-0.2.185/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/libc-0.2.185/LICENSE-MIT",
+      "sha256": "123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e"
+    },
+    {
+      "path": "notices/rust/litemap-0.7.3/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/log-0.4.27/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/log-0.4.27/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/lru-0.18.5/LICENSE",
+      "sha256": "061dc50af2cd9340703daf61978af3200cf681b12ea67a323c33ba109a23a45e"
+    },
+    {
+      "path": "notices/rust/memchr-2.7.4/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+    },
+    {
+      "path": "notices/rust/memchr-2.7.4/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+    },
+    {
+      "path": "notices/rust/num-bigint-0.4.6/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/num-bigint-0.4.6/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/num-integer-0.1.46/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/num-integer-0.1.46/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/num-traits-0.2.19/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/num-traits-0.2.19/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/once_cell-1.21.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/once_cell-1.21.3/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/percent-encoding-2.3.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/percent-encoding-2.3.2/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5"
+    },
+    {
+      "path": "notices/rust/portable-atomic-1.6.0/LICENSE-APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "notices/rust/portable-atomic-1.6.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/proc-macro2-1.0.107/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/proc-macro2-1.0.107/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/pyo3-0.30.1/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-0.30.1/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/pyo3-0.30.1/pyo3-runtime/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-0.30.1/pyo3-runtime/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/pyo3-build-config-0.30.1/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-build-config-0.30.1/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/pyo3-ffi-0.30.1/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-ffi-0.30.1/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/pyo3-macros-0.30.1/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-macros-0.30.1/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/pyo3-macros-backend-0.30.1/LICENSE-APACHE",
+      "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+    },
+    {
+      "path": "notices/rust/pyo3-macros-backend-0.30.1/LICENSE-MIT",
+      "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+    },
+    {
+      "path": "notices/rust/quote-1.0.44/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/quote-1.0.44/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/r-efi-5.2.0/AUTHORS",
+      "sha256": "c42285aa32440c3b5358fd4805b817cd8d6e1795111d2e4c547530be41896b2d"
+    },
+    {
+      "path": "notices/rust/r-efi-5.2.0/README.md",
+      "sha256": "420f65fec3ba2e89d49da51b222d2881d26959037a7b7d3794143db4bd4627b1"
+    },
+    {
+      "path": "notices/rust/r-efi-5.2.0/src/lib.rs",
+      "sha256": "289fdfa8384062616aa39b49c4094b93849ff0a2e5f6d7125b40124299a0837e"
+    },
+    {
+      "path": "notices/rust/radium-0.7.0/LICENSE.txt",
+      "sha256": "13f4cc9fbc8d4a447b28aa84019c10ad4abf4b5f6919db061bf6690ccc23bc02"
+    },
+    {
+      "path": "notices/rust/regex-1.13.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/regex-1.13.1/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/regex-automata-0.4.18/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/regex-automata-0.4.18/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/regex-syntax-0.8.11/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/regex-syntax-0.8.11/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust/regex-syntax-0.8.11/src/unicode_tables/LICENSE-UNICODE",
+      "sha256": "74db5baf44a41b1000312c673544b3374e4198af5605c7f9080a402cec42cfa3"
+    },
+    {
+      "path": "notices/rust/serde-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/serde-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/serde_core-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/serde_core-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/serde_derive-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/serde_derive-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/serde_json-1.0.151/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/serde_json-1.0.151/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/smallvec-1.16.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/smallvec-1.16.2/LICENSE-MIT",
+      "sha256": "0b28172679e0009b655da42797c03fd163a3379d5cfa67ba1f1655e974a2a1a9"
+    },
+    {
+      "path": "notices/rust/speedate-0.18.0/LICENSE",
+      "sha256": "2afdd30d54b4d62b6f488a6bcc1546e84ec5061f13f4209c03d012348783795a"
+    },
+    {
+      "path": "notices/rust/stable_deref_trait-1.2.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/stable_deref_trait-1.2.0/LICENSE-MIT",
+      "sha256": "5e05b024f653a5ce199e77cbbbd42fb5553562ec714b819421ed0c3e552a75d7"
+    },
+    {
+      "path": "notices/rust/strum-0.28.0/LICENSE",
+      "sha256": "8bce3b45e49ecd1461f223b46de133d8f62cd39f745cfdaf81bee554b908bd42"
+    },
+    {
+      "path": "notices/rust/strum_macros-0.28.0/LICENSE",
+      "sha256": "8bce3b45e49ecd1461f223b46de133d8f62cd39f745cfdaf81bee554b908bd42"
+    },
+    {
+      "path": "notices/rust/syn-2.0.82/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/syn-2.0.82/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/syn-3.0.6/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/syn-3.0.6/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/synstructure-0.13.1/LICENSE",
+      "sha256": "219920e865eee70b7dcfc948a86b099e7f4fe2de01bcca2ca9a20c0a033f2b59"
+    },
+    {
+      "path": "notices/rust/tap-1.0.1/LICENSE.txt",
+      "sha256": "8b4e95f5cf0dc40269c99f7b787203ffe04ded245ca2427422c196efa2b2f42a"
+    },
+    {
+      "path": "notices/rust/target-lexicon-0.13.4/LICENSE",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "notices/rust/tinystr-0.7.6/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/unicode-ident-1.0.12/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust/unicode-ident-1.0.12/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/unicode-ident-1.0.12/LICENSE-UNICODE",
+      "sha256": "68f5b9f5ea36881a0942ba02f558e9e1faf76cc09cb165ad801744c61b738844"
+    },
+    {
+      "path": "notices/rust/url-2.5.8/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/url-2.5.8/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5"
+    },
+    {
+      "path": "notices/rust/utf16_iter-1.0.5/COPYRIGHT",
+      "sha256": "b84efe109a420fa3ca98be33f4227327af7ffa426195812c270feb1268bc2426"
+    },
+    {
+      "path": "notices/rust/utf16_iter-1.0.5/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "notices/rust/utf16_iter-1.0.5/LICENSE-MIT",
+      "sha256": "3fa4ca83dcc9237839b1bdeb2e6d16bdfb5ec0c5ce42b24694d8bbf0dcbef72c"
+    },
+    {
+      "path": "notices/rust/utf8_iter-1.0.4/COPYRIGHT",
+      "sha256": "c30152c94a6d75e021adbc52b3a52470366a46edb917e17deae3259251af244c"
+    },
+    {
+      "path": "notices/rust/utf8_iter-1.0.4/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "notices/rust/utf8_iter-1.0.4/LICENSE-MIT",
+      "sha256": "3fa4ca83dcc9237839b1bdeb2e6d16bdfb5ec0c5ce42b24694d8bbf0dcbef72c"
+    },
+    {
+      "path": "notices/rust/uuid-1.23.4/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/uuid-1.23.4/LICENSE-MIT",
+      "sha256": "436bc5a105d8e57dcd8778730f3754f7bf39c14d2f530e4cde4bd2d17a83ec3d"
+    },
+    {
+      "path": "notices/rust/version_check-0.9.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/version_check-0.9.5/LICENSE-MIT",
+      "sha256": "b7e650f3fce5c53249d1cdc608b54df156a97edd636cf9d23498d0cfe7aec63e"
+    },
+    {
+      "path": "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-Apache-2.0_WITH_LLVM-exception",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-0.2.100/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-0.2.100/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-backend-0.2.100/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-backend-0.2.100/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-macro-0.2.100/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-macro-0.2.100/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-macro-support-0.2.100/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-macro-support-0.2.100/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-shared-0.2.100/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust/wasm-bindgen-shared-0.2.100/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust/wit-bindgen-rt-0.39.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust/write16-1.0.0/COPYRIGHT",
+      "sha256": "3210be7332b5bdf48eb24a945258b9f38616a2cceb0dfc06e3c3c7e9740475a0"
+    },
+    {
+      "path": "notices/rust/write16-1.0.0/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "notices/rust/write16-1.0.0/LICENSE-MIT",
+      "sha256": "3fa4ca83dcc9237839b1bdeb2e6d16bdfb5ec0c5ce42b24694d8bbf0dcbef72c"
+    },
+    {
+      "path": "notices/rust/writeable-0.5.5/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/wyz-0.5.1/LICENSE.txt",
+      "sha256": "411781fd38700f2357a14126d0ab048164ab881f1dcb335c1bb932e232c9a2f5"
+    },
+    {
+      "path": "notices/rust/yoke-0.7.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/yoke-derive-0.7.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/zerocopy-0.8.25/LICENSE-APACHE",
+      "sha256": "9d185ac6703c4b0453974c0d85e9eee43e6941009296bb1f5eb0b54e2329e9f3"
+    },
+    {
+      "path": "notices/rust/zerocopy-0.8.25/LICENSE-BSD",
+      "sha256": "83c1763356e822adde0a2cae748d938a73fdc263849ccff6b27776dff213bd32"
+    },
+    {
+      "path": "notices/rust/zerocopy-0.8.25/LICENSE-MIT",
+      "sha256": "1a2f5c12ddc934d58956aa5dbdd3255fe55fd957633ab7d0d39e4f0daa73f7df"
+    },
+    {
+      "path": "notices/rust/zerocopy-derive-0.8.25/LICENSE-APACHE",
+      "sha256": "9d185ac6703c4b0453974c0d85e9eee43e6941009296bb1f5eb0b54e2329e9f3"
+    },
+    {
+      "path": "notices/rust/zerocopy-derive-0.8.25/LICENSE-BSD",
+      "sha256": "83c1763356e822adde0a2cae748d938a73fdc263849ccff6b27776dff213bd32"
+    },
+    {
+      "path": "notices/rust/zerocopy-derive-0.8.25/LICENSE-MIT",
+      "sha256": "1a2f5c12ddc934d58956aa5dbdd3255fe55fd957633ab7d0d39e4f0daa73f7df"
+    },
+    {
+      "path": "notices/rust/zerofrom-0.1.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/zerofrom-derive-0.1.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/zerovec-0.10.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/zerovec-derive-0.10.3/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2"
+    },
+    {
+      "path": "notices/rust/zmij-1.0.6/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/addr2line-0.27.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/addr2line-0.27.1/LICENSE-MIT",
+      "sha256": "e99d88d232bf57d70f0fb87f6b496d44b6653f99f8a63d250a54c61ea4bcde40"
+    },
+    {
+      "path": "notices/rust-std/adler2-2.0.1/LICENSE-0BSD",
+      "sha256": "861399f8c21c042b110517e76dc6b63a2b334276c8cf17412fc3c8908ca8dc17"
+    },
+    {
+      "path": "notices/rust-std/adler2-2.0.1/LICENSE-APACHE",
+      "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb"
+    },
+    {
+      "path": "notices/rust-std/adler2-2.0.1/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/cc-1.2.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/cc-1.2.0/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust-std/cfg-if-1.0.4/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/cfg-if-1.0.4/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust-std/dlmalloc-0.2.14/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/dlmalloc-0.2.14/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust-std/foldhash-0.2.0/LICENSE",
+      "sha256": "b1181a40b2a7b25cf66fd01481713bc1005df082c53ef73e851e55071b102744"
+    },
+    {
+      "path": "notices/rust-std/fortanix-sgx-abi-0.6.1/COPYRIGHT",
+      "sha256": "4f342cc06c704bffa2331f24d54ad6629b219170613291d7c38db66703a4df35"
+    },
+    {
+      "path": "notices/rust-std/fortanix-sgx-abi-0.6.1/LICENSE",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "path": "notices/rust-std/getopts-0.2.24/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/getopts-0.2.24/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "notices/rust-std/gimli-0.34.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/gimli-0.34.0/LICENSE-MIT",
+      "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+    },
+    {
+      "path": "notices/rust-std/hashbrown-0.17.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/hashbrown-0.17.1/LICENSE-MIT",
+      "sha256": "ff8f68cb076caf8cefe7a6430d4ac086ce6af2ca8ce2c4e5a2004d4552ef52a2"
+    },
+    {
+      "path": "notices/rust-std/hermit-abi-0.5.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/hermit-abi-0.5.2/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/libc-0.2.189/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust-std/libc-0.2.189/LICENSE-MIT",
+      "sha256": "123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e"
+    },
+    {
+      "path": "notices/rust-std/memchr-2.8.3/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+    },
+    {
+      "path": "notices/rust-std/memchr-2.8.3/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+    },
+    {
+      "path": "notices/rust-std/miniz_oxide-0.9.1/LICENSE",
+      "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b"
+    },
+    {
+      "path": "notices/rust-std/miniz_oxide-0.9.1/LICENSE-APACHE.md",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "notices/rust-std/miniz_oxide-0.9.1/LICENSE-MIT.md",
+      "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+    },
+    {
+      "path": "notices/rust-std/miniz_oxide-0.9.1/LICENSE-ZLIB.md",
+      "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39"
+    },
+    {
+      "path": "notices/rust-std/moto-rt-0.16.4/LICENSE-APACHE",
+      "sha256": "69fef7b0f322a65554156141f2bc6256ed0bb78cba7e49f0d8829d7ec4ee62cd"
+    },
+    {
+      "path": "notices/rust-std/moto-rt-0.16.4/LICENSE-MIT",
+      "sha256": "a7c936ff1ed8fa340172d42a98185afee078f818e907da69f3a8e336b1623b4b"
+    },
+    {
+      "path": "notices/rust-std/object-0.39.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/object-0.39.1/LICENSE-MIT",
+      "sha256": "0b74dfa0bcee5c420c6b7f67b4b2658f9ab8388c97b8e733975f2cecbdd668a6"
+    },
+    {
+      "path": "notices/rust-std/r-efi-5.3.0/AUTHORS",
+      "sha256": "ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7"
+    },
+    {
+      "path": "notices/rust-std/r-efi-alloc-2.1.0/AUTHORS",
+      "sha256": "fba3318d0c600380177edf7ba4778ff6588faa8d106c679ac5dfee620011239c"
+    },
+    {
+      "path": "notices/rust-std/rand-0.9.5/COPYRIGHT",
+      "sha256": "90eb64f0279b0d9432accfa6023ff803bc4965212383697eee27a0f426d5f8d5"
+    },
+    {
+      "path": "notices/rust-std/rand-0.9.5/LICENSE-APACHE",
+      "sha256": "35242e7a83f69875e6edeff02291e688c97caafe2f8902e4e19b49d3e78b4cab"
+    },
+    {
+      "path": "notices/rust-std/rand-0.9.5/LICENSE-MIT",
+      "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
+    },
+    {
+      "path": "notices/rust-std/rand_core-0.9.5/COPYRIGHT",
+      "sha256": "90eb64f0279b0d9432accfa6023ff803bc4965212383697eee27a0f426d5f8d5"
+    },
+    {
+      "path": "notices/rust-std/rand_core-0.9.5/LICENSE-APACHE",
+      "sha256": "6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51"
+    },
+    {
+      "path": "notices/rust-std/rand_core-0.9.5/LICENSE-MIT",
+      "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
+    },
+    {
+      "path": "notices/rust-std/rand_xorshift-0.4.0/COPYRIGHT",
+      "sha256": "90eb64f0279b0d9432accfa6023ff803bc4965212383697eee27a0f426d5f8d5"
+    },
+    {
+      "path": "notices/rust-std/rand_xorshift-0.4.0/LICENSE-APACHE",
+      "sha256": "35242e7a83f69875e6edeff02291e688c97caafe2f8902e4e19b49d3e78b4cab"
+    },
+    {
+      "path": "notices/rust-std/rand_xorshift-0.4.0/LICENSE-MIT",
+      "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
+    },
+    {
+      "path": "notices/rust-std/rustc-demangle-0.1.28/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/rustc-demangle-0.1.28/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+    },
+    {
+      "path": "notices/rust-std/rustc-literal-escaper-0.0.8/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust-std/rustc-literal-escaper-0.0.8/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/shlex-1.3.0/LICENSE-APACHE",
+      "sha256": "553fffcd9b1cb158bc3e9edc35da85ca5c3b3d7d2e61c883ebcfa8a65814b583"
+    },
+    {
+      "path": "notices/rust-std/shlex-1.3.0/LICENSE-MIT",
+      "sha256": "4455bf75a91154108304cb283e0fea9948c14f13e20d60887cf2552449dea3b1"
+    },
+    {
+      "path": "notices/rust-std/unwinding-0.2.10/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "notices/rust-std/unwinding-0.2.10/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/vex-sdk-0.27.1/LICENSE-MIT",
+      "sha256": "7bc7d5de2a0b793d4e1adb7ffcb99387776adc1f15f055bc3b667ea449249e6a"
+    },
+    {
+      "path": "notices/rust-std/wasip1-1.0.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-Apache-2.0_WITH_LLVM-exception",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-Apache-2.0_WITH_LLVM-exception",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "notices/rust-std/wit-bindgen-0.57.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "notices/rust-std/wit-bindgen-0.57.1/LICENSE-Apache-2.0_WITH_LLVM-exception",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "notices/rust-std/wit-bindgen-0.57.1/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "provenance/codicon.json",
+      "sha256": "63adc09a5e9380a3fbe9e580f8b4859a64b602d54c1624352d459d104bdb6fd5"
+    },
+    {
+      "path": "provenance/electron-DEPS",
+      "sha256": "329c7b25bd8052fe7b9c578a2d1e15079abda0bc24b3de3b5db3e8908bd80f47"
+    },
+    {
+      "path": "provenance/ffmpeg-binary.json",
+      "sha256": "05a1efa8d8ed45fd0ad9e69d5c0dc4b0cd8eaa5179debf1f09f2a7825e31a2ea"
+    },
+    {
+      "path": "provenance/ffmpeg-config.h",
+      "sha256": "749bffa2c825b9b9ab0464a20f40979cf7bc3468dba376f3ad5c931f4a423a6f"
+    },
+    {
+      "path": "provenance/libgcc-s1.json",
+      "sha256": "692db7e42659340136c119d767285dcc5b09aa52003e797161d33eac2577ec42"
+    },
+    {
+      "path": "provenance/pydantic-core.cyclonedx.json",
+      "sha256": "fef600af2bdde2c353c09e9f828937990243d78bbaa03f6e2e5c82c86028cf65"
+    },
+    {
+      "path": "provenance/python-binary-match.json",
+      "sha256": "f9f7e18ff10cb59dcba848d305eb71e21f405ec67838a786916b21754a8de2c1"
+    },
+    {
+      "path": "provenance/python-release.json",
+      "sha256": "cc0fae17cdb19ea1a98fc218e2809d691c6793d3a553be245a47d7c46600a544"
+    },
+    {
+      "path": "provenance/python-static-manifest.json",
+      "sha256": "d3cefabec5dd3e0905a3669b85a8b146445f86770cb82bb7880d07bd254cc1e3"
+    },
+    {
+      "path": "provenance/python-stripped-release.json",
+      "sha256": "a981879e418358a29d83b9eb195019d275e30f32e2bce343fc84f34286e51380"
+    },
+    {
+      "path": "provenance/rust-license-metadata.json",
+      "sha256": "7bed295fb8d5ddc54ef9e7c795b18207d8da747513ae83fce9748e840200b40c"
+    },
+    {
+      "path": "provenance/rust-stdlib-Cargo.lock",
+      "sha256": "53d9ccff0c906de434b65af90d5c30063894b940fc839261f1fb06ef2e69e3d3"
+    },
+    {
+      "path": "provenance/ubuntu-sources.json",
+      "sha256": "5060205d9e94b678207885b4f6d58daf0c21e579d8859fc6c782471a9bbbb501"
+    },
+    {
+      "path": "provenance/viewer-provenance.json",
+      "sha256": "c8b8ab4abe331f6c9bbff0bdff5c3f09b982dddb8ab6b84bc5becac044b9aed5"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/LICENSE",
+      "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/MPL-2.0.txt",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/certifi/__init__.py",
+      "sha256": "6c069810be5831ee48e99eb0fbd79c06b51803771f48d7ccd28f9c0c32270e86"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/certifi/__main__.py",
+      "sha256": "c410688fdd394d45812d118034e71fee88ba7beddd30fe1c1281bd3b232cd758"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/certifi/cacert.pem",
+      "sha256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/certifi/core.py",
+      "sha256": "5c55f2727746e697f7edac9e17c377d8752e0da7ecca191531b3b80403d61dad"
+    },
+    {
+      "path": "sources/certifi-2026.10.23/certifi/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "sources/ffmpeg/link_with_loader_path.patch",
+      "sha256": "e2f63a2036ffa803db9a50dfec74c4f5628abc476cb44a5ede9d7e775bc7b238"
+    },
+    {
+      "path": "sources/openFPGALoader/cxxopts.hpp",
+      "sha256": "233051e78f64606e4bf21db71f63892ff70ddb19ab505382d610f91f9f0f507c"
+    },
+    {
+      "path": "texts/Apache-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "texts/GPL-2.txt",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "path": "texts/GPL-3.txt",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "texts/LGPL-2.1.txt",
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    {
+      "path": "texts/LGPL-2.txt",
+      "sha256": "681e386e44a19d7d0674b4320272c90e66b6610b741e7e6305f8219c42e85366"
+    },
+    {
+      "path": "texts/LGPL-3.txt",
+      "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "path": "texts/MPL-2.0.txt",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    }
+  ],
+  "sources": [
+    {
+      "sha256": "1c33c92759a6ab965f7e37ac54fc88d252f3a4cebd414432d5b72511bdcd97f2",
+      "size": 2678,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libf/libftdi1/libftdi1_1.5-6build5.dsc",
+      "component": "libftdi1",
+      "version": "1.5-6build5",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libftdi1_1.5-6build5.dsc",
+      "path": "sources/ubuntu/libftdi1/libftdi1_1.5-6build5.dsc"
+    },
+    {
+      "sha256": "7c7091e9c86196148bd41177b4590dccb1510bfe6cea5bf7407ff194482eb049",
+      "size": 116297,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libf/libftdi1/libftdi1_1.5.orig.tar.bz2",
+      "component": "libftdi1",
+      "version": "1.5-6build5",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libftdi1_1.5.orig.tar.bz2",
+      "path": "sources/ubuntu/libftdi1/libftdi1_1.5.orig.tar.bz2"
+    },
+    {
+      "sha256": "6504d3511c6d1f62f667370aa32619163264a58df0db663955b9ac3a16ffe0a5",
+      "size": 232,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libf/libftdi1/libftdi1_1.5.orig.tar.bz2.asc",
+      "component": "libftdi1",
+      "version": "1.5-6build5",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libftdi1_1.5.orig.tar.bz2.asc",
+      "path": "sources/ubuntu/libftdi1/libftdi1_1.5.orig.tar.bz2.asc"
+    },
+    {
+      "sha256": "718f63c002b16477f6107c18fcd4a487732bb312783c1bed716d02669005179c",
+      "size": 11736,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libf/libftdi1/libftdi1_1.5-6build5.debian.tar.xz",
+      "component": "libftdi1",
+      "version": "1.5-6build5",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libftdi1_1.5-6build5.debian.tar.xz",
+      "path": "sources/ubuntu/libftdi1/libftdi1_1.5-6build5.debian.tar.xz"
+    },
+    {
+      "sha256": "8bb3b5e8ad48159cc562cc98b1d86ab78c0c24076bfaa25175855e332392503b",
+      "size": 2528,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libu/libusb-1.0/libusb-1.0_1.0.27-1.dsc",
+      "component": "libusb-1.0",
+      "version": "2:1.0.27-1",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libusb-1.0_1.0.27-1.dsc",
+      "path": "sources/ubuntu/libusb-1.0/libusb-1.0_1.0.27-1.dsc"
+    },
+    {
+      "sha256": "ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575",
+      "size": 643680,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libu/libusb-1.0/libusb-1.0_1.0.27.orig.tar.bz2",
+      "component": "libusb-1.0",
+      "version": "2:1.0.27-1",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libusb-1.0_1.0.27.orig.tar.bz2",
+      "path": "sources/ubuntu/libusb-1.0/libusb-1.0_1.0.27.orig.tar.bz2"
+    },
+    {
+      "sha256": "1cd22bbfe4ce382ca9b091e2a6275c48f1c776253815cbb615da295ae0bfe687",
+      "size": 833,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libu/libusb-1.0/libusb-1.0_1.0.27.orig.tar.bz2.asc",
+      "component": "libusb-1.0",
+      "version": "2:1.0.27-1",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libusb-1.0_1.0.27.orig.tar.bz2.asc",
+      "path": "sources/ubuntu/libusb-1.0/libusb-1.0_1.0.27.orig.tar.bz2.asc"
+    },
+    {
+      "sha256": "560bc02e704b8f28b04be3e6a551ccbf2b5c5cb0850864d6a5416ad05723f0b4",
+      "size": 17044,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libu/libusb-1.0/libusb-1.0_1.0.27-1.debian.tar.xz",
+      "component": "libusb-1.0",
+      "version": "2:1.0.27-1",
+      "index_sha256": "4f8e45d8f84dd2a6b7ce87695c70336114b9e96e6fd6db066c115f758e39308e",
+      "cache_name": "libusb-1.0_1.0.27-1.debian.tar.xz",
+      "path": "sources/ubuntu/libusb-1.0/libusb-1.0_1.0.27-1.debian.tar.xz"
+    },
+    {
+      "sha256": "3b85d91bf38d1b858d9d01134f4046b3359731968ed4e6e912d29717a35d1a46",
+      "size": 92761021,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-13/gcc-13_13.3.0.orig.tar.gz",
+      "component": "gcc-13",
+      "version": "13.3.0-6ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-13_13.3.0.orig.tar.gz",
+      "path": "sources/ubuntu/gcc-13/gcc-13_13.3.0.orig.tar.gz"
+    },
+    {
+      "sha256": "5523658f272ad6d15a83b6e26d178fbd5cb7709ec7ce2ca52b0c843e19c228e3",
+      "size": 646156,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-13/gcc-13_13.3.0-6ubuntu2~24.04.1.debian.tar.xz",
+      "component": "gcc-13",
+      "version": "13.3.0-6ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-13_13.3.0-6ubuntu2~24.04.1.debian.tar.xz",
+      "path": "sources/ubuntu/gcc-13/gcc-13_13.3.0-6ubuntu2~24.04.1.debian.tar.xz"
+    },
+    {
+      "sha256": "86b4012c312ac13e3e092877719a62a5b5dbab082ae7e9680780a25c6a13ddc6",
+      "size": 39540,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-13/gcc-13_13.3.0-6ubuntu2~24.04.1.dsc",
+      "component": "gcc-13",
+      "version": "13.3.0-6ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-13_13.3.0-6ubuntu2~24.04.1.dsc",
+      "path": "sources/ubuntu/gcc-13/gcc-13_13.3.0-6ubuntu2~24.04.1.dsc"
+    },
+    {
+      "sha256": "768c314c11eeab56ccebb91eb42ec4a41122fa94f0d83400126401942622197b",
+      "size": 97158172,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-14/gcc-14_14.2.0.orig.tar.gz",
+      "component": "gcc-14",
+      "version": "14.2.0-4ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-14_14.2.0.orig.tar.gz",
+      "path": "sources/ubuntu/gcc-14/gcc-14_14.2.0.orig.tar.gz"
+    },
+    {
+      "sha256": "cfece214c2fb790ef5f3baffb9a53e40618e7ae12d053610b251e94d77d08ade",
+      "size": 1950432,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-14/gcc-14_14.2.0-4ubuntu2~24.04.1.debian.tar.xz",
+      "component": "gcc-14",
+      "version": "14.2.0-4ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-14_14.2.0-4ubuntu2~24.04.1.debian.tar.xz",
+      "path": "sources/ubuntu/gcc-14/gcc-14_14.2.0-4ubuntu2~24.04.1.debian.tar.xz"
+    },
+    {
+      "sha256": "50950080874a6ec6780dd60c243e21d9cda9d736bb32bca98d16095d27cc01b5",
+      "size": 46930,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/g/gcc-14/gcc-14_14.2.0-4ubuntu2~24.04.1.dsc",
+      "component": "gcc-14",
+      "version": "14.2.0-4ubuntu2~24.04.1",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "gcc-14_14.2.0-4ubuntu2~24.04.1.dsc",
+      "path": "sources/ubuntu/gcc-14/gcc-14_14.2.0-4ubuntu2~24.04.1.dsc"
+    },
+    {
+      "sha256": "15c40ededb3003d70a283fe587a36b7d19c8b3b554e33f86129c059a4bb466b2",
+      "size": 181592,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libc/libcap2/libcap2_2.66.orig.tar.xz",
+      "component": "libcap2",
+      "version": "1:2.66-5ubuntu2.4",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "libcap2_2.66.orig.tar.xz",
+      "path": "sources/ubuntu/libcap2/libcap2_2.66.orig.tar.xz"
+    },
+    {
+      "sha256": "7eb46752c6b59984494d2f641a049b9d4b394b7d1fe067729ccbc413c5943136",
+      "size": 24724,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libc/libcap2/libcap2_2.66-5ubuntu2.4.debian.tar.xz",
+      "component": "libcap2",
+      "version": "1:2.66-5ubuntu2.4",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "libcap2_2.66-5ubuntu2.4.debian.tar.xz",
+      "path": "sources/ubuntu/libcap2/libcap2_2.66-5ubuntu2.4.debian.tar.xz"
+    },
+    {
+      "sha256": "8178019803f285b92e52e82cf84b0a6fc18840041270b2c588db826b8277e3e0",
+      "size": 2319,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/libc/libcap2/libcap2_2.66-5ubuntu2.4.dsc",
+      "component": "libcap2",
+      "version": "1:2.66-5ubuntu2.4",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "libcap2_2.66-5ubuntu2.4.dsc",
+      "path": "sources/ubuntu/libcap2/libcap2_2.66-5ubuntu2.4.dsc"
+    },
+    {
+      "sha256": "96e75bd08c57ad401677456fb88ef54a9f05bb1695693013bc6ecce839640fd5",
+      "size": 14952427,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/s/systemd/systemd_255.4.orig.tar.gz",
+      "component": "systemd",
+      "version": "255.4-1ubuntu8.18",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "systemd_255.4.orig.tar.gz",
+      "path": "sources/ubuntu/systemd/systemd_255.4.orig.tar.gz"
+    },
+    {
+      "sha256": "ec3ce620c3e072d34bbeaf9a4155cd91b5bee94eb412071bf81182f230ae2657",
+      "size": 273272,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/s/systemd/systemd_255.4-1ubuntu8.18.debian.tar.xz",
+      "component": "systemd",
+      "version": "255.4-1ubuntu8.18",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "systemd_255.4-1ubuntu8.18.debian.tar.xz",
+      "path": "sources/ubuntu/systemd/systemd_255.4-1ubuntu8.18.debian.tar.xz"
+    },
+    {
+      "sha256": "04154737afced0898fc7966b85e88505fb3a17f46c8c7079576d022cdeb67304",
+      "size": 7324,
+      "url": "https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/s/systemd/systemd_255.4-1ubuntu8.18.dsc",
+      "component": "systemd",
+      "version": "255.4-1ubuntu8.18",
+      "index_sha256": "2a07bb6d21b98ad80fac92cd24511b0dc2664c951773fdffdbc0f046d4e674c4",
+      "cache_name": "systemd_255.4-1ubuntu8.18.dsc",
+      "path": "sources/ubuntu/systemd/systemd_255.4-1ubuntu8.18.dsc"
+    },
+    {
+      "sha256": "e83420be15aedc0479ad8265767eb3d18c65236e59be7227c88507998e8ce028",
+      "size": 18926460,
+      "url": "https://chromium.googlesource.com/chromium/third_party/ffmpeg/+archive/9db86ce5b5b454dfc96c435f9f0723012980c37f.tar.gz",
+      "component": "FFmpeg",
+      "version": "9db86ce5b5b454dfc96c435f9f0723012980c37f",
+      "cache_name": "ffmpeg-9db86ce5.tar.gz",
+      "path": "sources/ffmpeg/ffmpeg-9db86ce5.tar.gz"
+    }
+  ],
+  "runtime_files": [
+    {
+      "path": "_internal_cli/libpython3.14.so.1.0",
+      "sha256": "8a2045693038c5f8aff1c77ceebfdccb2e15e3fca8a80d2c33d7b9f9c5fe7790"
+    },
+    {
+      "path": "libffmpeg.so",
+      "sha256": "c114673acfcf2910a3b95bd2fdf7e5a9527ff7e83c985d2233079b89567ce16d"
+    },
+    {
+      "path": "libvk_swiftshader.so",
+      "sha256": "85c95943b28750ef574e56f1825f6c92151e1bbfa4853342508510b5599801a3"
+    },
+    {
+      "path": "libvulkan.so.1",
+      "sha256": "29d0e0c13e533c07a8d52c70d9ac83de3fabda9de8859a96452b4d7c9ebd81a7"
+    },
+    {
+      "path": "resources/core/_internal/libgcc_s.so.1",
+      "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+    },
+    {
+      "path": "resources/core/_internal/libpython3.14.so.1.0",
+      "sha256": "8a2045693038c5f8aff1c77ceebfdccb2e15e3fca8a80d2c33d7b9f9c5fe7790"
+    },
+    {
+      "path": "resources/core/_internal/pydantic_core/_pydantic_core.cpython-314-x86_64-linux-gnu.so",
+      "sha256": "16db4d0dd20e1547205a61afe6556b3b41120be752eaed997805fa5e8f45caa3"
+    },
+    {
+      "path": "resources/programmer/lib/libcap.so.2",
+      "sha256": "6ac6abc86ac891c6e13486470e26f1d939f47fda9e6b5d5508a7f5ec881adc84"
+    },
+    {
+      "path": "resources/programmer/lib/libftdi1.so.2",
+      "sha256": "0e5332df54c66f14ef9107934365b47b9429df02e3ff3402436bd85e9e3e84fe"
+    },
+    {
+      "path": "resources/programmer/lib/libudev.so.1",
+      "sha256": "0d6934adafb2ef3c640382440c14d6bd60f391e688c000796ffcea0c72849269"
+    },
+    {
+      "path": "resources/programmer/lib/libusb-1.0.so.0",
+      "sha256": "751349e3def1808981dc26bbeb746e2d6ff4ca97fc2c8bc8faaa8f46c879057f"
+    },
+    {
+      "path": "viewrv-gui",
+      "alternative": ".viewrv-gui-native",
+      "sha256": "b36c3ce9b423098a7854f4912f730b0654b41ae183818f887b8f1cd0a90725eb"
+    }
+  ],
+  "runtime_notices": [
+    {
+      "path": "LICENSE",
+      "destination": "Electron-LICENSE.txt",
+      "sha256": "5154e165bd6c2cc0cfbcd8916498c7abab0497923bafcd5cb07673fe8480087d"
+    },
+    {
+      "path": "LICENSES.chromium.html",
+      "destination": "LICENSES.chromium.html",
+      "sha256": "214152f78cc0b611f63ff8faefcc6670c4605ffbff05f092bb671e6df80ce741"
+    }
+  ],
+  "gui_packages": [
+    {
+      "name": "@base-ui/react",
+      "version": "1.9.0"
+    },
+    {
+      "name": "@base-ui/utils",
+      "version": "0.5.0"
+    },
+    {
+      "name": "@floating-ui/core",
+      "version": "1.8.0"
+    },
+    {
+      "name": "@floating-ui/dom",
+      "version": "1.8.0"
+    },
+    {
+      "name": "@floating-ui/react-dom",
+      "version": "2.1.9"
+    },
+    {
+      "name": "@floating-ui/utils",
+      "version": "0.2.12"
+    },
+    {
+      "name": "@microsoft/fetch-event-source",
+      "version": "2.0.1"
+    },
+    {
+      "name": "@monaco-editor/loader",
+      "version": "1.7.0"
+    },
+    {
+      "name": "@monaco-editor/react",
+      "version": "4.7.0"
+    },
+    {
+      "name": "flexlayout-react",
+      "version": "0.11.1"
+    },
+    {
+      "name": "lucide-react",
+      "version": "1.61.0"
+    },
+    {
+      "name": "monaco-editor",
+      "version": "0.57.0"
+    },
+    {
+      "name": "react",
+      "version": "19.3.1"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1"
+    },
+    {
+      "name": "scheduler",
+      "version": "0.28.0"
+    },
+    {
+      "name": "state-local",
+      "version": "1.0.7"
+    },
+    {
+      "name": "use-sync-external-store",
+      "version": "1.7.0"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.16"
+    }
+  ],
+  "gui_external": [
+    "electron",
+    "node:child_process",
+    "node:crypto",
+    "node:fs/promises",
+    "node:http",
+    "node:os",
+    "node:path"
+  ],
+  "components": [
+    {
+      "id": "npm:@base-ui/react",
+      "name": "@base-ui/react",
+      "version": "1.9.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@base-ui_react/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@base-ui/utils",
+      "name": "@base-ui/utils",
+      "version": "0.5.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@base-ui_utils/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@floating-ui/core",
+      "name": "@floating-ui/core",
+      "version": "1.8.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@floating-ui_core/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@floating-ui/dom",
+      "name": "@floating-ui/dom",
+      "version": "1.8.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@floating-ui_dom/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@floating-ui/react-dom",
+      "name": "@floating-ui/react-dom",
+      "version": "2.1.9",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@floating-ui_react-dom/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@floating-ui/utils",
+      "name": "@floating-ui/utils",
+      "version": "0.2.12",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@floating-ui_utils/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@microsoft/fetch-event-source",
+      "name": "@microsoft/fetch-event-source",
+      "version": "2.0.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@microsoft_fetch-event-source/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@monaco-editor/loader",
+      "name": "@monaco-editor/loader",
+      "version": "1.7.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@monaco-editor_loader/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:@monaco-editor/react",
+      "name": "@monaco-editor/react",
+      "version": "4.7.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/@monaco-editor_react/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:flexlayout-react",
+      "name": "flexlayout-react",
+      "version": "0.11.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/flexlayout-react/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:lucide-react",
+      "name": "lucide-react",
+      "version": "1.61.0",
+      "license": "ISC",
+      "notice_paths": [
+        "notices/npm/lucide-react/00-LICENSE",
+        "notices/npm/lucide-react/01-copyright.mjs",
+        "notices/npm/lucide-react/02-copyright.mjs.map"
+      ]
+    },
+    {
+      "id": "npm:monaco-editor",
+      "name": "monaco-editor",
+      "version": "0.57.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/monaco-editor/00-LICENSE",
+        "notices/npm/monaco-editor/01-ThirdPartyNotices.txt"
+      ]
+    },
+    {
+      "id": "npm:react",
+      "name": "react",
+      "version": "19.3.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/react/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:react-dom",
+      "name": "react-dom",
+      "version": "19.3.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/react-dom/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:scheduler",
+      "name": "scheduler",
+      "version": "0.28.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/scheduler/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:state-local",
+      "name": "state-local",
+      "version": "1.0.7",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/state-local/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:use-sync-external-store",
+      "name": "use-sync-external-store",
+      "version": "1.7.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/use-sync-external-store/00-LICENSE"
+      ]
+    },
+    {
+      "id": "npm:zustand",
+      "name": "zustand",
+      "version": "5.0.16",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/npm/zustand/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:annotated-doc",
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/annotated-doc/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:annotated-types",
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/annotated-types/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:anyio",
+      "name": "anyio",
+      "version": "4.15.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/anyio/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:certifi",
+      "name": "certifi",
+      "version": "2026.10.23",
+      "license": "MPL-2.0",
+      "notice_paths": [
+        "notices/python/certifi/00-LICENSE",
+        "sources/certifi-2026.10.23/LICENSE",
+        "sources/certifi-2026.10.23/MPL-2.0.txt",
+        "sources/certifi-2026.10.23/certifi/__init__.py",
+        "sources/certifi-2026.10.23/certifi/__main__.py",
+        "sources/certifi-2026.10.23/certifi/cacert.pem",
+        "sources/certifi-2026.10.23/certifi/core.py",
+        "sources/certifi-2026.10.23/certifi/py.typed"
+      ]
+    },
+    {
+      "id": "python:click",
+      "name": "click",
+      "version": "8.5.0",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/click/00-LICENSE.txt"
+      ]
+    },
+    {
+      "id": "python:fastapi",
+      "name": "fastapi",
+      "version": "0.162.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/fastapi/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:h11",
+      "name": "h11",
+      "version": "0.16.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/h11/00-LICENSE.txt"
+      ]
+    },
+    {
+      "id": "python:httpcore",
+      "name": "httpcore",
+      "version": "1.0.9",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/httpcore/00-LICENSE.md"
+      ]
+    },
+    {
+      "id": "python:httpx",
+      "name": "httpx",
+      "version": "0.28.1",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/httpx/00-LICENSE.md"
+      ]
+    },
+    {
+      "id": "python:idna",
+      "name": "idna",
+      "version": "3.20",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/idna/00-LICENSE.md"
+      ]
+    },
+    {
+      "id": "python:opentelemetry-api",
+      "name": "opentelemetry-api",
+      "version": "1.45.2",
+      "license": "Apache-2.0",
+      "notice_paths": [
+        "notices/python/opentelemetry-api/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:packaging",
+      "name": "packaging",
+      "version": "26.3",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "notice_paths": [
+        "notices/python/packaging/00-LICENSE",
+        "notices/python/packaging/01-LICENSE.APACHE",
+        "notices/python/packaging/02-LICENSE.BSD"
+      ]
+    },
+    {
+      "id": "python:pydantic",
+      "name": "pydantic",
+      "version": "2.14.2",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/pydantic/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:pydantic_core",
+      "name": "pydantic_core",
+      "version": "2.50.2",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/pydantic_core/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:pyinstaller",
+      "name": "pyinstaller",
+      "version": "6.22.3",
+      "license": "GPLv2-or-later with a special exception which allows to use PyInstaller to build and distribute non-free programs (including commercial ones)",
+      "notice_paths": [
+        "notices/python/pyinstaller/00-COPYING.txt"
+      ]
+    },
+    {
+      "id": "python:pyserial",
+      "name": "pyserial",
+      "version": "3.5",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/pyserial/LICENSE.txt"
+      ]
+    },
+    {
+      "id": "python:setuptools",
+      "name": "setuptools",
+      "version": "84.2.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/setuptools/00-LICENSE",
+        "notices/python/setuptools/01-LICENSE",
+        "notices/python/setuptools/02-LICENSE",
+        "notices/python/setuptools/03-LICENSE",
+        "notices/python/setuptools/04-LICENSE",
+        "notices/python/setuptools/05-LICENSE",
+        "notices/python/setuptools/06-LICENSE",
+        "notices/python/setuptools/07-LICENSE",
+        "notices/python/setuptools/08-LICENSE.APACHE",
+        "notices/python/setuptools/09-LICENSE.BSD",
+        "notices/python/setuptools/10-LICENSE",
+        "notices/python/setuptools/11-LICENSE",
+        "notices/python/setuptools/12-LICENSE.txt",
+        "notices/python/setuptools/13-LICENSE",
+        "notices/python/setuptools/14-NOTICE",
+        "notices/python/setuptools/15-NOTICE",
+        "notices/python/setuptools/16-LICENSE"
+      ]
+    },
+    {
+      "id": "python:starlette",
+      "name": "starlette",
+      "version": "1.10.0",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/starlette/00-LICENSE.md"
+      ]
+    },
+    {
+      "id": "python:typing-inspection",
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/python/typing-inspection/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:typing_extensions",
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "license": "PSF-2.0",
+      "notice_paths": [
+        "notices/python/typing_extensions/00-LICENSE"
+      ]
+    },
+    {
+      "id": "python:uvicorn",
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "license": "BSD-3-Clause",
+      "notice_paths": [
+        "notices/python/uvicorn/00-LICENSE.md"
+      ]
+    },
+    {
+      "id": "runtime:CPython",
+      "name": "CPython",
+      "version": "3.14.9",
+      "license": "PSF-2.0 and historical notices",
+      "notice_paths": [
+        "notices/runtime/CPython/00-LICENSE.txt",
+        "notices/runtime/CPython-static/LICENSE.bzip2.txt",
+        "notices/runtime/CPython-static/LICENSE.cpython.txt",
+        "notices/runtime/CPython-static/LICENSE.expat.txt",
+        "notices/runtime/CPython-static/LICENSE.libedit.txt",
+        "notices/runtime/CPython-static/LICENSE.libffi.txt",
+        "notices/runtime/CPython-static/LICENSE.liblzma.txt",
+        "notices/runtime/CPython-static/LICENSE.libuuid.txt",
+        "notices/runtime/CPython-static/LICENSE.mpdecimal.txt",
+        "notices/runtime/CPython-static/LICENSE.ncurses.txt",
+        "notices/runtime/CPython-static/LICENSE.openssl-3.txt",
+        "notices/runtime/CPython-static/LICENSE.sqlite.txt",
+        "notices/runtime/CPython-static/LICENSE.zlib-ng.txt",
+        "notices/runtime/CPython-static/LICENSE.zlib.txt",
+        "notices/runtime/CPython-static/LICENSE.zstd.txt",
+        "provenance/python-static-manifest.json",
+        "provenance/python-binary-match.json"
+      ]
+    },
+    {
+      "id": "content:inter",
+      "name": "inter",
+      "version": "pinned-assets",
+      "license": "OFL-1.1",
+      "notice_paths": [
+        "notices/content/inter/00-inter-OFL.txt"
+      ]
+    },
+    {
+      "id": "content:ibm-plex-mono",
+      "name": "ibm-plex-mono",
+      "version": "pinned-assets",
+      "license": "OFL-1.1",
+      "notice_paths": [
+        "notices/content/ibm-plex-mono/00-ibm-plex-mono-OFL.txt"
+      ]
+    },
+    {
+      "id": "programmer:gcc-runtime",
+      "name": "gcc-runtime",
+      "version": "see-original-runtime-notice",
+      "license": "GPL with GCC Runtime Library Exception 3.1",
+      "notice_paths": [
+        "notices/programmer/gcc-runtime/00-gcc-runtime.txt",
+        "texts/LGPL-2.txt",
+        "texts/LGPL-2.1.txt",
+        "texts/GPL-2.txt",
+        "texts/GPL-3.txt"
+      ]
+    },
+    {
+      "id": "programmer:libcap2",
+      "name": "libcap2",
+      "version": "1:2.66-5ubuntu2.4",
+      "license": "BSD-3-Clause option",
+      "notice_paths": [
+        "notices/programmer/libcap2/00-libcap2.txt"
+      ]
+    },
+    {
+      "id": "programmer:libftdi1-2",
+      "name": "libftdi1-2",
+      "version": "1.5-6build5",
+      "license": "LGPL-2.0-or-later (C library)",
+      "notice_paths": [
+        "notices/programmer/libftdi1-2/00-libftdi1-2.txt",
+        "texts/LGPL-2.txt",
+        "texts/LGPL-2.1.txt",
+        "texts/GPL-2.txt",
+        "texts/GPL-3.txt"
+      ]
+    },
+    {
+      "id": "programmer:libudev1",
+      "name": "libudev1",
+      "version": "255.4-1ubuntu8.18",
+      "license": "LGPL-2.1-or-later (libudev)",
+      "notice_paths": [
+        "notices/programmer/libudev1/00-libudev1.txt",
+        "texts/LGPL-2.txt",
+        "texts/LGPL-2.1.txt",
+        "texts/GPL-2.txt",
+        "texts/GPL-3.txt"
+      ]
+    },
+    {
+      "id": "programmer:libusb-1.0-0",
+      "name": "libusb-1.0-0",
+      "version": "2:1.0.27-1",
+      "license": "LGPL-2.1-or-later",
+      "notice_paths": [
+        "notices/programmer/libusb-1.0-0/00-libusb-1.0-0.txt",
+        "texts/LGPL-2.txt",
+        "texts/LGPL-2.1.txt",
+        "texts/GPL-2.txt",
+        "texts/GPL-3.txt"
+      ]
+    },
+    {
+      "id": "programmer:openFPGALoader",
+      "name": "openFPGALoader",
+      "version": "1.2.0",
+      "license": "Apache-2.0",
+      "notice_paths": [
+        "notices/programmer/openFPGALoader/00-openFPGALoader.txt",
+        "sources/openFPGALoader/cxxopts.hpp"
+      ]
+    },
+    {
+      "id": "asset:draw.io GraphViewer",
+      "name": "draw.io GraphViewer",
+      "version": "32.0.2",
+      "license": "Apache-2.0",
+      "notice_paths": [
+        "notices/assets/draw.io-GraphViewer/LICENSE.txt",
+        "notices/assets/draw.io-GraphViewer/embedded-headers.txt",
+        "provenance/viewer-provenance.json"
+      ]
+    },
+    {
+      "id": "asset:codicon",
+      "name": "codicon",
+      "version": "monaco-editor 0.57.0",
+      "license": "CC-BY-4.0; additional Git icon notice in upstream license",
+      "notice_paths": [
+        "notices/assets/codicon/LICENSE.txt",
+        "provenance/codicon.json"
+      ]
+    },
+    {
+      "id": "embedded:DOMPurify",
+      "name": "DOMPurify",
+      "version": "Monaco 3.4.15 / GraphViewer 3.4.16",
+      "license": "Apache-2.0 OR MPL-2.0",
+      "notice_paths": [
+        "notices/embedded/DOMPurify/LICENSE",
+        "notices/embedded/DOMPurify/LICENSE-MPL"
+      ]
+    },
+    {
+      "id": "embedded:pako",
+      "name": "pako",
+      "version": "2.2.0",
+      "license": "MIT AND Zlib",
+      "notice_paths": [
+        "notices/embedded/pako/LICENSE-MIT.txt",
+        "notices/embedded/pako/LICENSE-Zlib.txt"
+      ]
+    },
+    {
+      "id": "embedded:spin.js",
+      "name": "spin.js",
+      "version": "2.0.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/embedded/spin.js/LICENSE.txt"
+      ]
+    },
+    {
+      "id": "embedded:regenerator-runtime",
+      "name": "regenerator-runtime",
+      "version": "embedded GraphViewer 32.0.2",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/embedded/regenerator-runtime/LICENSE.txt"
+      ]
+    },
+    {
+      "id": "embedded:Rust standard library",
+      "name": "Rust standard library",
+      "version": "1.99.1 / 58cf8f9c35b355199727627d07ae34a4e2846d67",
+      "license": "MIT OR Apache-2.0; additional notices in license metadata",
+      "notice_paths": [
+        "notices/runtime/Rust/COPYRIGHT",
+        "notices/runtime/Rust/LICENSE-APACHE",
+        "notices/runtime/Rust/LICENSE-MIT",
+        "provenance/rust-license-metadata.json"
+      ]
+    },
+    {
+      "id": "rust:ahash@0.8.12",
+      "name": "ahash",
+      "version": "0.8.12",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/ahash-0.8.12/LICENSE-APACHE",
+        "notices/rust/ahash-0.8.12/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/ahash/ahash-0.8.12.crate",
+        "archive_sha256": "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+      }
+    },
+    {
+      "id": "rust:aho-corasick@1.1.3",
+      "name": "aho-corasick",
+      "version": "1.1.3",
+      "license": "Unlicense OR MIT",
+      "notice_paths": [
+        "notices/rust/aho-corasick-1.1.3/COPYING",
+        "notices/rust/aho-corasick-1.1.3/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/aho-corasick/aho-corasick-1.1.3.crate",
+        "archive_sha256": "8e60d3430d3a69478ad0993f19238d2df97c507009a52b3c10addcd7f6bcb916"
+      }
+    },
+    {
+      "id": "rust:arrayvec@0.7.8",
+      "name": "arrayvec",
+      "version": "0.7.8",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/arrayvec-0.7.8/LICENSE-APACHE",
+        "notices/rust/arrayvec-0.7.8/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/arrayvec/arrayvec-0.7.8.crate",
+        "archive_sha256": "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+      }
+    },
+    {
+      "id": "rust:autocfg@1.3.0",
+      "name": "autocfg",
+      "version": "1.3.0",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/autocfg-1.3.0/LICENSE-APACHE",
+        "notices/rust/autocfg-1.3.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/autocfg/autocfg-1.3.0.crate",
+        "archive_sha256": "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
+      }
+    },
+    {
+      "id": "rust:base64@0.23.1",
+      "name": "base64",
+      "version": "0.23.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/base64-0.23.1/LICENSE-APACHE",
+        "notices/rust/base64-0.23.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/base64/base64-0.23.1.crate",
+        "archive_sha256": "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
+      }
+    },
+    {
+      "id": "rust:bitflags@2.9.1",
+      "name": "bitflags",
+      "version": "2.9.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/bitflags-2.9.1/LICENSE-APACHE",
+        "notices/rust/bitflags-2.9.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/bitflags/bitflags-2.9.1.crate",
+        "archive_sha256": "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
+      }
+    },
+    {
+      "id": "rust:bitvec@1.0.1",
+      "name": "bitvec",
+      "version": "1.0.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/bitvec-1.0.1/LICENSE.txt"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/bitvec/bitvec-1.0.1.crate",
+        "archive_sha256": "1bc2832c24239b0141d5674bb9174f9d68a8b5b3f2753311927c172ca46f7e9c"
+      }
+    },
+    {
+      "id": "rust:bumpalo@3.19.0",
+      "name": "bumpalo",
+      "version": "3.19.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/bumpalo-3.19.0/LICENSE-APACHE",
+        "notices/rust/bumpalo-3.19.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/bumpalo/bumpalo-3.19.0.crate",
+        "archive_sha256": "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
+      }
+    },
+    {
+      "id": "rust:cfg-if@1.0.0",
+      "name": "cfg-if",
+      "version": "1.0.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/cfg-if-1.0.0/LICENSE-APACHE",
+        "notices/rust/cfg-if-1.0.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.0.crate",
+        "archive_sha256": "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+      }
+    },
+    {
+      "id": "rust:displaydoc@0.2.5",
+      "name": "displaydoc",
+      "version": "0.2.5",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/displaydoc-0.2.5/LICENSE-APACHE",
+        "notices/rust/displaydoc-0.2.5/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/displaydoc/displaydoc-0.2.5.crate",
+        "archive_sha256": "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
+      }
+    },
+    {
+      "id": "rust:enum_dispatch@0.3.13",
+      "name": "enum_dispatch",
+      "version": "0.3.13",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/enum_dispatch-0.3.13/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/enum_dispatch/enum_dispatch-0.3.13.crate",
+        "archive_sha256": "aa18ce2bc66555b3218614519ac839ddb759a7d6720732f979ef8d13be147ecd"
+      }
+    },
+    {
+      "id": "rust:equivalent@1.0.3",
+      "name": "equivalent",
+      "version": "1.0.3",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/equivalent-1.0.3/LICENSE-APACHE",
+        "notices/rust/equivalent-1.0.3/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/equivalent/equivalent-1.0.3.crate",
+        "archive_sha256": "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
+      }
+    },
+    {
+      "id": "rust:foldhash@0.2.0",
+      "name": "foldhash",
+      "version": "0.2.0",
+      "license": "Zlib",
+      "notice_paths": [
+        "notices/rust/foldhash-0.2.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/foldhash/foldhash-0.2.0.crate",
+        "archive_sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+      }
+    },
+    {
+      "id": "rust:form_urlencoded@1.2.2",
+      "name": "form_urlencoded",
+      "version": "1.2.2",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/form_urlencoded-1.2.2/LICENSE-APACHE",
+        "notices/rust/form_urlencoded-1.2.2/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/form_urlencoded/form_urlencoded-1.2.2.crate",
+        "archive_sha256": "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+      }
+    },
+    {
+      "id": "rust:funty@2.0.0",
+      "name": "funty",
+      "version": "2.0.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/funty-2.0.0/LICENSE.txt"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/funty/funty-2.0.0.crate",
+        "archive_sha256": "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
+      }
+    },
+    {
+      "id": "rust:getrandom@0.3.3",
+      "name": "getrandom",
+      "version": "0.3.3",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/getrandom-0.3.3/LICENSE-APACHE",
+        "notices/rust/getrandom-0.3.3/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/getrandom/getrandom-0.3.3.crate",
+        "archive_sha256": "26145e563e54f2cadc477553f1ec5ee650b00862f0a58bcd12cbdc5f0ea2d2f4"
+      }
+    },
+    {
+      "id": "rust:hashbrown@0.17.1",
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/hashbrown-0.17.1/LICENSE-APACHE",
+        "notices/rust/hashbrown-0.17.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/hashbrown/hashbrown-0.17.1.crate",
+        "archive_sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+      }
+    },
+    {
+      "id": "rust:heck@0.5.0",
+      "name": "heck",
+      "version": "0.5.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/heck-0.5.0/LICENSE-APACHE",
+        "notices/rust/heck-0.5.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/heck/heck-0.5.0.crate",
+        "archive_sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+      }
+    },
+    {
+      "id": "rust:hex@0.4.3",
+      "name": "hex",
+      "version": "0.4.3",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/hex-0.4.3/LICENSE-APACHE",
+        "notices/rust/hex-0.4.3/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/hex/hex-0.4.3.crate",
+        "archive_sha256": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+      }
+    },
+    {
+      "id": "rust:icu_collections@1.5.0",
+      "name": "icu_collections",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_collections-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_collections/icu_collections-1.5.0.crate",
+        "archive_sha256": "db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526"
+      }
+    },
+    {
+      "id": "rust:icu_locid@1.5.0",
+      "name": "icu_locid",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_locid-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_locid/icu_locid-1.5.0.crate",
+        "archive_sha256": "13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637"
+      }
+    },
+    {
+      "id": "rust:icu_locid_transform@1.5.0",
+      "name": "icu_locid_transform",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_locid_transform-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_locid_transform/icu_locid_transform-1.5.0.crate",
+        "archive_sha256": "01d11ac35de8e40fdeda00d9e1e9d92525f3f9d887cdd7aa81d727596788b54e"
+      }
+    },
+    {
+      "id": "rust:icu_locid_transform_data@1.5.0",
+      "name": "icu_locid_transform_data",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_locid_transform_data-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_locid_transform_data/icu_locid_transform_data-1.5.0.crate",
+        "archive_sha256": "fdc8ff3388f852bede6b579ad4e978ab004f139284d7b28715f773507b946f6e"
+      }
+    },
+    {
+      "id": "rust:icu_normalizer@1.5.0",
+      "name": "icu_normalizer",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_normalizer-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_normalizer/icu_normalizer-1.5.0.crate",
+        "archive_sha256": "19ce3e0da2ec68599d193c93d088142efd7f9c5d6fc9b803774855747dc6a84f"
+      }
+    },
+    {
+      "id": "rust:icu_normalizer_data@1.5.0",
+      "name": "icu_normalizer_data",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_normalizer_data-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_normalizer_data/icu_normalizer_data-1.5.0.crate",
+        "archive_sha256": "f8cafbf7aa791e9b22bec55a167906f9e1215fd475cd22adfcf660e03e989516"
+      }
+    },
+    {
+      "id": "rust:icu_properties@1.5.1",
+      "name": "icu_properties",
+      "version": "1.5.1",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_properties-1.5.1/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_properties/icu_properties-1.5.1.crate",
+        "archive_sha256": "93d6020766cfc6302c15dbbc9c8778c37e62c14427cb7f6e601d849e092aeef5"
+      }
+    },
+    {
+      "id": "rust:icu_properties_data@1.5.0",
+      "name": "icu_properties_data",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_properties_data-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_properties_data/icu_properties_data-1.5.0.crate",
+        "archive_sha256": "67a8effbc3dd3e4ba1afa8ad918d5684b8868b3b26500753effea8d2eed19569"
+      }
+    },
+    {
+      "id": "rust:icu_provider@1.5.0",
+      "name": "icu_provider",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_provider-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_provider/icu_provider-1.5.0.crate",
+        "archive_sha256": "6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9"
+      }
+    },
+    {
+      "id": "rust:icu_provider_macros@1.5.0",
+      "name": "icu_provider_macros",
+      "version": "1.5.0",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/icu_provider_macros-1.5.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/icu_provider_macros/icu_provider_macros-1.5.0.crate",
+        "archive_sha256": "1ec89e9337638ecdc08744df490b221a7399bf8d164eb52a665454e60e075ad6"
+      }
+    },
+    {
+      "id": "rust:idna@1.1.0",
+      "name": "idna",
+      "version": "1.1.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/idna-1.1.0/LICENSE-APACHE",
+        "notices/rust/idna-1.1.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/idna/idna-1.1.0.crate",
+        "archive_sha256": "3b0875f23caa03898994f6ddc501886a45c7d3d62d04d2d90788d47be1b1e4de"
+      }
+    },
+    {
+      "id": "rust:idna_adapter@1.2.0",
+      "name": "idna_adapter",
+      "version": "1.2.0",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/idna_adapter-1.2.0/LICENSE-APACHE",
+        "notices/rust/idna_adapter-1.2.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/idna_adapter/idna_adapter-1.2.0.crate",
+        "archive_sha256": "daca1df1c957320b2cf139ac61e7bd64fed304c5040df000a745aa1de3b4ef71"
+      }
+    },
+    {
+      "id": "rust:indexmap@2.14.0",
+      "name": "indexmap",
+      "version": "2.14.0",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/indexmap-2.14.0/LICENSE-APACHE",
+        "notices/rust/indexmap-2.14.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/indexmap/indexmap-2.14.0.crate",
+        "archive_sha256": "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
+      }
+    },
+    {
+      "id": "rust:itoa@1.0.11",
+      "name": "itoa",
+      "version": "1.0.11",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/itoa-1.0.11/LICENSE-APACHE",
+        "notices/rust/itoa-1.0.11/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/itoa/itoa-1.0.11.crate",
+        "archive_sha256": "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
+      }
+    },
+    {
+      "id": "rust:jiter@0.18.0",
+      "name": "jiter",
+      "version": "0.18.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/jiter-0.18.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/jiter/jiter-0.18.0.crate",
+        "archive_sha256": "49e31424b61d85292bd805dbf643c3ccc44f5f3871fb751209b889ee70585029"
+      }
+    },
+    {
+      "id": "rust:js-sys@0.3.77",
+      "name": "js-sys",
+      "version": "0.3.77",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/js-sys-0.3.77/LICENSE-APACHE",
+        "notices/rust/js-sys-0.3.77/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/js-sys/js-sys-0.3.77.crate",
+        "archive_sha256": "1cfaf33c695fc6e08064efbc1f72ec937429614f25eef83af942d0e227c3a28f"
+      }
+    },
+    {
+      "id": "rust:lexical-parse-float@1.0.6",
+      "name": "lexical-parse-float",
+      "version": "1.0.6",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/lexical-parse-float-1.0.6/LICENSE-APACHE",
+        "notices/rust/lexical-parse-float-1.0.6/LICENSE-MIT",
+        "notices/rust/lexical-parse-float-1.0.6/LICENSE.md"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/lexical-parse-float/lexical-parse-float-1.0.6.crate",
+        "archive_sha256": "52a9f232fbd6f550bc0137dcb5f99ab674071ac2d690ac69704593cb4abbea56"
+      }
+    },
+    {
+      "id": "rust:lexical-parse-integer@1.0.6",
+      "name": "lexical-parse-integer",
+      "version": "1.0.6",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/lexical-parse-integer-1.0.6/LICENSE-APACHE",
+        "notices/rust/lexical-parse-integer-1.0.6/LICENSE-MIT",
+        "notices/rust/lexical-parse-integer-1.0.6/LICENSE.md"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/lexical-parse-integer/lexical-parse-integer-1.0.6.crate",
+        "archive_sha256": "9a7a039f8fb9c19c996cd7b2fcce303c1b2874fe1aca544edc85c4a5f8489b34"
+      }
+    },
+    {
+      "id": "rust:lexical-util@1.0.7",
+      "name": "lexical-util",
+      "version": "1.0.7",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/lexical-util-1.0.7/LICENSE-APACHE",
+        "notices/rust/lexical-util-1.0.7/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/lexical-util/lexical-util-1.0.7.crate",
+        "archive_sha256": "2604dd126bb14f13fb5d1bd6a66155079cb9fa655b37f875b3a742c705dbed17"
+      }
+    },
+    {
+      "id": "rust:libc@0.2.185",
+      "name": "libc",
+      "version": "0.2.185",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/libc-0.2.185/LICENSE-APACHE",
+        "notices/rust/libc-0.2.185/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/libc/libc-0.2.185.crate",
+        "archive_sha256": "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
+      }
+    },
+    {
+      "id": "rust:litemap@0.7.3",
+      "name": "litemap",
+      "version": "0.7.3",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/litemap-0.7.3/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/litemap/litemap-0.7.3.crate",
+        "archive_sha256": "643cb0b8d4fcc284004d5fd0d67ccf61dfffadb7f75e1e71bc420f4688a3a704"
+      }
+    },
+    {
+      "id": "rust:log@0.4.27",
+      "name": "log",
+      "version": "0.4.27",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/log-0.4.27/LICENSE-APACHE",
+        "notices/rust/log-0.4.27/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/log/log-0.4.27.crate",
+        "archive_sha256": "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
+      }
+    },
+    {
+      "id": "rust:lru@0.18.5",
+      "name": "lru",
+      "version": "0.18.5",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/lru-0.18.5/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/lru/lru-0.18.5.crate",
+        "archive_sha256": "ef9ac18847474e638e3702b76c65d4eb93428471a74778ef0f1be711717f89b5"
+      }
+    },
+    {
+      "id": "rust:memchr@2.7.4",
+      "name": "memchr",
+      "version": "2.7.4",
+      "license": "Unlicense OR MIT",
+      "notice_paths": [
+        "notices/rust/memchr-2.7.4/COPYING",
+        "notices/rust/memchr-2.7.4/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/memchr/memchr-2.7.4.crate",
+        "archive_sha256": "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
+      }
+    },
+    {
+      "id": "rust:num-bigint@0.4.6",
+      "name": "num-bigint",
+      "version": "0.4.6",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/num-bigint-0.4.6/LICENSE-APACHE",
+        "notices/rust/num-bigint-0.4.6/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/num-bigint/num-bigint-0.4.6.crate",
+        "archive_sha256": "a5e44f723f1133c9deac646763579fdb3ac745e418f2a7af9cd0c431da1f20b9"
+      }
+    },
+    {
+      "id": "rust:num-integer@0.1.46",
+      "name": "num-integer",
+      "version": "0.1.46",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/num-integer-0.1.46/LICENSE-APACHE",
+        "notices/rust/num-integer-0.1.46/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/num-integer/num-integer-0.1.46.crate",
+        "archive_sha256": "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
+      }
+    },
+    {
+      "id": "rust:num-traits@0.2.19",
+      "name": "num-traits",
+      "version": "0.2.19",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/num-traits-0.2.19/LICENSE-APACHE",
+        "notices/rust/num-traits-0.2.19/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/num-traits/num-traits-0.2.19.crate",
+        "archive_sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
+      }
+    },
+    {
+      "id": "rust:once_cell@1.21.3",
+      "name": "once_cell",
+      "version": "1.21.3",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/once_cell-1.21.3/LICENSE-APACHE",
+        "notices/rust/once_cell-1.21.3/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/once_cell/once_cell-1.21.3.crate",
+        "archive_sha256": "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
+      }
+    },
+    {
+      "id": "rust:percent-encoding@2.3.2",
+      "name": "percent-encoding",
+      "version": "2.3.2",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/percent-encoding-2.3.2/LICENSE-APACHE",
+        "notices/rust/percent-encoding-2.3.2/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/percent-encoding/percent-encoding-2.3.2.crate",
+        "archive_sha256": "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+      }
+    },
+    {
+      "id": "rust:portable-atomic@1.6.0",
+      "name": "portable-atomic",
+      "version": "1.6.0",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/portable-atomic-1.6.0/LICENSE-APACHE",
+        "notices/rust/portable-atomic-1.6.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.6.0.crate",
+        "archive_sha256": "7170ef9988bc169ba16dd36a7fa041e5c4cbeb6a35b76d4c03daded371eae7c0"
+      }
+    },
+    {
+      "id": "rust:proc-macro2@1.0.107",
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/proc-macro2-1.0.107/LICENSE-APACHE",
+        "notices/rust/proc-macro2-1.0.107/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate",
+        "archive_sha256": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
+      }
+    },
+    {
+      "id": "rust:pyo3-build-config@0.30.1",
+      "name": "pyo3-build-config",
+      "version": "0.30.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/pyo3-build-config-0.30.1/LICENSE-APACHE",
+        "notices/rust/pyo3-build-config-0.30.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.30.1.crate",
+        "archive_sha256": "70130e2b6dd1ee589a8788026a429561ca5c40fa7a2fa7914c2282eddae24700"
+      }
+    },
+    {
+      "id": "rust:pyo3-ffi@0.30.1",
+      "name": "pyo3-ffi",
+      "version": "0.30.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/pyo3-ffi-0.30.1/LICENSE-APACHE",
+        "notices/rust/pyo3-ffi-0.30.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.30.1.crate",
+        "archive_sha256": "5e7ff73c555c286d212d4ce7e5fbda845a973c4f61bd5f160f5f2c3c2a04d1c4"
+      }
+    },
+    {
+      "id": "rust:pyo3-macros-backend@0.30.1",
+      "name": "pyo3-macros-backend",
+      "version": "0.30.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/pyo3-macros-backend-0.30.1/LICENSE-APACHE",
+        "notices/rust/pyo3-macros-backend-0.30.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.30.1.crate",
+        "archive_sha256": "38b89f066f2ae72a2aef52d1537ca2fcd104440ebfadee06e97aa90738a25b9b"
+      }
+    },
+    {
+      "id": "rust:pyo3-macros@0.30.1",
+      "name": "pyo3-macros",
+      "version": "0.30.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/pyo3-macros-0.30.1/LICENSE-APACHE",
+        "notices/rust/pyo3-macros-0.30.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.30.1.crate",
+        "archive_sha256": "c46d2e5862c7bb8207e3b639f713dda3c499933444784154c11d013c5a691b60"
+      }
+    },
+    {
+      "id": "rust:pyo3@0.30.1",
+      "name": "pyo3",
+      "version": "0.30.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/pyo3-0.30.1/LICENSE-APACHE",
+        "notices/rust/pyo3-0.30.1/LICENSE-MIT",
+        "notices/rust/pyo3-0.30.1/pyo3-runtime/LICENSE-APACHE",
+        "notices/rust/pyo3-0.30.1/pyo3-runtime/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/pyo3/pyo3-0.30.1.crate",
+        "archive_sha256": "229ca13b8a15bb0d1487b81ab975bfcd97513416499a8312011b6036e42e0de4"
+      }
+    },
+    {
+      "id": "rust:quote@1.0.44",
+      "name": "quote",
+      "version": "1.0.44",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/quote-1.0.44/LICENSE-APACHE",
+        "notices/rust/quote-1.0.44/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/quote/quote-1.0.44.crate",
+        "archive_sha256": "21b2ebcf727b7760c461f091f9f0f539b77b8e87f2fd88131e7f1b433b3cece4"
+      }
+    },
+    {
+      "id": "rust:r-efi@5.2.0",
+      "name": "r-efi",
+      "version": "5.2.0",
+      "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
+      "notice_paths": [
+        "notices/rust/r-efi-5.2.0/AUTHORS",
+        "notices/rust/r-efi-5.2.0/README.md",
+        "notices/rust/r-efi-5.2.0/src/lib.rs"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/r-efi/r-efi-5.2.0.crate",
+        "archive_sha256": "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
+      }
+    },
+    {
+      "id": "rust:radium@0.7.0",
+      "name": "radium",
+      "version": "0.7.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/radium-0.7.0/LICENSE.txt"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/radium/radium-0.7.0.crate",
+        "archive_sha256": "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
+      }
+    },
+    {
+      "id": "rust:regex-automata@0.4.18",
+      "name": "regex-automata",
+      "version": "0.4.18",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/regex-automata-0.4.18/LICENSE-APACHE",
+        "notices/rust/regex-automata-0.4.18/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/regex-automata/regex-automata-0.4.18.crate",
+        "archive_sha256": "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+      }
+    },
+    {
+      "id": "rust:regex-syntax@0.8.11",
+      "name": "regex-syntax",
+      "version": "0.8.11",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/regex-syntax-0.8.11/LICENSE-APACHE",
+        "notices/rust/regex-syntax-0.8.11/LICENSE-MIT",
+        "notices/rust/regex-syntax-0.8.11/src/unicode_tables/LICENSE-UNICODE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/regex-syntax/regex-syntax-0.8.11.crate",
+        "archive_sha256": "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+      }
+    },
+    {
+      "id": "rust:regex@1.13.1",
+      "name": "regex",
+      "version": "1.13.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/regex-1.13.1/LICENSE-APACHE",
+        "notices/rust/regex-1.13.1/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/regex/regex-1.13.1.crate",
+        "archive_sha256": "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+      }
+    },
+    {
+      "id": "rust:serde@1.0.229",
+      "name": "serde",
+      "version": "1.0.229",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/serde-1.0.229/LICENSE-APACHE",
+        "notices/rust/serde-1.0.229/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/serde/serde-1.0.229.crate",
+        "archive_sha256": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
+      }
+    },
+    {
+      "id": "rust:serde_core@1.0.229",
+      "name": "serde_core",
+      "version": "1.0.229",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/serde_core-1.0.229/LICENSE-APACHE",
+        "notices/rust/serde_core-1.0.229/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/serde_core/serde_core-1.0.229.crate",
+        "archive_sha256": "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48"
+      }
+    },
+    {
+      "id": "rust:serde_derive@1.0.229",
+      "name": "serde_derive",
+      "version": "1.0.229",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/serde_derive-1.0.229/LICENSE-APACHE",
+        "notices/rust/serde_derive-1.0.229/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/serde_derive/serde_derive-1.0.229.crate",
+        "archive_sha256": "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
+      }
+    },
+    {
+      "id": "rust:serde_json@1.0.151",
+      "name": "serde_json",
+      "version": "1.0.151",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/serde_json-1.0.151/LICENSE-APACHE",
+        "notices/rust/serde_json-1.0.151/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/serde_json/serde_json-1.0.151.crate",
+        "archive_sha256": "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
+      }
+    },
+    {
+      "id": "rust:smallvec@1.16.2",
+      "name": "smallvec",
+      "version": "1.16.2",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/smallvec-1.16.2/LICENSE-APACHE",
+        "notices/rust/smallvec-1.16.2/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/smallvec/smallvec-1.16.2.crate",
+        "archive_sha256": "f9395f0f0eee849a9b707b2f06bb92a6a422090e2123bb2ef8e87a0e61892a8e"
+      }
+    },
+    {
+      "id": "rust:speedate@0.18.0",
+      "name": "speedate",
+      "version": "0.18.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/speedate-0.18.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/speedate/speedate-0.18.0.crate",
+        "archive_sha256": "da8f8c5f7f7ea2811a17f99bca4fec7f9ef0b0734713a5cbfc9baee203eba8eb"
+      }
+    },
+    {
+      "id": "rust:stable_deref_trait@1.2.0",
+      "name": "stable_deref_trait",
+      "version": "1.2.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/stable_deref_trait-1.2.0/LICENSE-APACHE",
+        "notices/rust/stable_deref_trait-1.2.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/stable_deref_trait/stable_deref_trait-1.2.0.crate",
+        "archive_sha256": "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
+      }
+    },
+    {
+      "id": "rust:strum@0.28.0",
+      "name": "strum",
+      "version": "0.28.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/strum-0.28.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/strum/strum-0.28.0.crate",
+        "archive_sha256": "9628de9b8791db39ceda2b119bbe13134770b56c138ec1d3af810d045c04f9bd"
+      }
+    },
+    {
+      "id": "rust:strum_macros@0.28.0",
+      "name": "strum_macros",
+      "version": "0.28.0",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/strum_macros-0.28.0/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/strum_macros/strum_macros-0.28.0.crate",
+        "archive_sha256": "ab85eea0270ee17587ed4156089e10b9e6880ee688791d45a905f5b1ca36f664"
+      }
+    },
+    {
+      "id": "rust:syn@2.0.82",
+      "name": "syn",
+      "version": "2.0.82",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/syn-2.0.82/LICENSE-APACHE",
+        "notices/rust/syn-2.0.82/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/syn/syn-2.0.82.crate",
+        "archive_sha256": "83540f837a8afc019423a8edb95b52a8effe46957ee402287f4292fae35be021"
+      }
+    },
+    {
+      "id": "rust:syn@3.0.6",
+      "name": "syn",
+      "version": "3.0.6",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/syn-3.0.6/LICENSE-APACHE",
+        "notices/rust/syn-3.0.6/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/syn/syn-3.0.6.crate",
+        "archive_sha256": "8593e8e72159ed2257d083c7a454a85cbf854f37a0966d8d483aff8c8a3ebcee"
+      }
+    },
+    {
+      "id": "rust:synstructure@0.13.1",
+      "name": "synstructure",
+      "version": "0.13.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/synstructure-0.13.1/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/synstructure/synstructure-0.13.1.crate",
+        "archive_sha256": "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
+      }
+    },
+    {
+      "id": "rust:tap@1.0.1",
+      "name": "tap",
+      "version": "1.0.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/tap-1.0.1/LICENSE.txt"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/tap/tap-1.0.1.crate",
+        "archive_sha256": "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
+      }
+    },
+    {
+      "id": "rust:target-lexicon@0.13.4",
+      "name": "target-lexicon",
+      "version": "0.13.4",
+      "license": "Apache-2.0 WITH LLVM-exception",
+      "notice_paths": [
+        "notices/rust/target-lexicon-0.13.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/target-lexicon/target-lexicon-0.13.4.crate",
+        "archive_sha256": "b1dd07eb858a2067e2f3c7155d54e929265c264e6f37efe3ee7a8d1b5a1dd0ba"
+      }
+    },
+    {
+      "id": "rust:tinystr@0.7.6",
+      "name": "tinystr",
+      "version": "0.7.6",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/tinystr-0.7.6/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/tinystr/tinystr-0.7.6.crate",
+        "archive_sha256": "9117f5d4db391c1cf6927e7bea3db74b9a1c1add8f7eda9ffd5364f40f57b82f"
+      }
+    },
+    {
+      "id": "rust:unicode-ident@1.0.12",
+      "name": "unicode-ident",
+      "version": "1.0.12",
+      "license": "(MIT OR Apache-2.0) AND Unicode-DFS-2016",
+      "notice_paths": [
+        "notices/rust/unicode-ident-1.0.12/LICENSE-APACHE",
+        "notices/rust/unicode-ident-1.0.12/LICENSE-MIT",
+        "notices/rust/unicode-ident-1.0.12/LICENSE-UNICODE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.12.crate",
+        "archive_sha256": "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+      }
+    },
+    {
+      "id": "rust:url@2.5.8",
+      "name": "url",
+      "version": "2.5.8",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/url-2.5.8/LICENSE-APACHE",
+        "notices/rust/url-2.5.8/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/url/url-2.5.8.crate",
+        "archive_sha256": "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+      }
+    },
+    {
+      "id": "rust:utf16_iter@1.0.5",
+      "name": "utf16_iter",
+      "version": "1.0.5",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/utf16_iter-1.0.5/COPYRIGHT",
+        "notices/rust/utf16_iter-1.0.5/LICENSE-APACHE",
+        "notices/rust/utf16_iter-1.0.5/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/utf16_iter/utf16_iter-1.0.5.crate",
+        "archive_sha256": "c8232dd3cdaed5356e0f716d285e4b40b932ac434100fe9b7e0e8e935b9e6246"
+      }
+    },
+    {
+      "id": "rust:utf8_iter@1.0.4",
+      "name": "utf8_iter",
+      "version": "1.0.4",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/utf8_iter-1.0.4/COPYRIGHT",
+        "notices/rust/utf8_iter-1.0.4/LICENSE-APACHE",
+        "notices/rust/utf8_iter-1.0.4/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/utf8_iter/utf8_iter-1.0.4.crate",
+        "archive_sha256": "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
+      }
+    },
+    {
+      "id": "rust:uuid@1.23.4",
+      "name": "uuid",
+      "version": "1.23.4",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/uuid-1.23.4/LICENSE-APACHE",
+        "notices/rust/uuid-1.23.4/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/uuid/uuid-1.23.4.crate",
+        "archive_sha256": "bf80a72845275afea99e7f2b434723d3bc7e38470fcd1c7ed39a599c73319a53"
+      }
+    },
+    {
+      "id": "rust:version_check@0.9.5",
+      "name": "version_check",
+      "version": "0.9.5",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/version_check-0.9.5/LICENSE-APACHE",
+        "notices/rust/version_check-0.9.5/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/version_check/version_check-0.9.5.crate",
+        "archive_sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+      }
+    },
+    {
+      "id": "rust:wasi@0.14.2+wasi-0.2.4",
+      "name": "wasi",
+      "version": "0.14.2+wasi-0.2.4",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-APACHE",
+        "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-Apache-2.0_WITH_LLVM-exception",
+        "notices/rust/wasi-0.14.2+wasi-0.2.4/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasi/wasi-0.14.2+wasi-0.2.4.crate",
+        "archive_sha256": "9683f9a5a998d873c0d21fcbe3c083009670149a8fab228644b8bd36b2c48cb3"
+      }
+    },
+    {
+      "id": "rust:wasm-bindgen-backend@0.2.100",
+      "name": "wasm-bindgen-backend",
+      "version": "0.2.100",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/wasm-bindgen-backend-0.2.100/LICENSE-APACHE",
+        "notices/rust/wasm-bindgen-backend-0.2.100/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasm-bindgen-backend/wasm-bindgen-backend-0.2.100.crate",
+        "archive_sha256": "2f0a0651a5c2bc21487bde11ee802ccaf4c51935d0d3d42a6101f98161700bc6"
+      }
+    },
+    {
+      "id": "rust:wasm-bindgen-macro-support@0.2.100",
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.100",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/wasm-bindgen-macro-support-0.2.100/LICENSE-APACHE",
+        "notices/rust/wasm-bindgen-macro-support-0.2.100/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasm-bindgen-macro-support/wasm-bindgen-macro-support-0.2.100.crate",
+        "archive_sha256": "8ae87ea40c9f689fc23f209965b6fb8a99ad69aeeb0231408be24920604395de"
+      }
+    },
+    {
+      "id": "rust:wasm-bindgen-macro@0.2.100",
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.100",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/wasm-bindgen-macro-0.2.100/LICENSE-APACHE",
+        "notices/rust/wasm-bindgen-macro-0.2.100/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasm-bindgen-macro/wasm-bindgen-macro-0.2.100.crate",
+        "archive_sha256": "7fe63fc6d09ed3792bd0897b314f53de8e16568c2b3f7982f468c0bf9bd0b407"
+      }
+    },
+    {
+      "id": "rust:wasm-bindgen-shared@0.2.100",
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.100",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/wasm-bindgen-shared-0.2.100/LICENSE-APACHE",
+        "notices/rust/wasm-bindgen-shared-0.2.100/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasm-bindgen-shared/wasm-bindgen-shared-0.2.100.crate",
+        "archive_sha256": "1a05d73b933a847d6cccdda8f838a22ff101ad9bf93e33684f39c1f5f0eece3d"
+      }
+    },
+    {
+      "id": "rust:wasm-bindgen@0.2.100",
+      "name": "wasm-bindgen",
+      "version": "0.2.100",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust/wasm-bindgen-0.2.100/LICENSE-APACHE",
+        "notices/rust/wasm-bindgen-0.2.100/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasm-bindgen/wasm-bindgen-0.2.100.crate",
+        "archive_sha256": "1edc8929d7499fc4e8f0be2262a241556cfc54a0bea223790e71446f2aab1ef5"
+      }
+    },
+    {
+      "id": "rust:wit-bindgen-rt@0.39.0",
+      "name": "wit-bindgen-rt",
+      "version": "0.39.0",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/wit-bindgen-rt-0.39.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wit-bindgen-rt/wit-bindgen-rt-0.39.0.crate",
+        "archive_sha256": "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
+      }
+    },
+    {
+      "id": "rust:write16@1.0.0",
+      "name": "write16",
+      "version": "1.0.0",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/write16-1.0.0/COPYRIGHT",
+        "notices/rust/write16-1.0.0/LICENSE-APACHE",
+        "notices/rust/write16-1.0.0/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/write16/write16-1.0.0.crate",
+        "archive_sha256": "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
+      }
+    },
+    {
+      "id": "rust:writeable@0.5.5",
+      "name": "writeable",
+      "version": "0.5.5",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/writeable-0.5.5/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/writeable/writeable-0.5.5.crate",
+        "archive_sha256": "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
+      }
+    },
+    {
+      "id": "rust:wyz@0.5.1",
+      "name": "wyz",
+      "version": "0.5.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/wyz-0.5.1/LICENSE.txt"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wyz/wyz-0.5.1.crate",
+        "archive_sha256": "05f360fc0b24296329c78fda852a1e9ae82de9cf7b27dae4b7f62f118f77b9ed"
+      }
+    },
+    {
+      "id": "rust:yoke-derive@0.7.4",
+      "name": "yoke-derive",
+      "version": "0.7.4",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/yoke-derive-0.7.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/yoke-derive/yoke-derive-0.7.4.crate",
+        "archive_sha256": "28cc31741b18cb6f1d5ff12f5b7523e3d6eb0852bbbad19d73905511d9849b95"
+      }
+    },
+    {
+      "id": "rust:yoke@0.7.4",
+      "name": "yoke",
+      "version": "0.7.4",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/yoke-0.7.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/yoke/yoke-0.7.4.crate",
+        "archive_sha256": "6c5b1314b079b0930c31e3af543d8ee1757b1951ae1e1565ec704403a7240ca5"
+      }
+    },
+    {
+      "id": "rust:zerocopy-derive@0.8.25",
+      "name": "zerocopy-derive",
+      "version": "0.8.25",
+      "license": "BSD-2-Clause OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/zerocopy-derive-0.8.25/LICENSE-APACHE",
+        "notices/rust/zerocopy-derive-0.8.25/LICENSE-BSD",
+        "notices/rust/zerocopy-derive-0.8.25/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerocopy-derive/zerocopy-derive-0.8.25.crate",
+        "archive_sha256": "28a6e20d751156648aa063f3800b706ee209a32c0b4d9f24be3d980b01be55ef"
+      }
+    },
+    {
+      "id": "rust:zerocopy@0.8.25",
+      "name": "zerocopy",
+      "version": "0.8.25",
+      "license": "BSD-2-Clause OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust/zerocopy-0.8.25/LICENSE-APACHE",
+        "notices/rust/zerocopy-0.8.25/LICENSE-BSD",
+        "notices/rust/zerocopy-0.8.25/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerocopy/zerocopy-0.8.25.crate",
+        "archive_sha256": "a1702d9583232ddb9174e01bb7c15a2ab8fb1bc6f227aa1233858c351a3ba0cb"
+      }
+    },
+    {
+      "id": "rust:zerofrom-derive@0.1.4",
+      "name": "zerofrom-derive",
+      "version": "0.1.4",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/zerofrom-derive-0.1.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerofrom-derive/zerofrom-derive-0.1.4.crate",
+        "archive_sha256": "0ea7b4a3637ea8669cedf0f1fd5c286a17f3de97b8dd5a70a6c167a1730e63a5"
+      }
+    },
+    {
+      "id": "rust:zerofrom@0.1.4",
+      "name": "zerofrom",
+      "version": "0.1.4",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/zerofrom-0.1.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerofrom/zerofrom-0.1.4.crate",
+        "archive_sha256": "91ec111ce797d0e0784a1116d0ddcdbea84322cd79e5d5ad173daeba4f93ab55"
+      }
+    },
+    {
+      "id": "rust:zerovec-derive@0.10.3",
+      "name": "zerovec-derive",
+      "version": "0.10.3",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/zerovec-derive-0.10.3/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerovec-derive/zerovec-derive-0.10.3.crate",
+        "archive_sha256": "6eafa6dfb17584ea3e2bd6e76e0cc15ad7af12b09abdd1ca55961bed9b1063c6"
+      }
+    },
+    {
+      "id": "rust:zerovec@0.10.4",
+      "name": "zerovec",
+      "version": "0.10.4",
+      "license": "Unicode-3.0",
+      "notice_paths": [
+        "notices/rust/zerovec-0.10.4/LICENSE"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zerovec/zerovec-0.10.4.crate",
+        "archive_sha256": "aa2b893d79df23bfb12d5461018d408ea19dfafe76c2c7ef6d4eba614f8ff079"
+      }
+    },
+    {
+      "id": "rust:zmij@1.0.6",
+      "name": "zmij",
+      "version": "1.0.6",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust/zmij-1.0.6/LICENSE-MIT"
+      ],
+      "scope": "pydantic-core publisher SBOM, conservative all targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/zmij/zmij-1.0.6.crate",
+        "archive_sha256": "aac060176f7020d62c3bcc1cdbcec619d54f48b07ad1963a3f80ce7a0c17755f"
+      }
+    },
+    {
+      "id": "rust-std:addr2line@0.27.1",
+      "name": "addr2line (Rust std)",
+      "version": "0.27.1",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/addr2line-0.27.1/LICENSE-APACHE",
+        "notices/rust-std/addr2line-0.27.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/addr2line/addr2line-0.27.1.crate",
+        "archive_sha256": "e567177890eb1617b1f774005b66b26b2377afd138a2ca37aae7d8f0c81429d4"
+      }
+    },
+    {
+      "id": "rust-std:adler2@2.0.1",
+      "name": "adler2 (Rust std)",
+      "version": "2.0.1",
+      "license": "0BSD OR MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/adler2-2.0.1/LICENSE-0BSD",
+        "notices/rust-std/adler2-2.0.1/LICENSE-APACHE",
+        "notices/rust-std/adler2-2.0.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate",
+        "archive_sha256": "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
+      }
+    },
+    {
+      "id": "rust-std:cc@1.2.0",
+      "name": "cc (Rust std)",
+      "version": "1.2.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/cc-1.2.0/LICENSE-APACHE",
+        "notices/rust-std/cc-1.2.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/cc/cc-1.2.0.crate",
+        "archive_sha256": "1aeb932158bd710538c73702db6945cb68a8fb08c519e6e12706b94263b36db8"
+      }
+    },
+    {
+      "id": "rust-std:cfg-if@1.0.4",
+      "name": "cfg-if (Rust std)",
+      "version": "1.0.4",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/cfg-if-1.0.4/LICENSE-APACHE",
+        "notices/rust-std/cfg-if-1.0.4/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate",
+        "archive_sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+      }
+    },
+    {
+      "id": "rust-std:dlmalloc@0.2.14",
+      "name": "dlmalloc (Rust std)",
+      "version": "0.2.14",
+      "license": "MIT/Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/dlmalloc-0.2.14/LICENSE-APACHE",
+        "notices/rust-std/dlmalloc-0.2.14/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/dlmalloc/dlmalloc-0.2.14.crate",
+        "archive_sha256": "ad5208a115eaba24916f7456929832e310a81518c641f93fee4f89aa93aa3675"
+      }
+    },
+    {
+      "id": "rust-std:foldhash@0.2.0",
+      "name": "foldhash (Rust std)",
+      "version": "0.2.0",
+      "license": "Zlib",
+      "notice_paths": [
+        "notices/rust-std/foldhash-0.2.0/LICENSE"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/foldhash/foldhash-0.2.0.crate",
+        "archive_sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+      }
+    },
+    {
+      "id": "rust-std:fortanix-sgx-abi@0.6.1",
+      "name": "fortanix-sgx-abi (Rust std)",
+      "version": "0.6.1",
+      "license": "MPL-2.0",
+      "notice_paths": [
+        "notices/rust-std/fortanix-sgx-abi-0.6.1/COPYRIGHT",
+        "notices/rust-std/fortanix-sgx-abi-0.6.1/LICENSE"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/fortanix-sgx-abi/fortanix-sgx-abi-0.6.1.crate",
+        "archive_sha256": "5efc85edd5b83e8394f4371dd0da6859dff63dd387dab8568fece6af4cde6f84"
+      }
+    },
+    {
+      "id": "rust-std:getopts@0.2.24",
+      "name": "getopts (Rust std)",
+      "version": "0.2.24",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/getopts-0.2.24/LICENSE-APACHE",
+        "notices/rust-std/getopts-0.2.24/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/getopts/getopts-0.2.24.crate",
+        "archive_sha256": "cfe4fbac503b8d1f88e6676011885f34b7174f46e59956bba534ba83abded4df"
+      }
+    },
+    {
+      "id": "rust-std:gimli@0.34.0",
+      "name": "gimli (Rust std)",
+      "version": "0.34.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/gimli-0.34.0/LICENSE-APACHE",
+        "notices/rust-std/gimli-0.34.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/gimli/gimli-0.34.0.crate",
+        "archive_sha256": "1033caf0b349c518623b5396bfb2cf0bddf44f0306d543a250e5743297aafd10"
+      }
+    },
+    {
+      "id": "rust-std:hashbrown@0.17.1",
+      "name": "hashbrown (Rust std)",
+      "version": "0.17.1",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/hashbrown-0.17.1/LICENSE-APACHE",
+        "notices/rust-std/hashbrown-0.17.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/hashbrown/hashbrown-0.17.1.crate",
+        "archive_sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+      }
+    },
+    {
+      "id": "rust-std:hermit-abi@0.5.2",
+      "name": "hermit-abi (Rust std)",
+      "version": "0.5.2",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/hermit-abi-0.5.2/LICENSE-APACHE",
+        "notices/rust-std/hermit-abi-0.5.2/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/hermit-abi/hermit-abi-0.5.2.crate",
+        "archive_sha256": "fc0fef456e4baa96da950455cd02c081ca953b141298e41db3fc7e36b1da849c"
+      }
+    },
+    {
+      "id": "rust-std:libc@0.2.189",
+      "name": "libc (Rust std)",
+      "version": "0.2.189",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/libc-0.2.189/LICENSE-APACHE",
+        "notices/rust-std/libc-0.2.189/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/libc/libc-0.2.189.crate",
+        "archive_sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+      }
+    },
+    {
+      "id": "rust-std:memchr@2.8.3",
+      "name": "memchr (Rust std)",
+      "version": "2.8.3",
+      "license": "Unlicense OR MIT",
+      "notice_paths": [
+        "notices/rust-std/memchr-2.8.3/COPYING",
+        "notices/rust-std/memchr-2.8.3/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/memchr/memchr-2.8.3.crate",
+        "archive_sha256": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+      }
+    },
+    {
+      "id": "rust-std:miniz_oxide@0.9.1",
+      "name": "miniz_oxide (Rust std)",
+      "version": "0.9.1",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/miniz_oxide-0.9.1/LICENSE",
+        "notices/rust-std/miniz_oxide-0.9.1/LICENSE-APACHE.md",
+        "notices/rust-std/miniz_oxide-0.9.1/LICENSE-MIT.md",
+        "notices/rust-std/miniz_oxide-0.9.1/LICENSE-ZLIB.md"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.9.1.crate",
+        "archive_sha256": "b63fbc4a50860e98e7b2aa7804ded1db5cbc3aff9193adaff57a6931bf7c4b4c"
+      }
+    },
+    {
+      "id": "rust-std:moto-rt@0.16.4",
+      "name": "moto-rt (Rust std)",
+      "version": "0.16.4",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/moto-rt-0.16.4/LICENSE-APACHE",
+        "notices/rust-std/moto-rt-0.16.4/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/moto-rt/moto-rt-0.16.4.crate",
+        "archive_sha256": "0aadbab5a5ca5a01ec1ff4bc03c2c3a7643f0e1d97ad5a4a5b58ce78504e17da"
+      }
+    },
+    {
+      "id": "rust-std:object@0.39.1",
+      "name": "object (Rust std)",
+      "version": "0.39.1",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/object-0.39.1/LICENSE-APACHE",
+        "notices/rust-std/object-0.39.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/object/object-0.39.1.crate",
+        "archive_sha256": "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
+      }
+    },
+    {
+      "id": "rust-std:r-efi@5.3.0",
+      "name": "r-efi (Rust std)",
+      "version": "5.3.0",
+      "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
+      "notice_paths": [
+        "notices/rust-std/r-efi-5.3.0/AUTHORS"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/r-efi/r-efi-5.3.0.crate",
+        "archive_sha256": "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
+      }
+    },
+    {
+      "id": "rust-std:r-efi-alloc@2.1.0",
+      "name": "r-efi-alloc (Rust std)",
+      "version": "2.1.0",
+      "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
+      "notice_paths": [
+        "notices/rust-std/r-efi-alloc-2.1.0/AUTHORS"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/r-efi-alloc/r-efi-alloc-2.1.0.crate",
+        "archive_sha256": "dc2f58ef3ca9bb0f9c44d9aa8537601bcd3df94cc9314a40178cadf7d4466354"
+      }
+    },
+    {
+      "id": "rust-std:rand@0.9.5",
+      "name": "rand (Rust std)",
+      "version": "0.9.5",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/rand-0.9.5/COPYRIGHT",
+        "notices/rust-std/rand-0.9.5/LICENSE-APACHE",
+        "notices/rust-std/rand-0.9.5/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/rand/rand-0.9.5.crate",
+        "archive_sha256": "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41"
+      }
+    },
+    {
+      "id": "rust-std:rand_core@0.9.5",
+      "name": "rand_core (Rust std)",
+      "version": "0.9.5",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/rand_core-0.9.5/COPYRIGHT",
+        "notices/rust-std/rand_core-0.9.5/LICENSE-APACHE",
+        "notices/rust-std/rand_core-0.9.5/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/rand_core/rand_core-0.9.5.crate",
+        "archive_sha256": "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
+      }
+    },
+    {
+      "id": "rust-std:rand_xorshift@0.4.0",
+      "name": "rand_xorshift (Rust std)",
+      "version": "0.4.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/rand_xorshift-0.4.0/COPYRIGHT",
+        "notices/rust-std/rand_xorshift-0.4.0/LICENSE-APACHE",
+        "notices/rust-std/rand_xorshift-0.4.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/rand_xorshift/rand_xorshift-0.4.0.crate",
+        "archive_sha256": "513962919efc330f829edb2535844d1b912b0fbe2ca165d613e4e8788bb05a5a"
+      }
+    },
+    {
+      "id": "rust-std:rustc-demangle@0.1.28",
+      "name": "rustc-demangle (Rust std)",
+      "version": "0.1.28",
+      "license": "MIT/Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/rustc-demangle-0.1.28/LICENSE-APACHE",
+        "notices/rust-std/rustc-demangle-0.1.28/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/rustc-demangle/rustc-demangle-0.1.28.crate",
+        "archive_sha256": "b74b56ffa8bb2830709a538c2cbcae9aa062db0d2a42563bfb09bdaae44020eb"
+      }
+    },
+    {
+      "id": "rust-std:rustc-literal-escaper@0.0.8",
+      "name": "rustc-literal-escaper (Rust std)",
+      "version": "0.0.8",
+      "license": "Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/rustc-literal-escaper-0.0.8/LICENSE-APACHE",
+        "notices/rust-std/rustc-literal-escaper-0.0.8/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/rustc-literal-escaper/rustc-literal-escaper-0.0.8.crate",
+        "archive_sha256": "bfe6f213fb658c8fb95baabd5420393438cf5a98d707f5dd701d9197c705f71e"
+      }
+    },
+    {
+      "id": "rust-std:shlex@1.3.0",
+      "name": "shlex (Rust std)",
+      "version": "1.3.0",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/shlex-1.3.0/LICENSE-APACHE",
+        "notices/rust-std/shlex-1.3.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/shlex/shlex-1.3.0.crate",
+        "archive_sha256": "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
+      }
+    },
+    {
+      "id": "rust-std:unwinding@0.2.10",
+      "name": "unwinding (Rust std)",
+      "version": "0.2.10",
+      "license": "MIT OR Apache-2.0",
+      "notice_paths": [
+        "notices/rust-std/unwinding-0.2.10/LICENSE-APACHE",
+        "notices/rust-std/unwinding-0.2.10/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/unwinding/unwinding-0.2.10.crate",
+        "archive_sha256": "4b134ada16dda9e435abe2a6d76a01d497bc60707357845a15f9b0ed42dc88ce"
+      }
+    },
+    {
+      "id": "rust-std:vex-sdk@0.27.1",
+      "name": "vex-sdk (Rust std)",
+      "version": "0.27.1",
+      "license": "MIT",
+      "notice_paths": [
+        "notices/rust-std/vex-sdk-0.27.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/vex-sdk/vex-sdk-0.27.1.crate",
+        "archive_sha256": "79e5fe15afde1305478b35e2cb717fff59f485428534cf49cfdbfa4723379bf6"
+      }
+    },
+    {
+      "id": "rust-std:wasip1@1.0.0",
+      "name": "wasip1 (Rust std)",
+      "version": "1.0.0",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/wasip1-1.0.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasip1/wasip1-1.0.0.crate",
+        "archive_sha256": "b5e26842486624357dbeb8f0381cf1fb42f022291fd787d4a816768fec8cc760"
+      }
+    },
+    {
+      "id": "rust-std:wasip2@1.0.4+wasi-0.2.12",
+      "name": "wasip2 (Rust std)",
+      "version": "1.0.4+wasi-0.2.12",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-APACHE",
+        "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-Apache-2.0_WITH_LLVM-exception",
+        "notices/rust-std/wasip2-1.0.4+wasi-0.2.12/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasip2/wasip2-1.0.4+wasi-0.2.12.crate",
+        "archive_sha256": "b67efb37e106e55ce722a510d6b5f9c17f083e5fc79afc2badeb12cc313d9487"
+      }
+    },
+    {
+      "id": "rust-std:wasip3@0.7.0+wasi-0.3.0",
+      "name": "wasip3 (Rust std)",
+      "version": "0.7.0+wasi-0.3.0",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-APACHE",
+        "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-Apache-2.0_WITH_LLVM-exception",
+        "notices/rust-std/wasip3-0.7.0+wasi-0.3.0/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wasip3/wasip3-0.7.0+wasi-0.3.0.crate",
+        "archive_sha256": "07aa681120704bf09828d1f7cf7e763666c1dc6a36e5096efd0ad9aadfb302d3"
+      }
+    },
+    {
+      "id": "rust-std:wit-bindgen@0.57.1",
+      "name": "wit-bindgen (Rust std)",
+      "version": "0.57.1",
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "notice_paths": [
+        "notices/rust-std/wit-bindgen-0.57.1/LICENSE-APACHE",
+        "notices/rust-std/wit-bindgen-0.57.1/LICENSE-Apache-2.0_WITH_LLVM-exception",
+        "notices/rust-std/wit-bindgen-0.57.1/LICENSE-MIT"
+      ],
+      "scope": "Rust standard-library lock, conservative including build/test targets",
+      "provenance": {
+        "archive_url": "https://static.crates.io/crates/wit-bindgen/wit-bindgen-0.57.1.crate",
+        "archive_sha256": "1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e"
+      }
+    },
+    {
+      "id": "runtime:Electron",
+      "name": "Electron / Chromium / Node.js / SwiftShader / Vulkan / Opus",
+      "version": "45.0.0 / Chromium 156.0.8078.48 / Node 24.22.0",
+      "license": "MIT and bundled component terms",
+      "notice_paths": [
+        "Electron-LICENSE.txt",
+        "LICENSES.chromium.html"
+      ]
+    },
+    {
+      "id": "runtime:FFmpeg",
+      "name": "FFmpeg",
+      "version": "Chromium revision 9db86ce5b5b454dfc96c435f9f0723012980c37f",
+      "license": "LGPL-2.1-or-later; GPL/nonfree disabled",
+      "notice_paths": [
+        "notices/runtime/FFmpeg/COPYING.GPLv2",
+        "notices/runtime/FFmpeg/COPYING.LGPLv2.1",
+        "notices/runtime/FFmpeg/LICENSE.md",
+        "provenance/ffmpeg-config.h",
+        "provenance/ffmpeg-binary.json",
+        "sources/ffmpeg/link_with_loader_path.patch"
+      ]
+    },
+    {
+      "id": "python:pydantic-core-sbom",
+      "name": "Pydantic Core native dependency inventory",
+      "version": "2.50.2",
+      "license": "See individual Rust crate entries; conservative publisher all-target SBOM",
+      "notice_paths": [
+        "provenance/pydantic-core.cyclonedx.json"
+      ]
+    },
+    {
+      "id": "runtime:libgcc-s1",
+      "name": "libgcc-s1 (core native runtime)",
+      "version": "14.2.0-4ubuntu2~24.04.1",
+      "license": "GPL-3.0-or-later WITH GCC-exception-3.1",
+      "notice_paths": [
+        "notices/runtime/libgcc-s1/COPYRIGHT.txt",
+        "provenance/libgcc-s1.json",
+        "texts/GPL-3.txt"
+      ]
+    },
+    {
+      "id": "supplemental",
+      "name": "Full license texts, sources and provenance supplements",
+      "version": "review 2026-11-04",
+      "license": "See original texts",
+      "notice_paths": [
+        "REBUILDING.md",
+        "notices/python/pyserial/pyserial-3.5-LICENSE.txt",
+        "provenance/electron-DEPS",
+        "provenance/python-release.json",
+        "provenance/python-stripped-release.json",
+        "provenance/rust-stdlib-Cargo.lock",
+        "provenance/ubuntu-sources.json",
+        "texts/Apache-2.0.txt",
+        "texts/LGPL-3.txt",
+        "texts/MPL-2.0.txt"
+      ]
+    }
+  ],
+  "provenance": {
+    "python_standalone": "20261021 / 0c5e581b54a4736cdbbe68bdd6d7e571a1dca11e",
+    "electron_commit": "54f961b44b83e4ece81065ab60a182fd0c38c01e",
+    "chromium_version": "156.0.8078.48",
+    "ffmpeg_revision": "9db86ce5b5b454dfc96c435f9f0723012980c37f",
+    "ubuntu_snapshot": "20261018T000000Z",
+    "pydantic_rust_commit": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+    "rust_sbom_scope": "all targets and build dependencies; conservative inclusion of their notices"
+  }
+}

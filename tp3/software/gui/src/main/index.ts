@@ -158,6 +158,13 @@ app.whenReady().then(async () => {
     const result = await dialog.showSaveDialog(window, { defaultPath: name as string | undefined })
     return result.canceled ? null : result.filePath
   })
+  handle('viewrv:licenses', async () => {
+    const directory = app.isPackaged
+      ? resolve(resources, 'licenses')
+      : resolve(resources, '../build/licenses')
+    const result = await shell.openPath(resolve(directory, 'index.html'))
+    if (result) throw new Error(result)
+  })
   handle('viewrv:external', (url) => {
     if (typeof url !== 'string' || !/^https?:\/\//.test(url)) throw new Error('URL no admitida')
     return shell.openExternal(url)

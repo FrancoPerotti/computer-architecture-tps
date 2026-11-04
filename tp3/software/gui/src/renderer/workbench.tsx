@@ -244,6 +244,10 @@ export function Workbench() {
     const listener = (event: Event) => {
       const command = (event as CustomEvent<MenuCommand>).detail
       if (closing) return
+      if (command === 'licenses') {
+        void window.viewrvDesktop.openLicenses().catch(reportError)
+        return
+      }
       if (command === 'connection') {
         openView({ component: 'connection' })
         return

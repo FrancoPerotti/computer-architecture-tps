@@ -14,6 +14,7 @@ const { basename, dirname, join, resolve } = require('node:path')
 const { pathToFileURL } = require('node:url')
 const { createHash } = require('node:crypto')
 const { execFileSync } = require('node:child_process')
+const { checkGuiLicenses } = require('./check_gui_licenses.cjs')
 const hash = (file) => createHash('sha256').update(readFileSync(file)).digest('hex')
 
 function inventory(root, directory = '') {
@@ -59,6 +60,12 @@ async function buildVerification(software, { archive = false } = {}) {
       pathToFileURL(resolve(software, 'gui/node_modules/@electron/asar/lib/asar.js'))
     )
     await asar.createPackage(appSource, resolve(stage, 'resources/app.asar'))
+    checkGuiLicenses(software, stage)
+    execFileSync(
+      resolve(software, '.venv/bin/python'),
+      [resolve(software, 'packaging/licenses.py'), '--stage', stage],
+      { stdio: 'inherit' },
+    )
     if (
       existsSync(resolve(stage, 'release.json')) ||
       existsSync(resolve(stage, 'resources/hardware/processor.bit'))

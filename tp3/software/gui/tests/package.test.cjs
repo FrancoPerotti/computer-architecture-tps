@@ -4,7 +4,8 @@ const fs = require('node:fs')
 const path = require('node:path')
 const os = require('node:os')
 const { createHash } = require('node:crypto')
-const check = require('../../packaging/check_package.cjs')
+const checkDistribution = require('../../packaging/check_package.cjs')
+const { checkHardware: check } = checkDistribution
 const { inventory } = require('../../packaging/build_gui_verification.cjs')
 
 test('verification inventory records nested file contents and permissions and rejects links outside the package', () => {
@@ -61,6 +62,7 @@ test('PC-I04 packaging rejects missing hardware, stale inventories, cross-platfo
     }
     json('build/stage-release.json', release)
     await check(context)
+    await assert.rejects(checkDistribution(context), /material de licencias/)
     await assert.rejects(check({ ...context, electronPlatformName: 'win32' }), /plataforma/)
     json('build/stage-release.json', { ...release, app_version: 'old' })
     await assert.rejects(check(context), /otra versión/)

@@ -2,8 +2,8 @@
   "name": "viewrv-gui",
   "version": "0.7.0",
   "private": true,
-  "description": "Aplicaci\u00f3n de escritorio del procesador TP3",
-  "author": "Equipo TP3",
+  "description": "Aplicación de escritorio del procesador TP3",
+  "author": "Franco Perotti y Federico Arnaudo",
   "main": "out/main/index.js",
   "engines": {
     "node": "24.22.1"
@@ -102,5 +102,6 @@
     },
     "beforePack": "../packaging/check_package.cjs",
     "afterPack": "../packaging/stage_linux.cjs"
-  }
+  },
+  "license": "MIT"
 }

@@ -56,3 +56,7 @@ El manifiesto de preparación registra también la huella de `viewer_resources.c
 `camera-adapter.js` conserva los estados nativos en coordenadas del dibujo y actualiza la transformación de la vista sin validar de nuevo todas las celdas durante cada gesto. La escala conserva precisión para movimientos pequeños del trackpad. El tamaño desplazable que calcula el visor se aplica a un separador sin interacción; el SVG mantiene el tamaño del viewport para evitar recalcular todos sus rótulos al hacer zoom. Los trazos de selección mantienen sus variables de escala en sus propios paths. Ninguna de estas operaciones escribe geometrías, conexiones, valores UART ni instrucciones.
 
 `drawing-smoke.cjs` comprueba un campo clicable después de desplazar el dibujo y ampliar la cámara; `graphical-smoke.cjs` comprueba selección, memoria, encuadre y docking al 125 %. `performance-smoke.cjs` conserva entradas entregadas, cambios de cámara, cuadros y trazas, además de una grabación opcional en ejecución separada. Sus avisos de cuadros mayores a 25 ms deben revisarse junto con las muestras; no equivalen a medir la frecuencia del procesador.
+
+## Avisos y fuentes de terceros
+
+`licenses` conserva los textos y la procedencia revisados del material de distribución. El [procedimiento Linux](../packaging/LICENSES.md) agrega las fuentes exactas desde una caché verificada, genera el índice sin red y valida los runtimes y el bundle antes de empaquetar. El recurso aprobado de GraphViewer y su manifiesto de importación permanecen intactos.

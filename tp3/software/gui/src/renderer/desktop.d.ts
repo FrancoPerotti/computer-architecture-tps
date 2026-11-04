@@ -9,6 +9,7 @@ declare global {
       windowControl(action: 'minimize' | 'maximize'): Promise<void>
       chooseProgramFile(): Promise<string | null>
       chooseSavePath(suggestedName?: string): Promise<string | null>
+      openLicenses(): Promise<void>
       openExternal(url: string): Promise<void>
       getZoomFactor(): Promise<number>
       setZoomFactor(factor: number): Promise<void>

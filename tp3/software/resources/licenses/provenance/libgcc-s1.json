@@ -1,0 +1,8 @@
+{
+  "component": "libgcc-s1",
+  "version": "14.2.0-4ubuntu2~24.04.1",
+  "source_package": "gcc-14",
+  "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb",
+  "matches_ubuntu_binary": true,
+  "license": "GPL-3.0-or-later WITH GCC-exception-3.1"
+}
