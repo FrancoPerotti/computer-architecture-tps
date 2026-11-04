@@ -84,7 +84,7 @@ def audit(product, output):
             if not records
             else "notices_included"
             if all(record["packaged_as"] for record in records)
-            else "notices_missing_from_product"
+            else "notices_not_matched_as_files"
         )
         components.append(
             {
@@ -215,13 +215,14 @@ def audit(product, output):
         status: sum(c["notice_status"] == status for c in components)
         for status in (
             "notices_included",
-            "notices_missing_from_product",
+            "notices_not_matched_as_files",
             "notice_not_available_locally",
         )
     }
     report = {
         "schema_version": 1,
         "kind": "technical-notice-audit",
+        "method": "Exact SHA-256 matches of standalone notice files. Does not prove absence from concatenated HTML, ASAR or compiled bundles, and does not approve redistribution.",
         "redistribution_approved": False,
         "product": str(product),
         "product_manifest_sha256": digest(product / "verification-manifest.json"),
