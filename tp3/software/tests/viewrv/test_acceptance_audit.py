@@ -20,6 +20,8 @@ class NoticeInventoryTests(unittest.TestCase):
                 "click.dist-info/licenses/LICENSE.txt",
                 "COPYING",
                 "NOTICE.md",
+                "ThirdPartyNotices.txt",
+                "third-party-licenses.html",
             ]
             for name in expected + ["packaging/licenses/_spdx.py", "code.js", "README.md"]:
                 file = root / name
@@ -31,3 +33,4 @@ class NoticeInventoryTests(unittest.TestCase):
         self.assertFalse(is_notice(Path("packaging/licenses/__init__.py")))
         self.assertFalse(is_notice(Path("packaging/licenses/_spdx.py")))
         self.assertTrue(is_notice(Path("package.dist-info/licenses/LICENSE.BSD")))
+        self.assertFalse(is_notice(Path("third_party_licenses.py")))

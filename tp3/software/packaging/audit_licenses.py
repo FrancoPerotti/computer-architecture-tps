@@ -10,6 +10,9 @@ import sys
 from pathlib import Path
 
 NOTICE = re.compile(r"^(licen[cs]es?|copying|copyright|notice|ofl)([._-].*|$)", re.I)
+THIRD_PARTY_NOTICE = re.compile(
+    r"^third[._ -]?party[._ -]?(notices?|licen[cs]es?)([._ -].*|$)", re.I
+)
 SOFTWARE = Path(__file__).resolve().parents[1]
 
 
@@ -24,6 +27,10 @@ def notice_files(root):
 def is_notice(file):
     return (
         bool(NOTICE.match(file.name))
+        or (
+            bool(THIRD_PARTY_NOTICE.match(file.name))
+            and file.suffix.lower() in ("", ".txt", ".md", ".html", ".rst")
+        )
         or "-ofl." in file.name.lower()
         or (
             "licenses" in file.parts and file.suffix.lower() in ("", ".txt", ".md", ".rst", ".html")
