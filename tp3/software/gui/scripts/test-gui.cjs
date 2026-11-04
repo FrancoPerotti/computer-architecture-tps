@@ -27,6 +27,7 @@ const suites = [
   'formatter-smoke',
   'instruction-resource-smoke',
   'processor-feedback-smoke',
+  'stream-lifecycle-smoke',
 ]
 const requested = process.argv.slice(2)
 if (requested.some((name) => !suites.includes(name)))
