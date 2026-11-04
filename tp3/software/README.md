@@ -1,14 +1,14 @@
-# viewrv: visor educativo y depuración interactiva PC-I07
+# viewrv: visor educativo y depuración interactiva
 
-Esta entrega integra el visor completo con las capturas de sesión, selección compartida, seguimiento explícito e inspector de datos recibidos. Agrega el catálogo conceptual de 33 instrucciones y 165 etapas, y 59 programas con guías educativas. Conserva los flujos de la IDE, menús, tabs y splits conforme a Penpot. Utiliza las sesiones y la CLI de PC-I05, según [DEC-SYS-008](../docs/decisions/DEC-SYS-008.md) y los [contratos canónicos](../docs/software/viewrv/contratos.md). El core escucha exclusivamente en loopback, conserva una exclusión por usuario y publica un descubrimiento privado después de estar disponible. GUI y CLI validan destino, instancia, API y perfil antes de registrar trabajos. La implementación local se comprueba con el assembler real y adaptadores controlados de hardware. Faltan el bitstream aprobado y la aceptación con Basys 3 y Windows; PC-I04 conserva sus pendientes físicos. Estas pruebas no acreditan una ejecución del procesador real.
+viewrv integra el visor del procesador con las capturas de sesión, selección compartida, seguimiento de instrucciones e inspector de datos recibidos. Incluye un catálogo de 33 instrucciones y 165 etapas, y 59 programas con guías educativas. La GUI y la CLI comparten un core local según [DEC-SYS-008](../docs/decisions/DEC-SYS-008.md) y los [contratos canónicos](../docs/software/viewrv/contratos.md). El core escucha exclusivamente en loopback, conserva una exclusión por usuario y publica un descubrimiento privado después de estar disponible. Ambos clientes validan destino, instancia, API y perfil antes de registrar trabajos. Faltan el bitstream aprobado y la validación con Basys 3 y Windows; las pruebas con adaptadores controlados no acreditan ejecución física.
 
-La CLI ofrece `program assemble <archivo>`, `board status`, `board devices`, `board ports`, `board prepare [--device ID] [--port PUERTO]`, `board connect [--port PUERTO]`, `board disconnect`, `work status`, `work finish`, ayuda y versión. Las consultas no registran trabajos; ensamblar, preparar o conectar crean o reutilizan el trabajo persistente de CLI. `work finish --discard-unsaved` permite resolver explícitamente un fallo de conservación. Las rutas relativas de la CLI se resuelven desde el directorio de la invocación. PC-I05 completa las 25 operaciones del catálogo: añade program load, run start/stop, debug start/step/continue/pause/restart/stop, debug breakpoint add/remove/list y session list/show/steps/logs. Los [contratos canónicos](../docs/software/viewrv/contratos.md#catálogo-consolidado-de-comandos-y-opciones-de-cli) definen sus argumentos. --output human es predeterminado; --output json se coloca antes del grupo. Los códigos de proceso son 0, 1, 2 y 130; ayuda y versión siempre producen texto local sin iniciar el core.
+La CLI ofrece ensamblado y carga de programas, preparación y conexión de placa, ejecución, depuración, breakpoints y consulta de sesiones. Las consultas no registran trabajos; ensamblar, preparar o conectar crean o reutilizan el trabajo persistente de CLI. `work finish --discard-unsaved` permite resolver explícitamente un fallo de conservación. Las rutas relativas se resuelven desde el directorio de la invocación. Los [contratos canónicos](../docs/software/viewrv/contratos.md#catálogo-consolidado-de-comandos-y-opciones-de-cli) definen los comandos y sus argumentos. `--output human` es predeterminado; `--output json` se coloca antes del grupo. Los códigos de proceso son 0, 1, 2 y 130; ayuda y versión siempre producen texto local sin iniciar el core.
 
 La GUI utiliza `viewrv://app`, el puente nativo restringido y HTTP/SSE. Ofrece crear y abrir programas, copiar ejemplos, editar con Monaco, dividir vistas sobre un modelo compartido, guardar y recuperar borradores. Cada acción conserva la revisión exacta elegida mientras la edición puede continuar. Los diagnósticos se asocian a esa revisión; una respuesta atrasada no reemplaza el texto actual. El visor existente, las fuentes, el catálogo y los workers se cargan localmente. El panel Conexión permite enumerar destinos, preparar, conectar y desconectar, informa confirmaciones por fase y abre una guía local de permisos.
 
 Los menús Archivo, Editar, Ver y Ayuda reúnen las operaciones del documento y de las vistas. La barra común ofrece Ensamblar, Cargar, Correr y Empezar debug; durante depuración cambia a Avanzar, Continuar/Pausar, Reiniciar y Detener. El menú junto a Correr y **Ctrl/Meta+Shift+Enter** ejecutan «Ensamblar, cargar y correr» con la misma revisión. Una edición anterior a LOAD detiene la secuencia; una edición durante LOAD conserva la imagen confirmada para RUN. El foco en una vista informativa deshabilita las acciones de programa, mientras el control de una depuración sigue ligado a su sesión.
 
-Los resultados muestran registros, memoria, latches y estado global recibidos, con formatos independientes y cambios amarillos. El debugger abre sin ejecutar un ciclo; ofrece breakpoints por línea y registro interetapa, conserva la captura terminal para inspección y marca el último estado conocido si se pierde comunicación. Cerrar su tab solo cierra la vista: se puede reabrir desde Ver. La fuente de la sesión permanece protegida y los demás programas se pueden editar. Una sesión controlada por CLI se observa sin apropiarse de su control. El diagrama de sesión de PC-I07 utiliza esa misma captura, muestra la participación inferida y permite seleccionar módulos, conexiones y apariciones o seguir una aparición explícita sin avanzar la CPU.
+Los resultados muestran registros, memoria, latches y estado global recibidos, con formatos independientes y cambios amarillos. El debugger abre sin ejecutar un ciclo; ofrece breakpoints por línea y registro interetapa, conserva la captura terminal para inspección y marca el último estado conocido si se pierde comunicación. Cerrar su tab solo cierra la vista: se puede reabrir desde Ver. La fuente de la sesión permanece protegida y los demás programas se pueden editar. Una sesión controlada por CLI se observa sin apropiarse de su control. El diagrama de sesión utiliza esa misma captura, muestra la participación inferida y permite seleccionar módulos, conexiones y apariciones o seguir una aparición explícita sin avanzar la CPU.
 
 ## Preparación de Basys 3
 
@@ -18,7 +18,7 @@ Un fallo compuesto distingue `phase`, `programming_status` y `reset_status`. Si 
 
 La programación corre en un proceso hijo supervisado, con argumentos separados, salida limitada y plazo de 120 segundos. El entorno de bibliotecas del hijo se prepara sin modificar el del core. Desconectar o cerrar el trabajo durante programación espera su resolución y omite la apertura posterior de UART. Cerrar una GUI observadora conserva el trabajo y conexión de la CLI que controla la placa.
 
-El usuario confirmó que todavía no hay bitstream aprobado. Su ausencia no impide desarrollar ni probar con adaptadores controlados, pero impide producir la distribución de hardware. El [procedimiento de incorporación](resources/hardware/README.md) exige archivo real, revisión RTL y SHA-256 registrado, y genera el descriptor ligado al perfil de recursos. No se agrega un bitstream de prueba al producto. El programador Linux se construye con `software/packaging/build_programmer_linux.sh`, con fuente y dependencias fijadas en `packaging/programmer-linux.lock.json`.
+Todavía no hay bitstream aprobado. Se puede desarrollar y probar con adaptadores controlados, pero ese archivo es necesario para producir la distribución de hardware. El [procedimiento de incorporación](resources/hardware/README.md) exige archivo real, revisión RTL y SHA-256 registrado, y genera el descriptor ligado al perfil de recursos. El programador Linux se construye con `software/packaging/build_programmer_linux.sh`, con fuente y dependencias fijadas en `packaging/programmer-linux.lock.json`.
 
 ## Sesiones, ejecución y evidencia
 
@@ -32,11 +32,11 @@ Cada trabajo conserva su último ensayo para consultas. `session show`, `steps` 
 
 Los registros se guardan progresivamente como `$XDG_STATE_HOME/viewrv/records/<session_id>.jsonl` en Linux, o bajo LocalAppData/viewrv/records en Windows. Cada línea tiene schema_version, session_id, record_type y data; las unidades son start, observation y end. Conservan fuente exacta, perfil, autor, fechas UTC con milisegundos, capturas e integridad. El primer fallo detiene las escrituras de ese registro y se informa, mientras continúan la ejecución y la conservación del código. Un cierre con fallo de registro devuelve warnings sin bloquear la salida. La lectura recupera unidades válidas, mantiene índices originales y no restaura CPU ni debug tras una caída.
 
-La GUI recibe las sesiones por HTTP/SSE y respeta la protección de edición, incluso cuando controla CLI. STEP aporta correspondencias de fuente y diferencias entre capturas de la misma sesión. PC-I07 incorpora interpretación funcional y el endpoint de seguimiento de una aparición, con limitaciones explícitas ante datos no justificables. El [informe de verificación](verification/PC-I07.md) conserva el alcance, las muestras de rendimiento y las incidencias. La aceptación integrada en equipos modestos y con FPGA queda identificada para PC-I08. Estas inferencias no sustituyen los datos recibidos ni pausan Continuar.
+La GUI recibe las sesiones por HTTP/SSE y respeta la protección de edición, incluso cuando controla CLI. STEP aporta correspondencias de fuente y diferencias entre capturas de la misma sesión. La interpretación funcional y el seguimiento de una aparición informan sus limitaciones ante datos no justificables. Estas inferencias no sustituyen los datos recibidos ni pausan Continuar.
 
 ## Assembler y conservación
 
-El adaptador llama a `software.assembler.assemble(source_text)` según el contrato aprobado. Se incorporaron el módulo real y su catálogo de pruebas de la rama `feature/tp3-13-assembler`, revisión `4d07433aa38eac65394db3357eda35cceae7d445`, sin modificarlos. PyInstaller incluye explícitamente el módulo en el core nativo. Las pruebas comprueban imagen, mapa PC-línea y diagnósticos reales; los dobles de traducción restantes permiten controlar demoras y fallos. Los adaptadores de hardware controlados son exclusivos de tests. #17 completa la integración con FPGA y el paquete distribuible.
+El adaptador llama a `software.assembler.assemble(source_text)` según el contrato aprobado. PyInstaller incluye explícitamente el módulo en el core nativo. Las pruebas comprueban imagen, mapa PC-línea y diagnósticos reales; los dobles de traducción permiten controlar demoras y fallos. Los adaptadores de hardware controlados son exclusivos de tests.
 
 El autoguardado se solicita un segundo después del primer cambio pendiente, sin reiniciar el plazo con cada tecla. El trabajador de almacenamiento conserva primero el código y confirma solo la revisión escrita duraderamente. Guardar explícitamente y cerrar esperan la conservación pendiente. Ante un fallo, la GUI permite reintentar, elegir otro destino o cancelar; salir sin conservar requiere la acción explícita del usuario.
 
@@ -58,7 +58,7 @@ El adaptador y el servicio interno sostienen Preparación y Sesiones; todas las 
 
 ## Entorno de desarrollo
 
-El [mapa de módulos de GUI](gui/README.md) describe la separación del editor, los estilos y las fixtures de pruebas. El [índice de evidencia](verification/README.md) reúne las entregas, las revisiones posteriores y los pendientes de aceptación.
+El [mapa de módulos de GUI](gui/README.md) describe la separación del editor, los estilos y las fixtures de pruebas.
 
 Usar CPython **3.14.9**, Node.js **24.22.1** y las versiones fijadas en los archivos de bloqueo. Los siguientes comandos parten de `tp3`; `python3.14` debe resolver ese CPython:
 
@@ -81,18 +81,12 @@ Para revisar la interfaz dentro de un navegador, ejecutar `npm run preview:brows
 
 Para revisar la GUI de depuración sin una placa, ejecutar `npm run preview:debug` desde `software/gui` y abrir `http://127.0.0.1:5175`. Este modo explícito utiliza un perfil separado y capturas UART predefinidas del ejemplo **Sumar dos números**. Abre la depuración en el ciclo 4; permite avanzar, continuar, reiniciar, gestionar breakpoints y abrir el diagrama desde Ver. Tras el ciclo 7 se muestra la finalización; **Reiniciar depuración** vuelve al comienzo. La cabecera identifica siempre **Demo visual · sin FPGA**. No se contacta hardware real ni se ejecutan programas Assembly arbitrarios: para cargar de nuevo debe usarse el ejemplo original de suma. La preparación, la carga y los controles pasan por el core real con adaptadores de prueba. Para trabajar con una placa real debe usarse la aplicación de escritorio. Para dejar la demo disponible al cerrar el terminal o continuar la conversación, usar `npm run preview:debug:background`. El lanzador reutiliza una demo ya activa en ese puerto; guarda su PID y log bajo `software/build/browser-debug-demo-5175.{pid,log}`. El proceso puede detenerse enviando SIGTERM al PID guardado. No instala un servicio ni modifica el inicio de sesión.
 
-## Verificación del tramo
+## Pruebas
 
-Desde `tp3`, ejecutar los comandos canónicos que corresponden al código implementado:
+Desde `tp3`:
 
 ```sh
 software/.venv/bin/python -m unittest discover -s software/tests/viewrv -t . -v
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_core
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_api_cli
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_storage
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_protocol
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_interpretation
-software/.venv/bin/python -m unittest -v software.tests.viewrv.test_preparation software.tests.viewrv.test_preparation_process
 software/.venv/bin/python -m unittest -v software.tests.test_assembler
 cd software/gui
 npm test
@@ -105,52 +99,35 @@ El editor de Assembly formatea automáticamente al terminar una línea con **Ent
 
 `npm run format` aplica el formato del código propio de GUI y `npm run format:check` lo comprueba sin editarlo. No se formatea ni modifica el runtime aprobado de GraphViewer. El workflow `viewrv-gui.yml` aplica la comprobación en Linux con Xvfb a los cambios de software y conserva su evidencia. Los ensayos de paquete nativo, rendimiento, Windows y placa física mantienen sus procedimientos separados; este chequeo no los sustituye.
 
-Las pruebas cubren contratos y concurrencia de programas, fallos de archivos y preferencias, almacenamiento duradero, recuperación tras terminar abruptamente el proceso, CLI y HTTP/SSE. Contribuyen parcialmente a TEST-PC-002, 008, 010, 012, 013, 014, 015, 017, 020 y 026; no acreditan los casos completos ni el catálogo TEST-PC-001 a TEST-PC-030. El módulo `test_protocol` agrega bytes literales del catálogo, ambas capacidades, plazos y fallos con reloj controlado, ciclo de vida entre hilos y pseudo-terminales Linux usando pySerial real. Contribuye parcialmente a TEST-PC-003, 007, 016, 023, 024 y 025. La interpretación educativa, las transiciones, el seguimiento y los recursos de PC-I07 tienen pruebas independientes, sin ejecución de CPU simulada en producción.
+Las pruebas cubren contratos y concurrencia de programas, fallos de archivos y preferencias, almacenamiento duradero, recuperación tras terminar abruptamente el proceso, CLI y HTTP/SSE. El módulo `test_protocol` incluye bytes literales del catálogo, ambas capacidades, plazos y fallos con reloj controlado, ciclo de vida entre hilos y pseudo-terminales Linux usando pySerial real. La interpretación educativa, las transiciones, el seguimiento y los recursos tienen pruebas independientes. La aceptación con hardware y Windows requiere los recorridos del [catálogo de verificación](../docs/software/viewrv/verificacion.md).
 
-La prueba de ventana se ejecuta desde `software/gui` con Playwright como herramienta externa de verificación:
+Las pruebas de ventana usan Playwright y requieren una sesión gráfica X11 en Linux; aíslan los directorios XDG. Comprueban el visor, edición real, split, ensamblado controlado mientras se edita, diagnóstico, guardado, preferencias, reapertura con otra instancia del core y fallos de cierre con cancelación, reintento y descarte explícito. `sessions-smoke.cjs` usa el assembler real con JTAG/UART controlados, verifica la protección de la fuente depurada, la edición independiente y el cierre de una GUI observadora mientras CLI continúa. No requieren FPGA.
 
-```sh
-node tests/smoke.cjs
-node tests/programs-smoke.cjs
-node tests/conservation-smoke.cjs
-node tests/preparation-smoke.cjs
-node tests/sessions-smoke.cjs
-node tests/ide-smoke.cjs
-node tests/drawing-smoke.cjs
-node tests/diagram-smoke.cjs
-node tests/graphical-smoke.cjs
-node tests/follow-loop-smoke.cjs
-node tests/examples-smoke.cjs
-```
-
-Si Playwright no está en los módulos locales, indicar su ruta mediante `PLAYWRIGHT_MODULE`. Las pruebas requieren una sesión gráfica X11 en Linux y aíslan los directorios XDG. Comprueban el visor, edición real, split, ensamblado controlado mientras se edita, diagnóstico, guardado, preferencias, reapertura con otra instancia del core y fallos de cierre con cancelación, reintento y descarte explícito. `sessions-smoke.cjs` usa el assembler real con JTAG/UART controlados, verifica la protección de la fuente depurada, la edición independiente y el cierre de una GUI observadora mientras CLI continúa. No requieren FPGA.
-
-Los recorridos gráficos se ejecutan secuencialmente. `performance-smoke.cjs` mide entradas y cuadros con GPU habilitada, mantiene todas las muestras y marca intervalos mayores a 25 ms para revisión. La grabación se solicita en una ejecución separada con `VIEWRV_PERF_VIDEO=1`; `VIEWRV_PERF_QUICK=1` limita esa ejecución a notebook 1366×768 al 100 %. No ejecutar otros ensayos mientras se mide. El resultado incluye el entorno, trazas Chromium y, al grabar, cuadros JPEG con timestamps y WebM de duración variable. El [informe PC-I07](verification/PC-I07.md) distingue medición puntual, cadencia, grabación e incidencias; un rAF no acredita por sí solo un cambio de cámara ni ejecución FPGA.
+Los recorridos gráficos se ejecutan secuencialmente. `performance-smoke.cjs` mide entradas y cuadros con GPU habilitada, mantiene todas las muestras y marca intervalos mayores a 25 ms para revisión. La grabación se solicita en una ejecución separada con `VIEWRV_PERF_VIDEO=1`; `VIEWRV_PERF_QUICK=1` limita esa ejecución a notebook 1366×768 al 100 %. No ejecutar otros ensayos mientras se mide. El resultado incluye el entorno, trazas Chromium y, al grabar, cuadros JPEG con timestamps y WebM de duración variable. Un rAF no acredita por sí solo un cambio de cámara ni ejecución FPGA.
 
 Para repetir la comprobación sobre el paquete extraído, indicar `VIEWRV_PRODUCT` con su ruta absoluta. `node tests/sandbox-smoke.cjs` verifica además el arranque directo del producto con el sandbox nativo, sin el argumento `--no-sandbox` que agrega el lanzador de Electron de Playwright.
 
-La [evidencia de PC-I06](verification/PC-I06.md) registra la IDE y los límites de las comprobaciones locales. La [evidencia de PC-I05](verification/PC-I05.md) registra las sesiones y la CLI. La [evidencia de PC-I04](verification/PC-I04.md) conserva el tramo anterior de preparación y sus pendientes. Las evidencias de [PC-I03](verification/PC-I03.md), [PC-I02](verification/PC-I02.md) y [PC-I01](verification/PC-I01.md) conservan las comprobaciones históricas de sus paquetes.
-
-## Construcción Linux y paquete anterior
+## Construcción Linux
 
 Con Docker, el entorno Python anterior y los recursos reales de hardware incorporados, desde `tp3`:
 
 ```sh
 software/packaging/build_programmer_linux.sh
 software/packaging/build_linux.sh
+software/.venv/bin/python software/packaging/licenses.py --fetch
 cd software/gui
 npm run package:linux -- --config.compression=store
 ```
 
-La ejecución verificada utilizó CPython 3.14.9 convencional de python-build-standalone, instalado mediante `uv`; el script monta esa instalación de desarrollo en `/opt/python`. No debe usarse para introducir bibliotecas de un CPython construido contra una glibc posterior a la base objetivo.
+Usar CPython 3.14.9 convencional de python-build-standalone, instalado mediante `uv`; el script monta esa instalación de desarrollo en `/opt/python`. No debe usarse para introducir bibliotecas de un CPython construido contra una glibc posterior a la base objetivo.
 
 El script construye ambos conjuntos Python onedir en la base Ubuntu 24.04 fijada del TP3, usando el CPython 3.14.9 convencional indicado. También compila el launcher Linux con el GCC y sysroot fijados del programador. Descarga las herramientas de binutils del snapshot Ubuntu de esa imagen y las extrae dentro de `software/build`; no instala paquetes en el equipo ni cambia el rootfs del contenedor. Los bloqueos de dependencias se verifican mediante hashes.
 
 El código actual es 0.7.0. La construcción de distribución exige programador nativo y bitstream válidos: con el bitstream ausente termina con error y no genera `stage-release.json`. El hook de electron-builder también rechaza inventarios viejos, plataformas distintas y recursos alterados. `build_linux.sh --native-only` construye únicamente CLI/core para pruebas locales, sin inventario ni distribución.
 
-Los paquetes anteriores se conservan: 0.3.0 está en `software/gui/dist/viewrv-gui-0.3.0.tar.gz` y `software/build/extracted/viewrv-gui-0.3.0`; las extracciones 0.1.0 y 0.2.0 siguen separadas. Esos paquetes no contienen PC-I04 a PC-I07. El [informe de entornos y avisos](verification/PC-I08-ENVIRONMENTS-LICENSES-2026-11-04.md) conserva la verificación anterior del lock y del paquete. La [matriz de aceptación original](verification/PC-I08-ACCEPTANCE-2026-11-04.md) identifica los 30 casos, 74 requisitos y 16 grupos de variantes en ese punto; la [revisión R2](verification/PC-I08-ACCEPTANCE-2026-11-04-R2.md) actualiza el estado después del mantenimiento Linux. El [suplemento de mantenimiento Linux](verification/PC-I08-LINUX-MAINTENANCE-2026-11-04.md) registra la implementación y comprobación de instalación, actualización y desinstalación. La [revisión R3](verification/PC-I08-ACCEPTANCE-2026-11-04-R3.md) incorpora los [avisos y fuentes correspondientes de Linux](verification/PC-I08-LINUX-LICENSES-2026-11-04.md), con índice sin red y comprobación del archivo final. Siguen pendientes la aceptación física y Windows. No hay una distribución final PC-I08 con hardware. La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
+La CLI empaquetada conserva su propio runtime y funciona sin Electron, Python o Node del host.
 
-El código propio de la aplicación PC se distribuye bajo [MIT](LICENSE), con Franco Perotti y Federico Arnaudo como titulares; [LICENSING.md](LICENSING.md) delimita su alcance. El [procedimiento de licencias Linux](packaging/LICENSES.md) prepara textos, atribuciones, fuentes correspondientes e índice sin red, accesible desde Ayuda → Avisos y licencias. Los constructores validan el inventario revisado y rechazan dependencias, fuentes o avisos inconsistentes. La [revisión preliminar de compatibilidad](verification/MIT-COMPATIBILITY-2026-11-04.md) conserva el estado anterior a esta incorporación. Windows mantiene su revisión pendiente.
+El código propio de la aplicación PC se distribuye bajo [MIT](LICENSE), con Franco Perotti y Federico Arnaudo como titulares; [LICENSING.md](LICENSING.md) delimita su alcance. El [procedimiento de licencias Linux](packaging/LICENSES.md) prepara textos, atribuciones, fuentes correspondientes e índice sin red, accesible desde Ayuda → Avisos y licencias. Los constructores validan el inventario revisado y rechazan dependencias, fuentes o avisos inconsistentes. Windows mantiene su revisión pendiente.
 
 Para comprobar solo los ejecutables nativos 0.7.0 y su programador en un host sin placa, desde `tp3`, ejecutar `software/.venv/bin/python software/packaging/smoke_preparation_native.py software --sessions`. También comprueba el assembler real incluido y las consultas de registros históricos. El verificador arma una disposición temporal, sin `release.json` ni bitstream, y no la presenta como distribución.
 
@@ -223,15 +200,20 @@ software/.venv/bin/python software/packaging/smoke_linux_installation.py /ruta/a
 software/.venv/bin/python -m unittest software.tests.viewrv.test_linux_installation -v
 ```
 
-El recorrido de la GUI instalada y sandbox se repite en el userland Ubuntu preparado según el [informe de entornos](verification/PC-I08-ENVIRONMENTS-LICENSES-2026-11-04.md):
+Para preparar un userland Ubuntu aislado y comprobar la GUI instalada y su sandbox, desde `tp3/software`, con Docker disponible:
 
 ```sh
-software/packaging/check_ubuntu_gui.sh software/build/ubuntu-gui-root /ruta/al/paquete/extraído installation
+docker build -f packaging/Dockerfile.gui-verification -t viewrv-gui-check:ubuntu-24.04 packaging
+mkdir -p build/ubuntu-gui-root
+viewrv_test_container=$(docker create viewrv-gui-check:ubuntu-24.04 /bin/true)
+docker export "$viewrv_test_container" | tar --no-same-owner -xf - -C build/ubuntu-gui-root
+docker rm "$viewrv_test_container"
+packaging/check_ubuntu_gui.sh build/ubuntu-gui-root /ruta/al/paquete/extraído installation
 ```
 
 ## Windows pendiente
 
-El usuario indicó dejar pendiente la comprobación Windows por no disponer actualmente de equipo o VM. `requirements-windows.lock` y `packaging/build_windows.ps1` preparan la construcción nativa con las mismas versiones; también falta construir el programador Windows con dependencias ajenas al sistema estáticas. No acreditan un NSIS construido ni una ejecución Windows.
+La construcción y ejecución Windows están pendientes de validación en un equipo o VM. `requirements-windows.lock` y `packaging/build_windows.ps1` preparan la construcción nativa con las mismas versiones; también falta construir el programador Windows con dependencias ajenas al sistema estáticas.
 
 Cuando haya entorno, crear `software/.venv` con CPython 3.14.9 y ejecutar el script PowerShell. Verificar también permisos privados, exclusión entre procesos, rutas LocalAppData, CLI independiente, SSE, recursos locales, conservación duradera, recuperación, preferencias y cierre en una cuenta Windows de prueba. Las pruebas de pseudo-terminal y procesos Linux no reemplazan esa comprobación. En Windows también deben validarse pySerial real, fragmentación, plazos, recuperación, cierre durante RUN/LOAD/STEP y pérdida/reenumeración del dispositivo. La Basys 3 real y su bitstream identificado se verifican en la integración física de #17.
 

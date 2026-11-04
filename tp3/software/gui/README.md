@@ -54,4 +54,4 @@ Los escenarios de arranque nativo, aislamiento del dibujo, reapertura tras reini
 
 `stream-lifecycle-smoke` utiliza el core de pruebas y una ventana real para comprobar comentarios SSE, el watchdog de 45 segundos, reconexión y cierre durante reintento. El reloj del renderer se controla y pausa, mientras el servidor emite sus comentarios reales de 15 segundos; no simula la CPU. Se verifica que el ciclo de observación no envíe comandos de procesador ni termine el trabajo CLI ajeno.
 
-Los tests utilizan adaptadores o capturas literales de hardware; no acreditan Basys 3 ni Windows. El estado vigente y la evidencia histórica se consultan en el [índice de verificación](../verification/README.md).
+Los tests utilizan adaptadores o capturas literales de hardware; no acreditan Basys 3 ni Windows. El [README de la aplicación](../README.md) describe los procedimientos de construcción y las comprobaciones pendientes.
