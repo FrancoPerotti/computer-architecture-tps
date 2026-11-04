@@ -167,9 +167,15 @@ class SessionCliProcessTests(unittest.TestCase):
         native = os.environ.get("VIEWRV_TEST_NATIVE_CLI")
         if native:
             product = self.root / "native CLI verification only"
-            shutil.copytree(Path(native).resolve().parent, product)
-            shutil.copytree(TP3 / "software/resources/content", product / "resources/content")
-            self.cli_command = [str(product / "viewrv")]
+            executable = Path(native).resolve()
+            product.mkdir()
+            shutil.copy2(executable, product / executable.name)
+            shutil.copytree(executable.parent / "_internal_cli", product / "_internal_cli")
+            content = executable.parent / "resources/content"
+            if not content.is_dir():
+                content = TP3 / "software/resources/content"
+            shutil.copytree(content, product / "resources/content")
+            self.cli_command = [str(product / executable.name)]
         else:
             self.cli_command = [sys.executable, "-m", "software.viewrv.cli"]
         self.environment = {
