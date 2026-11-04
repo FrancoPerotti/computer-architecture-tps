@@ -94,10 +94,18 @@ function cli(...args) {
     )
     assert.equal(proxy.local, 'DIRECT')
     const parent = instance.process().pid
-    for (const value of readFileSync(`/proc/${parent}/task/${parent}/children`, 'utf8')
-      .trim()
-      .split(/\s+/)) {
+    // Linux public entry points supervise their native payload. Follow the
+    // actual child tree instead of assuming core is a direct Electron child.
+    const pending = [String(parent)]
+    while (pending.length) {
+      const value = pending.shift()
       try {
+        pending.push(
+          ...readFileSync(`/proc/${value}/task/${value}/children`, 'utf8')
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean),
+        )
         if (
           readFileSync(`/proc/${value}/cmdline`, 'utf8').split('\0')[0] ===
           resolve(product, 'resources/core/viewrv-core')

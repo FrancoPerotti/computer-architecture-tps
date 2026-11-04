@@ -170,6 +170,9 @@ class SessionCliProcessTests(unittest.TestCase):
             executable = Path(native).resolve()
             product.mkdir()
             shutil.copy2(executable, product / executable.name)
+            payload = executable.with_name(".viewrv-native")
+            if payload.exists():
+                shutil.copy2(payload, product / payload.name)
             shutil.copytree(executable.parent / "_internal_cli", product / "_internal_cli")
             content = executable.parent / "resources/content"
             if not content.is_dir():

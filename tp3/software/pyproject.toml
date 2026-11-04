@@ -17,5 +17,5 @@ viewrv = "software.viewrv.cli.__main__:main"
 viewrv-core = "software.viewrv.core.__main__:main"
 
 [tool.setuptools]
-packages = ["software", "software.viewrv", "software.viewrv.core", "software.viewrv.adapters", "software.viewrv.client", "software.viewrv.cli"]
+packages = ["software", "software.viewrv", "software.viewrv.core", "software.viewrv.adapters", "software.viewrv.client", "software.viewrv.cli", "software.viewrv.installation"]
 package-dir = {software = "."}

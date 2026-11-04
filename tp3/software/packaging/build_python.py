@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -15,6 +16,7 @@ sys.path.insert(0, str(TP3))
 
 
 def main():
+    """Build frozen native runtimes and the platform distribution inventory."""
     from software.viewrv import __version__
     from software.viewrv.adapters.programmer import HardwareAssets
     from software.viewrv.client.resources import load_profile
@@ -33,6 +35,40 @@ def main():
     target = {"Linux": "linux", "Windows": "windows"}.get(platform.system())
     if target is None or platform.machine().lower() not in {"amd64", "x86_64"}:
         raise SystemExit("Se requiere Linux o Windows x86_64 nativo.")
+    if target == "linux":
+        tools = SOFTWARE / "build/programmer/toolchain"
+        compiler = tools / "usr/bin/gcc"
+        if not compiler.exists():
+            raise SystemExit(
+                "Prepará primero el toolchain fijado con packaging/build_programmer_linux.sh."
+            )
+        destination = SOFTWARE / "build/linux-launcher/viewrv-launcher"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(
+            [
+                str(compiler),
+                f"--sysroot={tools}",
+                "-O2",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-D_FORTIFY_SOURCE=2",
+                "-fstack-protector-strong",
+                "-fPIE",
+                "-pie",
+                "-static-libgcc",
+                "-Wl,-z,relro,-z,now",
+                str(SOFTWARE / "packaging/linux/launcher.c"),
+                "-o",
+                str(destination),
+            ],
+            check=True,
+            env={
+                **os.environ,
+                "PATH": str(tools / "usr/bin") + os.pathsep + os.environ["PATH"],
+                "LD_LIBRARY_PATH": str(tools / "usr/lib/x86_64-linux-gnu"),
+            },
+        )
     if not args.native_only:
         from software.packaging.validate_examples import validate
 
