@@ -231,7 +231,7 @@ Detalle: [UART](uart/uart_core.md), [Controller](debug/protocol_controller.md), 
 
 ## Software de PC
 
-El contrato UART y los plazos compartidos ya están definidos. [DEC-SYS-009](../decisions/DEC-SYS-009.md) aprueba el diseño completo de un assembler propio en Python, acotado al lenguaje del TP3. Permanece pendiente el diseño de la aplicación PC de DEC-SYS-008. Esta elección no modifica los contratos FPGA.
+El contrato UART y los plazos compartidos ya están definidos. [DEC-SYS-009](../decisions/DEC-SYS-009.md) aprueba el diseño completo de un assembler propio en Python, acotado al lenguaje del TP3. [DEC-SYS-008](../decisions/DEC-SYS-008.md) define la aplicación viewrv, con GUI y CLI sobre un core local compartido. Su [arquitectura](../software/viewrv/arquitectura.md) y [verificación](../software/viewrv/verificacion.md) especifican responsabilidades y comprobaciones sin modificar los contratos FPGA. La aprobación documental no acredita implementación ni pruebas ejecutadas.
 
 ## Autoridad documental por tema
 
@@ -283,7 +283,7 @@ El plan organiza actividades y no reemplaza los contratos vigentes.
 
 Los documentos de etapas desarrollan cada bloque; los de control/memoria/sesión fijan sus reglas transversales. El contenido actual se lee allí; `decisions.md` reúne las decisiones y sus justificaciones. `pending_decisions.md` registra las decisiones de diseño todavía abiertas. Los fundamentos de tiempos/consumo UART están integrados en `uart_core`, `loader`, `session_preparation` y `response_serializer`.
 
-El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md). Siguen pendientes el diseño de la aplicación PC y el cierre conjunto del sistema antes de D0/M6. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
+El diseño del assembler está aprobado en [DEC-SYS-009](../decisions/DEC-SYS-009.md). La especificación de la aplicación PC y su verificación están disponibles; resta aceptar y registrar D0/M6 antes de comenzar implementación. Esta especificación no acredita funcionamiento RTL, inferencia, timing o placa.
 
 ## Referencias y trazabilidad
 
