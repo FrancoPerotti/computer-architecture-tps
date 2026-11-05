@@ -5,7 +5,6 @@ import { request } from 'node:http'
 import { spawn, type ChildProcess } from 'node:child_process'
 import {
   CoreConnection,
-  Envelope,
   ProcessorProfile,
   validateConnection,
   validateEnvelope,

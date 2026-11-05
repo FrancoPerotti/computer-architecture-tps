@@ -206,8 +206,6 @@ export function Workbench() {
     }
   }
   const active = focus ? documents.get(focus) : undefined
-  const state = active?.snapshot()
-  const assembly = core?.assemblies.find((entry) => entry.program_id === focus)
   function addDocumentTab(component: string, name: string) {
     model.doAction(
       Actions.addTab(
