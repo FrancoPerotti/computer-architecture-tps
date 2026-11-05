@@ -293,7 +293,10 @@ se documentan en [memoria](memory.md#evidencia-cpu-9) y
 `inputs.processor` y `expected.processor` contienen palabras, sesiones, comandos,
 pausas, estados iniciales y expectativas externas. Los bancos SystemVerilog
 comparan commits RF/store en el flanco, PC, contador, terminal, causa/PC de falla,
-stalls y lecturas Debug de RF/DMEM. Las trazas explícitas agregan acciones,
+stalls y lecturas Debug de RF/DMEM. El banco lee una vez los bytes/marcas
+esperados del JSON y luego compara por Debug todas las direcciones DMEM; evita
+repetir búsquedas de texto por byte sin reducir las observaciones. Las trazas
+explícitas agregan acciones,
 próximos `valid`, identidad y payloads de latches. HOLD compara los 504 bits
 actuales, PC, contador y metadata durante 50 clocks, sin exigir ceros en
 payloads inválidos. Las lecturas RF y DMEM usan direcciones independientes.
@@ -330,11 +333,17 @@ regresión RTL disponible. `results.json` identifica cada ID, banco y nivel;
 para REFERENCE, ALT_1000 y mínimo genérico. La selección focalizada conserva
 `make test-rtl TESTS="TEST-PIPE-010 TEST-EXEC-004"`; no se modifica el runner común.
 El banco de tipos mantiene su timeout de 30 segundos para el archivo compartido
-ampliado, sin cambiar vectores ni expectativas previas.
+ampliado, sin cambiar vectores ni expectativas previas. Los cuatro casos CPU de
+EXEC-007 disponen de 60 segundos: el primer CI completó sus dos ejecuciones CPU,
+pero tres agotaron 30 segundos en la comparación final de Debug. El watchdog
+simulado de 10 ms y todas las comparaciones se conservan. La suite completa tiene
+30 minutos en CI, dentro de un job de 45 minutos.
 
 Los controles negativos alteran una copia del valor esperado de un commit y
 retiran las assertions de ownership en una copia temporal del top. Deben fallar
-con diagnóstico de aserción, sin timeouts ni rechazos falsos del banco.
+con diagnóstico de aserción, sin timeouts ni rechazos falsos del banco. Otro
+control negativo cambia de 7 a 8 un byte esperado de DMEM y exige el fallo de
+la comparación Debug con las expectativas cacheadas.
 La evidencia final identifica fuentes por SHA-256, HEAD/base, imagen, versiones,
 comandos y resultados. Las corridas parciales anteriores se conservan como
 históricas; no acreditan esta integración completa.
@@ -342,10 +351,10 @@ históricas; no acreditan esta integración completa.
 La corrida local del 2026-11-05 aprobó **2421 ejecuciones RTL**, cero fallos y
 cero errores, además de 40 pruebas de infraestructura y 114 del assembler.
 Las 312 ejecuciones adicionales de #9 están incluidas, con sus 281 contextos
-CPU. Después se reforzó el banco de preparación para repetir el destino RUN/STEP
-tras reset: sus 26 ejecuciones combinadas y formato/lint/validación pasaron de
-nuevo, sin cambios al RTL ni a los vectores. Los 20 chequeos de modelos abstractos
-pasaron por separado. El catálogo completo conserva 262 IDs pendientes de otros
+CPU. La corrida final incluye el reinicio de preparación RUN/STEP tras reset y la
+lectura única de expectativas DMEM, con todos los bytes/marcas comparados. Sus
+reportes locales están en `build/reports/full-cpu-cached/`; CI conserva los suyos
+en `build/reports/`. Los 20 chequeos de modelos abstractos pasaron por separado. El catálogo completo conserva 262 IDs pendientes de otros
 niveles/entregas y revisiones sin simulación; no se suman como PASS de CPU.
 
 La revisión del compañero y el merge a la base siguen pendientes. Síntesis,

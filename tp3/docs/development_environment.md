@@ -303,9 +303,12 @@ por sí sola. Un fallo de descarga o construcción detiene los controles, sin
 cambiar de imagen como alternativa. El reporte `image-source.json` registra el
 modo, la referencia y el motivo de selección; se conservan también los logs de
 la descarga cuando corresponda. El job tiene un límite de duración y la fase de
-comprobaciones un límite adicional de veinte minutos para la regresión ampliada
-del CPU, que también contiene una compilación detenida. Los timeouts individuales
-de simulación conservan su valor y se reportan como errores.
+comprobaciones un límite adicional de treinta minutos para la regresión ampliada
+del CPU, que también contiene una compilación detenida. El job dispone de 45
+minutos para incluir descarga/construcción de herramientas y artifacts. Los cuatro
+casos CPU de TEST-EXEC-007 admiten 60 segundos por la comparación de dos sesiones
+completas; los demás límites individuales se conservan. Agotar cualquiera de esos
+límites se reporta como error.
 
 Los informes y logs se conservan como artifacts incluso al fallar. El resultado
 final distingue controles satisfactorios, cambio no aplicable y errores; un fallo

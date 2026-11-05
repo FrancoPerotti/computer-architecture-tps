@@ -790,10 +790,22 @@ module processor_top_tb #(
 
   task automatic check_final_state;
     integer       used_count;
+    integer       expected_addresses[DMEM_CAPACITY_BYTES];
+    logic   [7:0] expected_values   [DMEM_CAPACITY_BYTES];
     logic   [7:0] expected_byte;
     logic         expected_used;
     begin
-      used_count        = data.get_size({expected_path, "/used_addresses"});
+      used_count = data.get_size({expected_path, "/used_addresses"});
+      if (64'(used_count) > DMEM_CAPACITY_BYTES) fail("too many expected DMEM bytes");
+      // Lee una vez las expectativas externas; cada byte y marca se compara por Debug más abajo.
+      for (integer item = 0; item < used_count; item = item + 1) begin
+        expected_addresses[item] =
+            32'(data.get_integer($sformatf("%s/used_addresses/%0d", expected_path, item)));
+        expected_values[item] =
+            8'(data.get_integer($sformatf("%s/used_values/%0d", expected_path, item)));
+        if (expected_addresses[item] < 0 || 64'(expected_addresses[item]) >= DMEM_CAPACITY_BYTES)
+          fail("expected DMEM address outside capacity");
+      end
       debug_read_select = 1'b1;
       for (integer index = 0; index < 32; index = index + 1) begin
         debug_rf_addr = 5'(index);
@@ -806,12 +818,9 @@ module processor_top_tb #(
         expected_byte = 8'd0;
         expected_used = 1'b0;
         for (integer item = 0; item < used_count; item = item + 1) begin
-          if (address == data.get_integer(
-                  $sformatf("%s/used_addresses/%0d", expected_path, item)
-              )) begin
+          if (address == expected_addresses[item]) begin
             expected_used = 1'b1;
-            expected_byte =
-                8'(data.get_integer($sformatf("%s/used_values/%0d", expected_path, item)));
+            expected_byte = expected_values[item];
           end
         end
         debug_dmem_addr = DMEM_BYTE_ADDRESS_WIDTH'(address);

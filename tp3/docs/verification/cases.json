@@ -126313,7 +126313,7 @@
           ],
           "top": "processor_top_tb",
           "level": "CPU",
-          "timeout_seconds": 30,
+          "timeout_seconds": 60,
           "case_ids": [
             "TEST-EXEC-007/C001",
             "TEST-EXEC-007/C002",
