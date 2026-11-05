@@ -1,0 +1,1317 @@
+[
+  {
+    "id": "TEST-PLAT-001/C007",
+    "inputs": {
+      "C": 2048,
+      "control_fixture": {
+        "imem_capacity_bytes": 2048,
+        "state_onehot": null,
+        "cycle_count": null,
+        "loaded_image_size_bytes": null,
+        "fault_cause": null,
+        "fault_pc": null,
+        "fsm_source": "custom",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {
+          "label": "LOAD con capacidad completa",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 1,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 2048
+        },
+        {
+          "label": "load_ok todavía no publica",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 1,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 2048
+        },
+        {
+          "label": "Mantenimiento",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "prepare_init": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 2048
+        },
+        {
+          "label": "Publicación inclusive",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 2048
+        },
+        {
+          "label": "El pendiente cambia sin alterar la imagen confirmada",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 0
+        },
+        {
+          "label": "Reset de la imagen confirmada",
+          "clocks": 1,
+          "reset": 1,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 2048
+        }
+      ],
+      "loader_capacity": 2048,
+      "loader_fixture": {
+        "partial_word": "0xDEADBE",
+        "indices": [
+          0,
+          511
+        ],
+        "memory": [
+          "0x89ABCDEF",
+          "0x76543210"
+        ],
+        "defaults": {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_start": 0,
+          "loader_active": 1,
+          "size": 2048,
+          "remaining": 2048,
+          "valid": 0,
+          "byte": 0,
+          "last": 0,
+          "abort": 0,
+          "prepare_init": 0,
+          "prepare_done": 0
+        }
+      },
+      "loader_steps": [
+        {
+          "label": "Aceptación de LOAD",
+          "load_request": 1,
+          "load_start": 1,
+          "loader_active": 0
+        },
+        {
+          "label": "Entrega offset 2044",
+          "remaining": 4,
+          "valid": 1,
+          "byte": 19
+        },
+        {
+          "label": "Entrega offset 2045",
+          "remaining": 3,
+          "valid": 1,
+          "byte": 5
+        },
+        {
+          "label": "Entrega offset 2046",
+          "remaining": 2,
+          "valid": 1,
+          "byte": 160
+        },
+        {
+          "label": "Entrega offset 2047",
+          "remaining": 1,
+          "valid": 1,
+          "last": 1
+        },
+        {
+          "label": "Offset N sin entrega",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Inicialización modelada de sesión",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_init": 1
+        },
+        {
+          "label": "Preparación todavía pendiente",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Publicación después de preparar",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_done": 1
+        },
+        {
+          "label": "READY conserva imagen y no escribe",
+          "loader_active": 0,
+          "remaining": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "last_index": 2047
+      }
+    },
+    "expected": {
+      "BYTE_ADDRESS_WIDTH": 11,
+      "WORD_INDEX_WIDTH": 9,
+      "ROW_INDEX_WIDTH": 9,
+      "CAPACITY_INCLUSIVE_WIDTH": 12,
+      "control_steps": [
+        {
+          "before": {
+            "command_accepted": true,
+            "load_start": true,
+            "cpu_cycle_fire": false,
+            "global_state_code": 0,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 1,
+            "loader_active": true,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 2048,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 2048,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        }
+      ],
+      "loader_steps": [
+        {
+          "start": true,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xDEADBE",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": true,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 2044,
+          "write": false,
+          "index": 511,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xDEAD13",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 2045,
+          "write": false,
+          "index": 511,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xDE0513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 2046,
+          "write": false,
+          "index": 511,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 2047,
+          "write": true,
+          "index": 511,
+          "data": "0x00A00513",
+          "ok": true,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 3,
+          "size_after": 2048,
+          "image_valid_after": true,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 2048,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 3,
+          "size_after": 2048,
+          "image_valid_after": true,
+          "cycles_after": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "limit": 2048
+      }
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Funciones de anchura"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C008",
+    "inputs": {
+      "C": 4294967296,
+      "control_fixture": {
+        "imem_capacity_bytes": 4294967296,
+        "state_onehot": null,
+        "cycle_count": null,
+        "loaded_image_size_bytes": null,
+        "fault_cause": null,
+        "fault_pc": null,
+        "fsm_source": "custom",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {
+          "label": "LOAD con capacidad completa",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 1,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4294967296
+        },
+        {
+          "label": "load_ok todavía no publica",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 1,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4294967296
+        },
+        {
+          "label": "Mantenimiento",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "prepare_init": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4294967296
+        },
+        {
+          "label": "Publicación inclusive",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4294967296
+        },
+        {
+          "label": "El pendiente cambia sin alterar la imagen confirmada",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 0
+        },
+        {
+          "label": "Reset de la imagen confirmada",
+          "clocks": 1,
+          "reset": 1,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4294967296
+        }
+      ],
+      "loader_capacity": 4294967296,
+      "loader_fixture": {
+        "partial_word": "0xDEADBE",
+        "indices": [
+          0,
+          1073741823
+        ],
+        "memory": [
+          "0x89ABCDEF",
+          "0x76543210"
+        ],
+        "defaults": {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_start": 0,
+          "loader_active": 1,
+          "size": 4294967296,
+          "remaining": 4294967296,
+          "valid": 0,
+          "byte": 0,
+          "last": 0,
+          "abort": 0,
+          "prepare_init": 0,
+          "prepare_done": 0
+        }
+      },
+      "loader_steps": [
+        {
+          "label": "Aceptación de LOAD",
+          "load_request": 1,
+          "load_start": 1,
+          "loader_active": 0
+        },
+        {
+          "label": "Entrega offset 4294967292",
+          "remaining": 4,
+          "valid": 1,
+          "byte": 19
+        },
+        {
+          "label": "Entrega offset 4294967293",
+          "remaining": 3,
+          "valid": 1,
+          "byte": 5
+        },
+        {
+          "label": "Entrega offset 4294967294",
+          "remaining": 2,
+          "valid": 1,
+          "byte": 160
+        },
+        {
+          "label": "Entrega offset 4294967295",
+          "remaining": 1,
+          "valid": 1,
+          "last": 1
+        },
+        {
+          "label": "Offset N sin entrega",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Inicialización modelada de sesión",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_init": 1
+        },
+        {
+          "label": "Preparación todavía pendiente",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Publicación después de preparar",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_done": 1
+        },
+        {
+          "label": "READY conserva imagen y no escribe",
+          "loader_active": 0,
+          "remaining": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "last_index": 4294967295
+      }
+    },
+    "expected": {
+      "BYTE_ADDRESS_WIDTH": 32,
+      "WORD_INDEX_WIDTH": 30,
+      "ROW_INDEX_WIDTH": 30,
+      "CAPACITY_INCLUSIVE_WIDTH": 33,
+      "control_steps": [
+        {
+          "before": {
+            "command_accepted": true,
+            "load_start": true,
+            "cpu_cycle_fire": false,
+            "global_state_code": 0,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 1,
+            "loader_active": true,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 4294967296,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 4294967296,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        }
+      ],
+      "loader_steps": [
+        {
+          "start": true,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xDEADBE",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": true,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 4294967292,
+          "write": false,
+          "index": 1073741823,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xDEAD13",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 4294967293,
+          "write": false,
+          "index": 1073741823,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xDE0513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 4294967294,
+          "write": false,
+          "index": 1073741823,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 4294967295,
+          "write": true,
+          "index": 1073741823,
+          "data": "0x00A00513",
+          "ok": true,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 3,
+          "size_after": 4294967296,
+          "image_valid_after": true,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4294967296,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x00A00513"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 3,
+          "size_after": 4294967296,
+          "image_valid_after": true,
+          "cycles_after": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "limit": 4294967296
+      }
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Funciones de anchura"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C009",
+    "inputs": {
+      "C": 0
+    },
+    "expected": {
+      "diagnostic": "CONFIG_INVALID_CAPACITY",
+      "no_resource_elaboration": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad ilegal"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C010",
+    "inputs": {
+      "C": 2
+    },
+    "expected": {
+      "diagnostic": "CONFIG_INVALID_CAPACITY",
+      "no_resource_elaboration": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad ilegal"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C011",
+    "inputs": {
+      "C": 1023
+    },
+    "expected": {
+      "diagnostic": "CONFIG_INVALID_CAPACITY",
+      "no_resource_elaboration": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad ilegal"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C012",
+    "inputs": {
+      "C": 2050
+    },
+    "expected": {
+      "diagnostic": "CONFIG_INVALID_CAPACITY",
+      "no_resource_elaboration": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad ilegal"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C013",
+    "inputs": {
+      "C": 4294967300
+    },
+    "expected": {
+      "diagnostic": "CONFIG_INVALID_CAPACITY",
+      "no_resource_elaboration": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad ilegal"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C014",
+    "inputs": {
+      "MEMORY_PROFILE": "UNKNOWN_PROFILE"
+    },
+    "expected": {
+      "diagnostic": "CONFIG_UNSUPPORTED"
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Perfil desconocido"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C015",
+    "inputs": {
+      "C": 4294967296,
+      "target": "Basys3-físico",
+      "physical_realization_required": true
+    },
+    "expected": {
+      "architecturally_legal": true,
+      "diagnostic": "CONFIG_UNSUPPORTED",
+      "no_giant_array_attempt": true
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Capacidad legal no soportada"
+    ],
+    "status": "implemented"
+  }
+]

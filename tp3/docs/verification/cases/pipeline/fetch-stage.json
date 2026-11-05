@@ -1,0 +1,34 @@
+{
+  "id": "TEST-PIPE-013",
+  "source": "pipeline.md#test-pipe-013",
+  "case_count": 15,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/if_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/if_stage_tb.sv"
+      ],
+      "top": "if_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "file": "fetch-stage/cases-001-009.json"
+    },
+    {
+      "file": "fetch-stage/cases-010-015.json"
+    }
+  ]
+}

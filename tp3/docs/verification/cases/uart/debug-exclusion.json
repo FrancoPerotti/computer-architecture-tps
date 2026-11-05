@@ -1,0 +1,1225 @@
+{
+  "id": "TEST-UART-011",
+  "source": "uart_debug.md#test-uart-011",
+  "case_count": 31,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-011/C001",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "preheader-wait",
+        "opcode": 1,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C002",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "preheader-wait",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C003",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "preheader-wait",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C004",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "preheader-wait",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C005",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "preheader-wait",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C006",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "opcode": 1,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C007",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C008",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C009",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C010",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C011",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "last-Stop",
+        "opcode": 1,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          -5,
+          -4,
+          -3,
+          -2,
+          -1,
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -6,
+          -5,
+          -4,
+          -3,
+          -2,
+          -1
+        ],
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C012",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "last-Stop",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C013",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "last-Stop",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C014",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "last-Stop",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C015",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "last-Stop",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C016",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "preheader-wait",
+        "opcode": 1,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "response_busy_before": true,
+        "run_result_required": true,
+        "debug_hold_before": false
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C017",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "preheader-wait",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "response_busy_before": true,
+        "run_result_required": true,
+        "debug_hold_before": false
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C018",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "preheader-wait",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "response_busy_before": true,
+        "run_result_required": true,
+        "debug_hold_before": false
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C019",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "preheader-wait",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "response_busy_before": true,
+        "run_result_required": true,
+        "debug_hold_before": false
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C020",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "preheader-wait",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "response_busy_before": true,
+        "run_result_required": true,
+        "debug_hold_before": false
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C021",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "body",
+        "opcode": 1,
+        "K": 2048,
+        "physical_byte_pattern": "a mod 256",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C022",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "body",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C023",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "body",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C024",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "body",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C025",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "body",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_delivery": "un byte por flanco de consumo durante exclusión",
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C026",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "last-Stop",
+        "opcode": 1,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          1,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          -5,
+          -4,
+          -3,
+          -2,
+          -1,
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -6,
+          -5,
+          -4,
+          -3,
+          -2,
+          -1
+        ],
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C027",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "last-Stop",
+        "opcode": 2,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          2
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C028",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "last-Stop",
+        "opcode": 3,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          3
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C029",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "last-Stop",
+        "opcode": 4,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          4
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C030",
+      "inputs": {
+        "context": "RUN-terminal-with-ACCEPTED-in-flight",
+        "point": "last-Stop",
+        "opcode": 5,
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5",
+        "RX_bytes": [
+          5
+        ],
+        "RX_consume_edges_relative_last_Stop": [
+          0
+        ],
+        "RX_fifo_write_edges_relative_last_Stop": [
+          -1
+        ],
+        "prior_response": "02 01",
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "response_busy_before": true,
+        "run_result_required": false,
+        "debug_hold_before": true
+      },
+      "expected": {
+        "command_effect": false,
+        "response_added": false,
+        "RX_drained": true,
+        "CPU_state_stable": true,
+        "new_commands_admitted_after_Debug_Stop": true,
+        "observation_controls": {
+          "debug_read_select": true,
+          "RF_and_DMEM_select_same_signal": true,
+          "select_does_not_enable_writes": true
+        }
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Comandoduranteexclusión"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-011/C031",
+      "inputs": {
+        "context": "postSTEP",
+        "point": "body",
+        "reset_source": "button",
+        "K": 1,
+        "used_address": 5,
+        "used_byte": "0xA5"
+      },
+      "expected": {
+        "reset_to_NO_IMAGE": true,
+        "response_partial_invalid": true,
+        "normal_done": false,
+        "debug_read_select_during_reset": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Botónabortarespuesta"
+      ],
+      "status": "pending"
+    }
+  ]
+}

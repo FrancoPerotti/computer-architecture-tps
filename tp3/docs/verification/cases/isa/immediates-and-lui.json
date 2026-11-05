@@ -1,0 +1,927 @@
+{
+  "id": "TEST-ISA-003",
+  "source": "isa.md#test-isa-003",
+  "case_count": 24,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/immediate_generator.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/immediate_generator_tb.sv"
+      ],
+      "top": "immediate_generator_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-ISA-003/C021",
+        "TEST-ISA-003/C022",
+        "TEST-ISA-003/C023",
+        "TEST-ISA-003/C024"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-ISA-003/C001",
+      "inputs": {
+        "format": "I",
+        "value": 0,
+        "word": "0x00008193"
+      },
+      "expected": {
+        "immediate": "0x00000000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C002",
+      "inputs": {
+        "format": "I",
+        "value": 1,
+        "word": "0x00108193"
+      },
+      "expected": {
+        "immediate": "0x00000001"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C003",
+      "inputs": {
+        "format": "I",
+        "value": -1,
+        "word": "0xFFF08193"
+      },
+      "expected": {
+        "immediate": "0xFFFFFFFF"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C004",
+      "inputs": {
+        "format": "I",
+        "value": -2048,
+        "word": "0x80008193"
+      },
+      "expected": {
+        "immediate": "0xFFFFF800"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C005",
+      "inputs": {
+        "format": "I",
+        "value": 2047,
+        "word": "0x7FF08193"
+      },
+      "expected": {
+        "immediate": "0x000007FF"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C006",
+      "inputs": {
+        "format": "S",
+        "value": 0,
+        "word": "0x0020A023"
+      },
+      "expected": {
+        "immediate": "0x00000000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C007",
+      "inputs": {
+        "format": "S",
+        "value": 1,
+        "word": "0x0020A0A3"
+      },
+      "expected": {
+        "immediate": "0x00000001"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C008",
+      "inputs": {
+        "format": "S",
+        "value": -1,
+        "word": "0xFE20AFA3"
+      },
+      "expected": {
+        "immediate": "0xFFFFFFFF"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C009",
+      "inputs": {
+        "format": "S",
+        "value": -2048,
+        "word": "0x8020A023"
+      },
+      "expected": {
+        "immediate": "0xFFFFF800"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C010",
+      "inputs": {
+        "format": "S",
+        "value": 2047,
+        "word": "0x7E20AFA3"
+      },
+      "expected": {
+        "immediate": "0x000007FF"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C011",
+      "inputs": {
+        "format": "B",
+        "value": 0,
+        "word": "0x00208063"
+      },
+      "expected": {
+        "immediate": "0x00000000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C012",
+      "inputs": {
+        "format": "B",
+        "value": 2,
+        "word": "0x00208163"
+      },
+      "expected": {
+        "immediate": "0x00000002"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C013",
+      "inputs": {
+        "format": "B",
+        "value": -2,
+        "word": "0xFE208FE3"
+      },
+      "expected": {
+        "immediate": "0xFFFFFFFE"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C014",
+      "inputs": {
+        "format": "B",
+        "value": -4096,
+        "word": "0x80208063"
+      },
+      "expected": {
+        "immediate": "0xFFFFF000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C015",
+      "inputs": {
+        "format": "B",
+        "value": 4094,
+        "word": "0x7E208FE3"
+      },
+      "expected": {
+        "immediate": "0x00000FFE"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C016",
+      "inputs": {
+        "format": "J",
+        "value": 0,
+        "word": "0x000001EF"
+      },
+      "expected": {
+        "immediate": "0x00000000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C017",
+      "inputs": {
+        "format": "J",
+        "value": 2,
+        "word": "0x002001EF"
+      },
+      "expected": {
+        "immediate": "0x00000002"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C018",
+      "inputs": {
+        "format": "J",
+        "value": -2,
+        "word": "0xFFFFF1EF"
+      },
+      "expected": {
+        "immediate": "0xFFFFFFFE"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C019",
+      "inputs": {
+        "format": "J",
+        "value": -1048576,
+        "word": "0x800001EF"
+      },
+      "expected": {
+        "immediate": "0xFFF00000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C020",
+      "inputs": {
+        "format": "J",
+        "value": 1048574,
+        "word": "0x7FFFF1EF"
+      },
+      "expected": {
+        "immediate": "0x000FFFFE"
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C021",
+      "inputs": {
+        "format": "U",
+        "value": 0,
+        "word": "0x000001B7",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              439,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "immediate": "0x00000000",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 5,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 3,
+                "value": 0
+              }
+            ],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "idex_immediate": 0
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 12,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C022",
+      "inputs": {
+        "format": "U",
+        "value": 74565,
+        "word": "0x123451B7",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              305418679,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "immediate": "0x12345000",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 5,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 3,
+                "value": 305418240
+              }
+            ],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "idex_immediate": 305418240
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              0,
+              305418240,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 12,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C023",
+      "inputs": {
+        "format": "U",
+        "value": 524288,
+        "word": "0x800001B7",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              2147484087,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "immediate": "0x80000000",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 5,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 3,
+                "value": 2147483648
+              }
+            ],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "idex_immediate": 2147483648
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              0,
+              2147483648,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 12,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-ISA-003/C024",
+      "inputs": {
+        "format": "U",
+        "value": 1048575,
+        "word": "0xFFFFF1B7",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              4294963639,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "immediate": "0xFFFFF000",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 5,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 3,
+                "value": 4294963200
+              }
+            ],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "idex_immediate": 4294963200
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              0,
+              4294963200,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 12,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Formatos de inmediato"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

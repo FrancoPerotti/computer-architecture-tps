@@ -1,0 +1,894 @@
+{
+  "id": "TEST-PIPE-001",
+  "source": "pipeline.md#test-pipe-001",
+  "case_count": 1,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_latches_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/pipeline_composition_tb.sv"
+      ],
+      "top": "pipeline_composition_tb",
+      "level": "Integración local",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-PIPE-001/C001"
+      ],
+      "parameters": {
+        "FILL_FIXTURE": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-001/C001"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-PIPE-001/C001",
+      "inputs": {
+        "program": "addi x1,x0,1; addi x2,x0,2; addi x3,x0,3; addi x4,x0,4; addi x5,x0,5; addi x6,x0,6; halt",
+        "mode": "RUN",
+        "composition": {
+          "PC": 0,
+          "redirect_target": 128,
+          "preload_source": "empty",
+          "cpu_cycle_fire": 1,
+          "drain_mode": 0,
+          "fetch_order": [
+            "step0",
+            "step1",
+            "step2",
+            "step3",
+            "step4"
+          ],
+          "payloads": {
+            "empty": {
+              "ifid": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rs1": 0,
+                "rs2": 0,
+                "rd": 0,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 0,
+                "alu_op": 0,
+                "alu_src": 0,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 0,
+                "ex_result": 0,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 0
+              }
+            },
+            "step0": {
+              "ifid": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rs1": 0,
+                "rs2": 0,
+                "rd": 0,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 0,
+                "alu_op": 0,
+                "alu_src": 0,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 0,
+                "ex_result": 0,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 0
+              }
+            },
+            "step1": {
+              "ifid": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rs1": 0,
+                "rs2": 1,
+                "rd": 1,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 1,
+                "alu_op": 32,
+                "alu_src": 1,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 1
+              },
+              "exmem": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 0,
+                "ex_result": 0,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 0
+              }
+            },
+            "step2": {
+              "ifid": {
+                "valid": 1,
+                "pc": 8,
+                "instruction": 3146131,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rs1": 0,
+                "rs2": 2,
+                "rd": 2,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 2,
+                "alu_op": 32,
+                "alu_src": 1,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 1
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "mem_op": 0,
+                "ex_result": 1,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 0,
+                "pc": 0,
+                "instruction": 0,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 0
+              }
+            },
+            "step3": {
+              "ifid": {
+                "valid": 1,
+                "pc": 12,
+                "instruction": 4194835,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 8,
+                "instruction": 3146131,
+                "rs1": 0,
+                "rs2": 3,
+                "rd": 3,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 3,
+                "alu_op": 32,
+                "alu_src": 1,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 1
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "mem_op": 0,
+                "ex_result": 2,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 0,
+                "instruction": 1048723,
+                "rd": 1,
+                "reg_write": 1,
+                "wb_value": 1
+              }
+            },
+            "step4": {
+              "ifid": {
+                "valid": 1,
+                "pc": 16,
+                "instruction": 5243539,
+                "fetch_fault_valid": 0,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 12,
+                "instruction": 4194835,
+                "rs1": 0,
+                "rs2": 4,
+                "rd": 4,
+                "rs1_value": 0,
+                "rs2_value": 0,
+                "immediate": 4,
+                "alu_op": 32,
+                "alu_src": 1,
+                "result_sel": 0,
+                "flow_op": 0,
+                "mem_op": 0,
+                "reg_write": 1
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 8,
+                "instruction": 3146131,
+                "rd": 3,
+                "reg_write": 1,
+                "mem_op": 0,
+                "ex_result": 3,
+                "store_data": 0
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 4,
+                "instruction": 2097427,
+                "rd": 2,
+                "reg_write": 1,
+                "wb_value": 2
+              }
+            }
+          }
+        },
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048,
+        "processor": [
+          {
+            "words": [
+              1048723,
+              2097427,
+              3146131,
+              4194835,
+              5243539,
+              6292243,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "start": "load",
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "after_trace": "none"
+          }
+        ]
+      },
+      "expected": {
+        "RF": "xi=i para i=1..6",
+        "first_writeback_cycle": 5,
+        "stage_trace": "tabla de los cuatro primeros ciclos",
+        "control_codes": {
+          "ALU_OP_SLL": 0,
+          "ALU_OP_SRL": 2,
+          "ALU_OP_SRA": 3,
+          "ALU_OP_SLT": 42,
+          "ALU_OP_SLTU": 43,
+          "ALU_OP_ADD": 32,
+          "ALU_OP_SUB": 34,
+          "ALU_OP_AND": 36,
+          "ALU_OP_OR": 37,
+          "ALU_OP_XOR": 38,
+          "ALU_SRC_RS2": 0,
+          "ALU_SRC_IMMEDIATE": 1,
+          "RESULT_SEL_ALU": 0,
+          "RESULT_SEL_IMMEDIATE": 1,
+          "RESULT_SEL_LINK": 2,
+          "FLOW_OP_NONE": 0,
+          "FLOW_OP_BEQ": 1,
+          "FLOW_OP_BNE": 2,
+          "FLOW_OP_JAL": 3,
+          "FLOW_OP_JALR": 4,
+          "FLOW_OP_HALT": 5,
+          "MEM_OP_NONE": 0,
+          "MEM_OP_LB": 1,
+          "MEM_OP_LH": 2,
+          "MEM_OP_LW": 3,
+          "MEM_OP_LBU": 4,
+          "MEM_OP_LHU": 5,
+          "MEM_OP_SB": 6,
+          "MEM_OP_SH": 7,
+          "MEM_OP_SW": 8,
+          "FAULT_INSTRUCTION_ADDRESS_MISALIGNED": 0,
+          "FAULT_INSTRUCTION_ACCESS_FAULT": 1,
+          "FAULT_ILLEGAL_INSTRUCTION": 2,
+          "FAULT_LOAD_ADDRESS_MISALIGNED": 4,
+          "FAULT_LOAD_ACCESS_FAULT": 5,
+          "FAULT_STORE_ADDRESS_MISALIGNED": 6,
+          "FAULT_STORE_ACCESS_FAULT": 7
+        },
+        "selectors": {
+          "forward_sel": {
+            "width": 2,
+            "codes": {
+              "FORWARD_SEL_ID_EX": 0,
+              "FORWARD_SEL_EX_MEM": 1,
+              "FORWARD_SEL_MEM_WB": 2
+            }
+          },
+          "access_size": {
+            "width": 2,
+            "codes": {
+              "ACCESS_SIZE_BYTE": 0,
+              "ACCESS_SIZE_HALFWORD": 1,
+              "ACCESS_SIZE_WORD": 2
+            }
+          }
+        },
+        "fill_action": "act_normal",
+        "fill_trace": [
+          {
+            "PC": 4,
+            "valids": [
+              1,
+              0,
+              0,
+              0
+            ],
+            "pcs": [
+              0,
+              null,
+              null,
+              null
+            ],
+            "instructions": [
+              1048723,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "PC": 8,
+            "valids": [
+              1,
+              1,
+              0,
+              0
+            ],
+            "pcs": [
+              4,
+              0,
+              null,
+              null
+            ],
+            "instructions": [
+              2097427,
+              1048723,
+              null,
+              null
+            ]
+          },
+          {
+            "PC": 12,
+            "valids": [
+              1,
+              1,
+              1,
+              0
+            ],
+            "pcs": [
+              8,
+              4,
+              0,
+              null
+            ],
+            "instructions": [
+              3146131,
+              2097427,
+              1048723,
+              null
+            ]
+          },
+          {
+            "PC": 16,
+            "valids": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "pcs": [
+              12,
+              8,
+              4,
+              0
+            ],
+            "instructions": [
+              4194835,
+              3146131,
+              2097427,
+              1048723
+            ]
+          },
+          {
+            "PC": 20,
+            "valids": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "pcs": [
+              16,
+              12,
+              8,
+              4
+            ],
+            "instructions": [
+              5243539,
+              4194835,
+              3146131,
+              2097427
+            ]
+          }
+        ],
+        "fifth_preedge_wb": {
+          "pc": 0,
+          "rd": 1,
+          "wb_value": 1
+        },
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "trace": [
+              {
+                "pc": 4,
+                "count": 1,
+                "state": 4,
+                "valid_mask": 8,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": false
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 0,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 8,
+                "count": 2,
+                "state": 4,
+                "valid_mask": 12,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": false
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 4,
+                "idex_pc": 0,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 12,
+                "count": 3,
+                "state": 4,
+                "valid_mask": 14,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": false
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 8,
+                "idex_pc": 4,
+                "exmem_pc": 0,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 16,
+                "count": 4,
+                "state": 4,
+                "valid_mask": 15,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": false
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 12,
+                "idex_pc": 8,
+                "exmem_pc": 4,
+                "memwb_pc": 0,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 20,
+                "count": 5,
+                "state": 4,
+                "valid_mask": 15,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 0,
+                  "rd": 1,
+                  "value": 1
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 16,
+                "idex_pc": 12,
+                "exmem_pc": 8,
+                "memwb_pc": 4,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 24,
+                "count": 6,
+                "state": 4,
+                "valid_mask": 15,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 4,
+                  "rd": 2,
+                  "value": 2
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 20,
+                "idex_pc": 16,
+                "exmem_pc": 12,
+                "memwb_pc": 8,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 28,
+                "count": 7,
+                "state": 4,
+                "valid_mask": 15,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 8,
+                  "rd": 3,
+                  "value": 3
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 24,
+                "idex_pc": 20,
+                "exmem_pc": 16,
+                "memwb_pc": 12,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 32,
+                "count": 8,
+                "state": 4,
+                "valid_mask": 7,
+                "empty_next": false,
+                "action": 4,
+                "fetch_fault_valid": true,
+                "fetch_fault_cause": 1,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 12,
+                  "rd": 4,
+                  "value": 4
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "ifid_pc": 28,
+                "idex_pc": 24,
+                "exmem_pc": 20,
+                "memwb_pc": 16,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 32,
+                "count": 9,
+                "state": 6,
+                "valid_mask": 1,
+                "empty_next": false,
+                "action": 64,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 16,
+                  "rd": 5,
+                  "value": 5
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "memwb_pc": 20,
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              },
+              {
+                "pc": 32,
+                "count": 10,
+                "state": 10,
+                "valid_mask": 0,
+                "empty_next": true,
+                "action": 1,
+                "fetch_fault_valid": false,
+                "fetch_fault_cause": 0,
+                "rf_commit": {
+                  "fire": true,
+                  "pc": 20,
+                  "rd": 6,
+                  "value": 6
+                },
+                "store_commit": {
+                  "fire": false
+                },
+                "fault_info_valid": false,
+                "check_idex_operands": false
+              }
+            ],
+            "rf": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programa lineal"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

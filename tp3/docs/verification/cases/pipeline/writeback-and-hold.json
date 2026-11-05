@@ -1,0 +1,1127 @@
+{
+  "id": "TEST-PIPE-009",
+  "source": "pipeline.md#test-pipe-009",
+  "case_count": 11,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/mem_wb_register.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/mem_wb_boundary_tb.sv"
+      ],
+      "top": "mem_wb_boundary_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-PIPE-009/C001",
+        "TEST-PIPE-009/C002"
+      ],
+      "parameters": {
+        "MEM_SOURCE_FIXTURE": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/mem_wb_register.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/mem_wb_boundary_tb.sv"
+      ],
+      "top": "mem_wb_boundary_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-PIPE-009/C003",
+        "TEST-PIPE-009/C004",
+        "TEST-PIPE-009/C005",
+        "TEST-PIPE-009/C006",
+        "TEST-PIPE-009/C007"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/wb_stage_tb.sv"
+      ],
+      "top": "wb_stage_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PIPE-009/C003",
+        "TEST-PIPE-009/C004",
+        "TEST-PIPE-009/C005",
+        "TEST-PIPE-009/C006",
+        "TEST-PIPE-009/C007"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-009/C008",
+        "TEST-PIPE-009/C009",
+        "TEST-PIPE-009/C010",
+        "TEST-PIPE-009/C011"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_frontier_tb.sv"
+      ],
+      "top": "processor_frontier_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-009/C001",
+        "TEST-PIPE-009/C002"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-PIPE-009/C001",
+      "inputs": {
+        "source": "ex_result",
+        "ex_result": "0x11223344",
+        "load_value": "0xFFFFFF80",
+        "boundary": {
+          "initial": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 0
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 287454020
+          },
+          "cpu_cycle_fire": 1
+        },
+        "cpu_frontier": {
+          "kind": "mux",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 0,
+          "ifid": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 0,
+            "fetch_fault_valid": 0,
+            "fetch_fault_cause": 0
+          },
+          "idex": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 0,
+            "rs1": 0,
+            "rs2": 0,
+            "rd": 0,
+            "rs1_value": 0,
+            "rs2_value": 0,
+            "immediate": 0,
+            "alu_op": 0,
+            "alu_src": 0,
+            "result_sel": 0,
+            "flow_op": 0,
+            "mem_op": 0,
+            "reg_write": 0
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 275,
+            "rd": 2,
+            "reg_write": 1,
+            "mem_op": 0,
+            "ex_result": 287454020,
+            "store_data": 0
+          },
+          "memwb": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 0
+          },
+          "load_value": 4294967168
+        }
+      },
+      "expected": {
+        "memwb_next_wb_value": "0x11223344",
+        "cpu_frontier": {
+          "value": 287454020
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Selector MEM"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C002",
+      "inputs": {
+        "source": "load_value",
+        "ex_result": "0x11223344",
+        "load_value": "0xFFFFFF80",
+        "boundary": {
+          "initial": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 0
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 4294967168
+          },
+          "cpu_cycle_fire": 1
+        },
+        "cpu_frontier": {
+          "kind": "mux",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 0,
+          "ifid": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 0,
+            "fetch_fault_valid": 0,
+            "fetch_fault_cause": 0
+          },
+          "idex": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 0,
+            "rs1": 0,
+            "rs2": 0,
+            "rd": 0,
+            "rs1_value": 0,
+            "rs2_value": 0,
+            "immediate": 0,
+            "alu_op": 0,
+            "alu_src": 0,
+            "result_sel": 0,
+            "flow_op": 0,
+            "mem_op": 0,
+            "reg_write": 0
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 275,
+            "rd": 2,
+            "reg_write": 1,
+            "mem_op": 1,
+            "ex_result": 287454020,
+            "store_data": 0
+          },
+          "memwb": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 0
+          },
+          "load_value": 4294967168
+        }
+      },
+      "expected": {
+        "memwb_next_wb_value": "0xFFFFFF80",
+        "cpu_frontier": {
+          "value": 4294967168
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Selector MEM"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C003",
+      "inputs": {
+        "guard": "ninguna",
+        "current_wb_value": 7,
+        "future_wb_value": 99,
+        "boundary": {
+          "initial": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 7
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 99
+          },
+          "cpu_cycle_fire": 1
+        }
+      },
+      "expected": {
+        "write_fire": true,
+        "written_value": 7
+      },
+      "kind": "vector",
+      "origins": [
+        "Writeback"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C004",
+      "inputs": {
+        "guard": "valid0",
+        "current_wb_value": 7,
+        "future_wb_value": 99,
+        "boundary": {
+          "initial": {
+            "valid": 0,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 7
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 99
+          },
+          "cpu_cycle_fire": 1
+        }
+      },
+      "expected": {
+        "write_fire": false,
+        "written_value": "ninguno"
+      },
+      "kind": "vector",
+      "origins": [
+        "Writeback"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C005",
+      "inputs": {
+        "guard": "reg_write0",
+        "current_wb_value": 7,
+        "future_wb_value": 99,
+        "boundary": {
+          "initial": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 0,
+            "wb_value": 7
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 99
+          },
+          "cpu_cycle_fire": 1
+        }
+      },
+      "expected": {
+        "write_fire": false,
+        "written_value": "ninguno"
+      },
+      "kind": "vector",
+      "origins": [
+        "Writeback"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C006",
+      "inputs": {
+        "guard": "rd0",
+        "current_wb_value": 7,
+        "future_wb_value": 99,
+        "boundary": {
+          "initial": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 0,
+            "reg_write": 1,
+            "wb_value": 7
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 99
+          },
+          "cpu_cycle_fire": 1
+        }
+      },
+      "expected": {
+        "write_fire": false,
+        "written_value": "ninguno"
+      },
+      "kind": "vector",
+      "origins": [
+        "Writeback"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C007",
+      "inputs": {
+        "guard": "fire0",
+        "current_wb_value": 7,
+        "future_wb_value": 99,
+        "boundary": {
+          "initial": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 1048723,
+            "rd": 1,
+            "reg_write": 1,
+            "wb_value": 7
+          },
+          "future": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2097427,
+            "rd": 2,
+            "reg_write": 1,
+            "wb_value": 99
+          },
+          "cpu_cycle_fire": 0
+        }
+      },
+      "expected": {
+        "write_fire": false,
+        "written_value": "ninguno"
+      },
+      "kind": "vector",
+      "origins": [
+        "Writeback"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C008",
+      "inputs": {
+        "program": "addi x1,x0,7; sw x1,0(x0); halt",
+        "mode": "RUN",
+        "hold_cycles": 0,
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              7340179,
+              1056803,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "x1": 7,
+        "word0": 7,
+        "each_dynamic_commit_once": true,
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 1,
+                "value": 7
+              }
+            ],
+            "store_commits": [
+              {
+                "cycle": 5,
+                "pc": 4,
+                "address": 0,
+                "value": 7,
+                "byte_enable": 15
+              }
+            ],
+            "probes": [],
+            "rf": [
+              0,
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "used_values": [
+              7,
+              0,
+              0,
+              0
+            ],
+            "terminal": 10,
+            "pc": 16,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Commit yHOLD enCPU"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C009",
+      "inputs": {
+        "program": "addi x1,x0,7; sw x1,0(x0); halt",
+        "mode": "STEP",
+        "hold_cycles": 50,
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              7340179,
+              1056803,
+              11
+            ],
+            "mode": "STEP",
+            "holds": [
+              50,
+              50,
+              50,
+              50,
+              50,
+              50
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "x1": 7,
+        "word0": 7,
+        "each_dynamic_commit_once": true,
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 1,
+                "value": 7
+              }
+            ],
+            "store_commits": [
+              {
+                "cycle": 5,
+                "pc": 4,
+                "address": 0,
+                "value": 7,
+                "byte_enable": 15
+              }
+            ],
+            "probes": [],
+            "rf": [
+              0,
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "used_values": [
+              7,
+              0,
+              0,
+              0
+            ],
+            "terminal": 10,
+            "pc": 16,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Commit yHOLD enCPU"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C010",
+      "inputs": {
+        "program": "addi x1,x0,7; sw x1,0(x0); illegal",
+        "mode": "RUN",
+        "hold_cycles": 0,
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              7340179,
+              1056803,
+              0
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "x1": 7,
+        "word0": 7,
+        "each_dynamic_commit_once": true,
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 1,
+                "value": 7
+              }
+            ],
+            "store_commits": [
+              {
+                "cycle": 5,
+                "pc": 4,
+                "address": 0,
+                "value": 7,
+                "byte_enable": 15
+              }
+            ],
+            "probes": [],
+            "rf": [
+              0,
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "used_values": [
+              7,
+              0,
+              0,
+              0
+            ],
+            "terminal": 11,
+            "pc": 12,
+            "fault_cause": 2,
+            "fault_pc": 8
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Commit yHOLD enCPU"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-009/C011",
+      "inputs": {
+        "program": "addi x1,x0,7; sw x1,0(x0); illegal",
+        "mode": "STEP",
+        "hold_cycles": 50,
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              7340179,
+              1056803,
+              0
+            ],
+            "mode": "STEP",
+            "holds": [
+              50,
+              50,
+              50,
+              50,
+              50,
+              50
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "x1": 7,
+        "word0": 7,
+        "each_dynamic_commit_once": true,
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 1,
+                "value": 7
+              }
+            ],
+            "store_commits": [
+              {
+                "cycle": 5,
+                "pc": 4,
+                "address": 0,
+                "value": 7,
+                "byte_enable": 15
+              }
+            ],
+            "probes": [],
+            "rf": [
+              0,
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "used_values": [
+              7,
+              0,
+              0,
+              0
+            ],
+            "terminal": 11,
+            "pc": 12,
+            "fault_cause": 2,
+            "fault_pc": 8
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Commit yHOLD enCPU"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

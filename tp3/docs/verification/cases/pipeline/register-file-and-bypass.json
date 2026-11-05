@@ -1,0 +1,128 @@
+{
+  "id": "TEST-PIPE-002",
+  "source": "pipeline.md#test-pipe-002",
+  "case_count": 52,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/register_file.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/register_file_tb.sv"
+      ],
+      "top": "register_file_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PIPE-002/C001",
+        "TEST-PIPE-002/C002",
+        "TEST-PIPE-002/C003",
+        "TEST-PIPE-002/C019",
+        "TEST-PIPE-002/C020",
+        "TEST-PIPE-002/C021",
+        "TEST-PIPE-002/C022",
+        "TEST-PIPE-002/C023",
+        "TEST-PIPE-002/C024",
+        "TEST-PIPE-002/C025",
+        "TEST-PIPE-002/C026",
+        "TEST-PIPE-002/C027",
+        "TEST-PIPE-002/C028",
+        "TEST-PIPE-002/C029",
+        "TEST-PIPE-002/C030",
+        "TEST-PIPE-002/C031",
+        "TEST-PIPE-002/C032",
+        "TEST-PIPE-002/C033",
+        "TEST-PIPE-002/C034",
+        "TEST-PIPE-002/C035",
+        "TEST-PIPE-002/C036",
+        "TEST-PIPE-002/C037",
+        "TEST-PIPE-002/C038",
+        "TEST-PIPE-002/C039",
+        "TEST-PIPE-002/C040",
+        "TEST-PIPE-002/C041",
+        "TEST-PIPE-002/C042",
+        "TEST-PIPE-002/C043",
+        "TEST-PIPE-002/C044",
+        "TEST-PIPE-002/C045",
+        "TEST-PIPE-002/C046",
+        "TEST-PIPE-002/C047",
+        "TEST-PIPE-002/C048",
+        "TEST-PIPE-002/C049",
+        "TEST-PIPE-002/C050",
+        "TEST-PIPE-002/C051",
+        "TEST-PIPE-002/C052"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/id_stage_tb.sv"
+      ],
+      "top": "id_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/wb_stage_tb.sv"
+      ],
+      "top": "wb_stage_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PIPE-002/C004",
+        "TEST-PIPE-002/C005",
+        "TEST-PIPE-002/C006",
+        "TEST-PIPE-002/C007",
+        "TEST-PIPE-002/C008",
+        "TEST-PIPE-002/C009",
+        "TEST-PIPE-002/C010",
+        "TEST-PIPE-002/C011",
+        "TEST-PIPE-002/C012",
+        "TEST-PIPE-002/C013",
+        "TEST-PIPE-002/C014",
+        "TEST-PIPE-002/C015",
+        "TEST-PIPE-002/C016",
+        "TEST-PIPE-002/C017",
+        "TEST-PIPE-002/C018"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "file": "register-file-and-bypass/cases-001-007.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-008-014.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-015-021.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-022-028.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-029-035.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-036-042.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-043-049.json"
+    },
+    {
+      "file": "register-file-and-bypass/cases-050-052.json"
+    }
+  ]
+}

@@ -1,0 +1,471 @@
+{
+  "id": "TEST-UART-004",
+  "source": "uart_debug.md#test-uart-004",
+  "case_count": 18,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-004/C001",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N": 4,
+        "content": "halt",
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "accept": "01 01",
+        "done": "01 02",
+        "confirmed_size": 4,
+        "ready_without_CPU": true,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Tamañosválidos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C002",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N": 1024,
+        "content": "ADDI x1,x0,i para i=0..N/4-2;halt",
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "accept": "01 01",
+        "done": "01 02",
+        "confirmed_size": 1024,
+        "ready_without_CPU": true,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Tamañosválidos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C003",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 0,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C004",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 6,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C005",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 1028,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C006",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 4294967296,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C007",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 4294967300,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C008",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N40": 549755813888,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C009",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N": 4,
+        "content_word": 0,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "LOAD_result": "DONE",
+        "execute_result": "FAULT",
+        "cause": 2,
+        "fault_pc": 0,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Illegalcargable"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C010",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N": 4,
+        "content": "halt",
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "accept": "01 01",
+        "done": "01 02",
+        "confirmed_size": 4,
+        "ready_without_CPU": true,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Tamañosválidos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C011",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N": 1000,
+        "content": "ADDI x1,x0,i para i=0..N/4-2;halt",
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "accept": "01 01",
+        "done": "01 02",
+        "confirmed_size": 1000,
+        "ready_without_CPU": true,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Tamañosválidos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C012",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 0,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C013",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 6,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C014",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 1004,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C015",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 4294967296,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C016",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 4294967300,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C017",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N40": 549755813888,
+        "old_size": 16,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "response": "01 06",
+        "old_size_after": 16,
+        "load_request": false,
+        "command_accepted": false,
+        "load_start": false,
+        "validate_40_bits_before_narrowing": true,
+        "fifth_byte_in_candidate": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "Ninválido40bits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-004/C018",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N": 4,
+        "content_word": 0,
+        "size_decision_edge": "fifth_byte_consume",
+        "response_busy_before": false
+      },
+      "expected": {
+        "LOAD_result": "DONE",
+        "execute_result": "FAULT",
+        "cause": 2,
+        "fault_pc": 0,
+        "validate_40_bits_before_narrowing": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "one_decrement_per_delivery": true,
+        "protocol_after_last_delivery": "WAIT_PREP_DONE",
+        "prepare_active_after_last_delivery": true,
+        "DONE_capture_edge_relative_image_publish": 1,
+        "CPU_cycle_at_publish": false
+      },
+      "kind": "transaction",
+      "origins": [
+        "Illegalcargable"
+      ],
+      "status": "pending"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "id": "TEST-UART-006",
+  "source": "uart_debug.md#test-uart-006",
+  "case_count": 8,
+  "reuse_groups": [
+    "TEST-UART-003"
+  ],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-006/C001",
+      "inputs": {
+        "context": "opcode-READY",
+        "error": "false-start",
+        "recovery_sequence": [
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_COMMAND"
+      },
+      "expected": {
+        "response": "ninguna",
+        "old_image_preserved": true,
+        "TX_preserved": true,
+        "RUN_continues": false,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C002",
+      "inputs": {
+        "context": "opcode-READY",
+        "error": "bad-stop",
+        "recovery_sequence": [
+          "05",
+          "04",
+          "residual",
+          "edge-near-R",
+          "hold-low",
+          "frame-in-progress",
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_COMMAND"
+      },
+      "expected": {
+        "response": "ninguna",
+        "old_image_preserved": true,
+        "TX_preserved": true,
+        "RUN_continues": false,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C003",
+      "inputs": {
+        "context": "opcode-READY",
+        "error": "RX-overflow",
+        "recovery_sequence": [
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_COMMAND"
+      },
+      "expected": {
+        "response": "ninguna",
+        "old_image_preserved": true,
+        "TX_preserved": true,
+        "RUN_continues": false,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C005",
+      "inputs": {
+        "context": "opcode-RUNNING",
+        "error": "bad-stop",
+        "recovery_sequence": [
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true
+      },
+      "expected": {
+        "response": "ninguna",
+        "old_image_preserved": true,
+        "TX_preserved": true,
+        "RUN_continues": true,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_RUN_END",
+        "normal_query_after_recovery": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C008",
+      "inputs": {
+        "context": "LOAD-size",
+        "error": "bad-stop",
+        "recovery_sequence": [
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "RECEIVE_LOAD_SIZE"
+      },
+      "expected": {
+        "response": "01 09",
+        "old_image_preserved": true,
+        "TX_preserved": true,
+        "RUN_continues": false,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C011",
+      "inputs": {
+        "context": "LOAD-content",
+        "error": "bad-stop",
+        "recovery_sequence": [
+          "R-silent"
+        ],
+        "R_clocks": 5000000,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "RECEIVE_LOAD_DATA"
+      },
+      "expected": {
+        "response": "01 09",
+        "old_image_preserved": false,
+        "TX_preserved": true,
+        "RUN_continues": false,
+        "reopened_after_continuous_silence": true,
+        "discarded_commands_replayed": false,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ab orto ysilencio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C013",
+      "inputs": {
+        "context": "opcode-RUNNING",
+        "error": "bad-stop",
+        "terminal": "FINISHED",
+        "reopen_order": "R-before-Debug-Stop",
+        "R_clocks": 5000000,
+        "RX_activity_between_R_and_Debug_Stop": false,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true
+      },
+      "expected": {
+        "terminal_delivered_once": true,
+        "accept_RX_only_when": "continuous_silence && RX_empty && !response_busy && !debug_hold",
+        "RECOVER_not_skipped": true,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop"
+      },
+      "kind": "scenario",
+      "origins": [
+        "TerminalenRECOVER"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-006/C014",
+      "inputs": {
+        "context": "opcode-RUNNING",
+        "error": "bad-stop",
+        "terminal": "FINISHED",
+        "reopen_order": "R-after-Debug-Stop",
+        "R_clocks": 5000000,
+        "RX_activity_edge_relative_Debug_Stop": -1,
+        "rx_activity_includes": [
+          "transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true
+      },
+      "expected": {
+        "terminal_delivered_once": true,
+        "accept_RX_only_when": "continuous_silence && RX_empty && !response_busy && !debug_hold",
+        "RECOVER_not_skipped": true,
+        "R_restarted_by_RX_activity": true,
+        "recovery_state": "RECOVER_RX",
+        "return_protocol_state": "WAIT_COMMAND",
+        "normal_query_after_recovery": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop"
+      },
+      "kind": "scenario",
+      "origins": [
+        "TerminalenRECOVER"
+      ],
+      "status": "pending"
+    }
+  ]
+}
