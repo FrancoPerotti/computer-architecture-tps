@@ -118,7 +118,9 @@ def main():
                         cwd=software / "gui",
                         env=gui_environment,
                         check=True,
-                        timeout=240,
+                        # The full catalog visits 165 real graph stages. This bounds the
+                        # functional verifier; UI response is measured separately.
+                        timeout=600 if scenario == "native-ide-smoke.cjs" else 90,
                     )
             source_file = home / "user code.s"
             source_file.write_text("addi x1, x0, 8\nhalt\n")
