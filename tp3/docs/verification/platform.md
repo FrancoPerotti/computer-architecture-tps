@@ -169,11 +169,51 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** revisión RTL, elaboración y análisis estático.
 - **Tipo de estímulo:** estructura sin estímulo arquitectónico.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** CPU elaborado y revisado en #9; transporte, IP y netlist FPGA pendientes.
 
 **Requisitos:** [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-002](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-011](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-026](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-TIM-001](../requirements.md#9-clock-fpga-y-timing), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [module_inventory](../architecture/module_inventory.md); [system_composition](../architecture/system_composition.md); [interfaces](../interfaces.md); [architectural_invariants](../architecture/architectural_invariants.md); [global_state_encoding](../architecture/session/global_state_encoding.md).
+
+<a id="revision-cpu-9"></a>
+
+### Revisión de la porción CPU en #9
+
+La [tabla de composición](../architecture/system_composition.md#cobertura-de-los-bloques-cpu)
+localiza individualmente los 51 IDs. La revisión de `processor_top` contrasta
+los controles locales 1.8, 2.9, 3.14 y 4.6 con las ocho acciones de hazards:
+captura normal, retención load-use, descarte joven y avance de las instrucciones
+anteriores. Las sesiones CPU y los fixtures de frontera comprueban su aplicación.
+
+`make review-cpu` elabora REFERENCE, ALT_1000 y mínimo genérico y ejecuta
+`tools/verification/check_cpu_structure.py` sobre el XML de Verilator. Contrasta
+los 23 módulos específicos y sus padres con el inventario de 51 IDs; los otros
+28 bloques son lógica local en siete contenedores, con 30 tipos instanciados en
+la jerarquía CPU. Contar esas instancias no sustituye la revisión de las funciones
+locales, sus productores, consumidores y temporalidad.
+
+Se contrastan campo por campo los payloads 69/193/139/103 y sus 34 salidas Debug,
+504 bits en total. El RF implementa x1–x31 como 31 palabras de 32 bits y x0 como
+constante arquitectónica. En REFERENCE hay 256 palabras IMEM de 32 bits y cuatro
+lanes DMEM de 512 bytes, cada una con 512 marcas; los otros perfiles derivan sus
+recursos de las capacidades. La FSM mantiene 14 bits one-hot. El top no agrega
+estado arquitectónico registrado ni copia de Debug: las assertions solo detectan
+colisiones internas. El paquete aporta los tipos, no memorias adicionales.
+
+La revisión del camino de autoridad conserva esta secuencia: estado actual y
+solicitudes → aceptación/autorización → acción de hazards → próximos `valid`
+de los cuatro latches → reducción `pipeline_empty_next` → transición de FSM.
+`next_state` retorna únicamente por el registro de estado; `cpu_cycle_fire`
+no depende de confirmaciones ni del estado futuro. Fault cause/PC, tamaño
+confirmado y contador permanecen únicamente en `execution_control`; `image_valid`
+es un predicado combinacional del tamaño. `make lint` comprueba elaboración y
+lazos combinacionales en los tres perfiles sin suprimir diagnósticos de lazo.
+
+Los reportes `cpu-*-structure.json` son evidencia mecánica de esta porción CPU.
+El caso canónico sigue `pending` en el runner de simulación: todavía requiere
+revisión del compañero y, en sus entregas correspondientes, transporte, Wizard,
+reset de sistema, netlist y timing FPGA. No se registra un PASS de simulación
+para una revisión estructural ni se acredita hardware de placa.
 
 ### Qué comprueba y por qué
 

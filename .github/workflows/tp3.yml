@@ -212,7 +212,7 @@ jobs:
           cache-from: type=gha,scope=tp3-tools
           cache-to: type=gha,mode=max,scope=tp3-tools
       - name: Run the same checks as local development
-        timeout-minutes: 10
+        timeout-minutes: 20
         shell: bash
         working-directory: tp3
         env:

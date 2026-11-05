@@ -5,6 +5,7 @@ SHELL := /bin/bash
 # Solo fuentes propias; las salidas generadas de Vivado y build quedan fuera.
 SV_DIRS := rtl tb scripts/tests/fixtures
 PY_DIR := scripts software
+CPU_REVIEW_TOOL := tools/verification/check_cpu_structure.py
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \
                rtl/register_file.sv rtl/id_fault_check.sv rtl/load_use_detector.sv \
@@ -28,17 +29,20 @@ EX_FAULT_RTL_TOPS := ex_fault_check
 EX_FAULT_LINT_CAPACITIES := 4 1000 2048 4294967296
 DMEM_RTL_TOPS := data_memory mem_stage
 DMEM_LINT_CAPACITIES := 4 1000 2048
+PROCESSOR_SOURCES := $(RTL_SOURCES) rtl/processor_top.sv
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags
 export TESTS
 
-.PHONY: help format format-check lint validate test-infra test-software test-rtl test check
+.PHONY: help format format-check lint lint-processor review-cpu validate test-infra test-software test-rtl test check
 help:
 	@printf '%s\n' \
 	  'make format        Aplicar formato SystemVerilog, Python y Bash' \
 	  'make format-check  Comprobar formato sin modificar fuentes' \
 	  'make lint          Verible, Verilator, Ruff y ShellCheck' \
+	  'make lint-processor  Analizar el CPU real en tres configuraciones' \
+	  'make review-cpu    Contrastar jerarquía, payloads y recursos del CPU con el inventario' \
 	  'make validate      Validar esquemas, catálogo y fuentes registradas' \
 	  'make test-infra    Probar la infraestructura de pruebas' \
 	  'make test-software Probar el software de PC' \
@@ -49,16 +53,16 @@ help:
 
 format:
 	find $(SV_DIRS) -type f -name '*.sv' -print0 | xargs -0 -r $(VERIBLE_FORMAT) --inplace
-	ruff check --select I --fix $(PY_DIR)
-	ruff format $(PY_DIR)
+	ruff check --select I --fix $(PY_DIR) $(CPU_REVIEW_TOOL)
+	ruff format $(PY_DIR) $(CPU_REVIEW_TOOL)
 	shfmt -ln bash -i 2 -w $(SH_SOURCES)
 
 format-check:
 	find $(SV_DIRS) -type f -name '*.sv' -print0 | xargs -0 -r -n 1 $(VERIBLE_FORMAT) --verify
-	ruff format --check $(PY_DIR)
+	ruff format --check $(PY_DIR) $(CPU_REVIEW_TOOL)
 	shfmt -ln bash -i 2 -d $(SH_SOURCES)
 
-lint:
+lint: lint-processor
 	find $(SV_DIRS) -type f -name '*.sv' -print0 | xargs -0 -r $(VERIBLE_LINT)
 	@for top in $(RTL_TOPS); do \
 	  verilator --lint-only --language 1800-2012 --top-module "$$top" $(RTL_SOURCES); \
@@ -81,8 +85,32 @@ lint:
 	      "-GDMEM_CAPACITY_BYTES=64'd$$capacity" $(RTL_SOURCES); \
 	  done; \
 	done
-	ruff check $(PY_DIR)
+	ruff check $(PY_DIR) $(CPU_REVIEW_TOOL)
 	shellcheck --shell=bash $(SH_SOURCES)
+
+# REFERENCE, ALT_1000 y mínimo genérico; las cinco etapas son RTL de producción.
+lint-processor:
+	@for configuration in '1024 2048' '1000 1000' '4 4'; do \
+	  read -r imem dmem <<< "$$configuration"; \
+	  verilator --lint-only --language 1800-2012 --top-module processor_top \
+	    "-GIMEM_CAPACITY_BYTES=64'd$$imem" "-GDMEM_CAPACITY_BYTES=64'd$$dmem" \
+	    $(PROCESSOR_SOURCES); \
+	done
+
+# Esta revisión mecánica no sustituye el análisis de lógica local ni la implementación FPGA.
+review-cpu:
+	@mkdir -p $(REPORTS)
+	@for configuration in \
+	    '1024 2048 TEST-PLAT-001/C001 reference' \
+	    '1000 1000 TEST-PLAT-001/C002 alt-1000' \
+	    '4 4 TEST-PLAT-001/C003 minimum'; do \
+	  read -r imem dmem case_id label <<< "$$configuration"; \
+	  verilator --xml-only --language 1800-2012 --top-module processor_top \
+	    "-GIMEM_CAPACITY_BYTES=64'd$$imem" "-GDMEM_CAPACITY_BYTES=64'd$$dmem" \
+	    --xml-output "$(REPORTS)/cpu-$$label.xml" $(PROCESSOR_SOURCES); \
+	  python3 $(CPU_REVIEW_TOOL) --xml "$(REPORTS)/cpu-$$label.xml" --case "$$case_id" \
+	    --output "$(REPORTS)/cpu-$$label-structure.json"; \
+	done
 
 validate:
 	check-jsonschema --check-metaschema docs/verification/cases.schema.json docs/verification/results.schema.json
@@ -109,4 +137,4 @@ test-rtl:
 	  PYTHONPATH=scripts python3 -c 'import json, sys; from run_tests import print_report; print_report(json.load(sys.stdin), "text")'
 
 test: test-infra test-software test-rtl
-check: format-check lint validate test
+check: format-check lint validate review-cpu test
