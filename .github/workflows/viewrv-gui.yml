@@ -1,4 +1,4 @@
-name: viewrv GUI quality
+name: viewrv quality
 
 on:
   pull_request:
@@ -42,8 +42,12 @@ jobs:
           ../.venv/bin/python -m pip install --require-hashes -r ../requirements-linux.lock
       - name: Install pinned GUI dependencies
         run: npm ci
-      - name: Format, types, build, unit and graphical checks
-        run: xvfb-run -a npm run check
+      - name: Format, types, build and GUI unit checks
+        run: npm run check
+      - name: Core catalog regressions
+        run: npm run test:core
+      - name: Functional window checks
+        run: xvfb-run -a npm run test:gui
       - name: Preserve GUI check evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

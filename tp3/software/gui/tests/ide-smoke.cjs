@@ -78,13 +78,6 @@ withGuiEnvironment(
       (await page.locator('.viewrv-breakpoint-slot').count()) >= 2,
       'Active debug needs discoverable breakpoint targets',
     )
-    assert.equal(
-      await page
-        .locator('.viewrv-breakpoint-slot')
-        .first()
-        .evaluate((node) => getComputedStyle(node).backgroundImage),
-      'none',
-    )
     await page.locator('.viewrv-breakpoint-slot').first().hover()
     await page.locator('.viewrv-breakpoint-hover').waitFor()
     await page
@@ -100,7 +93,14 @@ withGuiEnvironment(
     async function anchoredBelow() {
       const a = await arrow.boundingBox(),
         p = await picker.boundingBox()
-      return a && p && Math.abs(p.x - a.x) < 2 && Math.abs(p.y - a.y - a.height - 4) < 2
+      return (
+        a &&
+        p &&
+        p.y >= a.y + a.height &&
+        p.y < a.y + a.height + 48 &&
+        p.x < a.x + a.width &&
+        p.x + p.width > a.x
+      )
     }
     await until(anchoredBelow)
     await page.setViewportSize({ width: 1100, height: 768 })

@@ -258,14 +258,6 @@ async function eventually(predicate, timeout = 15000) {
       .waitFor()
     const redSource = page.locator('.monaco-editor:visible .viewrv-source-error').first()
     await redSource.waitFor()
-    assert.equal(
-      await redSource.evaluate((node) => getComputedStyle(node).color),
-      'rgb(186, 51, 72)',
-    )
-    assert.equal(
-      await redSource.evaluate((node) => getComputedStyle(node).textDecorationLine),
-      'none',
-    )
     await page.screenshot({ path: resolve(gui, '../build/gui-pc-i06-error.png') })
     await page
       .getByText('Instrucción inválida en el resultado controlado.', { exact: true })

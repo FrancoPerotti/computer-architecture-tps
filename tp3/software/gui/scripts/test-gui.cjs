@@ -1,4 +1,4 @@
-// Functional and visual checks run sequentially: they share the graphical host.
+// Functional window checks run sequentially: they share the graphical host.
 const { spawn } = require('node:child_process')
 const { mkdirSync, writeFileSync, readFileSync, createWriteStream } = require('node:fs')
 const { resolve } = require('node:path')
@@ -15,18 +15,13 @@ const suites = [
   'graphical-smoke',
   'follow-loop-smoke',
   'examples-smoke',
-  'visual-feedback-smoke',
-  'visual-round2-smoke',
-  'visual-round3-smoke',
-  'debug-review-smoke',
-  'debug-polish-smoke',
-  'debug-spacing-smoke',
+  'editor-workspace-smoke',
+  'processor-state-smoke',
   'source-follow-smoke',
   'breakpoint-visibility-smoke',
   'completion-smoke',
   'formatter-smoke',
   'instruction-resource-smoke',
-  'processor-feedback-smoke',
   'stream-lifecycle-smoke',
 ]
 const requested = process.argv.slice(2)

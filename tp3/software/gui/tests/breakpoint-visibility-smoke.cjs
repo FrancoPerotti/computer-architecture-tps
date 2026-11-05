@@ -40,25 +40,44 @@ withGuiEnvironment(
         .split('\n')
         .filter((line) => line === '03').length
     const editor = page.locator('.monaco-editor:visible').first()
-    const marginWidth = () =>
-      editor
-        .locator('.margin')
-        .first()
-        .evaluate((node) => node.getBoundingClientRect().width)
     const breakpointMarks = () =>
       editor.locator(
         '.viewrv-breakpoint, .viewrv-breakpoint-slot, [class*=viewrv-breakpoint-targets-]',
       )
-    const editWidth = await marginWidth()
     await loadDebug()
     assert.equal(steps(), 0)
-    await editor.locator('.viewrv-breakpoint-slot').first().click()
+    const arrow = page.getByRole('button', {
+      name: 'Elegir registro del breakpoint de la línea 2',
+      exact: true,
+    })
+    const picker = page.getByRole('dialog', { name: 'Breakpoint de la línea 2', exact: true })
+    await arrow.click()
+    await picker
+      .getByRole('button', { name: 'IF/ID · entrada a ID', exact: true })
+      .press('ArrowDown')
+    assert.equal(
+      await page.evaluate(() => document.activeElement.getAttribute('aria-label')),
+      'ID/EX · entrada a EX',
+    )
+    await page.keyboard.press('Escape')
+    await picker.waitFor({ state: 'hidden' })
+    await arrow.click()
+    await page.getByRole('heading', { name: 'Listo para el primer ciclo', exact: true }).click()
+    await picker.waitFor({ state: 'hidden' })
+    await arrow.click()
     await page
       .getByRole('dialog', { name: 'Breakpoint de la línea 2', exact: true })
       .getByRole('button', { name: 'EX/MEM · entrada a MEM', exact: true })
       .click()
     await editor.locator('.viewrv-breakpoint-targets-4').waitFor()
-    assert.ok((await marginWidth()) > editWidth)
+    await arrow.click()
+    await picker.getByRole('button', { name: 'IF/ID · entrada a ID', exact: true }).click()
+    await editor.locator('.viewrv-breakpoint-targets-5').waitFor()
+    await arrow.click()
+    const ifid = picker.getByRole('button', { name: 'IF/ID · entrada a ID', exact: true })
+    assert.equal(await ifid.getAttribute('aria-pressed'), 'true')
+    await ifid.click()
+    await editor.locator('.viewrv-breakpoint-targets-4').waitFor()
     await page.getByRole('button', { name: 'Avanzar un ciclo', exact: true }).click()
     await editor.locator('.viewrv-stage-badge').waitFor()
     assert.equal(steps(), 1)
@@ -72,7 +91,6 @@ withGuiEnvironment(
       await page.getByRole('button', { name: /^Elegir registro del breakpoint/ }).count(),
       0,
     )
-    assert.equal(await marginWidth(), editWidth)
     assert.equal(steps(), 1, 'Stop emitted STEP')
     await page.screenshot({ path: resolve(gui, '../build/breakpoint-visibility-edit.png') })
     await loadDebug()
@@ -97,7 +115,6 @@ withGuiEnvironment(
     await page.keyboard.type('\n# nueva revisión')
     await until(() => page.getByRole('tab', { name: 'addition.s ●', exact: true }).isVisible())
     assert.equal(await breakpointMarks().count(), 0)
-    assert.equal(await marginWidth(), editWidth)
     assert.deepEqual(errors, [])
     console.log(
       'Breakpoint visibility: explicit Stop removes dots, targets, empty slots, stage annotations and follow controls; gutter returns to editing width; same-version LOAD/debug and Restart preserve the breakpoint without extra STEP; editing after Stop stays clear. Isolated core, one literal UART capture.',

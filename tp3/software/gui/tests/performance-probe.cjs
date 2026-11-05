@@ -142,13 +142,20 @@ async function installFrame(frame, bindings) {
           id = bindings.representations?.[block]?.[0] || bindings.blocks[block],
           start = now()
         const poll = () => {
-          const render = graph.view.getState(graph.model.getCell(id))
+          const cell = graph.model.getCell(id),
+            render = graph.view.getState(cell),
+            desired = graph.getCellStyle(cell).strokeColor,
+            context = document.createElement('canvas').getContext('2d')
+          const normalize = (color) => {
+            if (!CSS.supports('color', color)) return null
+            context.fillStyle = color
+            return context.fillStyle
+          }
           const painted =
-            render?.style.strokeColor === '#4338ca' &&
-            [render.shape.node, ...render.shape.node.querySelectorAll('[stroke]')].some((node) => {
-              const stroke = getComputedStyle(node).stroke
-              return stroke === 'rgb(67, 56, 202)' || stroke === '#4338ca'
-            })
+            render?.style.strokeColor === desired &&
+            [render.shape.node, ...render.shape.node.querySelectorAll('[stroke]')].some(
+              (node) => normalize(getComputedStyle(node).stroke) === normalize(desired),
+            )
           if (painted)
             requestAnimationFrame(() =>
               requestAnimationFrame(() => post({ kind: 'module-complete', block, at_ms: now() })),

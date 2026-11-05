@@ -35,7 +35,7 @@ Los archivos del renderer están en `src/renderer/`. Los contratos compartidos c
 - `dialogs.css.ts`: conexión, ejemplos, recuperación, preferencias y notificaciones.
 - `docking.css.ts`: integración visual con FlexLayout.
 
-Las áreas pueden importar estilos compartidos concretos, sin ciclos ni importar su propia fachada. Las modificaciones de apariencia se verifican con los recorridos gráficos existentes. Los estilos del visor aprobado siguen siendo un recurso independiente.
+Las áreas pueden importar estilos compartidos concretos, sin ciclos ni importar su propia fachada. Las modificaciones de apariencia se revisan visualmente; los recorridos automatizados comprueban interacción y contenido. Los estilos del visor aprobado siguen siendo un recurso independiente.
 
 ## Pruebas y entornos
 
@@ -46,7 +46,9 @@ npm run check
 npm run test:gui -- formatter-smoke
 ```
 
-`check` comprueba formato, construye con TypeScript estricto, ejecuta las pruebas unitarias y los 24 recorridos funcionales/visuales, secuencialmente. Versiones y logs se guardan en `../build/gui-check/`.
+`check` comprueba formato, construye con TypeScript estricto y ejecuta las pruebas unitarias de GUI. `npm run test:core` ejecuta la suite Python de viewrv con el entorno `../.venv`. `npm run test:gui` ejecuta los 19 recorridos de ventana secuencialmente sobre la construcción existente; sus resultados temporales quedan en `../build/gui-check/`. `npm run check:all` reúne los tres niveles; CI los ejecuta como pasos separados. Los ensayos de paquete y rendimiento se ejecutan aparte según el cambio o la entrega.
+
+Las pruebas conservan la relación con el [catálogo de aceptación](../../docs/software/viewrv/verificacion.md). Comprueban resultados, conservación de datos y acciones del usuario; evitan fijar colores, radios, espaciados exactos o tiempos internos de animación. La apariencia se revisa visualmente. Al cambiar una implementación, conservar la expectativa funcional y adaptar el montaje de la prueba cuando sea necesario.
 
 `tests/gui-fixture.cjs` posee el perfil XDG aislado, el proceso del core y las ventanas de las pruebas funcionales. `withGui` abre una ventana normal; `withGuiEnvironment` permite preparar CLI o archivos antes de abrirla mediante `launch`. Cada recorrido conserva su viewport, uso de GPU, módulo de hardware controlado y plazos de espera. La fixture conserva una captura ante fallo y finaliza las ventanas y el core antes de eliminar exclusivamente su perfil temporal.
 

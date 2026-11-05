@@ -1,4 +1,4 @@
-// Debug visual review, comments 1–4: actual renderer and isolated core; no hardware acceptance.
+// TEST-PC-005/018: follow one source occurrence at a time without implicit CPU steps.
 const { withGuiEnvironment, until: waitUntil } = require('./gui-fixture.cjs')
 const { readFileSync } = require('node:fs')
 const { resolve } = require('node:path')
@@ -16,17 +16,6 @@ withGuiEnvironment(
     await page.getByRole('button', { name: 'IDE', exact: true }).click()
     await menuCommand(page, 'Archivo', 'Abrir ejemplo…')
     const examples = page.getByRole('dialog', { name: 'Abrir ejemplo', exact: true })
-    const title = await examples
-        .getByRole('heading', { name: 'Abrir ejemplo', exact: true })
-        .boundingBox(),
-      search = await examples.getByLabel('Buscar ejemplo', { exact: true }).boundingBox(),
-      entry = await examples
-        .getByRole('button', { name: 'Sumar dos números', exact: true })
-        .boundingBox()
-    assert.ok(
-      Math.abs(title.x - search.x) < 2 && Math.abs(search.x - entry.x) < 2,
-      'Example modal left anchors differ',
-    )
     await examples.getByLabel('Buscar ejemplo', { exact: true }).fill('suma')
     await examples.getByRole('button', { name: 'Sumar dos números', exact: true }).waitFor()
     await examples.getByLabel('Buscar ejemplo', { exact: true }).fill('')
@@ -34,12 +23,6 @@ withGuiEnvironment(
     await examples.getByRole('button', { name: 'Sumar dos números', exact: true }).click()
     await openConnection(page)
     const connection = page.getByRole('dialog', { name: 'Conexión con la placa', exact: true })
-    const selects = await connection
-      .locator('select')
-      .evaluateAll((nodes) => nodes.map((n) => n.getBoundingClientRect().left))
-    assert.equal(selects.length, 2)
-    assert.ok(Math.abs(selects[0] - selects[1]) < 1, 'Board fields not aligned')
-    await page.screenshot({ path: resolve(gui, '../build/debug-review-r5-connection.png') })
     await connection.getByRole('button', { name: 'Preparar Basys 3', exact: true }).click()
     await page.getByText(/Programación confirmada. Comunicación UART comprobada/).waitFor()
     await closeConnection(page)
@@ -58,13 +41,6 @@ withGuiEnvironment(
       component = inspector.getByLabel('Componente del circuito', { exact: true })
     await graph.waitFor()
     assert.equal(await component.inputValue(), '')
-    await component
-      .getByRole('option', { name: 'Componente', exact: true })
-      .waitFor({ state: 'attached' })
-    assert.equal(await inspector.locator('label').count(), 0)
-    assert.equal(await page.getByText(/Solo lectura durante la depuración/).count(), 0)
-    assert.equal(await page.getByRole('button', { name: 'Apariciones…', exact: true }).count(), 0)
-    assert.equal(await page.getByRole('button', { name: 'Breakpoints…', exact: true }).count(), 0)
     assert.equal(
       await page.getByRole('button', { name: /instrucción de la línea/ }).count(),
       0,
@@ -82,37 +58,31 @@ withGuiEnvironment(
       await graph.getByText(`Ciclo observado · ${cycle}`, { exact: true }).waitFor()
       assert.equal(steps(), cycle)
     }
+    assert.equal(steps(), 0, 'Opening diagram debug emitted STEP')
+    await until(() =>
+      page.getByRole('button', { name: 'Reiniciar depuración', exact: true }).isEnabled(),
+    )
+    await page.getByRole('button', { name: 'Reiniciar depuración', exact: true }).click()
+    await until(() =>
+      page.getByRole('button', { name: 'Reiniciar depuración', exact: true }).isEnabled(),
+    )
+    await graph
+      .getByText('Sin captura completa. Los valores no se presumen cero.', { exact: true })
+      .waitFor()
+    assert.equal(steps(), 0, 'Restarting diagram debug emitted STEP')
+    const wide = await page.locator('.monaco-editor .view-lines .view-line').first().innerText()
+    await page.setViewportSize({ width: 1000, height: 771 })
+    await until(
+      async () =>
+        (await page.locator('.monaco-editor .view-lines .view-line').first().innerText()) !== wide,
+    )
+    await page.setViewportSize({ width: 1528, height: 771 })
     await step(1)
     const sourceFirst = page.getByRole('button', {
       name: 'Seguir instrucción de la línea 2',
       exact: true,
     })
     await sourceFirst.waitFor()
-    const stageMargin = page.locator('.margin-view-overlays .viewrv-stage-line-margin').first()
-    await stageMargin.waitFor()
-    const margin = await stageMargin.evaluate((n) => ({
-      width: n.getBoundingClientRect().width,
-      full: n.closest('.margin').getBoundingClientRect().width,
-      color: getComputedStyle(n).backgroundColor,
-    }))
-    assert.ok(
-      Math.abs(margin.width - margin.full) < 1,
-      'Pipeline highlight omits part of the margin',
-    )
-    assert.equal(
-      margin.color,
-      await page
-        .locator('.viewrv-stage-line')
-        .first()
-        .evaluate((n) => getComputedStyle(n).backgroundColor),
-    )
-    const route = await sourceFirst.boundingBox(),
-      stage = await page.locator('.viewrv-stage-badge').first().boundingBox()
-    assert.ok(route.x >= stage.x + stage.width + 4, 'Source follow overlaps the stage badge')
-    assert.ok(
-      Math.abs(route.y + route.height / 2 - (stage.y + stage.height / 2)) < 3,
-      'Source follow not anchored on its line',
-    )
     await sourceFirst.focus()
     await page.keyboard.press('Enter')
     await inspector.getByRole('img', { name: 'Siguiendo una aparición', exact: true }).waitFor()
@@ -187,7 +157,7 @@ withGuiEnvironment(
     assert.equal(steps(), 3, 'Disconnection emitted STEP')
     assert.deepEqual(errors, [])
     console.log(
-      'Round 5: no debug banner, no follow before capture, accessible inline Monaco follow after stage label, replacement and stop of a single occurrence without STEP, preserved keyboard inspection/breakpoints, narrow-split actions, removal after disconnection, component placeholder, aligned example/connection modal fields. Isolated core and literal addition trace.',
+      'Source follow: diagram start/restart without STEP, wrapped source, single occurrence replacement, keyboard controls, narrow-split actions and disconnection. TEST-PC-005/018; controlled UART.',
     )
   },
   { coreModule: 'educational_core', trace: 'addition' },

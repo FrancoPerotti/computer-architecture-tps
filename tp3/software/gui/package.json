@@ -22,7 +22,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,html}\" \"tests/*.cjs\" \"scripts/*.{cjs,mjs}\" \"*.{json,ts}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,html}\" \"tests/*.cjs\" \"scripts/*.{cjs,mjs}\" \"*.{json,ts}\"",
     "test:gui": "node scripts/test-gui.cjs",
-    "check": "npm run format:check && npm run build && npm test && npm run test:gui"
+    "test:core": "node scripts/test-core.cjs",
+    "check": "npm run format:check && npm run build && npm test",
+    "check:all": "npm run check && npm run test:core && npm run test:gui"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",

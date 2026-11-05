@@ -109,25 +109,28 @@ async function until(predicate, timeout = 20000) {
         )
       } else {
         await page.waitForFunction(() => !!window.tp3SessionAdapter)
-        await page.evaluate((block) => window.tp3SessionAdapter.setFocus([block]), ids.block)
-        assert.equal(
-          await page.evaluate((id) => {
+        const stroke = () =>
+          page.evaluate((id) => {
             const g = window.tp3Viewer.viewer.graph
             return g.getCellStyle(g.model.getCell(id)).strokeColor
-          }, ids.root),
-          '#b80078',
+          }, ids.root)
+        const original = await stroke()
+        await page.evaluate((block) => window.tp3SessionAdapter.setFocus([block]), ids.block)
+        const focused = await stroke()
+        assert.notEqual(
+          focused,
+          original,
+          'Participation is not distinguishable from the original drawing',
         )
         for (let index = 0; index < 7; index++) await page.locator('#zoom-in').click()
         await page.evaluate(
           (block) => window.tp3SessionAdapter.selectComponent(block, { centre: true }),
           ids.block,
         )
-        assert.equal(
-          await page.evaluate((id) => {
-            const g = window.tp3Viewer.viewer.graph
-            return g.getCellStyle(g.model.getCell(id)).strokeColor
-          }, ids.root),
-          '#4338ca',
+        assert.notEqual(
+          await stroke(),
+          focused,
+          'Selection is not distinguishable from participation',
         )
         const point = await page.evaluate((id) => {
           const graph = window.tp3Viewer.viewer.graph,

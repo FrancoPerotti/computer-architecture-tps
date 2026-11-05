@@ -67,6 +67,12 @@ withGui('instruction-resource', async ({ page, errors, gui }) => {
     .getByRole('article', { name: 'lui', exact: true })
     .getByText('lui rd, imm20', { exact: true })
     .waitFor()
+  await catalog.getByLabel('Buscar instrucción', { exact: true }).fill('')
+  await catalog.getByRole('button', { name: 'Memoria', exact: true }).click()
+  await catalog.getByRole('article', { name: 'lw', exact: true }).waitFor()
+  assert.equal(await catalog.getByRole('article', { name: 'add', exact: true }).count(), 0)
+  await catalog.getByRole('button', { name: 'Todas', exact: true }).click()
+  await catalog.getByRole('article', { name: 'add', exact: true }).waitFor()
   assert.deepEqual(errors, [])
   console.log(
     'Catalog HTTP, malformed JSON, invalid schema and network failures show an accessible retry; recovery restores all 33 entries and search without unhandled errors.',
