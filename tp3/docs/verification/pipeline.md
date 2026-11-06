@@ -1,7 +1,7 @@
 # TP3 — Pipeline y dependencias
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** diseño vigente; ejecución parcial de unidades.
+- **Estado documental:** unidad, integración local y CPU disponibles según el nivel de cada variante.
 
 ## Propósito y alcance
 
@@ -10,6 +10,11 @@ Este documento reúne las pruebas del avance del pipeline, las lecturas y escrit
 Los resultados arquitectónicos se comparan con las expectativas escritas para cada variante. Los stalls, el solapamiento y la actualización de latches se comprueban durante los ciclos indicados por las tablas y secuencias de estas pruebas. La comparación incluye tanto los valores finales como las condiciones y los momentos en que se producen sus efectos.
 
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
+
+La [integración CPU de #9](verification_plan.md#integracion-cpu-9) registra el
+alcance actual por ID y nivel. Los capítulos de evidencia de entregas locales
+conservan sus resultados y pendientes de aquel momento; el resumen de #9
+actualiza la contribución CPU sin acreditar transporte, timing ni placa.
 
 ## Índice
 
@@ -38,7 +43,7 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 - **Nivel:** CPU y revisión de estructura.
 - **Tipo de estímulo:** legal.
-- **Estado:** esquema de tipos y llenado local implementados; CPU pendiente.
+- **Estado:** Tipos, llenado CPU y revisión estructural disponibles.
 
 **Requisitos:** [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-002](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -128,7 +133,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad RF/WB e integración ID.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** unidad RF/WB e integración ID implementadas.
+- **Estado:** Unidades RF/WB e integración ID disponibles.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-012](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit).
 
@@ -211,7 +216,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding/EX y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad forwarding y proyección de operandos de `ex_stage` implementadas; integración EX completa y CPU pendientes.
+- **Estado:** Forwarding unitario y C025–C029 CPU disponibles.
 
 **Requisitos:** [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -247,9 +252,9 @@ Los cuatro casos de consumidor no elegible combinan una fuente no utilizada o un
 
 ### Ejecución disponible
 
-Los casos `C001` a `C024` se ejecutan en `forwarding_unit_tb` y en una proyección de `ex_stage`. La segunda ejecución comprueba que el valor seleccionado por cada productor llegue al resultado ALU y, para la fuente B, al dato de store. Los casos `C025` a `C029` quedan pendientes hasta la integración EX/CPU con programas.
+Los casos `C001` a `C024` se ejecutan en `forwarding_unit_tb` y en una proyección de `ex_stage`. La segunda ejecución comprueba que el valor seleccionado por cada productor llegue al resultado ALU y, para la fuente B, al dato de store. Los casos `C025` a `C029` ejecutan sus programas en `processor_top_fixture_tb`, con IF/ID/EX reales y MEM/WB modelados. Sus trazas comparan forwarding, resultados, destinos, commits y descarte de instrucciones jóvenes contra expectativas del JSON. El [alcance parcial de #9](verification_plan.md#composicion-parcial-9) mantiene pendiente el nivel CPU con las cinco etapas reales.
 
-La prueba unitaria acredita los selectores y la proyección de `ex_stage` comprueba el dato efectivo en los caminos combinacionales. No acredita todavía la ejecución de los programas ni la integración con el pipeline registrado.
+La prueba unitaria acredita los selectores y la proyección de `ex_stage` comprueba el dato efectivo en los caminos combinacionales. La ejecución adicional observa las dependencias en el pipeline registrado; el store usa el sustituto de MEM y los writebacks usan el de WB.
 
 ### Programas concretos
 
@@ -335,7 +340,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad forwarding e integración hazard.
 - **Tipo de estímulo:** artificial local y legal CPU.
-- **Estado:** unidad forwarding y proyección local de `ex_stage` implementadas; integración hazard y CPU pendientes.
+- **Estado:** C001/C002 locales y C003 CPU disponibles.
 
 **Requisitos:** [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -365,7 +370,7 @@ La prueba local y la ejecución legal verifican obligaciones diferentes; la inye
 
 ### Ejecución disponible
 
-Los casos artificiales `C001` y `C002` se ejecutan en `forwarding_unit_tb` y en la proyección de `ex_stage`. Se comprueba que el load reciente deje cada operando en su valor base y que ese sea el valor que alcanza el camino de ejecución. El caso legal `C003` queda pendiente de la integración del pipeline.
+Los casos artificiales `C001` y `C002` se ejecutan en `forwarding_unit_tb` y en la proyección de `ex_stage`. Se comprueba que el load reciente deje cada operando en su valor base y que ese sea el valor que alcanza el camino de ejecución. El caso `C003` se ejecuta además con IF/ID/EX reales en `processor_top_fixture_tb`: verifica una burbuja, el forwarding de MEM/WB y los commits `x1=7`, `x2=14`. El dato 7 del load lo suministra el modelo de MEM; el acceso real a DMEM y la CPU completa siguen pendientes de #6.
 
 ### Programas concretos
 
@@ -408,7 +413,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad detector, integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad e integración local implementadas; programas de CPU pendientes.
+- **Estado:** Las nueve variantes CPU disponibles.
 
 **Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-002](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-006](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -480,7 +485,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración local decoder/detector y CPU.
 - **Tipo de estímulo:** legal y flags locales controlados.
-- **Estado:** nueve variantes locales implementadas; programa de CPU pendiente.
+- **Estado:** C001–C009 locales y C010 CPU disponibles.
 
 **Requisitos:** [REQ-CPU-013](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-003](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-005](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -572,7 +577,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad hazard y registros interetapa.
 - **Tipo de estímulo:** entradas locales controladas; drain-load-use artificial.
-- **Estado:** bancos de árbitro y composición local implementados; CPU pendiente.
+- **Estado:** Las 21 variantes unitarias/locales disponibles; acciones reales observadas también en sesiones CPU.
 
 **Requisitos:** [REQ-CPU-009](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -704,7 +709,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración hazard.
 - **Tipo de estímulo:** legal; combinación EX/ID local indicada.
-- **Estado:** proyección local C006–C009 implementada; programas y efectos reales pendientes.
+- **Estado:** C001–C005 CPU y C006–C009 locales con commits reales disponibles.
 
 **Requisitos:** [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -723,9 +728,10 @@ Un observador en el flanco verifica que el dato de store 3 y el valor WB 11
 anteriores siguen disponibles con sus flags de elegibilidad, aunque los
 registros se actualicen después. La expectativa `older_commits` se proyecta
 localmente sobre esa disponibilidad; no se escribe RF ni DMEM y no se acredita
-el commit real o su cuenta. La captura de metadatos y los programas C001–C005
-siguen pendientes de CPU. Los fixtures de candidatos y payloads no acreditan
-alcanzabilidad de esas coincidencias en una sesión legal.
+el commit real o su cuenta. En #9, `processor_top_tb` agrega los programas C001–C005 y
+`processor_frontier_tb` verifica C006–C009 con los candidatos calculados por EX/ID,
+metadatos y los commits reales de RF/DMEM anteriores. Sus payloads iniciales
+son artificiales y no acreditan alcanzabilidad de esas coincidencias en una sesión legal.
 
 ### Qué comprueba y por qué
 
@@ -781,7 +787,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad MEM/WB y CPU.
 - **Tipo de estímulo:** legal y entradas locales controladas.
-- **Estado:** frontera MEM/WB C001–C007 y control WB C003–C007 implementados; selección MEM y CPU pendientes.
+- **Estado:** C001–C007 unitarios y C008–C011 CPU disponibles; transporte HOLD se consolida en sistema.
 
 **Requisitos:** [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -791,16 +797,16 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 `mem_wb_boundary_tb` ejecuta C001–C007 al nivel Unidad. C001/C002 inyectan
 el valor preseleccionado en la entrada de `mem_wb_register` y contrastan su
-almacenamiento con `memwb_next_wb_value`. La selección real entre EX y DMEM
-sigue pendiente del mux de MEM; este fixture no la implementa como RTL del producto.
+almacenamiento con `memwb_next_wb_value`. Ese banco acredita el registro. En #9, `processor_frontier_tb` agrega
+la selección del mux MEM real con sus dos operandos aislados, al nivel Unidad.
 
 C003–C007 precargan el valor 7 y presentan la entrada futura 99. El observador
 de frontera comprueba captura o retención de los seis campos y detecta el
 consumo accidental del valor nuevo en el mismo flanco. `wb_stage_tb` aplica
 además el payload MEM/WB anterior al RTL de WB y comprueba las cuatro guardas de
 `rf_write_fire`; la escritura integrada en RF y su cuenta permanecen fuera de
-esta unidad. Los programas C008–C011 y sus HOLD UART siguen pendientes de
-CPU/sistema. Las expectativas canónicas conservan su significado completo.
+esta unidad. En #9, C008–C011 agregan programas, commits únicos y HOLD en CPU;
+la coordinación y duración de respuestas UART se consolidan en sistema. Las expectativas canónicas conservan su significado completo.
 
 ### Qué comprueba y por qué
 
@@ -876,7 +882,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración CPU/control.
 - **Tipo de estímulo:** secuencias de CPU y comandos elegibles, con datos iniciales de fixture explícitos; no se fuerzan candidatos ni latches.
-- **Estado:** diseñada, sin ejecutar contra RTL.
+- **Estado:** Las veinte variantes CPU disponibles.
 
 **Requisitos:** [REQ-CPU-010](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-004](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-010](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -1010,7 +1016,7 @@ C017–C025 usan `MEM_OP_LW`; los destinos y fuentes se especifican individualme
 2. Esperar la estabilización combinacional sin reloj ni flanco.
 3. Comparar `load_use_stall` con su expectativa mediante una aserción SystemVerilog que también rechaza X/Z.
 
-El banco `load_use_detector_tb` usa `USE_DECODER=0` en este grupo y debe aprobar los 25 casos. La conexión al decoder real se comprueba por separado en TEST-PIPE-006. TEST-PIPE-005 conserva pendientes sus nueve programas y la comprobación de exactamente un stall, avance del load, bubble y retención de PC/IF/ID. No se acredita validación física.
+El banco `load_use_detector_tb` usa `USE_DECODER=0` en este grupo y debe aprobar los 25 casos. La conexión al decoder real se comprueba por separado en TEST-PIPE-006. La integración #9 agrega los nueve programas de TEST-PIPE-005 con exactamente un stall, avance del load, bubble y retención de PC/IF/ID. No se acredita validación física.
 
 <a id="test-pipe-012"></a>
 
@@ -1071,6 +1077,8 @@ No se calcula la elegibilidad de WB en el testbench: la habilitación y los sele
 - **Nivel:** integración local `if_stage`.
 - **Tipo de estímulo:** acciones locales, escritura de IMEM e inyecciones artificiales de PC y tamaño.
 - **Estado:** banco de integración implementado.
+
+**Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-021](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-022](../requirements.md#5-memorias-y-carga-de-programas), con alcance local de IF.
 
 **Contratos:** [Etapa IF](../architecture/cpu/stage_if.md); [control del PC](../architecture/cpu/control_and_hazards.md#pc); [composición](../architecture/system_composition.md); [reset](../architecture/platform/reset_integration.md); [preparación](../architecture/session/session_preparation.md).
 
@@ -1341,7 +1349,7 @@ controles locales y la integración correspondientes.
 
 <a id="acreditacion-local-7"></a>
 
-## Acreditación local de #7 y pendientes de integración
+## Evidencia histórica de #7 y pendientes de aquella entrega
 
 La rama incorpora las entregas revisadas de #3 y #4 desde la base `13d934b`.
 Se conservan los IDs publicados por #4 para detector load-use e integraciones

@@ -1,7 +1,7 @@
 # TP3 — Sesión y ejecución
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** catálogo diseñado; ejecución parcial en unidad e integración local de sesión.
+- **Estado documental:** unidad, integración local y CPU disponibles según el nivel de cada variante.
 
 ## Propósito y alcance
 
@@ -10,6 +10,11 @@ Este documento reúne las pruebas del control global de ejecución y preparació
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
 
 En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_request`, `step_request` y las condiciones de sus productores. Observa `command_accepted`, `load_start`, `cpu_cycle_fire`, `image_publish`, las salidas Moore y el código de estado. En integración, `Execution Control` recibe las acciones de fault y los cuatro próximos `valid` desde sus productores y forma localmente `fault_confirm` y `pipeline_empty_next`.
+
+La [integración CPU de #9](verification_plan.md#integracion-cpu-9) registra el
+alcance actual por ID y nivel. Los capítulos de evidencia de entregas locales
+conservan sus resultados y pendientes de aquel momento; el resumen de #9
+actualiza la contribución CPU sin acreditar transporte, timing ni placa.
 
 ## Índice
 
@@ -31,7 +36,7 @@ En unidad de `Global FSM`, el banco presenta `reset`, `load_request`, `run_reque
 
 - **Nivel:** unidad global_fsm e integración execution_control.
 - **Tipo de estímulo:** fixtures de estado y solicitudes locales; cruces simultáneos artificiales.
-- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
+- **Estado:** Las 153 variantes unitarias/locales de FSM y control disponibles.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline).
 
@@ -99,7 +104,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad session_preparation e integración CPU.
 - **Tipo de estímulo:** legal con estado previo del fixture.
-- **Estado:** unidad e integración local ejecutadas con recursos modelados; CPU y Controller de producción pendientes.
+- **Estado:** Preparación de recursos CPU disponible; transporte de C021 se consolida en sistema.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -163,7 +168,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** integración local disponible; CPU y sistema pendientes.
+- **Estado:** Las cuatro variantes CPU disponibles.
 
 **Requisitos:** [REQ-EXEC-006](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-008](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-010](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-011](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-TIM-001](../requirements.md#9-clock-fpga-y-timing).
 
@@ -250,7 +255,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración ID/EX.
 - **Tipo de estímulo:** legal salvo fetch desalineado artificial.
-- **Estado:** integración local disponible; CPU y sistema pendientes.
+- **Estado:** Las once variantes CPU disponibles, con fixtures de PC para C010/C011.
 
 **Requisitos:** [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -324,7 +329,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
+- **Estado:** Las cuatro variantes CPU disponibles.
 
 **Requisitos:** [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones), [REQ-EXEC-001](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-002](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-004](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-005](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-013](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -405,7 +410,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU y unidad global_fsm.
 - **Tipo de estímulo:** recorridos legales y fixtures locales artificiales.
-- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
+- **Estado:** C001–C005 CPU y C006/C007 artificiales unitarios disponibles.
 
 **Requisitos:** [REQ-EXEC-003](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -476,7 +481,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** ejecución disponible en unidad Global FSM; integración pendiente.
+- **Estado:** Las cuatro variantes CPU disponibles.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit).
 
@@ -534,7 +539,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** integración local disponible; CPU y sistema pendientes.
+- **Estado:** Las cuatro variantes CPU disponibles; UART y tiempo físico pendientes de sistema.
 
 **Requisitos:** [REQ-EXEC-012](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-014](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DOC-004](../requirements.md#10-documentación-y-trazabilidad), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit).
 
@@ -616,7 +621,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad contador y CPU.
 - **Tipo de estímulo:** legal; fixture próximo al wrap artificial.
-- **Estado:** integración local disponible; CPU y sistema pendientes.
+- **Estado:** Unidad de contador y comparación CPU C008 disponibles.
 
 **Requisitos:** [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-009](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline).
 
@@ -682,7 +687,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración CPU/control.
 - **Tipo de estímulo:** legal y coincidencias locales.
-- **Estado:** integración local disponible; CPU y sistema pendientes.
+- **Estado:** Las nueve variantes CPU y prioridades locales disponibles.
 
 **Requisitos:** [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-015](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 

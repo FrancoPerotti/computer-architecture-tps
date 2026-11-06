@@ -109,6 +109,24 @@ La selección de metadatos, sus registros de causa/PC, el tamaño confirmado, el
 
 `loader` y `session_preparation` son hijos de `processor_top`. Reciben de `execution_control` los controles de inicio, carga y preparación, y devuelven sus condiciones de finalización.
 
+### Realización de processor_top en #9
+
+`processor_top.sv` instancia las cinco etapas de producción y los cuatro
+registros interetapa. IF/ID usa los payloads de `system_pkg`; EX recibe
+`idex`, `exmem_producer` y `memwb_producer` y forma `exmem_input`; MEM recibe
+`exmem` y forma `memwb_input`; WB consume `memwb` y entrega
+`rf_write_register`, dato, habilitación y selecciones de bypass a ID.
+Los controles locales del top aplican las ocho acciones de hazards a los
+registros; sus próximos `valid` retornan a la reducción de vacío de
+`execution_control`. La autorización de ciclo depende del estado actual.
+
+Loader y Session Preparation acceden a IMEM y a las marcas DMEM por sus
+interfaces aprobadas. Las assertions detectan colisiones IMEM/fetch y
+CPU/Debug sin introducir efectos arquitectónicos. Cada instancia tiene un
+comentario que identifica su función. Debug expone los campos actuales sin
+copiar ni registrar snapshots. La [verificación CPU](../verification/verification_plan.md#integracion-cpu-9)
+distingue programas legales, estado inicial de fixture y combinaciones locales.
+
 ## Puertos y parámetros de los tops
 
 ### basys3_top

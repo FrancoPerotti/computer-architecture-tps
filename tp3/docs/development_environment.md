@@ -176,10 +176,11 @@ make check
 ~~~
 
 `make check` comprueba formato, lint, esquemas y catálogo, las pruebas de
-infraestructura y de software de PC, y todos los casos de simulación implementados.
+infraestructura y de software de PC, la revisión estructural del CPU y todos los
+casos de simulación implementados.
 No modifica fuentes. Para aplicar el formato explícitamente se usa `make format`.
 También están disponibles `format-check`, `lint`, `validate`, `test-infra`,
-`test-software`, `test-rtl` y `test`.
+`test-software`, `test-rtl`, `lint-processor`, `review-cpu` y `test`.
 `make test` reúne infraestructura, software de PC y simulaciones RTL.
 
 El formato y lint abarcan fuentes propias bajo `rtl/`, `tb/`, `scripts/` y
@@ -193,7 +194,12 @@ tres consumidores de capacidad IMEM se analizan con cuatro, 1000 y 1024 bytes;
 aritméticos de fetch y acceso de datos también cubren el extremo `2^32`, sin
 elaborar una memoria física de ese tamaño.
 El catálogo de pruebas conserva sus bancos y fuentes de simulación; no define el
-alcance de lint RTL.
+alcance de lint RTL. `processor_top` se analiza con las cinco etapas reales
+en REFERENCE, ALT_1000 y mínimo genérico. `review-cpu` elabora esos perfiles
+y contrasta XML, inventario y recursos mediante
+`tools/verification/check_cpu_structure.py`, también incluido en Ruff. Los
+reportes estructurales complementan la simulación y la revisión manual de
+[la integración #9](verification/verification_plan.md#integracion-cpu-9).
 
 Ruff comprueba errores básicos, imports y presencia/formato básico de docstrings.
 La exigencia de documentar también funciones privadas y anidadas se revisa donde
@@ -297,7 +303,12 @@ por sí sola. Un fallo de descarga o construcción detiene los controles, sin
 cambiar de imagen como alternativa. El reporte `image-source.json` registra el
 modo, la referencia y el motivo de selección; se conservan también los logs de
 la descarga cuando corresponda. El job tiene un límite de duración y la fase de
-comprobaciones un límite adicional que también contiene una compilación detenida.
+comprobaciones un límite adicional de treinta minutos para la regresión ampliada
+del CPU, que también contiene una compilación detenida. El job dispone de 45
+minutos para incluir descarga/construcción de herramientas y artifacts. Los cuatro
+casos CPU de TEST-EXEC-007 admiten 60 segundos por la comparación de dos sesiones
+completas; los demás límites individuales se conservan. Agotar cualquiera de esos
+límites se reporta como error.
 
 Los informes y logs se conservan como artifacts incluso al fallar. El resultado
 final distingue controles satisfactorios, cambio no aplicable y errores; un fallo
