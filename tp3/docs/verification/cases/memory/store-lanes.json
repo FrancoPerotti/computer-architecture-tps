@@ -1,0 +1,393 @@
+{
+  "id": "TEST-MEM-001",
+  "source": "memory.md#test-mem-001",
+  "case_count": 18,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/mem_stage_tb.sv"
+      ],
+      "top": "mem_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 10,
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": "64'd4"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-MEM-001/C001",
+      "inputs": {
+        "op": "SB",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "0001",
+        "physical_after": "78 B2 C3 D4",
+        "bitmap_after": "0001"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C002",
+      "inputs": {
+        "op": "SB",
+        "EA": 1,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "0010",
+        "physical_after": "A1 78 C3 D4",
+        "bitmap_after": "0010"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C003",
+      "inputs": {
+        "op": "SB",
+        "EA": 2,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "0100",
+        "physical_after": "A1 B2 78 D4",
+        "bitmap_after": "0100"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C004",
+      "inputs": {
+        "op": "SB",
+        "EA": 3,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "1000",
+        "physical_after": "A1 B2 C3 78",
+        "bitmap_after": "1000"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C005",
+      "inputs": {
+        "op": "SH",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "0011",
+        "physical_after": "78 56 C3 D4",
+        "bitmap_after": "0011"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C006",
+      "inputs": {
+        "op": "SH",
+        "EA": 2,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "1100",
+        "physical_after": "A1 B2 78 56",
+        "bitmap_after": "1100"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C007",
+      "inputs": {
+        "op": "SW",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "0000"
+      },
+      "expected": {
+        "mask": "1111",
+        "physical_after": "78 56 34 12",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C008",
+      "inputs": {
+        "op": "SB",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "0001",
+        "physical_after": "78 B2 C3 D4",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C009",
+      "inputs": {
+        "op": "SB",
+        "EA": 1,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "0010",
+        "physical_after": "A1 78 C3 D4",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C010",
+      "inputs": {
+        "op": "SB",
+        "EA": 2,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "0100",
+        "physical_after": "A1 B2 78 D4",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C011",
+      "inputs": {
+        "op": "SB",
+        "EA": 3,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "1000",
+        "physical_after": "A1 B2 C3 78",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C012",
+      "inputs": {
+        "op": "SH",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "0011",
+        "physical_after": "78 56 C3 D4",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C013",
+      "inputs": {
+        "op": "SH",
+        "EA": 2,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "1100",
+        "physical_after": "A1 B2 78 56",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C014",
+      "inputs": {
+        "op": "SW",
+        "EA": 0,
+        "data": "0x12345678",
+        "physical_before": "A1 B2 C3 D4",
+        "bitmap_before": "1111"
+      },
+      "expected": {
+        "mask": "1111",
+        "physical_after": "78 56 34 12",
+        "bitmap_after": "1111"
+      },
+      "kind": "vector",
+      "origins": [
+        "Lanes ymarcas"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C015",
+      "inputs": {
+        "op": "SB",
+        "EA": 2,
+        "data": 0,
+        "bitmap_before": "0000",
+        "physical_before": "A1 B2 C3 D4"
+      },
+      "expected": {
+        "physical_after": "A1 B2 00 D4",
+        "bitmap_after": "0100",
+        "used_addresses": [
+          2
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Store de cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C016",
+      "inputs": {
+        "op": "SW",
+        "EA": 0,
+        "data": "0x12345678",
+        "bitmap_before": "1111",
+        "physical_before": "A1 B2 C3 D4",
+        "disabled_guard": "EXMEM_valid0"
+      },
+      "expected": {
+        "physical_after": "A1 B2 C3 D4",
+        "bitmap_after": "1111",
+        "store_fire": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Guardas sobre SW"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C017",
+      "inputs": {
+        "op": "SW",
+        "EA": 0,
+        "data": "0x12345678",
+        "bitmap_before": "1111",
+        "physical_before": "A1 B2 C3 D4",
+        "disabled_guard": "fire0"
+      },
+      "expected": {
+        "physical_after": "A1 B2 C3 D4",
+        "bitmap_after": "1111",
+        "store_fire": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Guardas sobre SW"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-001/C018",
+      "inputs": {
+        "op": "SW",
+        "EA": 0,
+        "data": "0x12345678",
+        "bitmap_before": "1111",
+        "physical_before": "A1 B2 C3 D4",
+        "disabled_guard": "reset1"
+      },
+      "expected": {
+        "physical_after": "A1 B2 C3 D4",
+        "bitmap_after": "1111",
+        "store_fire": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Guardas sobre SW"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

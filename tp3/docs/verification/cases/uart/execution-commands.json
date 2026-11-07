@@ -1,0 +1,130 @@
+{
+  "id": "TEST-UART-010",
+  "source": "uart_debug.md#test-uart-010",
+  "case_count": 5,
+  "reuse_groups": [
+    "TEST-UART-003",
+    "TEST-UART-011"
+  ],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-010/C001",
+      "inputs": {
+        "mode": "RUN",
+        "result": "FINISHED",
+        "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); halt",
+        "initial_RF_zero": true
+      },
+      "expected": {
+        "RUN_accept": "02 01",
+        "last_header": "02 0A",
+        "snapshot_state": "FINISHED",
+        "older_word4": 3
+      },
+      "kind": "transaction",
+      "origins": [
+        "Intercambio normal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-010/C002",
+      "inputs": {
+        "mode": "STEP",
+        "result": "FINISHED",
+        "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); halt",
+        "initial_RF_zero": true,
+        "after_terminal_Debug": "send_one_STEP_with_same_image_after_last_Stop"
+      },
+      "expected": {
+        "RUN_accept": null,
+        "last_header": "03 02",
+        "snapshot_state": "FINISHED",
+        "older_word4": 3,
+        "new_session_first_STEP": {
+          "one_cycle": true,
+          "snapshot_equals_first_STEP_from_READY": true,
+          "DONE_and_debug_hold_on_cpu_cycle_fire": true,
+          "prepare_active_may_be_one_before_cycle": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Intercambio normal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-010/C003",
+      "inputs": {
+        "mode": "RUN",
+        "result": "FAULT",
+        "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); word0",
+        "initial_RF_zero": true
+      },
+      "expected": {
+        "RUN_accept": "02 01",
+        "last_header": "02 0B",
+        "snapshot_state": "FAULT",
+        "older_word4": 3,
+        "fault_pc": 16,
+        "cause": 2
+      },
+      "kind": "transaction",
+      "origins": [
+        "Intercambio normal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-010/C004",
+      "inputs": {
+        "mode": "STEP",
+        "result": "FAULT",
+        "program": "addi x2,x0,3; addi x8,x0,11; addi x9,x0,12; sw x2,4(x0); word0",
+        "initial_RF_zero": true,
+        "after_terminal_Debug": "send_one_STEP_with_same_image_after_last_Stop"
+      },
+      "expected": {
+        "RUN_accept": null,
+        "last_header": "03 02",
+        "snapshot_state": "FAULT",
+        "older_word4": 3,
+        "fault_pc": 16,
+        "cause": 2,
+        "new_session_first_STEP": {
+          "one_cycle": true,
+          "snapshot_equals_first_STEP_from_READY": true,
+          "DONE_and_debug_hold_on_cpu_cycle_fire": true,
+          "prepare_active_may_be_one_before_cycle": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Intercambio normal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-010/C005",
+      "inputs": {
+        "mode": "RUN",
+        "program": "halt",
+        "image_size": 4
+      },
+      "expected": {
+        "response_order": [
+          "02 01",
+          "02 0A+Debug"
+        ],
+        "terminal_once": true
+      },
+      "kind": "transaction",
+      "origins": [
+        "RUNmuyrápida"
+      ],
+      "status": "pending"
+    }
+  ]
+}

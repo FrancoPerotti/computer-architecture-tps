@@ -1,0 +1,255 @@
+{
+  "id": "TEST-UART-014",
+  "source": "uart_debug.md#test-uart-014",
+  "case_count": 10,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-014/C001",
+      "inputs": {
+        "profile": "REFERENCE",
+        "N": 1024,
+        "content": "ADDI x1,x0,i;últimoHALT",
+        "physical_UART": "19200/8N1",
+        "clock_Hz": 50000000
+      },
+      "expected": {
+        "RX_processing_latency_clocks": 1,
+        "RX_peak_occupancy": 1,
+        "prepare_clocks": 2049,
+        "LOAD_done_deadline_ms": 734.3333333333334,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Carga continua máxima"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C002",
+      "inputs": {
+        "profile": "REFERENCE",
+        "request": "CHECK_READY",
+        "state": "NO_IMAGE"
+      },
+      "expected": {
+        "response": "05 03",
+        "bound_clocks": 52182,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Respuesta breve"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C003",
+      "inputs": {
+        "profile": "REFERENCE",
+        "K": 0,
+        "program": "halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 230,
+        "fixed_bound_clocks": 6001154,
+        "list_bound_clocks": 0,
+        "total_bound_clocks": 6003202,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C004",
+      "inputs": {
+        "profile": "REFERENCE",
+        "K": 1,
+        "program": "addi x2,x0,0; sb x2,0(x0); halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 235,
+        "fixed_bound_clocks": 6001154,
+        "list_bound_clocks": 158562,
+        "total_bound_clocks": 6133617,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C005",
+      "inputs": {
+        "profile": "REFERENCE",
+        "K": 2048,
+        "program": "addi x1,x0,0; addi x2,x0,0; addi x3,x0,C/4; sw x2,0(x1); addi x1,x1,4; addi x3,x3,-1; bne x3,x0,-12; halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 10470,
+        "fixed_bound_clocks": 6001154,
+        "list_bound_clocks": 267118067,
+        "total_bound_clocks": 273093122,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C006",
+      "inputs": {
+        "profile": "ALT_1000",
+        "N": 1000,
+        "content": "ADDI x1,x0,i;últimoHALT",
+        "physical_UART": "19200/8N1",
+        "clock_Hz": 50000000
+      },
+      "expected": {
+        "RX_processing_latency_clocks": 1,
+        "RX_peak_occupancy": 1,
+        "prepare_clocks": 1001,
+        "LOAD_done_deadline_ms": 721.8333333333334,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Carga continua máxima"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C007",
+      "inputs": {
+        "profile": "ALT_1000",
+        "request": "CHECK_READY",
+        "state": "NO_IMAGE"
+      },
+      "expected": {
+        "response": "05 03",
+        "bound_clocks": 52182,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Respuesta breve"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C008",
+      "inputs": {
+        "profile": "ALT_1000",
+        "K": 0,
+        "program": "halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 230,
+        "fixed_bound_clocks": 6000106,
+        "list_bound_clocks": 0,
+        "total_bound_clocks": 6001106,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C009",
+      "inputs": {
+        "profile": "ALT_1000",
+        "K": 1,
+        "program": "addi x2,x0,0; sb x2,0(x0); halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 235,
+        "fixed_bound_clocks": 6000106,
+        "list_bound_clocks": 157514,
+        "total_bound_clocks": 6131521,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-014/C010",
+      "inputs": {
+        "profile": "ALT_1000",
+        "K": 1000,
+        "program": "addi x1,x0,0; addi x2,x0,0; addi x3,x0,C/4; sw x2,0(x1); addi x1,x1,4; addi x3,x3,-1; bne x3,x0,-12; halt",
+        "memory_values": 0
+      },
+      "expected": {
+        "response_length": 5230,
+        "fixed_bound_clocks": 6000106,
+        "list_bound_clocks": 130442099,
+        "total_bound_clocks": 136416106,
+        "same_edge_combinational_paths": {
+          "functional_period_ns": 20,
+          "evidence_required": "RTL simulation and static timing; not established by this manifest",
+          "acyclic": true
+        }
+      },
+      "kind": "transaction",
+      "origins": [
+        "Debugporocupación"
+      ],
+      "status": "pending"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 
 import json
 import subprocess
+import tempfile
 from pathlib import Path
 
 # Rutas compartidas resueltas desde el módulo para admitir cualquier directorio de trabajo.
@@ -110,23 +111,106 @@ def index_manifest(manifest):
     return groups, cases
 
 
-def load_manifest(path=MANIFEST):
-    """Valida el esquema, carga JSON sin claves repetidas y comprueba su coherencia."""
+def _read_document(path):
+    """Lee un documento JSON y conserva su ruta en los diagnósticos."""
+    try:
+        with path.open(encoding="utf-8") as source:
+            return json.load(
+                source,
+                object_pairs_hook=reject_duplicate_keys,
+                parse_constant=reject_constant,
+            )
+    except (OSError, ValueError) as error:
+        raise ValueError(f"cannot read catalogue file {path}: {error}") from error
+
+
+def _read_catalogue(path):
+    """Resuelve archivos de grupos y listas de casos, conservando su orden y fuentes."""
     path = Path(path).resolve()
-    validation = subprocess.run(
-        ["check-jsonschema", "--schemafile", str(SCHEMA), str(path)],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    directory = path.parent
+    sources = {path}
+
+    def reference(entry, owner, stack):
+        """Resuelve una referencia local dentro del directorio del catálogo."""
+        if set(entry) != {"file"} or not isinstance(entry["file"], str) or not entry["file"]:
+            raise ValueError(f"invalid file reference in {owner}: expected only a file path")
+        filename = Path(entry["file"])
+        target = (owner.parent / filename).resolve()
+        if filename.is_absolute() or not target.is_relative_to(directory):
+            raise ValueError(f"catalogue reference leaves its directory: {entry['file']}")
+        if target.suffix != ".json":
+            raise ValueError(f"catalogue reference must name a JSON file: {entry['file']}")
+        if target in stack:
+            raise ValueError(f"cyclic catalogue reference: {target}")
+        sources.add(target)
+        return _read_document(target), target, (*stack, target)
+
+    def cases(entries, owner, stack):
+        """Expande listas de casos sin interpretar referencias dentro de sus datos."""
+        expanded = []
+        for entry in entries:
+            if isinstance(entry, dict) and "file" in entry:
+                document, target, child_stack = reference(entry, owner, stack)
+                if not isinstance(document, list):
+                    raise ValueError(f"case file must contain an array: {target}")
+                expanded.extend(cases(document, target, child_stack))
+            else:
+                expanded.append(entry)
+        return expanded
+
+    def group(entry, owner, stack):
+        """Carga un grupo y sus listas externas de casos."""
+        if isinstance(entry, dict) and "file" in entry:
+            document, target, child_stack = reference(entry, owner, stack)
+            if not isinstance(document, dict):
+                raise ValueError(f"group file must contain an object: {target}")
+            return group(document, target, child_stack)
+        if isinstance(entry, dict) and isinstance(entry.get("cases"), list):
+            entry["cases"] = cases(entry["cases"], owner, stack)
+        return entry
+
+    manifest = _read_document(path)
+    if not isinstance(manifest, dict):
+        raise ValueError(f"manifest must contain an object: {path}")
+    if isinstance(manifest.get("groups"), list):
+        manifest["groups"] = [group(entry, path, (path,)) for entry in manifest["groups"]]
+    return manifest, sources
+
+
+def read_manifest(path=MANIFEST):
+    """Carga el catálogo completo con biblioteca estándar, sin validar su esquema."""
+    return _read_catalogue(path)[0]
+
+
+def manifest_sources(path=MANIFEST):
+    """Enumera el índice y todos los archivos de datos que consume el catálogo."""
+    return _read_catalogue(path)[1]
+
+
+def load_manifest(path=MANIFEST):
+    """Resuelve archivos, valida el catálogo completo y comprueba su coherencia."""
+    manifest = read_manifest(path)
+    with tempfile.TemporaryDirectory(prefix="tp3-manifest-") as temporary:
+        resolved = Path(temporary) / "manifest.json"
+        schema_path = Path(temporary) / "schema.json"
+        schema = _read_document(SCHEMA)
+        # La forma resuelta exige grupos/casos completos y conserva errores por campo.
+        schema["properties"]["groups"]["items"] = {"$ref": "#/$defs/group"}
+        schema["$defs"]["group"]["properties"]["cases"]["items"] = {"$ref": "#/$defs/case"}
+        schema_path.write_text(json.dumps(schema), encoding="utf-8")
+        resolved.write_text(
+            json.dumps(manifest, ensure_ascii=False, allow_nan=False), encoding="utf-8"
+        )
+        validation = subprocess.run(
+            ["check-jsonschema", "--schemafile", str(schema_path), str(resolved)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
     if validation.returncode:
         diagnostic = (validation.stdout + validation.stderr).strip()
+        diagnostic = diagnostic.replace(str(resolved), str(Path(path).resolve()))
+        diagnostic = diagnostic.replace(str(schema_path), str(SCHEMA))
         raise ValueError(f"manifest validation failed:\n{diagnostic}")
-    with path.open(encoding="utf-8") as source:
-        manifest = json.load(
-            source,
-            object_pairs_hook=reject_duplicate_keys,
-            parse_constant=reject_constant,
-        )
     index_manifest(manifest)
     return manifest

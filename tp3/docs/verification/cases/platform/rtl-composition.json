@@ -1,0 +1,27 @@
+{
+  "id": "TEST-PLAT-003",
+  "source": "platform.md#test-plat-003",
+  "case_count": 1,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-PLAT-003/C001",
+      "inputs": {
+        "scope": "51bloques+tops+transporte+configuración",
+        "revision": "commit delbuild futuro"
+      },
+      "expected": {
+        "contracts_matched": true,
+        "combinational_cycles": 0,
+        "registered_boundaries": 4,
+        "new_redundant_arch_state": false
+      },
+      "kind": "review",
+      "origins": [
+        "Revisión completa RTL"
+      ],
+      "status": "pending"
+    }
+  ]
+}

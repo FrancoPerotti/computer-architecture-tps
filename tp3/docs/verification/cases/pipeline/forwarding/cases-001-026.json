@@ -1,0 +1,1352 @@
+[
+  {
+    "id": "TEST-PIPE-003/C001",
+    "inputs": {
+      "source": "A",
+      "producer_matches": "ninguno",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C002",
+    "inputs": {
+      "source": "A",
+      "producer_matches": "EXMEM",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "01",
+      "effective_value": 7,
+      "forward_a_sel": 1,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C003",
+    "inputs": {
+      "source": "A",
+      "producer_matches": "MEMWB",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 2,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C004",
+    "inputs": {
+      "source": "A",
+      "producer_matches": "ambos",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "01",
+      "effective_value": 7,
+      "forward_a_sel": 1,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C005",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "EXMEM",
+      "guard": "valid0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "MEMWB elegible coincidente",
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 0,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 2,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C006",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "EXMEM",
+      "guard": "reg_write0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "MEMWB elegible coincidente",
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 0,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 2,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C007",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "EXMEM",
+      "guard": "rd0",
+      "src_index": 0,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 0,
+      "other_producer": "sin match",
+      "word": "0x002001B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 0,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 0,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C008",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "MEMWB",
+      "guard": "valid0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "sin match",
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 0,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C009",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "MEMWB",
+      "guard": "reg_write0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "sin match",
+      "word": "0x002081B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 0
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C010",
+    "inputs": {
+      "source": "A",
+      "producer_under_test": "MEMWB",
+      "guard": "rd0",
+      "src_index": 0,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 0,
+      "other_producer": "sin match",
+      "word": "0x002001B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 0,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 0,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C011",
+    "inputs": {
+      "source": "A",
+      "consumer_guard": "source_unused",
+      "producer_matches": "ambos",
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x000081B7",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Consumidor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C012",
+    "inputs": {
+      "source": "A",
+      "consumer_guard": "consumer_invalid",
+      "producer_matches": "ambos",
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x002081B3",
+      "idex_valid": 0,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Consumidor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C013",
+    "inputs": {
+      "source": "B",
+      "producer_matches": "ninguno",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C014",
+    "inputs": {
+      "source": "B",
+      "producer_matches": "EXMEM",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "01",
+      "effective_value": 7,
+      "forward_a_sel": 0,
+      "forward_b_sel": 1
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C015",
+    "inputs": {
+      "source": "B",
+      "producer_matches": "MEMWB",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 0,
+      "forward_b_sel": 2
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C016",
+    "inputs": {
+      "source": "B",
+      "producer_matches": "ambos",
+      "consumer_valid": 1,
+      "source_used": 1,
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "01",
+      "effective_value": 7,
+      "forward_a_sel": 0,
+      "forward_b_sel": 1
+    },
+    "kind": "vector",
+    "origins": [
+      "Selección disponible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C017",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "EXMEM",
+      "guard": "valid0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "MEMWB elegible coincidente",
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 0,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 0,
+      "forward_b_sel": 2
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C018",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "EXMEM",
+      "guard": "reg_write0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "MEMWB elegible coincidente",
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 0,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "10",
+      "effective_value": 5,
+      "forward_a_sel": 0,
+      "forward_b_sel": 2
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C019",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "EXMEM",
+      "guard": "rd0",
+      "src_index": 0,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 0,
+      "other_producer": "sin match",
+      "word": "0x000101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 0,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 31,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 0,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C020",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "MEMWB",
+      "guard": "valid0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "sin match",
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 0,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C021",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "MEMWB",
+      "guard": "reg_write0",
+      "src_index": 1,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 3,
+      "other_producer": "sin match",
+      "word": "0x001101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 0
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C022",
+    "inputs": {
+      "source": "B",
+      "producer_under_test": "MEMWB",
+      "guard": "rd0",
+      "src_index": 0,
+      "ex_value": 7,
+      "wb_value": 5,
+      "base": 0,
+      "other_producer": "sin match",
+      "word": "0x000101B3",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 31,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 0,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 0,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Productor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C023",
+    "inputs": {
+      "source": "B",
+      "consumer_guard": "source_unused",
+      "producer_matches": "ambos",
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x00110193",
+      "idex_valid": 1,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Consumidor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C024",
+    "inputs": {
+      "source": "B",
+      "consumer_guard": "consumer_invalid",
+      "producer_matches": "ambos",
+      "base": 3,
+      "ex_value": 7,
+      "wb_value": 5,
+      "word": "0x001101B3",
+      "idex_valid": 0,
+      "exmem_valid": 1,
+      "exmem_rd": 1,
+      "exmem_reg_write": 1,
+      "exmem_mem_op": 0,
+      "memwb_valid": 1,
+      "memwb_rd": 1,
+      "memwb_reg_write": 1
+    },
+    "expected": {
+      "selector": "00",
+      "effective_value": 3,
+      "forward_a_sel": 0,
+      "forward_b_sel": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Consumidor no elegible"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C025",
+    "inputs": {
+      "program_tag": "A",
+      "program": "addi x1,x0,3; addi x1,x1,4; add x2,x1,x1; halt",
+      "mode": "RUN",
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            3145875,
+            4227219,
+            1081651,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "terminal": "x1=7,x2=14",
+      "extra_data_stall": false,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "count": 1
+            },
+            {
+              "pc": 8,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "count": 2
+            },
+            {
+              "pc": 12,
+              "state": 4,
+              "valid_mask": 14,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "idex_pc": 4,
+              "exmem_pc": 0,
+              "ex_check": {
+                "forward_a": 0,
+                "forward_b": 0,
+                "result": 3,
+                "store_data": 0,
+                "redirect": false,
+                "target": 0
+              },
+              "count": 3
+            },
+            {
+              "pc": 16,
+              "state": 4,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "exmem_pc": 4,
+              "memwb_pc": 0,
+              "ex_check": {
+                "forward_a": 1,
+                "forward_b": 0,
+                "result": 7,
+                "store_data": 0,
+                "redirect": false,
+                "target": 0
+              },
+              "count": 4
+            },
+            {
+              "pc": 20,
+              "state": 4,
+              "valid_mask": 7,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 1,
+                "value": 3
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "memwb_pc": 4,
+              "ex_check": {
+                "forward_a": 1,
+                "forward_b": 1,
+                "result": 14,
+                "store_data": 7,
+                "redirect": false,
+                "target": 0
+              },
+              "count": 5
+            },
+            {
+              "pc": 20,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 4,
+                "rd": 1,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "count": 6
+            },
+            {
+              "pc": 20,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 2,
+                "value": 14
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "count": 7
+            }
+          ],
+          "rf": [
+            0,
+            7,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Cinco consumidores CPU"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-003/C026",
+    "inputs": {
+      "program_tag": "B",
+      "program": "addi x1,x0,3; addi x2,x0,4; add x3,x1,x2; halt",
+      "mode": "RUN",
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            3145875,
+            4194579,
+            2130355,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "terminal": "x3=7",
+      "extra_data_stall": false,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "count": 1
+            },
+            {
+              "pc": 8,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "count": 2
+            },
+            {
+              "pc": 12,
+              "state": 4,
+              "valid_mask": 14,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "idex_pc": 4,
+              "exmem_pc": 0,
+              "count": 3
+            },
+            {
+              "pc": 16,
+              "state": 4,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "exmem_pc": 4,
+              "memwb_pc": 0,
+              "count": 4
+            },
+            {
+              "pc": 20,
+              "state": 4,
+              "valid_mask": 7,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 1,
+                "value": 3
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "memwb_pc": 4,
+              "ex_check": {
+                "forward_a": 2,
+                "forward_b": 1,
+                "result": 7,
+                "store_data": 4,
+                "redirect": false,
+                "target": 0
+              },
+              "count": 5
+            },
+            {
+              "pc": 20,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 4,
+                "rd": 2,
+                "value": 4
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "count": 6
+            },
+            {
+              "pc": 20,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 3,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "count": 7
+            }
+          ],
+          "rf": [
+            0,
+            3,
+            4,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Cinco consumidores CPU"
+    ],
+    "status": "implemented"
+  }
+]

@@ -1,0 +1,1362 @@
+[
+  {
+    "id": "TEST-EXEC-001/C120",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 1,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C121",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 0,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C122",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 0,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C123",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C124",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C125",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_RUN",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 12,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C126",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 1,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": "RESET",
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "NO_IMAGE",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C127",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 0,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 1,
+          "idex_next_valid": 1,
+          "exmem_next_valid": 1,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C128",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 0,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C129",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 1,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 1,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C130",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 0,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 1,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C131",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 0,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 1,
+          "idex_next_valid": 1,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C132",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 1,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C133",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 1,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 1,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C134",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": false,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 1,
+          "exmem_next_valid": 1,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": true,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "RUNNING",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 4,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x000001000000002A",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C135",
+    "inputs": {
+      "state": "PREPARING_RUN",
+      "state_onehot": 4096,
+      "prepare_done": 1,
+      "pending_work": false,
+      "load_request": 1,
+      "run_request": 1,
+      "step_request": 1,
+      "reset": 1,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 4096,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": "RESET",
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 12,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "NO_IMAGE",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-001/C136",
+    "inputs": {
+      "state": "PREPARING_STEP",
+      "state_onehot": 8192,
+      "prepare_done": 0,
+      "pending_work": false,
+      "load_request": 0,
+      "run_request": 0,
+      "step_request": 0,
+      "reset": 0,
+      "load_ok": 0,
+      "load_fail": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "pipeline_empty_next": true,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 8192,
+        "cycle_count": "0x0000010000000029",
+        "loaded_image_size_bytes": 256,
+        "fault_cause": 5,
+        "fault_pc": 132,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 1,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "cpu_cycle_fire": false,
+      "selected_command": null,
+      "command_accepted": false,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 13,
+      "loader_active": false,
+      "prepare_active": true,
+      "drain_mode": false,
+      "load_available": false,
+      "program_finished": false,
+      "fault_terminal": false,
+      "next_state": "PREPARING_STEP",
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 13,
+              "loaded_image_size_bytes": 256,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": 5,
+              "fault_pc": 132
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla estado/solicitud"
+    ],
+    "status": "implemented"
+  }
+]

@@ -17,8 +17,10 @@ python3 scripts/prepare_case.py \
   --output build/case-data/case.data
 ~~~
 
-El preparador invoca `check-jsonschema` antes de leer el manifiesto y exige
-un ID de caso completo y único. `--manifest` permite indicar otro manifiesto
+El preparador resuelve el [índice y sus archivos](cases/README.md), invoca
+`check-jsonschema` sobre el catálogo completo y exige un ID de caso completo y
+único. `--output` protege el índice, todos los archivos referenciados y el esquema.
+`--manifest` permite indicar otro manifiesto
 con el mismo esquema. Un error produce un diagnóstico en la salida de
 errores y un código distinto de cero. La preparación fallida conserva el
 archivo de salida anterior, si existe.

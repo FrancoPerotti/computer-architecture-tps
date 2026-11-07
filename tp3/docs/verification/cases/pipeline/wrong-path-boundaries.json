@@ -1,0 +1,1507 @@
+{
+  "id": "TEST-PIPE-008",
+  "source": "pipeline.md#test-pipe-008",
+  "case_count": 9,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/pipeline_composition_tb.sv"
+      ],
+      "top": "pipeline_composition_tb",
+      "level": "Integración local",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-PIPE-008/C006",
+        "TEST-PIPE-008/C007",
+        "TEST-PIPE-008/C008",
+        "TEST-PIPE-008/C009"
+      ],
+      "parameters": {
+        "FRONTIER_FIXTURE": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-008/C001",
+        "TEST-PIPE-008/C002",
+        "TEST-PIPE-008/C003",
+        "TEST-PIPE-008/C004",
+        "TEST-PIPE-008/C005"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_frontier_tb.sv"
+      ],
+      "top": "processor_frontier_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-008/C006",
+        "TEST-PIPE-008/C007",
+        "TEST-PIPE-008/C008",
+        "TEST-PIPE-008/C009"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-PIPE-008/C001",
+      "inputs": {
+        "scenario": "branch-halt-joven",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              1082979,
+              11,
+              2105379,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "young_effects": false,
+        "rule": "resultado del programa por antigüedad",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "action": 32,
+                "redirect_target": 12
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 20,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programas wrong-path"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C002",
+      "inputs": {
+        "scenario": "branch-illegal-joven",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              1082979,
+              0,
+              2105379,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "young_effects": false,
+        "rule": "resultado del programa por antigüedad",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "action": 32,
+                "redirect_target": 12
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 20,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programas wrong-path"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C003",
+      "inputs": {
+        "scenario": "loop-fetch-descartado",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "reset_program",
+            "words": [
+              111
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "young_effects": false,
+        "rule": "resultado del programa por antigüedad",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 20,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [
+              {
+                "cycle": 3,
+                "action": 32,
+                "redirect_target": 0
+              }
+            ],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 4,
+            "pc": 8,
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "observed_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "reset_result": {
+              "rf": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programas wrong-path"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C004",
+      "inputs": {
+        "scenario": "halt-antes-illegal",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              11,
+              0
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "young_effects": false,
+        "rule": "resultado del programa por antigüedad",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 3,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 8,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programas wrong-path"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C005",
+      "inputs": {
+        "scenario": "illegal-antes-halt",
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              0,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "young_effects": false,
+        "rule": "resultado del programa por antigüedad",
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 2,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 11,
+            "pc": 4,
+            "fault_cause": 2,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Programas wrong-path"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C006",
+      "inputs": {
+        "EX": "fault",
+        "ID": "illegal",
+        "older_MEM_store": 3,
+        "older_WB_value": 11,
+        "composition": {
+          "PC": 64,
+          "redirect_target": 128,
+          "preload_order": [
+            "current"
+          ],
+          "future_order": [
+            "alternate"
+          ],
+          "payloads": {
+            "alternate": {
+              "ifid": {
+                "valid": 0,
+                "pc": 2147483650,
+                "instruction": 0,
+                "fetch_fault_valid": 1,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rs1": 0,
+                "rs2": 1,
+                "rd": 2,
+                "rs1_value": 4275878552,
+                "rs2_value": 1985229328,
+                "immediate": 4275878552,
+                "alu_op": 20,
+                "alu_src": 0,
+                "result_sel": 1,
+                "flow_op": 2,
+                "mem_op": 7,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 4275878552,
+                "instruction": 1985229328,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 7,
+                "ex_result": 4275878552,
+                "store_data": 1985229328
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 1985229328
+              }
+            }
+          },
+          "cpu_cycle_fire": 1,
+          "drain_mode": 0,
+          "events": {
+            "ex_fault_candidate": 1,
+            "ex_halt_candidate": 0,
+            "redirect_requested": 0,
+            "id_fault_candidate": 1,
+            "load_use_stall": 0
+          },
+          "older_mem": {
+            "valid": 1,
+            "mem_op": 8,
+            "reg_write": 0
+          },
+          "older_wb": {
+            "valid": 1,
+            "reg_write": 1,
+            "rd": 31
+          }
+        },
+        "cpu_frontier": {
+          "kind": "priority",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 64,
+          "ifid": {
+            "valid": 1,
+            "pc": 12,
+            "instruction": 0,
+            "fetch_fault_valid": 0,
+            "fetch_fault_cause": 0
+          },
+          "idex": {
+            "valid": 1,
+            "pc": 8,
+            "instruction": 2138147,
+            "rs1": 1,
+            "rs2": 2,
+            "rd": 0,
+            "rs1_value": 2048,
+            "rs2_value": 3,
+            "immediate": 0,
+            "alu_op": 32,
+            "alu_src": 1,
+            "result_sel": 0,
+            "flow_op": 0,
+            "mem_op": 8,
+            "reg_write": 0
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2105891,
+            "rd": 0,
+            "reg_write": 0,
+            "mem_op": 8,
+            "ex_result": 4,
+            "store_data": 3
+          },
+          "memwb": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 11535379,
+            "rd": 8,
+            "reg_write": 1,
+            "wb_value": 11
+          }
+        }
+      },
+      "expected": {
+        "winner": "EX",
+        "older_commits": true,
+        "ID_confirm": false,
+        "composition": {
+          "selected_action": "act_ex_fault",
+          "next_updates": [
+            "hold",
+            "invalidate_flags",
+            "bubble",
+            "invalidate",
+            "capture_MEM"
+          ]
+        },
+        "cpu_frontier": {
+          "action": 128,
+          "pc": 64,
+          "exmem_valid": 0,
+          "state": 9,
+          "rf_register": 8,
+          "rf_value": 11,
+          "store_address": 4,
+          "store_value": 3
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Eventos por antigüedad"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C007",
+      "inputs": {
+        "EX": "redirect",
+        "ID": "load-use",
+        "older_MEM_store": 3,
+        "older_WB_value": 11,
+        "composition": {
+          "PC": 64,
+          "redirect_target": 128,
+          "preload_order": [
+            "current"
+          ],
+          "future_order": [
+            "alternate"
+          ],
+          "payloads": {
+            "alternate": {
+              "ifid": {
+                "valid": 0,
+                "pc": 2147483650,
+                "instruction": 0,
+                "fetch_fault_valid": 1,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rs1": 0,
+                "rs2": 1,
+                "rd": 2,
+                "rs1_value": 4275878552,
+                "rs2_value": 1985229328,
+                "immediate": 4275878552,
+                "alu_op": 20,
+                "alu_src": 0,
+                "result_sel": 1,
+                "flow_op": 2,
+                "mem_op": 7,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 4275878552,
+                "instruction": 1985229328,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 7,
+                "ex_result": 4275878552,
+                "store_data": 1985229328
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 1985229328
+              }
+            }
+          },
+          "cpu_cycle_fire": 1,
+          "drain_mode": 0,
+          "events": {
+            "ex_fault_candidate": 0,
+            "ex_halt_candidate": 0,
+            "redirect_requested": 1,
+            "id_fault_candidate": 0,
+            "load_use_stall": 1
+          },
+          "older_mem": {
+            "valid": 1,
+            "mem_op": 8,
+            "reg_write": 0
+          },
+          "older_wb": {
+            "valid": 1,
+            "reg_write": 1,
+            "rd": 31
+          }
+        },
+        "cpu_frontier": {
+          "kind": "priority",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 64,
+          "ifid": {
+            "valid": 1,
+            "pc": 12,
+            "instruction": 1081779,
+            "fetch_fault_valid": 0,
+            "fetch_fault_cause": 0
+          },
+          "idex": {
+            "valid": 1,
+            "pc": 8,
+            "instruction": 125837443,
+            "rs1": 0,
+            "rs2": 0,
+            "rd": 1,
+            "rs1_value": 0,
+            "rs2_value": 0,
+            "immediate": 120,
+            "alu_op": 32,
+            "alu_src": 1,
+            "result_sel": 2,
+            "flow_op": 3,
+            "mem_op": 3,
+            "reg_write": 1
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2105891,
+            "rd": 0,
+            "reg_write": 0,
+            "mem_op": 8,
+            "ex_result": 4,
+            "store_data": 3
+          },
+          "memwb": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 11535379,
+            "rd": 8,
+            "reg_write": 1,
+            "wb_value": 11
+          }
+        }
+      },
+      "expected": {
+        "winner": "EX",
+        "older_commits": true,
+        "ID_confirm": false,
+        "composition": {
+          "selected_action": "act_redirect",
+          "next_updates": [
+            "target",
+            "invalidate_flags",
+            "bubble",
+            "capture_EX",
+            "capture_MEM"
+          ]
+        },
+        "cpu_frontier": {
+          "action": 32,
+          "pc": 128,
+          "exmem_valid": 1,
+          "state": 5,
+          "rf_register": 8,
+          "rf_value": 11,
+          "store_address": 4,
+          "store_value": 3
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Eventos por antigüedad"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C008",
+      "inputs": {
+        "EX": "redirect",
+        "ID": "fetch-candidate",
+        "older_MEM_store": 3,
+        "older_WB_value": 11,
+        "composition": {
+          "PC": 64,
+          "redirect_target": 128,
+          "preload_order": [
+            "alternate"
+          ],
+          "future_order": [
+            "current"
+          ],
+          "payloads": {
+            "alternate": {
+              "ifid": {
+                "valid": 0,
+                "pc": 2147483650,
+                "instruction": 0,
+                "fetch_fault_valid": 1,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rs1": 0,
+                "rs2": 1,
+                "rd": 2,
+                "rs1_value": 4275878552,
+                "rs2_value": 1985229328,
+                "immediate": 4275878552,
+                "alu_op": 20,
+                "alu_src": 0,
+                "result_sel": 1,
+                "flow_op": 2,
+                "mem_op": 7,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 4275878552,
+                "instruction": 1985229328,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 7,
+                "ex_result": 4275878552,
+                "store_data": 1985229328
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 1985229328
+              }
+            }
+          },
+          "cpu_cycle_fire": 1,
+          "drain_mode": 0,
+          "events": {
+            "ex_fault_candidate": 0,
+            "ex_halt_candidate": 0,
+            "redirect_requested": 1,
+            "id_fault_candidate": 1,
+            "load_use_stall": 0
+          },
+          "older_mem": {
+            "valid": 1,
+            "mem_op": 8,
+            "reg_write": 0
+          },
+          "older_wb": {
+            "valid": 1,
+            "reg_write": 1,
+            "rd": 31
+          }
+        },
+        "cpu_frontier": {
+          "kind": "priority",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 64,
+          "ifid": {
+            "valid": 0,
+            "pc": 12,
+            "instruction": 0,
+            "fetch_fault_valid": 1,
+            "fetch_fault_cause": 1
+          },
+          "idex": {
+            "valid": 1,
+            "pc": 8,
+            "instruction": 125829871,
+            "rs1": 0,
+            "rs2": 0,
+            "rd": 5,
+            "rs1_value": 0,
+            "rs2_value": 0,
+            "immediate": 120,
+            "alu_op": 32,
+            "alu_src": 1,
+            "result_sel": 2,
+            "flow_op": 3,
+            "mem_op": 0,
+            "reg_write": 1
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2105891,
+            "rd": 0,
+            "reg_write": 0,
+            "mem_op": 8,
+            "ex_result": 4,
+            "store_data": 3
+          },
+          "memwb": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 11535379,
+            "rd": 8,
+            "reg_write": 1,
+            "wb_value": 11
+          }
+        }
+      },
+      "expected": {
+        "winner": "EX",
+        "older_commits": true,
+        "ID_confirm": false,
+        "composition": {
+          "selected_action": "act_redirect",
+          "next_updates": [
+            "target",
+            "invalidate_flags",
+            "bubble",
+            "capture_EX",
+            "capture_MEM"
+          ]
+        },
+        "cpu_frontier": {
+          "action": 32,
+          "pc": 128,
+          "exmem_valid": 1,
+          "state": 5,
+          "rf_register": 8,
+          "rf_value": 11,
+          "store_address": 4,
+          "store_value": 3
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Eventos por antigüedad"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-008/C009",
+      "inputs": {
+        "EX": "halt",
+        "ID": "illegal",
+        "older_MEM_store": 3,
+        "older_WB_value": 11,
+        "composition": {
+          "PC": 64,
+          "redirect_target": 128,
+          "preload_order": [
+            "current"
+          ],
+          "future_order": [
+            "alternate"
+          ],
+          "payloads": {
+            "alternate": {
+              "ifid": {
+                "valid": 0,
+                "pc": 2147483650,
+                "instruction": 0,
+                "fetch_fault_valid": 1,
+                "fetch_fault_cause": 0
+              },
+              "idex": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rs1": 0,
+                "rs2": 1,
+                "rd": 2,
+                "rs1_value": 4275878552,
+                "rs2_value": 1985229328,
+                "immediate": 4275878552,
+                "alu_op": 20,
+                "alu_src": 0,
+                "result_sel": 1,
+                "flow_op": 2,
+                "mem_op": 7,
+                "reg_write": 0
+              },
+              "exmem": {
+                "valid": 1,
+                "pc": 4275878552,
+                "instruction": 1985229328,
+                "rd": 0,
+                "reg_write": 0,
+                "mem_op": 7,
+                "ex_result": 4275878552,
+                "store_data": 1985229328
+              },
+              "memwb": {
+                "valid": 1,
+                "pc": 1985229328,
+                "instruction": 4275878552,
+                "rd": 0,
+                "reg_write": 0,
+                "wb_value": 1985229328
+              }
+            }
+          },
+          "cpu_cycle_fire": 1,
+          "drain_mode": 0,
+          "events": {
+            "ex_fault_candidate": 0,
+            "ex_halt_candidate": 1,
+            "redirect_requested": 0,
+            "id_fault_candidate": 1,
+            "load_use_stall": 0
+          },
+          "older_mem": {
+            "valid": 1,
+            "mem_op": 8,
+            "reg_write": 0
+          },
+          "older_wb": {
+            "valid": 1,
+            "reg_write": 1,
+            "rd": 31
+          }
+        },
+        "cpu_frontier": {
+          "kind": "priority",
+          "words": [
+            19,
+            19,
+            19,
+            19,
+            19
+          ],
+          "pc": 64,
+          "ifid": {
+            "valid": 1,
+            "pc": 12,
+            "instruction": 0,
+            "fetch_fault_valid": 0,
+            "fetch_fault_cause": 0
+          },
+          "idex": {
+            "valid": 1,
+            "pc": 8,
+            "instruction": 11,
+            "rs1": 0,
+            "rs2": 0,
+            "rd": 0,
+            "rs1_value": 0,
+            "rs2_value": 0,
+            "immediate": 0,
+            "alu_op": 32,
+            "alu_src": 1,
+            "result_sel": 0,
+            "flow_op": 5,
+            "mem_op": 0,
+            "reg_write": 0
+          },
+          "exmem": {
+            "valid": 1,
+            "pc": 4,
+            "instruction": 2105891,
+            "rd": 0,
+            "reg_write": 0,
+            "mem_op": 8,
+            "ex_result": 4,
+            "store_data": 3
+          },
+          "memwb": {
+            "valid": 1,
+            "pc": 0,
+            "instruction": 11535379,
+            "rd": 8,
+            "reg_write": 1,
+            "wb_value": 11
+          }
+        }
+      },
+      "expected": {
+        "winner": "EX",
+        "older_commits": true,
+        "ID_confirm": false,
+        "composition": {
+          "selected_action": "act_halt",
+          "next_updates": [
+            "hold",
+            "invalidate_flags",
+            "bubble",
+            "invalidate",
+            "capture_MEM"
+          ]
+        },
+        "cpu_frontier": {
+          "action": 64,
+          "pc": 64,
+          "exmem_valid": 0,
+          "state": 7,
+          "rf_register": 8,
+          "rf_value": 11,
+          "store_address": 4,
+          "store_value": 3
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Eventos por antigüedad"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

@@ -1,0 +1,1178 @@
+[
+  {
+    "id": "TEST-ISA-006/C001",
+    "inputs": {
+      "op": "JAL",
+      "pc": 0,
+      "offset": 8,
+      "rd": 5,
+      "flow_control": {
+        "valid": 1,
+        "flow_op": 3,
+        "zero": 0
+      },
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            8389359,
+            103809427,
+            7340563,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "target": 8,
+      "link": 4,
+      "writes_rd": true,
+      "target_sel": 0,
+      "redirect_requested": 1,
+      "ex_halt_candidate": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 3,
+              "state": 4,
+              "valid_mask": 2,
+              "empty_next": false,
+              "action": 32,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "exmem_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 4,
+              "state": 4,
+              "valid_mask": 9,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "memwb_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 5,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 5,
+                "value": 4
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 4,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 7,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 8,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 4,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            0,
+            0,
+            0,
+            7,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "JAL"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-006/C002",
+    "inputs": {
+      "op": "JAL",
+      "pc": 0,
+      "offset": 8,
+      "rd": 0,
+      "flow_control": {
+        "valid": 1,
+        "flow_op": 3,
+        "zero": 0
+      },
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            8388719,
+            103809427,
+            7340563,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "target": 8,
+      "link": 4,
+      "writes_rd": false,
+      "target_sel": 0,
+      "redirect_requested": 1,
+      "ex_halt_candidate": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 3,
+              "state": 4,
+              "valid_mask": 2,
+              "empty_next": false,
+              "action": 32,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "exmem_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 4,
+              "state": 4,
+              "valid_mask": 9,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "memwb_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 5,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 4,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 7,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 8,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 4,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "JAL"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-006/C003",
+    "inputs": {
+      "op": "JALR",
+      "pc": 0,
+      "x1": 9,
+      "imm": 0,
+      "rd": 5,
+      "flow_control": {
+        "valid": 1,
+        "flow_op": 4,
+        "zero": 0
+      },
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            33511,
+            103809427,
+            7340563,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "target": 8,
+      "link": 4,
+      "writes_rd": true,
+      "target_sel": 1,
+      "redirect_requested": 1,
+      "ex_halt_candidate": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "check_idex_operands": true,
+              "idex_rs1_value": 9,
+              "idex_rs2_value": 0
+            },
+            {
+              "pc": 8,
+              "count": 3,
+              "state": 4,
+              "valid_mask": 2,
+              "empty_next": false,
+              "action": 32,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "exmem_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 4,
+              "state": 4,
+              "valid_mask": 9,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "memwb_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 5,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 5,
+                "value": 4
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 4,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 7,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 8,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 4,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            9,
+            0,
+            0,
+            7,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "JALR"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-006/C004",
+    "inputs": {
+      "op": "JALR",
+      "pc": 0,
+      "x1": 9,
+      "imm": 0,
+      "rd": 0,
+      "flow_control": {
+        "valid": 1,
+        "flow_op": 4,
+        "zero": 0
+      },
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            32871,
+            103809427,
+            7340563,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "target": 8,
+      "link": 4,
+      "writes_rd": false,
+      "target_sel": 1,
+      "redirect_requested": 1,
+      "ex_halt_candidate": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "check_idex_operands": true,
+              "idex_rs1_value": 9,
+              "idex_rs2_value": 0
+            },
+            {
+              "pc": 8,
+              "count": 3,
+              "state": 4,
+              "valid_mask": 2,
+              "empty_next": false,
+              "action": 32,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "exmem_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 4,
+              "state": 4,
+              "valid_mask": 9,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "memwb_pc": 0,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 5,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 4,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 7,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 8,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 4,
+                "value": 7
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            9,
+            0,
+            0,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "JALR"
+    ],
+    "status": "implemented"
+  }
+]
