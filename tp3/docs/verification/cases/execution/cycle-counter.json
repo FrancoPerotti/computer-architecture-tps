@@ -1,0 +1,568 @@
+{
+  "id": "TEST-EXEC-009",
+  "source": "execution.md#test-exec-009",
+  "case_count": 5,
+  "reuse_groups": [
+    "TEST-PIPE-001",
+    "TEST-PIPE-005",
+    "TEST-EXEC-005",
+    "TEST-EXEC-006",
+    "TEST-UART-007"
+  ],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/execution_control_tb.sv"
+      ],
+      "top": "execution_control_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-EXEC-009/C001",
+        "TEST-EXEC-009/C002",
+        "TEST-EXEC-009/C008",
+        "TEST-EXEC-009/C011",
+        "TEST-EXEC-009/C012"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_state_fixture_tb.sv"
+      ],
+      "top": "processor_state_fixture_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-EXEC-009/C008"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-EXEC-009/C001",
+      "inputs": {
+        "count": "0xFFFFFFFFFFFFFFFE",
+        "fire": 1,
+        "target": "cycle_counter",
+        "control_fixture": {
+          "imem_capacity_bytes": 1024,
+          "state_onehot": 16,
+          "cycle_count": "0xFFFFFFFFFFFFFFFE",
+          "loaded_image_size_bytes": 16,
+          "fault_cause": 5,
+          "fault_pc": 132,
+          "fsm_source": "custom",
+          "resource_defaults": {
+            "prepare_init": 0,
+            "act_ex_fault": 0,
+            "act_id_fault": 0,
+            "ex_fault_cause": 7,
+            "idex_pc": 320,
+            "id_fault_cause": 2,
+            "id_fault_pc": 36,
+            "ifid_next_valid": 1,
+            "idex_next_valid": 0,
+            "exmem_next_valid": 0,
+            "memwb_next_valid": 0,
+            "pending_image_size_bytes": 1024,
+            "counter_fire_override": null,
+            "prepare_init_first_clock": false
+          }
+        },
+        "control_steps": [
+          {
+            "label": "Contador efectivo con fixture próximo al wrap",
+            "clocks": 1,
+            "reset": 0,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          }
+        ]
+      },
+      "expected": {
+        "count_next": "0xFFFFFFFFFFFFFFFF",
+        "control_steps": [
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": true,
+              "global_state_code": 4,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": false,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 4,
+                "loaded_image_size_bytes": 16,
+                "image_valid": true,
+                "cycle_count": "0xFFFFFFFFFFFFFFFF",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Antesdewrap"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-009/C002",
+      "inputs": {
+        "count": "0xFFFFFFFFFFFFFFFF",
+        "fire": 0,
+        "control_fixture": {
+          "imem_capacity_bytes": 1024,
+          "state_onehot": 32,
+          "cycle_count": "0xFFFFFFFFFFFFFFFF",
+          "loaded_image_size_bytes": 16,
+          "fault_cause": 5,
+          "fault_pc": 132,
+          "fsm_source": "custom",
+          "resource_defaults": {
+            "prepare_init": 0,
+            "act_ex_fault": 0,
+            "act_id_fault": 0,
+            "ex_fault_cause": 7,
+            "idex_pc": 320,
+            "id_fault_cause": 2,
+            "id_fault_pc": 36,
+            "ifid_next_valid": 1,
+            "idex_next_valid": 0,
+            "exmem_next_valid": 0,
+            "memwb_next_valid": 0,
+            "pending_image_size_bytes": 1024,
+            "counter_fire_override": null,
+            "prepare_init_first_clock": false
+          }
+        },
+        "control_steps": [
+          {
+            "label": "Contador efectivo con fixture próximo al wrap",
+            "clocks": 1,
+            "reset": 0,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          }
+        ]
+      },
+      "expected": {
+        "count_next": "0xFFFFFFFFFFFFFFFF",
+        "control_steps": [
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": false,
+              "global_state_code": 5,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": true,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 5,
+                "loaded_image_size_bytes": 16,
+                "image_valid": true,
+                "cycle_count": "0xFFFFFFFFFFFFFFFF",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "HOLD máximo"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-009/C008",
+      "inputs": {
+        "count": "0xFFFFFFFFFFFFFFFF",
+        "target": "execution_control+pipeline_hazard_control",
+        "action": "act_normal",
+        "local_fixture": {
+          "global_state": "RUNNING",
+          "PC": 64,
+          "redirect_target": 128,
+          "ex_fault_candidate": 0,
+          "ex_halt_candidate": 0,
+          "redirect_requested": 0,
+          "id_fault_candidate": 0,
+          "load_use_stall": 0,
+          "pipeline_has_pending_work": true
+        },
+        "comparison_count": 41,
+        "reset": 0,
+        "load_request": 0,
+        "run_request": 0,
+        "step_request": 0,
+        "control_fixture": {
+          "imem_capacity_bytes": 1024,
+          "state_onehot": 16,
+          "cycle_count": "0xFFFFFFFFFFFFFFFF",
+          "loaded_image_size_bytes": 16,
+          "fault_cause": 5,
+          "fault_pc": 132,
+          "fsm_source": "custom",
+          "resource_defaults": {
+            "prepare_init": 0,
+            "act_ex_fault": 0,
+            "act_id_fault": 0,
+            "ex_fault_cause": 7,
+            "idex_pc": 320,
+            "id_fault_cause": 2,
+            "id_fault_pc": 36,
+            "ifid_next_valid": 1,
+            "idex_next_valid": 0,
+            "exmem_next_valid": 0,
+            "memwb_next_valid": 0,
+            "pending_image_size_bytes": 1024,
+            "counter_fire_override": null,
+            "prepare_init_first_clock": false
+          }
+        },
+        "control_steps": [
+          {
+            "label": "Contador efectivo con fixture próximo al wrap",
+            "clocks": 1,
+            "reset": 0,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          },
+          {
+            "label": "Ciclo posterior al wrap",
+            "clocks": 1,
+            "reset": 0,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          }
+        ],
+        "cpu_state_fixture": "counter",
+        "cpu_state_words": [
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          1048723,
+          11
+        ]
+      },
+      "expected": {
+        "count_next": 0,
+        "extra_fault_or_flag": false,
+        "same_controls_as_without_wrap": true,
+        "selected_action": "act_normal",
+        "cpu_cycle_fire": true,
+        "PC_next": "0x00000044",
+        "global_state_next": "RUNNING",
+        "fault_confirm": false,
+        "halt_confirm": false,
+        "redirect_apply": false,
+        "comparison_count_next": 42,
+        "control_steps": [
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": true,
+              "global_state_code": 4,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": false,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 4,
+                "loaded_image_size_bytes": 16,
+                "image_valid": true,
+                "cycle_count": "0x0000000000000000",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          },
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": true,
+              "global_state_code": 4,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": false,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 4,
+                "loaded_image_size_bytes": 16,
+                "image_valid": true,
+                "cycle_count": "0x0000000000000001",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          }
+        ]
+      },
+      "kind": "integration_artificial",
+      "origins": [
+        "Wrap durante avance normal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-009/C011",
+      "inputs": {
+        "count": "0xFFFFFFFFFFFFFFFF",
+        "fire": 1,
+        "init": "reset",
+        "target": "cycle_counter",
+        "control_fixture": {
+          "imem_capacity_bytes": 1024,
+          "state_onehot": 16,
+          "cycle_count": "0xFFFFFFFFFFFFFFFF",
+          "loaded_image_size_bytes": 16,
+          "fault_cause": 5,
+          "fault_pc": 132,
+          "fsm_source": "custom",
+          "resource_defaults": {
+            "prepare_init": 0,
+            "act_ex_fault": 0,
+            "act_id_fault": 0,
+            "ex_fault_cause": 7,
+            "idex_pc": 320,
+            "id_fault_cause": 2,
+            "id_fault_pc": 36,
+            "ifid_next_valid": 1,
+            "idex_next_valid": 0,
+            "exmem_next_valid": 0,
+            "memwb_next_valid": 0,
+            "pending_image_size_bytes": 1024,
+            "counter_fire_override": 1,
+            "prepare_init_first_clock": false
+          }
+        },
+        "control_steps": [
+          {
+            "label": "Contador efectivo con fixture próximo al wrap",
+            "clocks": 1,
+            "reset": 1,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          }
+        ]
+      },
+      "expected": {
+        "count_next": 0,
+        "control_steps": [
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": true,
+              "global_state_code": 4,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": false,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 0,
+                "loaded_image_size_bytes": 0,
+                "image_valid": false,
+                "cycle_count": "0x0000000000000000",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Prioridad deinicialización"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-009/C012",
+      "inputs": {
+        "count": "0xFFFFFFFFFFFFFFFF",
+        "fire": 1,
+        "init": "prepare_init",
+        "target": "cycle_counter",
+        "control_fixture": {
+          "imem_capacity_bytes": 1024,
+          "state_onehot": 16,
+          "cycle_count": "0xFFFFFFFFFFFFFFFF",
+          "loaded_image_size_bytes": 16,
+          "fault_cause": 5,
+          "fault_pc": 132,
+          "fsm_source": "custom",
+          "resource_defaults": {
+            "prepare_init": 1,
+            "act_ex_fault": 0,
+            "act_id_fault": 0,
+            "ex_fault_cause": 7,
+            "idex_pc": 320,
+            "id_fault_cause": 2,
+            "id_fault_pc": 36,
+            "ifid_next_valid": 1,
+            "idex_next_valid": 0,
+            "exmem_next_valid": 0,
+            "memwb_next_valid": 0,
+            "pending_image_size_bytes": 1024,
+            "counter_fire_override": 1,
+            "prepare_init_first_clock": false
+          }
+        },
+        "control_steps": [
+          {
+            "label": "Contador efectivo con fixture próximo al wrap",
+            "clocks": 1,
+            "reset": 0,
+            "load_request": 0,
+            "run_request": 0,
+            "step_request": 0,
+            "load_ok": 0,
+            "load_fail": 0,
+            "prepare_done": 0,
+            "halt_confirm": 0
+          }
+        ]
+      },
+      "expected": {
+        "count_next": 0,
+        "control_steps": [
+          {
+            "before": {
+              "command_accepted": false,
+              "load_start": false,
+              "cpu_cycle_fire": true,
+              "global_state_code": 4,
+              "loader_active": false,
+              "prepare_active": false,
+              "drain_mode": false,
+              "load_available": false,
+              "program_finished": false,
+              "fault_terminal": false
+            },
+            "after": [
+              {
+                "global_state_code": 4,
+                "loaded_image_size_bytes": 16,
+                "image_valid": true,
+                "cycle_count": "0x0000000000000000",
+                "fault_cause": 5,
+                "fault_pc": 132
+              }
+            ]
+          }
+        ]
+      },
+      "kind": "vector",
+      "origins": [
+        "Prioridad deinicialización"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

@@ -1,0 +1,533 @@
+{
+  "id": "TEST-UART-012",
+  "source": "uart_debug.md#test-uart-012",
+  "case_count": 14,
+  "reuse_groups": [
+    "TEST-UART-010"
+  ],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-012/C001",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "A-terminal-before-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "terminal_observable_before_ACCEPTED_Stop": true,
+        "response_busy_before_ACCEPTED_Stop": true
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 01",
+          "02 0A+Debug"
+        ],
+        "capture_terminal_relative_ACCEPTED_Stop": 1,
+        "state_after_ACCEPTED_Stop": "WAIT_RESPONSE_SENT"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C002",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "B-last-CPU-cycle-at-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "terminal_observable_before_ACCEPTED_Stop": false,
+        "last_CPU_cycle_at_ACCEPTED_Stop": true,
+        "response_busy_before_ACCEPTED_Stop": true
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 01",
+          "02 0A+Debug"
+        ],
+        "capture_terminal_relative_ACCEPTED_Stop": 1,
+        "state_after_ACCEPTED_Stop": "WAIT_RUN_END"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C003",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "C-terminal-after-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "response_busy_before_terminal_capture": false
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "terminal_capture_edge": "first_edge_with_terminal_observable",
+        "state_after_terminal_capture": "WAIT_RESPONSE_SENT",
+        "response_order": [
+          "02 01",
+          "02 0A+Debug"
+        ]
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C004",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "D-R-before-Debug-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "RECOVER_RX",
+        "RUN_ACCEPTED_complete": true,
+        "reopen_order": "R-before-Debug-Stop",
+        "R_clocks": 5000000,
+        "response_busy_before_terminal_capture": false,
+        "inactivity_count_before_terminal_capture": 4999990
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "return_protocol_state": "WAIT_COMMAND",
+        "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+        "timer_continues_during_Debug": true
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C005",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "E-Debug-Stop-before-R",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "RECOVER_RX",
+        "RUN_ACCEPTED_complete": true,
+        "reopen_order": "R-after-Debug-Stop",
+        "R_clocks": 5000000,
+        "RX_activity_edge_relative_Debug_Stop": -1,
+        "response_busy_before_terminal_capture": false,
+        "inactivity_count_before_terminal_capture": 0
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "return_protocol_state": "WAIT_COMMAND",
+        "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+        "timer_continues_during_Debug": true
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C006",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "F-RESET-and-last-CPU-cycle",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "WAIT_RUN_END",
+        "RX_opcode": 4,
+        "prepare_active": false,
+        "RUN_ACCEPTED_complete": true,
+        "terminal_observable_before_RESET_edge": false,
+        "last_CPU_cycle_at_RESET_edge": true,
+        "response_busy_before": false
+      },
+      "expected": {
+        "terminal_captures": 0,
+        "response_with_debug": false,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "RESET_recognition",
+        "debug_hold_clear_edge": null,
+        "response_order": [
+          "04 01"
+        ],
+        "global_reset_after_RESET_ACCEPTED_Stop": true,
+        "confirmed_size_after_reset": 0
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C007",
+      "inputs": {
+        "terminal": "FINISHED",
+        "crossing": "G-RESET-with-terminal-already-observable",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "program_finished",
+        "response_opcode": 2,
+        "terminal_result": 10,
+        "transport_phase": "WAIT_RUN_END",
+        "RX_opcode": 4,
+        "prepare_active": false,
+        "RUN_ACCEPTED_complete": true,
+        "terminal_observable_before_RESET_edge": true,
+        "last_CPU_cycle_at_RESET_edge": false,
+        "response_busy_before": false
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 0A+Debug"
+        ],
+        "RESET_response": null,
+        "uart_reset_request": false,
+        "state_after_terminal_capture": "WAIT_RESPONSE_SENT"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C008",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "A-terminal-before-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "terminal_observable_before_ACCEPTED_Stop": true,
+        "response_busy_before_ACCEPTED_Stop": true
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 01",
+          "02 0B+Debug"
+        ],
+        "capture_terminal_relative_ACCEPTED_Stop": 1,
+        "state_after_ACCEPTED_Stop": "WAIT_RESPONSE_SENT"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C009",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "B-last-CPU-cycle-at-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "terminal_observable_before_ACCEPTED_Stop": false,
+        "last_CPU_cycle_at_ACCEPTED_Stop": true,
+        "response_busy_before_ACCEPTED_Stop": true
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 01",
+          "02 0B+Debug"
+        ],
+        "capture_terminal_relative_ACCEPTED_Stop": 1,
+        "state_after_ACCEPTED_Stop": "WAIT_RUN_END"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C010",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "C-terminal-after-ACCEPTED-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "response_busy_before_terminal_capture": false
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "terminal_capture_edge": "first_edge_with_terminal_observable",
+        "state_after_terminal_capture": "WAIT_RESPONSE_SENT",
+        "response_order": [
+          "02 01",
+          "02 0B+Debug"
+        ]
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C011",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "D-R-before-Debug-Stop",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "RECOVER_RX",
+        "RUN_ACCEPTED_complete": true,
+        "reopen_order": "R-before-Debug-Stop",
+        "R_clocks": 5000000,
+        "response_busy_before_terminal_capture": false,
+        "inactivity_count_before_terminal_capture": 4999990
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "return_protocol_state": "WAIT_COMMAND",
+        "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+        "timer_continues_during_Debug": true
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C012",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "E-Debug-Stop-before-R",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "RECOVER_RX",
+        "RUN_ACCEPTED_complete": true,
+        "reopen_order": "R-after-Debug-Stop",
+        "R_clocks": 5000000,
+        "RX_activity_edge_relative_Debug_Stop": -1,
+        "response_busy_before_terminal_capture": false,
+        "inactivity_count_before_terminal_capture": 0
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "return_protocol_state": "WAIT_COMMAND",
+        "leave_recovery_only_after": "R && RX_empty && !response_busy && !debug_hold",
+        "timer_continues_during_Debug": true
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C013",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "F-RESET-and-last-CPU-cycle",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "WAIT_RUN_END",
+        "RX_opcode": 4,
+        "prepare_active": false,
+        "RUN_ACCEPTED_complete": true,
+        "terminal_observable_before_RESET_edge": false,
+        "last_CPU_cycle_at_RESET_edge": true,
+        "response_busy_before": false
+      },
+      "expected": {
+        "terminal_captures": 0,
+        "response_with_debug": false,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "RESET_recognition",
+        "debug_hold_clear_edge": null,
+        "response_order": [
+          "04 01"
+        ],
+        "global_reset_after_RESET_ACCEPTED_Stop": true,
+        "confirmed_size_after_reset": 0
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-012/C014",
+      "inputs": {
+        "terminal": "FAULT",
+        "crossing": "G-RESET-with-terminal-already-observable",
+        "run_result_required_before": true,
+        "kind_of_fixture": "local_interface_events",
+        "terminal_indicator": "fault_terminal",
+        "response_opcode": 2,
+        "terminal_result": 11,
+        "transport_phase": "WAIT_RUN_END",
+        "RX_opcode": 4,
+        "prepare_active": false,
+        "RUN_ACCEPTED_complete": true,
+        "terminal_observable_before_RESET_edge": true,
+        "last_CPU_cycle_at_RESET_edge": false,
+        "response_busy_before": false
+      },
+      "expected": {
+        "terminal_captures": 1,
+        "response_with_debug": true,
+        "old_image_preserved_before_global_reset": true,
+        "requests_for_discarded_bytes": false,
+        "capture_only_if_response_busy_zero": true,
+        "single_response_producer": true,
+        "run_result_required_clear_edge": "terminal_descriptor_capture",
+        "debug_hold_clear_edge": "Debug_last_Stop",
+        "response_order": [
+          "02 0B+Debug"
+        ],
+        "RESET_response": null,
+        "uart_reset_request": false,
+        "state_after_terminal_capture": "WAIT_RESPONSE_SENT"
+      },
+      "kind": "integration_fixture",
+      "origins": [
+        "Orden de respuesta y prioridad preflanco"
+      ],
+      "status": "pending"
+    }
+  ]
+}

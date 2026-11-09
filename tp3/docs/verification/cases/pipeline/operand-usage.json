@@ -1,0 +1,443 @@
+{
+  "id": "TEST-PIPE-006",
+  "source": "pipeline.md#test-pipe-006",
+  "case_count": 10,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/load_use_detector.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/load_use_detector_tb.sv"
+      ],
+      "top": "load_use_detector_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "parameters": {
+        "USE_DECODER": "1'b1"
+      },
+      "case_ids": [
+        "TEST-PIPE-006/C001",
+        "TEST-PIPE-006/C002",
+        "TEST-PIPE-006/C003",
+        "TEST-PIPE-006/C004",
+        "TEST-PIPE-006/C005",
+        "TEST-PIPE-006/C006",
+        "TEST-PIPE-006/C007",
+        "TEST-PIPE-006/C008",
+        "TEST-PIPE-006/C009"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PIPE-006/C010"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-PIPE-006/C001",
+      "inputs": {
+        "condition": "ADDI-rs2-aparente",
+        "word": "0x00110093",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 1,
+        "uses_rs2": 0,
+        "rs1": 2,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C002",
+      "inputs": {
+        "condition": "LUI-sources-aparentes",
+        "word": "0x001080B7",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 0,
+        "uses_rs2": 0,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C003",
+      "inputs": {
+        "condition": "JAL-sources-aparentes",
+        "word": "0x001080EF",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 0,
+        "uses_rs2": 0,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C004",
+      "inputs": {
+        "condition": "halt",
+        "word": "0x0000000B",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 0,
+        "uses_rs2": 0,
+        "rs1": 0,
+        "rs2": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C005",
+      "inputs": {
+        "condition": "illegal",
+        "word": "0x021080B3",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 0,
+        "uses_rs1": 0,
+        "uses_rs2": 0,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C006",
+      "inputs": {
+        "condition": "ifid-invalid",
+        "word": "0x001081B3",
+        "ifid_valid": 0,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 1,
+        "uses_rs2": 1,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C007",
+      "inputs": {
+        "condition": "fetch-candidate",
+        "word": "0x001081B3",
+        "ifid_valid": 0,
+        "ifid_fetch_fault_valid": 1,
+        "idex_valid": 1,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 1,
+        "uses_rs2": 1,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C008",
+      "inputs": {
+        "condition": "load-invalid",
+        "word": "0x001081B3",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 0,
+        "idex_rd": 1,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 1,
+        "uses_rs2": 1,
+        "rs1": 1,
+        "rs2": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C009",
+      "inputs": {
+        "condition": "load-rd0",
+        "word": "0x000001B3",
+        "ifid_valid": 1,
+        "ifid_fetch_fault_valid": 0,
+        "idex_valid": 1,
+        "idex_rd": 0,
+        "idex_mem_op": 3
+      },
+      "expected": {
+        "load_use_stall": 0,
+        "decode_legal": 1,
+        "uses_rs1": 1,
+        "uses_rs2": 1,
+        "rs1": 0,
+        "rs2": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Falsas dependencias"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-PIPE-006/C010",
+      "inputs": {
+        "program": "lw x0,0(x0); addi x3,x0,1; halt",
+        "word0": 7,
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              8195,
+              1048979,
+              11
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "x0": 0,
+        "x3": 1,
+        "stall_count": 0,
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 6,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 6,
+                "pc": 4,
+                "rd": 3,
+                "value": 1
+              }
+            ],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 10,
+            "pc": 16,
+            "fault_cause": 0,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Load a x0"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "TEST-PLAT-006",
+  "source": "platform.md#test-plat-006",
+  "case_count": 1,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-PLAT-006/C001",
+      "inputs": {
+        "scope": "REQ-DOC-001..009",
+        "revision": "igual alRTL/bitstream entregado"
+      },
+      "expected": {
+        "open_decisions_recorded": true,
+        "docs_match_current_implementation": true,
+        "executed_vs_proposed_distinguished": true
+      },
+      "kind": "review",
+      "origins": [
+        "Correspondencia documental"
+      ],
+      "status": "pending"
+    }
+  ]
+}

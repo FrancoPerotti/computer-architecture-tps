@@ -1,0 +1,1291 @@
+[
+  {
+    "id": "TEST-PIPE-010/C011",
+    "kind": "program",
+    "inputs": {
+      "program": "lw x1,0(x0); beq x1,x0,-4",
+      "words": [
+        "00002083",
+        "FE008EE3"
+      ],
+      "image_size": 8,
+      "word0": 0,
+      "initial_rf": {},
+      "mode": "STEP",
+      "scenario": "branch_taken",
+      "hold_after_cycles": [
+        2,
+        3,
+        4
+      ],
+      "hold_clocks_each": 50,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "reset_program",
+          "words": [
+            8323,
+            4261449443
+          ],
+          "mode": "STEP",
+          "holds": [
+            0,
+            50,
+            50,
+            50,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x1": 0,
+      "cause": null,
+      "fault_pc": null,
+      "state": "STEPPING",
+      "effective_cycles": 20,
+      "actions": [
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect"
+      ],
+      "pc_after_cycle": [
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0
+      ],
+      "stall_count": 4,
+      "fault_confirm_count": 0,
+      "rf_commits_by_pc": {
+        "0": 4
+      },
+      "dmem_store_commits": 0,
+      "dmem_and_used_unchanged": true,
+      "hold_preserves_state": true,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 20,
+          "stalls": 4,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 10,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 15,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 20,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            }
+          ],
+          "store_commits": [],
+          "probes": [
+            {
+              "cycle": 1,
+              "action": 4
+            },
+            {
+              "cycle": 2,
+              "action": 4
+            },
+            {
+              "cycle": 3,
+              "action": 8
+            },
+            {
+              "cycle": 4,
+              "action": 4
+            },
+            {
+              "cycle": 5,
+              "action": 32
+            },
+            {
+              "cycle": 6,
+              "action": 4
+            },
+            {
+              "cycle": 7,
+              "action": 4
+            },
+            {
+              "cycle": 8,
+              "action": 8
+            },
+            {
+              "cycle": 9,
+              "action": 4
+            },
+            {
+              "cycle": 10,
+              "action": 32
+            },
+            {
+              "cycle": 11,
+              "action": 4
+            },
+            {
+              "cycle": 12,
+              "action": 4
+            },
+            {
+              "cycle": 13,
+              "action": 8
+            },
+            {
+              "cycle": 14,
+              "action": 4
+            },
+            {
+              "cycle": 15,
+              "action": 32
+            },
+            {
+              "cycle": 16,
+              "action": 4
+            },
+            {
+              "cycle": 17,
+              "action": 4
+            },
+            {
+              "cycle": 18,
+              "action": 8
+            },
+            {
+              "cycle": 19,
+              "action": 4
+            },
+            {
+              "cycle": 20,
+              "action": 32
+            }
+          ],
+          "rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 5,
+          "pc": 0,
+          "fault_cause": 0,
+          "fault_pc": 0,
+          "pc_trace": [
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0
+          ],
+          "observed_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "reset_result": {
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "origins": [
+      "Acuerdo 47: candidato fetch y antigüedad"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-010/C012",
+    "kind": "program",
+    "inputs": {
+      "program": "lw x1,0(x0); beq x1,x0,-4",
+      "words": [
+        "00002083",
+        "FE008EE3"
+      ],
+      "image_size": 8,
+      "word0": 7,
+      "initial_rf": {},
+      "mode": "STEP",
+      "scenario": "branch_not_taken",
+      "hold_after_cycles": [
+        2,
+        3,
+        4
+      ],
+      "hold_clocks_each": 50,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            8323,
+            4261449443
+          ],
+          "mode": "STEP",
+          "holds": [
+            0,
+            50,
+            50,
+            50,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 7
+            },
+            {
+              "address": 1,
+              "value": 0
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 0
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x1": 7,
+      "cause": 1,
+      "fault_pc": 8,
+      "state": "FAULT",
+      "effective_cycles": 7,
+      "actions": [
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_id_fault",
+        "act_drain_advance",
+        "act_drain_advance"
+      ],
+      "pc_after_cycle": [
+        4,
+        8,
+        8,
+        12,
+        12,
+        12,
+        12
+      ],
+      "stall_count": 1,
+      "fault_confirm_count": 1,
+      "rf_commits_by_pc": {
+        "0": 1
+      },
+      "dmem_store_commits": 0,
+      "dmem_and_used_unchanged": true,
+      "hold_preserves_state": true,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 7,
+          "stalls": 1,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 1,
+              "value": 7
+            }
+          ],
+          "store_commits": [],
+          "probes": [
+            {
+              "cycle": 1,
+              "action": 4
+            },
+            {
+              "cycle": 2,
+              "action": 4
+            },
+            {
+              "cycle": 3,
+              "action": 8
+            },
+            {
+              "cycle": 4,
+              "action": 4
+            },
+            {
+              "cycle": 5,
+              "action": 16
+            },
+            {
+              "cycle": 6,
+              "action": 1
+            },
+            {
+              "cycle": 7,
+              "action": 1
+            }
+          ],
+          "rf": [
+            0,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            7,
+            0,
+            0,
+            0
+          ],
+          "terminal": 11,
+          "pc": 12,
+          "fault_cause": 1,
+          "fault_pc": 8,
+          "pc_trace": [
+            4,
+            8,
+            8,
+            12,
+            12,
+            12,
+            12
+          ]
+        }
+      ]
+    },
+    "origins": [
+      "Acuerdo 47: candidato fetch y antigüedad"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-010/C013",
+    "kind": "program",
+    "inputs": {
+      "program": "lw x1,0(x0); jalr x5,x1,0",
+      "words": [
+        "00002083",
+        "000082E7"
+      ],
+      "image_size": 8,
+      "word0": 0,
+      "initial_rf": {},
+      "mode": "STEP",
+      "scenario": "jalr_aligned",
+      "hold_after_cycles": [
+        2,
+        3,
+        4
+      ],
+      "hold_clocks_each": 50,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "reset_program",
+          "words": [
+            8323,
+            33511
+          ],
+          "mode": "STEP",
+          "holds": [
+            0,
+            50,
+            50,
+            50,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x1": 0,
+      "x5": 8,
+      "cause": null,
+      "fault_pc": null,
+      "state": "STEPPING",
+      "effective_cycles": 20,
+      "actions": [
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect",
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_redirect"
+      ],
+      "pc_after_cycle": [
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0,
+        4,
+        8,
+        8,
+        12,
+        0
+      ],
+      "stall_count": 4,
+      "fault_confirm_count": 0,
+      "rf_commits_by_pc": {
+        "0": 4,
+        "4": 3
+      },
+      "dmem_store_commits": 0,
+      "dmem_and_used_unchanged": true,
+      "hold_preserves_state": true,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 20,
+          "stalls": 4,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 7,
+              "pc": 4,
+              "rd": 5,
+              "value": 8
+            },
+            {
+              "cycle": 10,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 12,
+              "pc": 4,
+              "rd": 5,
+              "value": 8
+            },
+            {
+              "cycle": 15,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            },
+            {
+              "cycle": 17,
+              "pc": 4,
+              "rd": 5,
+              "value": 8
+            },
+            {
+              "cycle": 20,
+              "pc": 0,
+              "rd": 1,
+              "value": 0
+            }
+          ],
+          "store_commits": [],
+          "probes": [
+            {
+              "cycle": 1,
+              "action": 4
+            },
+            {
+              "cycle": 2,
+              "action": 4
+            },
+            {
+              "cycle": 3,
+              "action": 8
+            },
+            {
+              "cycle": 4,
+              "action": 4
+            },
+            {
+              "cycle": 5,
+              "action": 32
+            },
+            {
+              "cycle": 6,
+              "action": 4
+            },
+            {
+              "cycle": 7,
+              "action": 4
+            },
+            {
+              "cycle": 8,
+              "action": 8
+            },
+            {
+              "cycle": 9,
+              "action": 4
+            },
+            {
+              "cycle": 10,
+              "action": 32
+            },
+            {
+              "cycle": 11,
+              "action": 4
+            },
+            {
+              "cycle": 12,
+              "action": 4
+            },
+            {
+              "cycle": 13,
+              "action": 8
+            },
+            {
+              "cycle": 14,
+              "action": 4
+            },
+            {
+              "cycle": 15,
+              "action": 32
+            },
+            {
+              "cycle": 16,
+              "action": 4
+            },
+            {
+              "cycle": 17,
+              "action": 4
+            },
+            {
+              "cycle": 18,
+              "action": 8
+            },
+            {
+              "cycle": 19,
+              "action": 4
+            },
+            {
+              "cycle": 20,
+              "action": 32
+            }
+          ],
+          "rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 5,
+          "pc": 0,
+          "fault_cause": 0,
+          "fault_pc": 0,
+          "pc_trace": [
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0,
+            4,
+            8,
+            8,
+            12,
+            0
+          ],
+          "observed_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "reset_result": {
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "origins": [
+      "Acuerdo 47: candidato fetch y antigüedad"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-010/C014",
+    "kind": "program",
+    "inputs": {
+      "program": "lw x1,0(x0); jalr x5,x1,0",
+      "words": [
+        "00002083",
+        "000082E7"
+      ],
+      "image_size": 8,
+      "word0": 2,
+      "initial_rf": {
+        "x5": 55
+      },
+      "mode": "STEP",
+      "scenario": "jalr_misaligned",
+      "hold_after_cycles": [
+        2,
+        3,
+        4
+      ],
+      "hold_clocks_each": 50,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            8323,
+            33511
+          ],
+          "mode": "STEP",
+          "holds": [
+            0,
+            50,
+            50,
+            50,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            55,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 2
+            },
+            {
+              "address": 1,
+              "value": 0
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 0
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x1": 2,
+      "x5": 55,
+      "cause": 0,
+      "fault_pc": 4,
+      "state": "FAULT",
+      "effective_cycles": 5,
+      "actions": [
+        "act_normal",
+        "act_normal",
+        "act_load_use",
+        "act_normal",
+        "act_ex_fault"
+      ],
+      "pc_after_cycle": [
+        4,
+        8,
+        8,
+        12,
+        12
+      ],
+      "stall_count": 1,
+      "fault_confirm_count": 1,
+      "rf_commits_by_pc": {
+        "0": 1
+      },
+      "dmem_store_commits": 0,
+      "dmem_and_used_unchanged": true,
+      "hold_preserves_state": true,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 1,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 1,
+              "value": 2
+            }
+          ],
+          "store_commits": [],
+          "probes": [
+            {
+              "cycle": 1,
+              "action": 4
+            },
+            {
+              "cycle": 2,
+              "action": 4
+            },
+            {
+              "cycle": 3,
+              "action": 8
+            },
+            {
+              "cycle": 4,
+              "action": 4
+            },
+            {
+              "cycle": 5,
+              "action": 128
+            }
+          ],
+          "rf": [
+            0,
+            2,
+            0,
+            0,
+            0,
+            55,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            2,
+            0,
+            0,
+            0
+          ],
+          "terminal": 11,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 4,
+          "pc_trace": [
+            4,
+            8,
+            8,
+            12,
+            12
+          ]
+        }
+      ]
+    },
+    "origins": [
+      "Acuerdo 47: candidato fetch y antigüedad"
+    ],
+    "status": "implemented"
+  }
+]

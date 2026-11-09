@@ -1,0 +1,15 @@
+{
+  "id": "TEST-UART-007",
+  "source": "uart_debug.md#test-uart-007",
+  "case_count": 7,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "file": "fixed-snapshot/cases-001-005.json"
+    },
+    {
+      "file": "fixed-snapshot/cases-006-007.json"
+    }
+  ]
+}

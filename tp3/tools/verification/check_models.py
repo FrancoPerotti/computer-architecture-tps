@@ -5,14 +5,18 @@ from fractions import Fraction
 import json
 from pathlib import Path
 import re
+import sys
 import unittest
 
 from controller_model import ControllerModel, Events, GLOBAL_STATES, PROFILES, Response, STATES, TIMER_LIMIT
 from pc_recovery_model import RecoveryModel, silence_ms
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from verification_manifest import read_manifest
+
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG = json.loads((ROOT / "docs/verification/cases.json").read_text())
+CATALOG = read_manifest(ROOT / "docs/verification/cases.json")
 GROUPS = {g["id"]: g for g in CATALOG["groups"]}
 WITNESSES = {}
 GLOBAL_SEEN = {profile: set() for profile in PROFILES}

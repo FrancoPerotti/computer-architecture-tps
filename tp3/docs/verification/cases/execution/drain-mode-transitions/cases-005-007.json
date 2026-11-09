@@ -1,0 +1,1013 @@
+[
+  {
+    "id": "TEST-EXEC-006/C005",
+    "inputs": {
+      "initial_state": "HALT_DRAIN_STEP",
+      "choice": "RUN",
+      "remaining": "soloMEMWB",
+      "hold_clocks": 50,
+      "fsm_steps": [
+        {
+          "reset": 1,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Reset funcional"
+        },
+        {
+          "reset": 0,
+          "load_request": 1,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Inicio de carga"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Espera de contenido"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 1,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Aborto de carga antes del setup"
+        },
+        {
+          "reset": 0,
+          "load_request": 1,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Nueva carga"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 1,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Última escritura modelada"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 2,
+          "label": "Mantenimiento todavía pendiente"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 1,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Publicación sin ciclo CPU"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 1,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": false,
+          "clocks": 1,
+          "label": "Primer fetch modelado"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 1,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 1,
+          "fault_confirm": 0,
+          "pipeline_empty_next": false,
+          "clocks": 1,
+          "label": "Confirmación modelada en sesión STEP"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": false,
+          "clocks": 50,
+          "label": "HOLD entre órdenes"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 1,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 1,
+          "label": "Único drain legal de halt"
+        },
+        {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "fault_confirm": 0,
+          "pipeline_empty_next": true,
+          "clocks": 3,
+          "label": "Retención del terminal"
+        }
+      ],
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": null,
+        "cycle_count": null,
+        "loaded_image_size_bytes": null,
+        "fault_cause": null,
+        "fault_pc": null,
+        "fsm_source": "sequence",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 12,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 16,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": true
+        }
+      },
+      "control_steps": [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "prepare_init": 1
+        },
+        {},
+        {
+          "memwb_next_valid": 1
+        },
+        {
+          "memwb_next_valid": 1
+        },
+        {
+          "memwb_next_valid": 1
+        },
+        {},
+        {}
+      ],
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            1048723,
+            2097427,
+            3146131,
+            11
+          ],
+          "mode": "STEP",
+          "holds": [
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "commands": [
+            "STEP",
+            "STEP",
+            "STEP",
+            "STEP",
+            "STEP",
+            "STEP",
+            "RUN"
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "last_state": "FINISHED",
+      "no_empty_extra_cycle": true,
+      "fsm_steps": [
+        {
+          "global_state_code": 0,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "NO_IMAGE"
+        },
+        {
+          "global_state_code": 0,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": true,
+          "load_start": true,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "LOADING"
+        },
+        {
+          "global_state_code": 1,
+          "loader_active": true,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "LOADING"
+        },
+        {
+          "global_state_code": 1,
+          "loader_active": true,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "NO_IMAGE"
+        },
+        {
+          "global_state_code": 0,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": true,
+          "load_start": true,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "LOADING"
+        },
+        {
+          "global_state_code": 1,
+          "loader_active": true,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "PREPARING_READY"
+        },
+        {
+          "global_state_code": 2,
+          "loader_active": false,
+          "prepare_active": true,
+          "drain_mode": false,
+          "load_available": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "PREPARING_READY"
+        },
+        {
+          "global_state_code": 2,
+          "loader_active": false,
+          "prepare_active": true,
+          "drain_mode": false,
+          "load_available": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": true,
+          "next_state": "READY"
+        },
+        {
+          "global_state_code": 3,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": true,
+          "load_start": false,
+          "cpu_cycle_fire": true,
+          "image_publish": false,
+          "next_state": "STEPPING"
+        },
+        {
+          "global_state_code": 5,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": true,
+          "load_start": false,
+          "cpu_cycle_fire": true,
+          "image_publish": false,
+          "next_state": "HALT_DRAIN_STEP"
+        },
+        {
+          "global_state_code": 7,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": true,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "HALT_DRAIN_STEP"
+        },
+        {
+          "global_state_code": 7,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": true,
+          "load_available": true,
+          "program_finished": false,
+          "fault_terminal": false,
+          "command_accepted": true,
+          "load_start": false,
+          "cpu_cycle_fire": true,
+          "image_publish": false,
+          "next_state": "FINISHED"
+        },
+        {
+          "global_state_code": 10,
+          "loader_active": false,
+          "prepare_active": false,
+          "drain_mode": false,
+          "load_available": true,
+          "program_finished": true,
+          "fault_terminal": false,
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false,
+          "next_state": "FINISHED"
+        }
+      ],
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 5,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000001",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 7,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000002",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 7,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000002",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 10,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000003",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "after": [
+            {
+              "global_state_code": 10,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000003",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        }
+      ],
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "state": 5,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "count": 1
+            },
+            {
+              "pc": 8,
+              "state": 5,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "count": 2
+            },
+            {
+              "pc": 12,
+              "state": 5,
+              "valid_mask": 14,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "idex_pc": 4,
+              "exmem_pc": 0,
+              "count": 3
+            },
+            {
+              "pc": 16,
+              "state": 5,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "exmem_pc": 4,
+              "memwb_pc": 0,
+              "count": 4
+            },
+            {
+              "pc": 20,
+              "state": 5,
+              "valid_mask": 7,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 1,
+                "value": 1
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "memwb_pc": 4,
+              "count": 5
+            },
+            {
+              "pc": 20,
+              "state": 7,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 4,
+                "rd": 2,
+                "value": 2
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 8,
+              "count": 6
+            },
+            {
+              "pc": 20,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 3,
+                "value": 3
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "count": 7
+            }
+          ],
+          "rf": [
+            0,
+            1,
+            2,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Haltdrain alcanzable"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-006/C006",
+    "inputs": {
+      "state": "HALT_DRAIN_STEP",
+      "pipeline_empty_next": false,
+      "run_request": 1,
+      "step_request": 0,
+      "load_request": 0,
+      "reset": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "state_onehot": 128,
+      "load_ok": 0,
+      "load_fail": 0,
+      "prepare_done": 0,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 128,
+        "cycle_count": "0x0000000000000029",
+        "loaded_image_size_bytes": 16,
+        "fault_cause": 2,
+        "fault_pc": 12,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 1,
+          "pending_image_size_bytes": 16,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "next_state": "HALT_DRAIN_AUTO",
+      "command_accepted": true,
+      "cpu_cycle_fire": true,
+      "drain_mode": true,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 7,
+      "loader_active": false,
+      "prepare_active": false,
+      "load_available": true,
+      "program_finished": false,
+      "fault_terminal": false,
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 6,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x000000000000002A",
+              "fault_cause": 2,
+              "fault_pc": 12
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "FilaFSM artificial"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-006/C007",
+    "inputs": {
+      "state": "HALT_DRAIN_STEP",
+      "pipeline_empty_next": true,
+      "run_request": 1,
+      "step_request": 0,
+      "load_request": 0,
+      "reset": 0,
+      "halt_confirm": 0,
+      "fault_confirm": 0,
+      "state_onehot": 128,
+      "load_ok": 0,
+      "load_fail": 0,
+      "prepare_done": 0,
+      "control_fixture": {
+        "imem_capacity_bytes": 1024,
+        "state_onehot": 128,
+        "cycle_count": "0x0000000000000029",
+        "loaded_image_size_bytes": 16,
+        "fault_cause": 2,
+        "fault_pc": 12,
+        "fsm_source": "vector",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 16,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {}
+      ]
+    },
+    "expected": {
+      "next_state": "FINISHED",
+      "command_accepted": true,
+      "cpu_cycle_fire": true,
+      "drain_mode": true,
+      "load_start": false,
+      "image_publish": false,
+      "global_state_code": 7,
+      "loader_active": false,
+      "prepare_active": false,
+      "load_available": true,
+      "program_finished": false,
+      "fault_terminal": false,
+      "control_steps": [
+        {
+          "after": [
+            {
+              "global_state_code": 10,
+              "loaded_image_size_bytes": 16,
+              "image_valid": true,
+              "cycle_count": "0x000000000000002A",
+              "fault_cause": 2,
+              "fault_pc": 12
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "FilaFSM artificial"
+    ],
+    "status": "implemented"
+  }
+]

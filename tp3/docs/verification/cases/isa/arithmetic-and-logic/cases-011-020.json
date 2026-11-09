@@ -1,0 +1,1342 @@
+[
+  {
+    "id": "TEST-ISA-001/C011",
+    "inputs": {
+      "op": "ADDI",
+      "rs1": "0x0000000A",
+      "rs2_or_imm": 7,
+      "alu_a": "0x0000000A",
+      "alu_b": "0x00000007",
+      "alu_op": 32,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            7373203,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x00000011",
+      "memory_changed": false,
+      "alu_result": "0x00000011",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 17
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            10,
+            0,
+            17,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C012",
+    "inputs": {
+      "op": "ADDI",
+      "rs1": "0x00000000",
+      "rs2_or_imm": -2048,
+      "alu_a": "0x00000000",
+      "alu_b": "0xFFFFF800",
+      "alu_op": 32,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2147516819,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0xFFFFF800",
+      "memory_changed": false,
+      "alu_result": "0xFFFFF800",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 4294965248
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            4294965248,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C013",
+    "inputs": {
+      "op": "ADDI",
+      "rs1": "0xFFFFFFFF",
+      "rs2_or_imm": 1,
+      "alu_a": "0xFFFFFFFF",
+      "alu_b": "0x00000001",
+      "alu_op": 32,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            1081747,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4294967295,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x00000000",
+      "memory_changed": false,
+      "alu_result": "0x00000000",
+      "zero": 1,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 0
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            4294967295,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C014",
+    "inputs": {
+      "op": "ADDI",
+      "rs1": "0x00000000",
+      "rs2_or_imm": 2047,
+      "alu_a": "0x00000000",
+      "alu_b": "0x000007FF",
+      "alu_op": 32,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2146468243,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x000007FF",
+      "memory_changed": false,
+      "alu_result": "0x000007FF",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 2047
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            2047,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C015",
+    "inputs": {
+      "op": "ANDI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": -1,
+      "alu_a": "0x12345678",
+      "alu_b": "0xFFFFFFFF",
+      "alu_op": 36,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            4293980563,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x12345678",
+      "memory_changed": false,
+      "alu_result": "0x12345678",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 305419896
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C016",
+    "inputs": {
+      "op": "ANDI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": 15,
+      "alu_a": "0x12345678",
+      "alu_b": "0x0000000F",
+      "alu_op": 36,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            15790483,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x00000008",
+      "memory_changed": false,
+      "alu_result": "0x00000008",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 8
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C017",
+    "inputs": {
+      "op": "ORI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": -2048,
+      "alu_a": "0x12345678",
+      "alu_b": "0xFFFFF800",
+      "alu_op": 37,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2147541395,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0xFFFFFE78",
+      "memory_changed": false,
+      "alu_result": "0xFFFFFE78",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 4294966904
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            4294966904,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C018",
+    "inputs": {
+      "op": "ORI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": 15,
+      "alu_a": "0x12345678",
+      "alu_b": "0x0000000F",
+      "alu_op": 37,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            15786387,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x1234567F",
+      "memory_changed": false,
+      "alu_result": "0x1234567F",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 305419903
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            305419903,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C019",
+    "inputs": {
+      "op": "XORI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": -1,
+      "alu_a": "0x12345678",
+      "alu_b": "0xFFFFFFFF",
+      "alu_op": 38,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            4293968275,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0xEDCBA987",
+      "memory_changed": false,
+      "alu_result": "0xEDCBA987",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 3989547399
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            3989547399,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-001/C020",
+    "inputs": {
+      "op": "XORI",
+      "rs1": "0x12345678",
+      "rs2_or_imm": 0,
+      "alu_a": "0x12345678",
+      "alu_b": "0x00000000",
+      "alu_op": 38,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            49555,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": []
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "x3": "0x12345678",
+      "memory_changed": false,
+      "alu_result": "0x12345678",
+      "zero": 0,
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 305419896
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            305419896,
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [],
+          "used_values": [],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Tabla de operaciones"
+    ],
+    "status": "implemented"
+  }
+]

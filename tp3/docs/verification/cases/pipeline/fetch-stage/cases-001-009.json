@@ -1,0 +1,1276 @@
+[
+  {
+    "id": "TEST-PIPE-013/C001",
+    "inputs": {
+      "scenario": "sequential-and-fetch-candidate",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 8,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 8,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 8,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 8,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 12,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 12,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 12,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 12,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 12,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 12,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        }
+      ]
+    },
+    "kind": "integration_fixture",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C002",
+    "inputs": {
+      "scenario": "redirect-to-last-word-and-hold",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 1020,
+          "loaded_image_size_bytes": 1024,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 1024,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 50
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 1020,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 1020,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 1020,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 1020,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 1020,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 1020,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "integration_fixture",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C003",
+    "inputs": {
+      "scenario": "hold-before-and-after-normal",
+      "C": 1000,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 249,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 50
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 50
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "integration_fixture",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C004",
+    "inputs": {
+      "scenario": "hold-fetch-candidate-and-resume",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 50
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 8,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 8,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C005",
+    "inputs": {
+      "scenario": "redirect-away-from-fetch-candidate",
+      "C": 1000,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 249,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C006",
+    "inputs": {
+      "scenario": "pc-wrap-modulo-32-bits",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4294967292,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4294967292,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4294967292,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4294967292,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 4294967292,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C007",
+    "inputs": {
+      "scenario": "reset-dominates-normal-and-redirect",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 1,
+          "prepare_init": 0,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 1,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 1020,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C008",
+    "inputs": {
+      "scenario": "prepare-dominates-normal-and-redirect",
+      "C": 1000,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 249,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 1,
+          "act_normal": 1,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 4,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 1,
+          "act_normal": 0,
+          "act_redirect": 1,
+          "redirect_target": 996,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 8,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 4,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 4,
+              "instruction": 11,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        }
+      ]
+    },
+    "kind": "artificial",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-013/C009",
+    "inputs": {
+      "scenario": "image-valid-derived-from-size",
+      "C": 1024,
+      "if_initial_words": [
+        {
+          "index": 0,
+          "data": 10847667
+        },
+        {
+          "index": 1,
+          "data": 11
+        },
+        {
+          "index": 255,
+          "data": 11
+        }
+      ],
+      "if_steps": [
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 0,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 0
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 4,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 0
+        },
+        {
+          "reset": 0,
+          "prepare_init": 0,
+          "act_normal": 0,
+          "act_redirect": 0,
+          "redirect_target": 0,
+          "loaded_image_size_bytes": 0,
+          "imem_write_index": 0,
+          "imem_write_data": 0,
+          "imem_write_enable": 0,
+          "clock_edges": 1
+        }
+      ]
+    },
+    "expected": {
+      "if_steps": [
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 0,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 0,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 1,
+              "pc": 0,
+              "instruction": 10847667,
+              "fetch_fault_valid": 0,
+              "fetch_fault_cause": 0
+            }
+          }
+        },
+        {
+          "before_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 0,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          },
+          "after_edge": {
+            "debug_pc": 0,
+            "ifid_input": {
+              "valid": 0,
+              "pc": 0,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 1
+            }
+          }
+        }
+      ]
+    },
+    "kind": "integration_fixture",
+    "origins": [
+      "IF Stage: acciones PC, recursos y payload IF/ID"
+    ],
+    "status": "implemented"
+  }
+]

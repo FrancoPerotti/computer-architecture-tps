@@ -1,0 +1,478 @@
+{
+  "id": "TEST-MEM-002",
+  "source": "memory.md#test-mem-002",
+  "case_count": 25,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/mem_stage_tb.sv"
+      ],
+      "top": "mem_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 10,
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": "64'd4"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-MEM-002/C001",
+      "inputs": {
+        "op": "LB",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0xFFFFFF80",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C002",
+      "inputs": {
+        "op": "LB",
+        "EA": 1,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0xFFFFFFFF",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C003",
+      "inputs": {
+        "op": "LB",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C004",
+      "inputs": {
+        "op": "LB",
+        "EA": 3,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0xFFFFFF80",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C005",
+      "inputs": {
+        "op": "LBU",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00000080",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C006",
+      "inputs": {
+        "op": "LBU",
+        "EA": 1,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x000000FF",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C007",
+      "inputs": {
+        "op": "LBU",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C008",
+      "inputs": {
+        "op": "LBU",
+        "EA": 3,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00000080",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C009",
+      "inputs": {
+        "op": "LH",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0xFFFFFF80",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C010",
+      "inputs": {
+        "op": "LH",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0xFFFF8000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C011",
+      "inputs": {
+        "op": "LHU",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x0000FF80",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C012",
+      "inputs": {
+        "op": "LHU",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00008000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C013",
+      "inputs": {
+        "op": "LW",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x8000FF80",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Tabla nominal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C014",
+      "inputs": {
+        "op": "LW",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0101"
+      },
+      "expected": {
+        "load_value": "0x00000080",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C015",
+      "inputs": {
+        "op": "LH",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0101"
+      },
+      "expected": {
+        "load_value": "0x00000080",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C016",
+      "inputs": {
+        "op": "LH",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "0101"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C017",
+      "inputs": {
+        "op": "LHU",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0101"
+      },
+      "expected": {
+        "load_value": "0x00000080",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C018",
+      "inputs": {
+        "op": "LHU",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "0101"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C019",
+      "inputs": {
+        "op": "LW",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0000"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C020",
+      "inputs": {
+        "op": "LH",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0000"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C021",
+      "inputs": {
+        "op": "LH",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "0000"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C022",
+      "inputs": {
+        "op": "LHU",
+        "EA": 0,
+        "physical": "80 FF 00 80",
+        "bitmap": "0000"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C023",
+      "inputs": {
+        "op": "LHU",
+        "EA": 2,
+        "physical": "80 FF 00 80",
+        "bitmap": "0000"
+      },
+      "expected": {
+        "load_value": "0x00000000",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Sustitución por cero"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C024",
+      "inputs": {
+        "op": "LH",
+        "EA": 0,
+        "physical": "7F 00 FF 7F",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x0000007F",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Signo positivo"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-002/C025",
+      "inputs": {
+        "op": "LH",
+        "EA": 2,
+        "physical": "7F 00 FF 7F",
+        "bitmap": "1111"
+      },
+      "expected": {
+        "load_value": "0x00007FFF",
+        "bitmap_unchanged": true
+      },
+      "kind": "vector",
+      "origins": [
+        "Signo positivo"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

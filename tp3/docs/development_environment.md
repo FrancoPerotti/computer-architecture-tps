@@ -315,6 +315,13 @@ final distingue controles satisfactorios, cambio no aplicable y errores; un fall
 de clasificación o del entorno no se presenta como aprobación. Las acciones se
 fijan por commit y el workflow utiliza permisos de lectura, sin publicar imágenes.
 
+## Verificación de PRs encadenadas
+
+El workflow comprueba PRs cuyo destino coincide con `feature/tp3-*`, incluida
+la rama base `feature/tp3-riscv-pipeline`. Esto permite revisar una reorganización
+apoyada en la rama del CPU antes de incorporar ambas entregas a la base. Los
+pushes conservan sus filtros y la selección de herramientas fijadas por digest.
+
 ## Fuentes
 
 - [Construcción de Icarus 13.0](https://github.com/steveicarus/iverilog/blob/v13_0/README.md).

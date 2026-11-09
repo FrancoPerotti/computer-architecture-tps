@@ -1,0 +1,350 @@
+{
+  "id": "TEST-MEM-009",
+  "source": "memory.md#test-mem-009",
+  "case_count": 18,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/fetch_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fetch_fault_check_tb.sv"
+      ],
+      "top": "fetch_fault_check_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-MEM-009/C001",
+      "inputs": {
+        "C": 4,
+        "PC": 0,
+        "image_size": 4,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": false,
+        "cause": null
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C002",
+      "inputs": {
+        "C": 4,
+        "PC": 4,
+        "image_size": 4,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C003",
+      "inputs": {
+        "C": 4,
+        "PC": 1,
+        "image_size": 4,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 0
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C004",
+      "inputs": {
+        "C": 4,
+        "PC": 0,
+        "image_size": 0,
+        "image_valid": 0
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C005",
+      "inputs": {
+        "C": 1024,
+        "PC": 4294967292,
+        "image_size": 1024,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C006",
+      "inputs": {
+        "C": 1024,
+        "PC": 4294967295,
+        "image_size": 1024,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 0
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C007",
+      "inputs": {
+        "C": 4294967296,
+        "PC": 4294967292,
+        "image_size": 4294967296,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": false,
+        "cause": null
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C008",
+      "inputs": {
+        "C": 4294967296,
+        "PC": 4294967288,
+        "image_size": 4294967292,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": false,
+        "cause": null
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C009",
+      "inputs": {
+        "C": 4294967296,
+        "PC": 4294967292,
+        "image_size": 4294967292,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C010",
+      "inputs": {
+        "C": 4294967296,
+        "PC": 0,
+        "image_size": 4294967296,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": false,
+        "cause": null
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C011",
+      "inputs": {
+        "C": 4294967296,
+        "PC": 4294967295,
+        "image_size": 4294967296,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 0
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C012",
+      "inputs": {
+        "C": 4294967292,
+        "PC": 4294967288,
+        "image_size": 4294967292,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": false,
+        "cause": null
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C013",
+      "inputs": {
+        "C": 4294967292,
+        "PC": 4294967292,
+        "image_size": 4294967292,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C014",
+      "inputs": {
+        "C": 1024,
+        "PC": 0,
+        "image_size": 8,
+        "image_valid": 0
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C015",
+      "inputs": {
+        "C": 1024,
+        "PC": 0,
+        "image_size": 0,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C016",
+      "inputs": {
+        "C": 1024,
+        "PC": 4,
+        "image_size": 7,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C017",
+      "inputs": {
+        "C": 1024,
+        "PC": 0,
+        "image_size": 3,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-009/C018",
+      "inputs": {
+        "C": 1000,
+        "PC": 1000,
+        "image_size": 1004,
+        "image_valid": 1
+      },
+      "expected": {
+        "if_fetch_fault_candidate": true,
+        "cause": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Fetch Fault Check: extremos de 33 bits y guardas independientes"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

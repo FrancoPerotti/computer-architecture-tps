@@ -1,0 +1,1291 @@
+{
+  "id": "TEST-EXEC-002",
+  "source": "execution.md#test-exec-002",
+  "case_count": 11,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/session_preparation_tb.sv"
+      ],
+      "top": "session_preparation_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-EXEC-002/C001",
+        "TEST-EXEC-002/C004",
+        "TEST-EXEC-002/C007",
+        "TEST-EXEC-002/C010",
+        "TEST-EXEC-002/C013",
+        "TEST-EXEC-002/C016",
+        "TEST-EXEC-002/C019",
+        "TEST-EXEC-002/C020",
+        "TEST-EXEC-002/C021"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": {
+          "input": "C_DMEM"
+        },
+        "WITH_CONTROL": "0"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/session_preparation_tb.sv"
+      ],
+      "top": "session_preparation_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-EXEC-002/C016",
+        "TEST-EXEC-002/C017",
+        "TEST-EXEC-002/C018",
+        "TEST-EXEC-002/C019",
+        "TEST-EXEC-002/C020",
+        "TEST-EXEC-002/C021"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": {
+          "input": "C_DMEM"
+        },
+        "WITH_CONTROL": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_preparation_tb.sv"
+      ],
+      "top": "processor_preparation_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-EXEC-002/C001",
+        "TEST-EXEC-002/C004",
+        "TEST-EXEC-002/C007",
+        "TEST-EXEC-002/C010",
+        "TEST-EXEC-002/C013",
+        "TEST-EXEC-002/C016",
+        "TEST-EXEC-002/C017",
+        "TEST-EXEC-002/C018",
+        "TEST-EXEC-002/C019",
+        "TEST-EXEC-002/C020",
+        "TEST-EXEC-002/C021"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": {
+          "input": "C_DMEM"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-EXEC-002/C001",
+      "inputs": {
+        "C_DMEM": 4,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y recursos de inicialización",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 4,
+        "physical_data_unchanged": true,
+        "completion_clocks": 5,
+        "count_at_completion": 0,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "preparation": {
+          "clear_count": 4,
+          "completion_clocks": 5,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C004",
+      "inputs": {
+        "C_DMEM": 28,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y recursos de inicialización",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 28,
+        "physical_data_unchanged": true,
+        "completion_clocks": 29,
+        "count_at_completion": 0,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "preparation": {
+          "clear_count": 28,
+          "completion_clocks": 29,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C007",
+      "inputs": {
+        "C_DMEM": 32,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y recursos de inicialización",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 32,
+        "physical_data_unchanged": true,
+        "completion_clocks": 33,
+        "count_at_completion": 0,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "preparation": {
+          "clear_count": 32,
+          "completion_clocks": 33,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C010",
+      "inputs": {
+        "C_DMEM": 36,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y recursos de inicialización",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 36,
+        "physical_data_unchanged": true,
+        "completion_clocks": 37,
+        "count_at_completion": 0,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "preparation": {
+          "clear_count": 36,
+          "completion_clocks": 37,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C013",
+      "inputs": {
+        "C_DMEM": 1000,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y recursos de inicialización",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 1000,
+        "physical_data_unchanged": true,
+        "completion_clocks": 1001,
+        "count_at_completion": 0,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "preparation": {
+          "clear_count": 1000,
+          "completion_clocks": 1001,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C016",
+      "inputs": {
+        "C_DMEM": 2048,
+        "state": "PREPARING_READY",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "session_preparation y CPU",
+        "image_first_word": "0x0000000B",
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "load",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 2048,
+        "physical_data_unchanged": true,
+        "completion_clocks": 2049,
+        "count_at_completion": 0,
+        "confirmed_size_at_completion": 16,
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "completion_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": true
+        },
+        "preparation": {
+          "clear_count": 2048,
+          "completion_clocks": 2049,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C017",
+      "inputs": {
+        "C_DMEM": 2048,
+        "state": "PREPARING_RUN",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "CPU",
+        "image_first_word": "0x0000000B",
+        "prep_fixture": {
+          "entry": "reuse",
+          "entry_state_onehot": 4096,
+          "confirmed_size": 16,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 1,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 2048,
+        "physical_data_unchanged": true,
+        "completion_clocks": 2049,
+        "count_at_completion": 1,
+        "first_fetch_PC": 0,
+        "after_first_cycle": "RUNNING",
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "completion_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": true,
+          "image_publish": false
+        },
+        "preparation": {
+          "clear_count": 2048,
+          "completion_clocks": 2049,
+          "finish": {
+            "state": 4,
+            "count": 1,
+            "publish": 0,
+            "fire": 1,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              2,
+              3
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C018",
+      "inputs": {
+        "C_DMEM": 2048,
+        "state": "PREPARING_STEP",
+        "dirty_RF": "x1..31=0xA5A5A5A5",
+        "dirty_PC": 64,
+        "dirty_count": 99,
+        "dirty_bitmap": "todos1",
+        "physical_byte_pattern": "a mod256",
+        "target": "CPU",
+        "image_first_word": "0x0000000B",
+        "prep_fixture": {
+          "entry": "reuse",
+          "entry_state_onehot": 8192,
+          "confirmed_size": 16,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 0,
+          "run_request": 0,
+          "step_request": 1,
+          "terminal": "FAULT"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "clear_count": 2048,
+        "physical_data_unchanged": true,
+        "completion_clocks": 2049,
+        "count_at_completion": 1,
+        "first_fetch_PC": 0,
+        "after_first_cycle": "STEPPING",
+        "service_at_done": {
+          "prepare_done": true,
+          "prepare_init": false,
+          "prepare_dmem_clear": false
+        },
+        "completion_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": true,
+          "image_publish": false
+        },
+        "preparation": {
+          "clear_count": 2048,
+          "completion_clocks": 2049,
+          "finish": {
+            "state": 5,
+            "count": 1,
+            "publish": 0,
+            "fire": 1,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              1,
+              1
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 11
+        }
+      },
+      "kind": "vector",
+      "origins": [
+        "Preparación completa"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C019",
+      "inputs": {
+        "C_DMEM": 4,
+        "state": "PREPARING_READY",
+        "reset_after_clears": 2,
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4,
+          "confirmed_size": 0,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 2,
+          "run_request": 0,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "reset_state": "NO_IMAGE",
+        "no_write_during_reset": true,
+        "restart_first_clear_address": 0,
+        "reset_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false
+        },
+        "preparation": {
+          "clear_count": 4,
+          "completion_clocks": 5,
+          "finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "scenario",
+      "origins": [
+        "Reset a mitad"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C020",
+      "inputs": {
+        "C_DMEM": 4,
+        "state": "PREPARING_RUN",
+        "reset_after_clears": 2,
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 4096,
+          "confirmed_size": 16,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 2,
+          "run_request": 1,
+          "step_request": 0,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "reset_state": "NO_IMAGE",
+        "no_write_during_reset": true,
+        "restart_first_clear_address": 0,
+        "reset_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false
+        },
+        "preparation": {
+          "clear_count": 4,
+          "completion_clocks": 5,
+          "finish": {
+            "state": 4,
+            "count": 1,
+            "publish": 0,
+            "fire": 1,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              2,
+              3
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "scenario",
+      "origins": [
+        "Reset a mitad"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-002/C021",
+      "inputs": {
+        "C_DMEM": 4,
+        "state": "PREPARING_STEP",
+        "reset_after_clears": 2,
+        "unit_service_inputs": {
+          "prepare_active": 1
+        },
+        "controller_integration": {
+          "transport_phase": "WAIT_STEP_END",
+          "response_busy_before": false,
+          "image_valid_before": true,
+          "run_result_required": false,
+          "reset_source": "button"
+        },
+        "prep_fixture": {
+          "entry": "direct",
+          "entry_state_onehot": 8192,
+          "confirmed_size": 16,
+          "pc": 64,
+          "count": 99,
+          "register_pattern": "0xA5A5A5A5",
+          "physical_modulus": 256,
+          "image_words": [
+            "0x0000000B",
+            "0x00000013",
+            "0x00000013",
+            "0x0000000B"
+          ],
+          "load_bytes": [
+            11,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0
+          ],
+          "reset_after": 2,
+          "run_request": 0,
+          "step_request": 1,
+          "terminal": "FINISHED"
+        },
+        "cpu_preparation_words": [
+          11,
+          19,
+          19,
+          11
+        ]
+      },
+      "expected": {
+        "reset_state": "NO_IMAGE",
+        "no_write_during_reset": true,
+        "restart_first_clear_address": 0,
+        "reset_controls": {
+          "command_accepted": false,
+          "load_start": false,
+          "cpu_cycle_fire": false,
+          "image_publish": false
+        },
+        "controller_reset": {
+          "protocol_phase_after": "WAIT_COMMAND",
+          "response_start": false,
+          "uart_reset_request": false,
+          "debug_read_select": false,
+          "STEP_queued_for_later": false
+        },
+        "preparation": {
+          "clear_count": 4,
+          "completion_clocks": 5,
+          "finish": {
+            "state": 5,
+            "count": 1,
+            "publish": 0,
+            "fire": 1,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              1,
+              1
+            ]
+          },
+          "initial_load_finish": {
+            "state": 3,
+            "count": 0,
+            "publish": 1,
+            "fire": 0,
+            "size": 16,
+            "fetch_pc": 0,
+            "follow_counts": [
+              0,
+              0
+            ]
+          },
+          "terminal_code": 10
+        }
+      },
+      "kind": "scenario",
+      "origins": [
+        "Reset a mitad"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

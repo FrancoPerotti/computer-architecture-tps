@@ -13,6 +13,16 @@ resuelve la configuración y coordina las herramientas mediante reglas
 comunes. Agregar casos con los mecanismos admitidos requiere registrar sus
 datos y bancos en el manifiesto, sin agregar lógica específica en Python.
 
+## Organización del catálogo
+
+[cases.json](cases.json) es el índice. Los [archivos por grupo y listas de casos](cases/README.md)
+contienen los datos de las pruebas. El cargador común resuelve esas referencias
+y valida el catálogo completo antes de seleccionar casos. También acepta los
+manifiestos inline usados en fixtures temporales con `--manifest`.
+
+Para editar una prueba, localizar su ID en el archivo del grupo. Los selectores,
+la reutilización, los parámetros y el orden de ejecución conservan sus reglas.
+
 ## Uso
 
 Dentro del contenedor, desde `/workspace/tp3`:

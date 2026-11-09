@@ -1,0 +1,1042 @@
+[
+  {
+    "id": "TEST-MEM-003/C067",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "EA": "0x000003E8",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2138147,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            1000,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "misaligned": false,
+      "out_of_range": true,
+      "cause": 7,
+      "effects_allowed": false,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 3,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            1000,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            170,
+            187,
+            204,
+            221
+          ],
+          "terminal": 11,
+          "pc": 8,
+          "fault_cause": 7,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Regiones ylímites"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C068",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "EA": "0x00000001",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2138147,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            1,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "misaligned": true,
+      "out_of_range": false,
+      "cause": 6,
+      "effects_allowed": false,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 3,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            1,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            170,
+            187,
+            204,
+            221
+          ],
+          "terminal": 11,
+          "pc": 8,
+          "fault_cause": 6,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Regiones ylímites"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C069",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "EA": "0x000003E7",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2138147,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            999,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "misaligned": true,
+      "out_of_range": true,
+      "cause": 6,
+      "effects_allowed": false,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 3,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            999,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            170,
+            187,
+            204,
+            221
+          ],
+          "terminal": 11,
+          "pc": 8,
+          "fault_cause": 6,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Regiones ylímites"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C070",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "EA": "0xFFFFFFFF",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2138147,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4294967295,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "misaligned": true,
+      "out_of_range": true,
+      "cause": 6,
+      "effects_allowed": false,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 3,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            4294967295,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            170,
+            187,
+            204,
+            221
+          ],
+          "terminal": 11,
+          "pc": 8,
+          "fault_cause": 6,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Regiones ylímites"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C071",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "base": "0xFFFFFFFF",
+      "imm": 1,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2138275,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4294967295,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "EA": 0,
+      "cause": null,
+      "effects_allowed": true,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [
+            {
+              "cycle": 4,
+              "pc": 0,
+              "address": 0,
+              "value": 305419896,
+              "byte_enable": 15
+            }
+          ],
+          "probes": [],
+          "rf": [
+            0,
+            4294967295,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            120,
+            86,
+            52,
+            18
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Formación modular word"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C072",
+    "inputs": {
+      "C": 1000,
+      "operation": "store",
+      "size": 4,
+      "base": "0x00000004",
+      "imm": -4,
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            4263554595,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 170
+            },
+            {
+              "address": 1,
+              "value": 187
+            },
+            {
+              "address": 2,
+              "value": 204
+            },
+            {
+              "address": 3,
+              "value": 221
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1000,
+      "processor_dmem_capacity": 1000
+    },
+    "expected": {
+      "EA": 0,
+      "cause": null,
+      "effects_allowed": true,
+      "processor": [
+        {
+          "prepare_clears": 1000,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [
+            {
+              "cycle": 4,
+              "pc": 0,
+              "address": 0,
+              "value": 305419896,
+              "byte_enable": 15
+            }
+          ],
+          "probes": [],
+          "rf": [
+            0,
+            4,
+            305419896,
+            85,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            120,
+            86,
+            52,
+            18
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "vector",
+    "origins": [
+      "Formación modular word"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C073",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "load",
+      "size": 4,
+      "EA": "0xFFFFFFFC"
+    },
+    "expected": {
+      "end_33_bits": 4294967296,
+      "misaligned": false,
+      "out_of_range": false,
+      "cause": null
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C074",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "load",
+      "size": 4,
+      "EA": "0xFFFFFFFF"
+    },
+    "expected": {
+      "end_33_bits": 4294967299,
+      "misaligned": true,
+      "out_of_range": true,
+      "cause": 4
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C075",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "load",
+      "size": 1,
+      "EA": "0xFFFFFFFF"
+    },
+    "expected": {
+      "end_33_bits": 4294967296,
+      "misaligned": false,
+      "out_of_range": false,
+      "cause": null
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C076",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "store",
+      "size": 4,
+      "EA": "0xFFFFFFFC"
+    },
+    "expected": {
+      "end_33_bits": 4294967296,
+      "misaligned": false,
+      "out_of_range": false,
+      "cause": null
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C077",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "store",
+      "size": 4,
+      "EA": "0xFFFFFFFF"
+    },
+    "expected": {
+      "end_33_bits": 4294967299,
+      "misaligned": true,
+      "out_of_range": true,
+      "cause": 6
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-003/C078",
+    "inputs": {
+      "C": 4294967296,
+      "operation": "store",
+      "size": 1,
+      "EA": "0xFFFFFFFF"
+    },
+    "expected": {
+      "end_33_bits": 4294967296,
+      "misaligned": false,
+      "out_of_range": false,
+      "cause": null
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Aritmética máxima aislada"
+    ],
+    "status": "implemented"
+  }
+]
