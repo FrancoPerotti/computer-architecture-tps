@@ -135626,7 +135626,22 @@
       "source": "uart_debug.md#test-uart-001",
       "case_count": 31,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "rtl/baud_tick_gen.sv",
+            "tb/common/tp3_case_data.sv",
+            "tb/baud_tick_gen_tb.sv"
+          ],
+          "top": "baud_tick_gen_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-UART-001/C001",
@@ -135646,7 +135661,7 @@
           "origins": [
             "Generador continuo"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-UART-001/C002",
