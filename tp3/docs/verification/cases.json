@@ -135653,6 +135653,32 @@
           "case_ids": [
             "TEST-UART-001/C001"
           ]
+        },
+        {
+          "sources": [
+            "tb/common/tp3_case_data.sv",
+            "rtl/rx_fsm.sv",
+            "tb/rx_fsm_tb.sv"
+          ],
+          "top": "rx_fsm_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "tb/common/tp3_case_data.sv",
+            "rtl/rx_datapath.sv",
+            "tb/rx_datapath_tb.sv"
+          ],
+          "top": "rx_datapath_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
         }
       ],
       "cases": [

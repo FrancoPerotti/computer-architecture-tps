@@ -34,7 +34,7 @@ Los [modelos abstractos ejecutables](../../tools/verification/README.md) comprue
 
 - **Nivel:** unidad UART e integración uart_core.
 - **Tipo de estímulo:** legal y errores físicos dirigidos.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001 unitario implementado para baud_tick_gen, serial_input_sync y rx_fsm; el resto de variantes y la integración RX/TX siguen pendientes.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -59,6 +59,8 @@ El clock y el generador de ticks se mantienen activos durante las observaciones.
 ### Variantes cerradas
 
 La prueba tiene 31 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-001/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+
+La variante C001 ejecuta bancos unitarios de `baud_tick_gen`, `serial_input_sync`, `rx_fsm` y `rx_datapath`. `rx_fsm` se prueba con condiciones de datapath controladas; `rx_datapath` verifica los recursos y comparadores de forma aislada. Esto no acredita todavía la integración entre ambos ni su incorporación a `uart_rx`.
 
 Los 24 casos nominales combinan los seis bytes dirigidos con RX o TX y las dos fases de inicio.
 

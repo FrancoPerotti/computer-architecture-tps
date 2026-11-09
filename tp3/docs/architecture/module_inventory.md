@@ -127,7 +127,9 @@ Los siguientes 19 tipos se suman a los 23 módulos específicos recomendados. Lo
 | `processor_top`       | `system_top`    | `processor_top.sv`                            |
 | `serial_input_sync`   | `uart_core`     | `serial_input_sync.sv`                        |
 | `baud_tick_gen`       | `uart_core`     | `baud_tick_gen.sv`                            |
-| `uart_rx`             | `uart_core`     | `uart_rx.sv`                                  |
+| `uart_rx`             | `uart_core`     | `uart_rx.sv`; integra `rx_fsm` y `rx_datapath` |
+| `rx_fsm`              | `uart_rx`       | `rx_fsm.sv`; control RX one-hot                 |
+| `rx_datapath`         | `uart_rx`       | `rx_datapath.sv`; contadores y shift register   |
 | `uart_tx`             | `uart_core`     | `uart_tx.sv`                                  |
 | `fifo`                | `uart_core`     | `fifo.sv`; instancias RX y TX                 |
 | `if_stage`            | `processor_top` | `if_stage.sv`                                 |

@@ -17,12 +17,12 @@ RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \
                rtl/if_id_register.sv rtl/id_ex_register.sv rtl/ex_mem_register.sv \
                rtl/mem_wb_register.sv rtl/pipeline_hazard_control.sv \
                rtl/global_fsm.sv rtl/execution_control.sv rtl/loader.sv \
-               rtl/session_preparation.sv
+               rtl/session_preparation.sv rtl/rx_fsm.sv rtl/rx_datapath.sv
 RTL_TOPS := decoder immediate_generator register_file id_fault_check load_use_detector \
             forwarding_unit alu flow_control id_stage ex_stage mem_decode \
             dmem_write_control load_select_extend wb_stage \
             if_id_register id_ex_register ex_mem_register mem_wb_register pipeline_hazard_control \
-            execution_control loader session_preparation
+            execution_control loader session_preparation rx_fsm rx_datapath
 IMEM_RTL_TOPS := fetch_fault_check instruction_memory if_stage
 IMEM_LINT_CAPACITIES := 4 1000 1024
 EX_FAULT_RTL_TOPS := ex_fault_check

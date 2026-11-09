@@ -11,47 +11,46 @@ El receptor UART convierte la señal serie que llega desde la PC en bytes de och
 
 El receptor trabaja sobre cada trama 8N1. La interpretación de esos bytes como códigos de operación, tamaños o contenido de un programa corresponde a los bloques que realizan el [protocolo](../../protocol.md). Una instrucción de 32 bits, por ejemplo, requiere recibir cuatro bytes y reconstruirlos fuera del receptor.
 
-El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). La [organización en cuatro partes](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) está aprobada. El [acuerdo de estados y agrupación](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) conserva los cinco estados y el comportamiento de recepción del TP2, con los recursos dentro de `uart_rx`. Los [indicadores de recepción](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) y la [codificación one-hot](../../decisions/DEC-SYS-007.md#recepción-y-actividad-rx) están aprobados. Las conexiones e integración se definen en [uart_core](uart_core.md).
+El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). Se conserva la organización funcional en control, contador de muestreo, contador de bits y registro de desplazamiento. La decisión aprobada de implementación TP3 separa físicamente el control en `rx_fsm` y los recursos en `rx_datapath`; ambos se integrarán posteriormente dentro de `uart_rx`. Se conservan los cinco estados, comportamiento, indicadores y codificación one-hot del contrato. Las conexiones e integración se definen en [uart_core](uart_core.md).
 
 ## Organización
 
 ### Organización interna
 
-El receptor se organiza en cuatro partes:
+El receptor se organiza funcionalmente en cuatro responsabilidades, realizadas en TP3 mediante dos módulos:
 
-- `RX Control`, que contiene el estado registrado y la lógica combinacional de la FSM.
-- `Sample Counter`, que cuenta los ticks de sobremuestreo transcurridos entre muestras.
-- `Bit Counter`, que identifica cuál de los ocho bits de datos se está recibiendo.
-- `RX Shift Register`, que incorpora las muestras y forma el byte recibido.
+- `rx_fsm` contiene `RX Control`: estado registrado, transiciones y señales de acción.
+- `rx_datapath` contiene el contador de muestreo, el contador de bits y el registro de desplazamiento.
+- `uart_rx` integrará ambos bloques y expondrá el contrato externo ya definido.
 
 ```mermaid
 flowchart LR
     PIN["serial_rx"] --> SYNC["Serial Input Synchronizer"]
-    SYNC -->|rx| CTRL["RX Control"]
-    SYNC -->|rx| DATA["RX Shift Register"]
-    GEN["Baud Tick Generator"] -->|s_tick| CTRL
-    CTRL -->|sample_count_clear / sample_count_inc| SAMPLE["Sample Counter"]
-    SAMPLE -->|sample_count| CTRL
-    CTRL -->|bit_count_clear / bit_count_inc| BIT["Bit Counter"]
-    BIT -->|bit_count| CTRL
-    CTRL -->|data_shift_enable| DATA
+    SYNC -->|rx| FSM["rx_fsm"]
+    SYNC -->|rx| DATA["rx_datapath"]
+    GEN["Baud Tick Generator"] -->|s_tick| FSM
+    FSM -->|clear / inc| SAMPLE["Sample Counter"]
+    SAMPLE -->|sample_half / sample_done| FSM
+    FSM -->|clear / inc| BIT["Bit Counter"]
+    BIT -->|last_bit| FSM
+    FSM -->|data_shift_enable| DATA
     DATA -->|data_out| FIFO["RX FIFO"]
-    CTRL -->|rx_done_tick| FIFO
-    CTRL -->|frame_error_tick| ERROR["UART Error Reporting"]
-    CTRL -->|rx_receiving| ACT["RX Activity Detection"]
+    FSM -->|rx_done_tick| FIFO
+    FSM -->|frame_error_tick| ERROR["UART Error Reporting"]
+    FSM -->|rx_receiving| ACT["RX Activity Detection"]
     SYNC -->|rx| ACT
-    CTRL -->|rx_receiving| UART["uart_core"]
+    FSM -->|rx_receiving| UART["uart_core"]
     ACT -->|rx_activity| UART
     UART -->|rx_activity| PROTO["protocol_controller"]
 ```
 
-Los contadores y el registro de desplazamiento conservan el estado de la recepción. La FSM consulta el nivel de la línea y los contadores para decidir qué acción corresponde. Luego emite controles que esos recursos consumen en el flanco ascendente del clock funcional.
+Los contadores y el registro de desplazamiento conservan el estado de la recepción. `rx_fsm` consulta el nivel de la línea y los indicadores combinacionales `sample_half`, `sample_done` y `last_bit` de `rx_datapath` para decidir las acciones. Los controles se consumen en el flanco ascendente correspondiente del clock funcional.
 
-La separación es funcional. Se conserva `uart_rx` como módulo receptor: la FSM, ambos contadores y el registro de recepción permanecen dentro de él, con lógica diferenciada para el control y para la actualización de los recursos. Los contadores y el registro no se convierten en módulos nuevos. El sincronizador, el generador de baud y las FIFO mantienen las fronteras de módulos del TP2; sus adaptaciones y conexiones se concretan en el diseño de cada bloque.
+`rx_fsm` y `rx_datapath` son fronteras físicas internas que se integrarán en `uart_rx`. Esta separación no altera la interfaz externa ni agrega una etapa entre decisión y acción. El sincronizador, el generador de baud y las FIFO conservan sus fronteras propias.
 
 ### `RX Control`
 
-`RX Control` conserva el estado actual de la recepción en un registro. Su lógica combinacional calcula el siguiente estado y las señales de acción a partir de ese estado, `rx`, `s_tick` y los valores de los contadores.
+`rx_fsm` conserva el estado actual de la recepción en un registro. Su lógica combinacional calcula el siguiente estado y las señales de acción a partir de ese estado, `rx`, `s_tick` y las condiciones de fin de cuenta entregadas por `rx_datapath`.
 
 La lógica combinacional expresa las decisiones mediante `casez`, usando `?` para las condiciones irrelevantes en cada elección, conforme al criterio docente registrado. El cálculo de un incremento o del nuevo contenido del registro de recepción queda en la lógica del recurso correspondiente.
 
@@ -61,8 +60,9 @@ La lógica combinacional expresa las decisiones mediante `casez`, usando `?` par
 |---------------------|-----------------------------|-------------------------------------------------------------------|
 | `rx`                | `Serial Input Synchronizer` | Nivel sincronizado de la línea serie.                             |
 | `s_tick`            | `Baud Tick Generator`       | Referencia de avance del sobremuestreo.                           |
-| `sample_count[3:0]` | `Sample Counter`            | Permite determinar cuándo corresponde tomar una muestra.          |
-| `bit_count[2:0]`    | `Bit Counter`               | Permite identificar el bit de datos actual y reconocer el último. |
+| `sample_half`       | `rx_datapath`               | Indica que `sample_count` vale 7 para validar Start.                |
+| `sample_done`       | `rx_datapath`               | Indica que `sample_count` vale 15 para muestrear datos o Stop.       |
+| `last_bit`          | `rx_datapath`               | Indica que `bit_count` vale 7.                                       |
 
 Las comparaciones de los contadores forman condiciones combinacionales para la FSM. Las transiciones utilizan `sample_count = 7` para comprobar el Start, `sample_count = 15` para muestrear cada bit de datos y el Stop, y `bit_count = 7` para reconocer el último bit de datos. Estas condiciones solo autorizan el muestreo cuando también está activo `s_tick`.
 
@@ -76,7 +76,7 @@ Las comparaciones de los contadores forman condiciones combinacionales para la F
 | `bit_count_inc`      | `Bit Counter`       | Avanzar al siguiente índice de bit de datos.               |
 | `data_shift_enable`  | `RX Shift Register` | Incorporar una muestra de `rx` mediante un desplazamiento. |
 
-Cada control es de un bit. Sin una orden de actualización, el recurso conserva su valor. La tabla de control evita ordenar simultáneamente limpieza e incremento de un mismo contador. El reset común inicializa los contadores y el registro de datos en cero y sitúa el control en reposo.
+Cada control es de un bit. Sin una orden de actualización, el recurso conserva su valor. La tabla de control evita ordenar simultáneamente limpieza e incremento de un mismo contador. El reset común inicializa los recursos del datapath en cero y sitúa `rx_fsm` en `IDLE`.
 
 La FSM también genera los eventos `rx_done_tick` y `frame_error_tick`, usados en el TP2 para indicar un byte correctamente recibido o un error de trama. La descripción de estados concreta sus condiciones y duración. El reporte de desbordamiento de FIFO pertenece a la integración UART, donde se conoce si existe espacio para guardar el byte.
 
@@ -85,6 +85,8 @@ La FSM también genera los eventos `rx_done_tick` y `frame_error_tick`, usados e
 `Sample Counter` conserva la cuenta del intervalo de muestreo. Con sobremuestreo 16 y un bit de Stop, la organización de referencia del TP2 utiliza cuatro bits para representar los valores de cero a quince. La FSM ordena los incrementos y las limpiezas necesarios para recorrer cada intervalo.
 
 `Bit Counter` conserva el índice del bit de datos que se recibe. Para una trama de ocho bits utiliza tres bits, con valores de cero a siete. Se inicializa para el primer bit y avanza cuando corresponde pasar al siguiente. Su valor permite a la FSM reconocer cuándo se han recibido los ocho bits y debe comprobarse el Stop.
+
+En TP3, ambos contadores y `RX Shift Register` pertenecen físicamente a `rx_datapath`. Este módulo recibe `sample_count_clear`, `sample_count_inc`, `bit_count_clear`, `bit_count_inc` y `data_shift_enable` de `rx_fsm`; no recibe `s_tick` ni contiene decisiones de protocolo. Limpieza tiene prioridad sobre incremento. Sus comparadores combinacionales presentan `sample_half` cuando la cuenta vale 7, `sample_done` cuando vale 15 y `last_bit` cuando el índice vale 7.
 
 Cada contador realiza su propia actualización al flanco de clock. La FSM emite la orden de avanzar; el contador calcula y registra el valor incrementado.
 
