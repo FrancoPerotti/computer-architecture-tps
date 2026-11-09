@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // FIFO síncrona genérica para los caminos UART RX y TX.
 module fifo #(
     parameter integer DATA_WIDTH = system_pkg::UART_DATA_BITS,
@@ -18,7 +16,7 @@ module fifo #(
   localparam integer                DEPTH       = 1 << ADDR_WIDTH;
   localparam logic   [ADDR_WIDTH:0] DEPTH_COUNT = {1'b1, {ADDR_WIDTH{1'b0}}};
 
-  logic [DATA_WIDTH-1:0] memory             [0:DEPTH-1];
+  logic [DATA_WIDTH-1:0] memory             [DEPTH];
   logic [ADDR_WIDTH-1:0] read_pointer = '0;
   logic [ADDR_WIDTH-1:0] write_pointer = '0;
   logic [  ADDR_WIDTH:0] count = '0;

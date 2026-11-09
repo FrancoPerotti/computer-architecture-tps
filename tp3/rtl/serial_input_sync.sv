@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Sincroniza la entrada serie externa con el reloj funcional.
 module serial_input_sync (
     input  logic clk,

@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Conserva los recursos de transmisión UART, sin lógica de control.
 module tx_datapath (
     input  logic                                  clk,

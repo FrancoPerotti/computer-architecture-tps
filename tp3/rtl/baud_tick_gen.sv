@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Genera el pulso de sobremuestreo de la UART a partir del reloj funcional.
 module baud_tick_gen #(
     parameter longint unsigned CLK_FREQ_HZ = system_pkg::FUNCTIONAL_CLOCK_HZ,

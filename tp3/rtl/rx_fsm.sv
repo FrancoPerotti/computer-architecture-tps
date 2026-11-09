@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Controla las decisiones de recepción UART; los recursos pertenecen a rx_datapath.
 module rx_fsm (
     input  logic clk,

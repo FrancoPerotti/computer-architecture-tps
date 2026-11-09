@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Controla la transmisión UART y emite acciones para tx_datapath.
 module tx_fsm (
     input  logic       clk,

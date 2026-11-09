@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Integra el control y los recursos del receptor UART, además de detectar actividad RX.
 module uart_rx (
     input  logic       clk,

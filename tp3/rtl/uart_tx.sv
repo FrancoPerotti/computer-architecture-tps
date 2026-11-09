@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Integra el control y los recursos del transmisor UART.
 module uart_tx (
     input  logic                                  clk,

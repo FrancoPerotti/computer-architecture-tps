@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Conserva contadores y muestras del receptor UART, sin lógica de control.
 module rx_datapath (
     input  logic       clk,

@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // Integra los caminos físicos RX y TX, con ticks compartidos y FIFO independientes.
 module uart_core #(
     parameter longint unsigned CLK_FREQ_HZ     = system_pkg::FUNCTIONAL_CLOCK_HZ,
