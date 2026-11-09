@@ -1,0 +1,947 @@
+[
+  {
+    "id": "TEST-ISA-007/C017",
+    "inputs": {
+      "op": "LH",
+      "base": 0,
+      "offset": 2,
+      "bitmap": "1111",
+      "data": "80 FF 00 80",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2134403,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 128
+            },
+            {
+              "address": 1,
+              "value": 255
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 128
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "rule": "TEST-MEM-002 tabla nominal de loads",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 4294934528
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            4294934528,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            128,
+            255,
+            0,
+            128
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Accesos ISA"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-007/C018",
+    "inputs": {
+      "op": "LHU",
+      "base": 0,
+      "offset": 0,
+      "bitmap": "1111",
+      "data": "80 FF 00 80",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            53635,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 128
+            },
+            {
+              "address": 1,
+              "value": 255
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 128
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "rule": "TEST-MEM-002 tabla nominal de loads",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 65408
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            65408,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            128,
+            255,
+            0,
+            128
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Accesos ISA"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-007/C019",
+    "inputs": {
+      "op": "LHU",
+      "base": 0,
+      "offset": 2,
+      "bitmap": "1111",
+      "data": "80 FF 00 80",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            2150787,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 128
+            },
+            {
+              "address": 1,
+              "value": 255
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 128
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "rule": "TEST-MEM-002 tabla nominal de loads",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 32768
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            32768,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            128,
+            255,
+            0,
+            128
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Accesos ISA"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-007/C020",
+    "inputs": {
+      "op": "LW",
+      "base": 0,
+      "offset": 0,
+      "bitmap": "1111",
+      "data": "80 FF 00 80",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            41347,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 128
+            },
+            {
+              "address": 1,
+              "value": 255
+            },
+            {
+              "address": 2,
+              "value": 0
+            },
+            {
+              "address": 3,
+              "value": 128
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "rule": "TEST-MEM-002 tabla nominal de loads",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 2147549056
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            0,
+            0,
+            2147549056,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            128,
+            255,
+            0,
+            128
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Accesos ISA"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-007/C021",
+    "inputs": {
+      "op": "LW",
+      "base": 4,
+      "offset": -4,
+      "bitmap": "1111",
+      "data": "0x12345678",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            4290814339,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 120
+            },
+            {
+              "address": 1,
+              "value": 86
+            },
+            {
+              "address": 2,
+              "value": 52
+            },
+            {
+              "address": 3,
+              "value": 18
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "EA": 0,
+      "word": "0x12345678",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [
+            {
+              "cycle": 5,
+              "pc": 0,
+              "rd": 3,
+              "value": 305419896
+            }
+          ],
+          "store_commits": [],
+          "probes": [],
+          "rf": [
+            0,
+            4,
+            0,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            120,
+            86,
+            52,
+            18
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Offset negativo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-007/C022",
+    "inputs": {
+      "op": "SW",
+      "base": 4,
+      "offset": -4,
+      "bitmap": "1111",
+      "data": "0x12345678",
+      "processor": [
+        {
+          "start": "load",
+          "after_trace": "none",
+          "words": [
+            4263554595,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_rf": [
+            0,
+            4,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "initial_memory": [
+            {
+              "address": 0,
+              "value": 161
+            },
+            {
+              "address": 1,
+              "value": 178
+            },
+            {
+              "address": 2,
+              "value": 195
+            },
+            {
+              "address": 3,
+              "value": 212
+            }
+          ]
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048
+    },
+    "expected": {
+      "EA": 0,
+      "word": "0x12345678",
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "cycles": 5,
+          "stalls": 0,
+          "rf_commits": [],
+          "store_commits": [
+            {
+              "cycle": 4,
+              "pc": 0,
+              "address": 0,
+              "value": 305419896,
+              "byte_enable": 15
+            }
+          ],
+          "probes": [],
+          "rf": [
+            0,
+            4,
+            305419896,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            120,
+            86,
+            52,
+            18
+          ],
+          "terminal": 10,
+          "pc": 12,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "program",
+    "origins": [
+      "Offset negativo"
+    ],
+    "status": "implemented"
+  }
+]

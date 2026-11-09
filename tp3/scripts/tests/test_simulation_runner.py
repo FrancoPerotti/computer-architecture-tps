@@ -12,7 +12,7 @@ from pathlib import Path
 # Permite importar las herramientas al descubrir pruebas desde otro directorio.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from simulation_runner import result_report, run_process
-from verification_manifest import MANIFEST
+from verification_manifest import MANIFEST, read_manifest
 
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
@@ -37,7 +37,7 @@ class SimulationRunnerTests(unittest.TestCase):
         self.manifest_path = self.directory / "manifest.json"
         self.scratch = self.directory / "scratch"
         self.scratch.mkdir()
-        self.manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.manifest = read_manifest(MANIFEST)
         self.group = {
             "id": GROUP,
             "source": "runner smoke fixture",

@@ -1,0 +1,674 @@
+[
+  {
+    "id": "TEST-MEM-008/C003",
+    "inputs": {
+      "old_size": 16,
+      "requested_N": 0,
+      "C": 1024,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 16,
+          "received": 16,
+          "abort": false,
+          "words": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "cpu",
+          "mode": "RUN",
+          "cycles": 3,
+          "hold_clocks": 0,
+          "stall_at": -1
+        },
+        {
+          "op": "terminal",
+          "mode": "RUN",
+          "result": "halt",
+          "cause": 0,
+          "fault_pc": 0
+        },
+        {
+          "op": "dirty"
+        },
+        {
+          "op": "reject",
+          "clocks": 4
+        }
+      ],
+      "cpu_old_image": [
+        7340179,
+        1056803,
+        9437459,
+        11
+      ]
+    },
+    "expected": {
+      "size_after": 16,
+      "session_preserved": true,
+      "load_request": false,
+      "command_accepted": false,
+      "load_start": false,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 16,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 4,
+          "size": 16,
+          "count": 3,
+          "pc": 12,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Rechazo conserva"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-008/C004",
+    "inputs": {
+      "old_size": 16,
+      "requested_N": 1028,
+      "C": 1024,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 16,
+          "received": 16,
+          "abort": false,
+          "words": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "cpu",
+          "mode": "RUN",
+          "cycles": 3,
+          "hold_clocks": 0,
+          "stall_at": -1
+        },
+        {
+          "op": "terminal",
+          "mode": "RUN",
+          "result": "halt",
+          "cause": 0,
+          "fault_pc": 0
+        },
+        {
+          "op": "dirty"
+        },
+        {
+          "op": "reject",
+          "clocks": 4
+        }
+      ],
+      "cpu_old_image": [
+        7340179,
+        1056803,
+        9437459,
+        11
+      ]
+    },
+    "expected": {
+      "size_after": 16,
+      "session_preserved": true,
+      "load_request": false,
+      "command_accepted": false,
+      "load_start": false,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 16,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 4,
+          "size": 16,
+          "count": 3,
+          "pc": 12,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Rechazo conserva"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-008/C005",
+    "inputs": {
+      "old_size": 16,
+      "requested_N": 6,
+      "C": 1024,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 16,
+          "received": 16,
+          "abort": false,
+          "words": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "cpu",
+          "mode": "RUN",
+          "cycles": 3,
+          "hold_clocks": 0,
+          "stall_at": -1
+        },
+        {
+          "op": "terminal",
+          "mode": "RUN",
+          "result": "halt",
+          "cause": 0,
+          "fault_pc": 0
+        },
+        {
+          "op": "dirty"
+        },
+        {
+          "op": "reject",
+          "clocks": 4
+        }
+      ],
+      "cpu_old_image": [
+        7340179,
+        1056803,
+        9437459,
+        11
+      ]
+    },
+    "expected": {
+      "size_after": 16,
+      "session_preserved": true,
+      "load_request": false,
+      "command_accepted": false,
+      "load_start": false,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 16,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 4,
+          "size": 16,
+          "count": 3,
+          "pc": 12,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        },
+        {
+          "state": 10,
+          "size": 16,
+          "count": 4,
+          "pc": 16,
+          "rf1": 7,
+          "rf2": 9,
+          "bitmap": 15,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": true
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Rechazo conserva"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-008/C006",
+    "inputs": {
+      "old_size": 16,
+      "new_N": 8,
+      "received_bytes": 3,
+      "abort": "timeout",
+      "recover_then_N": 4,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 16,
+          "received": 16,
+          "abort": false,
+          "words": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "load",
+          "size": 8,
+          "received": 3,
+          "abort": true,
+          "words": [
+            "0x0000000B",
+            "0x00000013"
+          ]
+        },
+        {
+          "op": "no_image_requests",
+          "clocks": 5
+        },
+        {
+          "op": "load",
+          "size": 4,
+          "received": 4,
+          "abort": false,
+          "words": [
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        }
+      ],
+      "cpu_old_image": [
+        7340179,
+        1056803,
+        9437459,
+        11
+      ]
+    },
+    "expected": {
+      "size_until_valid_commit": 0,
+      "RUN_STEP_after_recovery": "NO_IMAGE",
+      "final_ready_size": 4,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 16,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 0,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 0,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00700093",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x0000000B",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 4,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x0000000B",
+            "0x00102023",
+            "0x00900113",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Aceptación parcial falla"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-MEM-008/C007",
+    "inputs": {
+      "format": "opcode+N40+Nbytes sequential",
+      "requested_features": [
+        "origin4",
+        "sparse"
+      ]
+    },
+    "expected": {
+      "representable_in_LOAD": false,
+      "new_wire_fields_added": false
+    },
+    "kind": "review",
+    "origins": [
+      "Formato sin origen ni huecos"
+    ],
+    "status": "pending"
+  }
+]

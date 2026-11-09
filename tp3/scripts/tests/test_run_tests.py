@@ -11,7 +11,7 @@ from pathlib import Path
 # Permite importar las herramientas al descubrir pruebas desde otro directorio.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import run_tests
-from verification_manifest import MANIFEST, index_manifest
+from verification_manifest import MANIFEST, index_manifest, read_manifest
 
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
@@ -54,7 +54,7 @@ class SelectionTests(unittest.TestCase):
         self.addCleanup(self.work.cleanup)
         self.directory = Path(self.work.name)
         self.manifest_path = self.directory / "manifest.json"
-        self.manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.manifest = read_manifest(MANIFEST)
         self.manifest["groups"] = [
             group_fixture(FIRST, 3),
             group_fixture(SECOND, 1, reuse_groups=[FIRST]),
@@ -310,7 +310,7 @@ class SelectionTests(unittest.TestCase):
         result = self.cli("--manifest", str(MANIFEST), "--all", "--list", "--format", "json")
         self.assertEqual(result.returncode, 0, result.stderr)
         rows = json.loads(result.stdout)
-        catalogue = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        catalogue = read_manifest(MANIFEST)
         canonical_ids = {case["id"] for group in catalogue["groups"] for case in group["cases"]}
         self.assertEqual(len(rows), len(canonical_ids))
         self.assertEqual({row["case_id"] for row in rows}, canonical_ids)

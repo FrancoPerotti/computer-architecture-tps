@@ -11,6 +11,7 @@ from pathlib import Path
 # Permite importar las herramientas al descubrir pruebas desde otro directorio.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import prepare_case
+from verification_manifest import read_manifest
 
 # Ruta de las herramientas que se prueban, independiente del directorio de ejecución.
 SCRIPTS = Path(__file__).resolve().parents[1]
@@ -85,7 +86,7 @@ class CaseDataTests(unittest.TestCase):
         )
         if compilation.returncode:
             raise AssertionError(compilation.stdout + compilation.stderr)
-        cls.manifest = json.loads(prepare_case.MANIFEST.read_text(encoding="utf-8"))
+        cls.manifest = read_manifest(prepare_case.MANIFEST)
 
     @classmethod
     def tearDownClass(cls):

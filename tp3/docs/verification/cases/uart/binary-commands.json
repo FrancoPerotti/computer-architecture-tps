@@ -1,0 +1,1567 @@
+{
+  "id": "TEST-UART-003",
+  "source": "uart_debug.md#test-uart-003",
+  "case_count": 44,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-003/C001",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "NO_IMAGE",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C002",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "NO_IMAGE",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": false,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "NO_IMAGE"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 05",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C003",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "NO_IMAGE",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": false,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "NO_IMAGE"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "03 05",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C004",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C005",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "RUNNING"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C006",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "STEPPING"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C007",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "STEPPING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C008",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "STEPPING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "RUNNING"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C009",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "STEPPING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "STEPPING"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C010",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "HALT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C011",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "HALT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "FINISHED"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C012",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "HALT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "FINISHED"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C013",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "FAULT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C014",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "FAULT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "FAULT"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C015",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "FAULT_DRAIN_STEP",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": true,
+          "state_after_reply": "FAULT"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C016",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "FINISHED",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": true,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C017",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "FINISHED",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": true,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "PREPARING_RUN"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C018",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "FINISHED",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": true,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "PREPARING_STEP"
+        },
+        "response_busy_before": false,
+        "run_result_required": false,
+        "preparation_completion": {
+          "protocol_phase": "WAIT_STEP_END",
+          "prepare_active_before": true,
+          "cpu_cycle_fire": true
+        }
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire",
+        "one_CPU_cycle_after_preparation": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C019",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 5,
+        "state": "FAULT",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": true,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "05 03",
+        "unrelated_session_changed": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C020",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 2,
+        "state": "FAULT",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": true,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "run_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "PREPARING_RUN"
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": "02 01,terminal+Debug posterior",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C021",
+      "inputs": {
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 3,
+        "state": "FAULT",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": true,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "cpu_reply_on_request": {
+          "phase": "WAIT_COMMAND",
+          "request": "step_request",
+          "command_accepted": true,
+          "cpu_cycle_fire": false,
+          "state_after_reply": "PREPARING_STEP"
+        },
+        "response_busy_before": false,
+        "run_result_required": false,
+        "preparation_completion": {
+          "protocol_phase": "WAIT_STEP_END",
+          "prepare_active_before": true,
+          "cpu_cycle_fire": true
+        }
+      },
+      "expected": {
+        "response": "03 02+Debug postciclo",
+        "unrelated_session_changed": false,
+        "request_and_acceptance_same_edge": true,
+        "request_independent_command_accepted": true,
+        "response_start_with_serializer_free": true,
+        "response_capture_edge": "cpu_cycle_fire",
+        "debug_hold_set_edge": "cpu_cycle_fire",
+        "one_CPU_cycle_after_preparation": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Estado ycomando"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C022",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 5,
+        "state": "RUNNING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C023",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 2,
+        "state": "RUNNING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C024",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 3,
+        "state": "RUNNING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C025",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 5,
+        "state": "HALT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C026",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 2,
+        "state": "HALT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C027",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 3,
+        "state": "HALT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C028",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 5,
+        "state": "FAULT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C029",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 2,
+        "state": "FAULT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C030",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "opcode": 3,
+        "state": "FAULT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C031",
+      "inputs": {
+        "LOAD_header": "01 04 00 00 00 00",
+        "transport_phase": "WAIT_RUN_END",
+        "state": "FAULT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+        "LOAD_header_interpreted": false,
+        "RESET_from_size_byte": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C032",
+      "inputs": {
+        "LOAD_header": "01 04 00 00 00 00",
+        "transport_phase": "WAIT_RUN_END",
+        "state": "HALT_DRAIN_AUTO",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+        "LOAD_header_interpreted": false,
+        "RESET_from_size_byte": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C033",
+      "inputs": {
+        "LOAD_header": "01 04 00 00 00 00",
+        "transport_phase": "WAIT_RUN_END",
+        "state": "RUNNING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": true,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": true,
+        "RUN_ACCEPTED_complete": true
+      },
+      "expected": {
+        "response": null,
+        "requests": {
+          "load_request": false,
+          "run_request": false,
+          "step_request": false
+        },
+        "next_protocol_state": "RECOVER_RX",
+        "CPU_AUTO_continues": true,
+        "old_image_preserved": true,
+        "discarded_commands_replayed": false,
+        "recovery_return_if_RUN_continues": "WAIT_RUN_END",
+        "LOAD_header_interpreted": false,
+        "RESET_from_size_byte": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Tráfico fuera de fase durante RUN"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C034",
+      "inputs": {
+        "state": "READY",
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 6,
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": [
+          6,
+          12
+        ],
+        "CPU_image_unchanged": true,
+        "response_start_with_serializer_free": true,
+        "echo_capture_edge": "opcode_consume",
+        "response_with_debug": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Opcode desconocido"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C035",
+      "inputs": {
+        "state": "READY",
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 0,
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": [
+          0,
+          12
+        ],
+        "CPU_image_unchanged": true,
+        "response_start_with_serializer_free": true,
+        "echo_capture_edge": "opcode_consume",
+        "response_with_debug": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Opcode desconocido"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C036",
+      "inputs": {
+        "state": "READY",
+        "transport_phase": "WAIT_COMMAND",
+        "opcode": 255,
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "response": [
+          255,
+          12
+        ],
+        "CPU_image_unchanged": true,
+        "response_start_with_serializer_free": true,
+        "echo_capture_edge": "opcode_consume",
+        "response_with_debug": false
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Opcode desconocido"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C037",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_SIZE",
+        "byte": 2,
+        "remaining_bytes": 4,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "size_byte"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C038",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_SIZE",
+        "byte": 3,
+        "remaining_bytes": 4,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "size_byte"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C039",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_SIZE",
+        "byte": 4,
+        "remaining_bytes": 4,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "size_byte"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C040",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_SIZE",
+        "byte": 5,
+        "remaining_bytes": 4,
+        "state": "READY",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": true,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": true
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "size_byte"
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C041",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_DATA",
+        "byte": 2,
+        "remaining_bytes": 4,
+        "state": "LOADING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "loader_byte",
+        "load_byte_valid": true,
+        "remaining_decrement": 1,
+        "offset_from_preedge_remaining": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C042",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_DATA",
+        "byte": 3,
+        "remaining_bytes": 4,
+        "state": "LOADING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "loader_byte",
+        "load_byte_valid": true,
+        "remaining_decrement": 1,
+        "offset_from_preedge_remaining": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C043",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_DATA",
+        "byte": 4,
+        "remaining_bytes": 4,
+        "state": "LOADING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "loader_byte",
+        "load_byte_valid": true,
+        "remaining_decrement": 1,
+        "offset_from_preedge_remaining": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-003/C044",
+      "inputs": {
+        "transport_phase": "RECEIVE_LOAD_DATA",
+        "byte": 5,
+        "remaining_bytes": 4,
+        "state": "LOADING",
+        "cpu_context": {
+          "command_accepted": false,
+          "load_available": false,
+          "prepare_active": false,
+          "program_finished": false,
+          "fault_terminal": false,
+          "cpu_cycle_fire": false,
+          "image_valid": false
+        },
+        "response_busy_before": false,
+        "run_result_required": false
+      },
+      "expected": {
+        "decoded_as_command": false,
+        "action": "loader_byte",
+        "load_byte_valid": true,
+        "remaining_decrement": 1,
+        "offset_from_preedge_remaining": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "Datos nocomandos"
+      ],
+      "status": "pending"
+    }
+  ]
+}

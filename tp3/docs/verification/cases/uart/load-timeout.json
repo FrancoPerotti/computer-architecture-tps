@@ -1,0 +1,565 @@
+{
+  "id": "TEST-UART-005",
+  "source": "uart_debug.md#test-uart-005",
+  "case_count": 24,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-005/C001",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "received_bytes": 2,
+        "N": 8,
+        "T_clocks": 5000000,
+        "activity_without_valid_byte_before_timeout": [
+          "line-transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "activity_frame_start_clocks_before_T": 10000,
+        "valid_byte_or_error_before_T": false
+      },
+      "expected": {
+        "response": "01 07",
+        "old_image_preserved": true,
+        "LOAD_timer_restarted_by_activity_only": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Incompletosinbyte"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C002",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "received_bytes": 2,
+        "N": 8,
+        "valid_byte_event": "T-1",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C003",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "received_bytes": 2,
+        "N": 8,
+        "valid_byte_event": "T",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C004",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 1,
+        "N": 8,
+        "T_clocks": 5000000,
+        "activity_without_valid_byte_before_timeout": [
+          "line-transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "activity_frame_start_clocks_before_T": 10000,
+        "valid_byte_or_error_before_T": false
+      },
+      "expected": {
+        "response": "01 08",
+        "old_image_preserved": false,
+        "LOAD_timer_restarted_by_activity_only": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Incompletosinbyte"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C005",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 1,
+        "N": 8,
+        "valid_byte_event": "T-1",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C006",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 1,
+        "N": 8,
+        "valid_byte_event": "T",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C007",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 3,
+        "N": 8,
+        "T_clocks": 5000000,
+        "activity_without_valid_byte_before_timeout": [
+          "line-transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "activity_frame_start_clocks_before_T": 10000,
+        "valid_byte_or_error_before_T": false
+      },
+      "expected": {
+        "response": "01 08",
+        "old_image_preserved": false,
+        "LOAD_timer_restarted_by_activity_only": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Incompletosinbyte"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C008",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 3,
+        "N": 8,
+        "valid_byte_event": "T-1",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C009",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 3,
+        "N": 8,
+        "valid_byte_event": "T",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C010",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 4,
+        "N": 8,
+        "T_clocks": 5000000,
+        "activity_without_valid_byte_before_timeout": [
+          "line-transition",
+          "line-low",
+          "frame-in-progress"
+        ],
+        "activity_frame_start_clocks_before_T": 10000,
+        "valid_byte_or_error_before_T": false
+      },
+      "expected": {
+        "response": "01 08",
+        "old_image_preserved": false,
+        "LOAD_timer_restarted_by_activity_only": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Incompletosinbyte"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C011",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 4,
+        "N": 8,
+        "valid_byte_event": "T-1",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C012",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "received_bytes": 4,
+        "N": 8,
+        "valid_byte_event": "T",
+        "byte": "0x00"
+      },
+      "expected": {
+        "timeout": false,
+        "T_restarted": true,
+        "response_error": false
+      },
+      "kind": "timer_scenario",
+      "origins": [
+        "Byteenfrontera"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C013",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": false,
+        "events": "error+byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": false,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C014",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": false,
+        "events": "error+byte",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": false,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C015",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": false,
+        "events": "byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "byte",
+        "response": "ninguna",
+        "coincident_word_write": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C016",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": true,
+        "events": "error+byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": false,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C017",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": true,
+        "events": "error+byte",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": false,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C018",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_SIZE",
+        "byte_completes_phase": true,
+        "events": "byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "byte",
+        "response": "01 01",
+        "coincident_word_write": false,
+        "decision_uses_current_fifth_byte": true,
+        "request_and_ACCEPTED_capture_same_edge": true,
+        "next_protocol_state": "WAIT_LOAD_ACCEPT_SENT"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C019",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": false,
+        "events": "error+byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": true,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C020",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": false,
+        "events": "error+byte",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": true,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C021",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": false,
+        "events": "byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 3
+      },
+      "expected": {
+        "winner": "byte",
+        "response": "ninguna",
+        "coincident_word_write": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C022",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": true,
+        "events": "error+byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": true,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C023",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": true,
+        "events": "error+byte",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "error",
+        "response": "01 09",
+        "coincident_word_write": false,
+        "load_abort": true,
+        "load_byte_valid": false,
+        "remaining_decrement": 0,
+        "next_protocol_state": "RECOVER_RX"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-005/C024",
+      "inputs": {
+        "phase": "RECEIVE_LOAD_DATA",
+        "byte_completes_phase": true,
+        "events": "byte+timeout",
+        "N": 8,
+        "byte": "0x00",
+        "content_offset": 7
+      },
+      "expected": {
+        "winner": "byte",
+        "response": null,
+        "coincident_word_write": true,
+        "next_protocol_state": "WAIT_PREP_DONE",
+        "last_delivery_IMEM_write_load_ok_same_edge": true,
+        "remaining_decrement": 1,
+        "next_response": "01 02 after preparation and publication",
+        "DONE_capture_edge_relative_image_publish": 1
+      },
+      "kind": "artificial",
+      "origins": [
+        "Prioridadlocal"
+      ],
+      "status": "pending"
+    }
+  ]
+}

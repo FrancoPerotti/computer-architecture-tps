@@ -2,7 +2,7 @@ name: TP3 quality
 
 on:
   pull_request:
-    branches: [feature/tp3-riscv-pipeline]
+    branches: ['feature/tp3-*']
   push:
     branches:
       - 'feature/tp3-*'

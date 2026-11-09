@@ -1,0 +1,1392 @@
+[
+  {
+    "id": "TEST-ISA-004/C241",
+    "inputs": {
+      "word": "0x80015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x80015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRLI",
+        "bit": 31
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C242",
+    "inputs": {
+      "word": "0x01F05F93",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x01F05F93",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 2,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "SRLI",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Palabras legales"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C243",
+    "inputs": {
+      "word": "0x40015092",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40015092",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 0
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C244",
+    "inputs": {
+      "word": "0x40015091",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40015091",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 1
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C245",
+    "inputs": {
+      "word": "0x40015097",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40015097",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 2
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C246",
+    "inputs": {
+      "word": "0x4001509B",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x4001509B",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 3
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C247",
+    "inputs": {
+      "word": "0x40015083",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40015083",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 32,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 5,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "LHU",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 4
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C248",
+    "inputs": {
+      "word": "0x400150B3",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x400150B3",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 3,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 1,
+      "instruction_class": "SRA",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 5
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C249",
+    "inputs": {
+      "word": "0x400150D3",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x400150D3",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 6
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C250",
+    "inputs": {
+      "word": "0x40014093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40014093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 38,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "XORI",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 12
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C251",
+    "inputs": {
+      "word": "0x40017093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x40017093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 36,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "ANDI",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 13
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C252",
+    "inputs": {
+      "word": "0x42015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x42015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 25
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C253",
+    "inputs": {
+      "word": "0x44015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x44015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 26
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C254",
+    "inputs": {
+      "word": "0x48015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x48015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 27
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C255",
+    "inputs": {
+      "word": "0x50015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x50015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 28
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C256",
+    "inputs": {
+      "word": "0x60015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x60015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 29
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C257",
+    "inputs": {
+      "word": "0xC0015093",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0xC0015093",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "SRAI",
+        "bit": 31
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C258",
+    "inputs": {
+      "word": "0x41F05F93",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x41F05F93",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 3,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "SRAI",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Palabras legales"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C259",
+    "inputs": {
+      "word": "0x00010082",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x00010082",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 0
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C260",
+    "inputs": {
+      "word": "0x00010081",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x00010081",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 1
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C261",
+    "inputs": {
+      "word": "0x00010087",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x00010087",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 2
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C262",
+    "inputs": {
+      "word": "0x0001008B",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x0001008B",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 3
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C263",
+    "inputs": {
+      "word": "0x000100A3",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x000100A3",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 32,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 6,
+      "reg_write": 0,
+      "uses_rs1": 1,
+      "uses_rs2": 1,
+      "instruction_class": "SB",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 5
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C264",
+    "inputs": {
+      "word": "0x000100C3",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0x000100C3",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 0,
+      "alu_op": 32,
+      "alu_src": 0,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 0,
+      "reg_write": 0,
+      "uses_rs1": 0,
+      "uses_rs2": 0,
+      "id_fault_candidate": true,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": 2,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Mutaciones de bits fijos"
+    ],
+    "mutations": [
+      {
+        "from": "LB",
+        "bit": 6
+      }
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-ISA-004/C265",
+    "inputs": {
+      "word": "0xFFF00F83",
+      "ifid_valid": 1,
+      "id_context": {
+        "reset": 0,
+        "prepare_init": 0,
+        "ifid": {
+          "valid": 1,
+          "pc": 0,
+          "instruction": "0xFFF00F83",
+          "fetch_fault_valid": 0,
+          "fetch_fault_cause": 0
+        },
+        "idex_valid": 0,
+        "idex_rd": 0,
+        "idex_mem_op": 0,
+        "rf_write_addr": 0,
+        "rf_write_data": 0,
+        "rf_write_fire": 0,
+        "bypass_rs1": 0,
+        "bypass_rs2": 0,
+        "debug_read_select": 0,
+        "debug_rf_addr": 0
+      }
+    },
+    "expected": {
+      "decode_legal": 1,
+      "alu_op": 32,
+      "alu_src": 1,
+      "result_sel": 0,
+      "flow_op": 0,
+      "mem_op": 1,
+      "reg_write": 1,
+      "uses_rs1": 1,
+      "uses_rs2": 0,
+      "instruction_class": "LB",
+      "id_fault_candidate": false,
+      "halt_candidate": false,
+      "idex_valid": 1,
+      "id_fault_pc": 0,
+      "id_fault_cause": null,
+      "load_use_stall": 0
+    },
+    "kind": "vector",
+    "origins": [
+      "Palabras legales"
+    ],
+    "status": "implemented"
+  }
+]

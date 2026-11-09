@@ -1,0 +1,980 @@
+[
+  {
+    "id": "TEST-EXEC-003/C003",
+    "inputs": {
+      "program": "addi x1,x0,8; sw x1,0(x0); addi x2,x0,3; lw x1,0(x0); add x3,x1,x2; halt",
+      "mode": "RUN",
+      "word0": 0,
+      "x2_before": 0,
+      "hold_physical_clocks": 0,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 24,
+          "received": 24,
+          "abort": false,
+          "words": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "cpu",
+          "mode": "RUN",
+          "cycles": 10,
+          "hold_clocks": 0,
+          "stall_at": 3
+        },
+        {
+          "op": "terminal",
+          "mode": "RUN",
+          "result": "halt",
+          "cause": 0,
+          "fault_pc": 0
+        },
+        {
+          "op": "hold",
+          "clocks": 50
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "words": [
+            8388755,
+            1056803,
+            3146003,
+            8323,
+            2130355,
+            11
+          ],
+          "mode": "RUN",
+          "holds": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "start": "load",
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "after_trace": "none"
+        }
+      ]
+    },
+    "expected": {
+      "one_cycle_per_accepted_STEP": true,
+      "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
+      "hold_counter_increment": 0,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 24,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 4,
+          "size": 24,
+          "count": 10,
+          "pc": 36,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 24,
+          "count": 11,
+          "pc": 40,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 24,
+          "count": 11,
+          "pc": 40,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        }
+      ],
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 4,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 4,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 3,
+              "state": 4,
+              "valid_mask": 14,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "idex_pc": 4,
+              "exmem_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 4,
+              "state": 4,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "exmem_pc": 4,
+              "memwb_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 5,
+              "state": 4,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 1,
+                "value": 8
+              },
+              "store_commit": {
+                "fire": true,
+                "pc": 4,
+                "address": 0,
+                "value": 8
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "memwb_pc": 4,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 4,
+              "valid_mask": 11,
+              "empty_next": false,
+              "action": 8,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "exmem_pc": 12,
+              "memwb_pc": 8,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 24,
+              "count": 7,
+              "state": 4,
+              "valid_mask": 13,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 2,
+                "value": 3
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 20,
+              "idex_pc": 16,
+              "memwb_pc": 12,
+              "fault_info_valid": false,
+              "check_idex_operands": true,
+              "idex_rs1_value": 8,
+              "idex_rs2_value": 3
+            },
+            {
+              "pc": 28,
+              "count": 8,
+              "state": 4,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "rf_commit": {
+                "fire": true,
+                "pc": 12,
+                "rd": 1,
+                "value": 8
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 24,
+              "idex_pc": 20,
+              "exmem_pc": 16,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 28,
+              "count": 9,
+              "state": 6,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 16,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 28,
+              "count": 10,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 16,
+                "rd": 3,
+                "value": 11
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            8,
+            3,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            8,
+            0,
+            0,
+            0
+          ],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Dosprogramas ymodos"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-EXEC-003/C004",
+    "inputs": {
+      "program": "addi x1,x0,8; sw x1,0(x0); addi x2,x0,3; lw x1,0(x0); add x3,x1,x2; halt",
+      "mode": "STEP",
+      "word0": 0,
+      "x2_before": 0,
+      "hold_physical_clocks": 50,
+      "session_steps": [
+        {
+          "op": "load",
+          "size": 24,
+          "received": 24,
+          "abort": false,
+          "words": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ]
+        },
+        {
+          "op": "prepare"
+        },
+        {
+          "op": "cpu",
+          "mode": "STEP",
+          "cycles": 10,
+          "hold_clocks": 50,
+          "stall_at": 3
+        },
+        {
+          "op": "terminal",
+          "mode": "STEP",
+          "result": "halt",
+          "cause": 0,
+          "fault_pc": 0
+        },
+        {
+          "op": "hold",
+          "clocks": 50
+        }
+      ],
+      "processor_imem_capacity": 1024,
+      "processor_dmem_capacity": 2048,
+      "processor": [
+        {
+          "words": [
+            8388755,
+            1056803,
+            3146003,
+            8323,
+            2130355,
+            11
+          ],
+          "mode": "STEP",
+          "holds": [
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50
+          ],
+          "start": "load",
+          "initial_rf": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "after_trace": "none"
+        }
+      ]
+    },
+    "expected": {
+      "one_cycle_per_accepted_STEP": true,
+      "RF_terminal": "xi=i enlineal; x1=8,x3=11 enload-use",
+      "hold_counter_increment": 0,
+      "session_steps": [
+        {
+          "state": 2,
+          "size": 0,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 3,
+          "size": 24,
+          "count": 0,
+          "pc": 0,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 5,
+          "size": 24,
+          "count": 10,
+          "pc": 36,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 24,
+          "count": 11,
+          "pc": 40,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        },
+        {
+          "state": 10,
+          "size": 24,
+          "count": 11,
+          "pc": 40,
+          "rf1": 0,
+          "rf2": 0,
+          "bitmap": 0,
+          "imem": [
+            "0x00800093",
+            "0x00102023",
+            "0x00300113",
+            "0x00002083",
+            "0x002081B3",
+            "0x0000000B"
+          ],
+          "physical_word_preserved": false
+        }
+      ],
+      "processor": [
+        {
+          "prepare_clears": 2048,
+          "trace": [
+            {
+              "pc": 4,
+              "count": 1,
+              "state": 5,
+              "valid_mask": 8,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 8,
+              "count": 2,
+              "state": 5,
+              "valid_mask": 12,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 4,
+              "idex_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 12,
+              "count": 3,
+              "state": 5,
+              "valid_mask": 14,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 8,
+              "idex_pc": 4,
+              "exmem_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 16,
+              "count": 4,
+              "state": 5,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 12,
+              "idex_pc": 8,
+              "exmem_pc": 4,
+              "memwb_pc": 0,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 5,
+              "state": 5,
+              "valid_mask": 15,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 0,
+                "rd": 1,
+                "value": 8
+              },
+              "store_commit": {
+                "fire": true,
+                "pc": 4,
+                "address": 0,
+                "value": 8
+              },
+              "ifid_pc": 16,
+              "idex_pc": 12,
+              "exmem_pc": 8,
+              "memwb_pc": 4,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 20,
+              "count": 6,
+              "state": 5,
+              "valid_mask": 11,
+              "empty_next": false,
+              "action": 8,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 16,
+              "exmem_pc": 12,
+              "memwb_pc": 8,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 24,
+              "count": 7,
+              "state": 5,
+              "valid_mask": 13,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 8,
+                "rd": 2,
+                "value": 3
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 20,
+              "idex_pc": 16,
+              "memwb_pc": 12,
+              "fault_info_valid": false,
+              "check_idex_operands": true,
+              "idex_rs1_value": 8,
+              "idex_rs2_value": 3
+            },
+            {
+              "pc": 28,
+              "count": 8,
+              "state": 5,
+              "valid_mask": 6,
+              "empty_next": false,
+              "action": 4,
+              "fetch_fault_valid": true,
+              "fetch_fault_cause": 1,
+              "rf_commit": {
+                "fire": true,
+                "pc": 12,
+                "rd": 1,
+                "value": 8
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "ifid_pc": 24,
+              "idex_pc": 20,
+              "exmem_pc": 16,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 28,
+              "count": 9,
+              "state": 7,
+              "valid_mask": 1,
+              "empty_next": false,
+              "action": 64,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": false
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "memwb_pc": 16,
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            },
+            {
+              "pc": 28,
+              "count": 10,
+              "state": 10,
+              "valid_mask": 0,
+              "empty_next": true,
+              "action": 1,
+              "fetch_fault_valid": false,
+              "fetch_fault_cause": 0,
+              "rf_commit": {
+                "fire": true,
+                "pc": 16,
+                "rd": 3,
+                "value": 11
+              },
+              "store_commit": {
+                "fire": false
+              },
+              "fault_info_valid": false,
+              "check_idex_operands": false
+            }
+          ],
+          "rf": [
+            0,
+            8,
+            3,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "used_addresses": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "used_values": [
+            8,
+            0,
+            0,
+            0
+          ],
+          "terminal": 10,
+          "fault_cause": 0,
+          "fault_pc": 0
+        }
+      ]
+    },
+    "kind": "scenario",
+    "origins": [
+      "Dosprogramas ymodos"
+    ],
+    "status": "implemented"
+  }
+]

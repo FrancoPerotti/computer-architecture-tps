@@ -8,8 +8,12 @@ netlist FPGA, timing ni aceptación física.
 import argparse
 import json
 import re
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from verification_manifest import read_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -104,7 +108,7 @@ def inspect(xml_path, case_id):
             f"Padre incorrecto para {item['id']}",
         )
 
-    manifest = json.loads((ROOT / "docs/verification/cases.json").read_text())
+    manifest = read_manifest(ROOT / "docs/verification/cases.json")
     case = next(
         case for group in manifest["groups"] for case in group["cases"] if case["id"] == case_id
     )

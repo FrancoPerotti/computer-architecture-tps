@@ -48,6 +48,12 @@ Las [reglas del protocolo y su coordinación](coverage.md#reglas-del-protocolo-y
 
 El manifiesto `tp3-verification-cases` reúne la descripción de los casos y la configuración de sus ejecuciones en el mismo archivo. Cada grupo conserva sus IDs, fuentes documentales, entradas, expectativas y relaciones de reutilización, y contiene una lista `executions`.
 
+El catálogo se organiza en un [índice y archivos por grupo](cases/README.md).
+Los grupos grandes separan sus casos en listas de tamaño acotado. El cargador
+resuelve las referencias `file` antes de validar, seleccionar y preparar datos;
+los IDs, el orden, las entradas y las expectativas conservan su significado.
+Las rutas de fuentes y los comandos del ejecutor mantienen sus bases anteriores.
+
 Cada entrada de `executions` describe un testbench mediante sus fuentes en orden de compilación (`sources`), relativas a `tp3`, su módulo principal (`top`), el nivel de verificación que acredita (`level`) y el límite de tiempo por caso (`timeout_seconds`). Un grupo puede contener varias entradas para comprobar sus casos con distintos testbenches o en distintos niveles. Los IDs y las expectativas permanecen definidos en `cases` y `replay_cases`.
 
 Las propiedades opcionales `case_ids` y `parameters` restringen los casos aplicables y fijan los parámetros de elaboración del banco. Un parámetro puede tomar una entrada entera mediante `{"input": "C"}`, que referencia `inputs.C` del caso antes de compilar. Sin `case_ids`, la ejecución se aplica a todos los casos del grupo, incluidas sus reejecuciones. `expected_rejection` declara un rechazo controlado mediante su código de salida positivo y la clave del diagnóstico dentro de `expected`; el diagnóstico conserva su autoridad en el caso. La carga común verifica la pertenencia de los casos y la existencia y los tipos de las entradas referenciadas. El [ejecutor común](test_selection.md#compilación-y-simulación) aplica estas configuraciones y valida los resultados.
