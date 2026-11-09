@@ -135640,6 +135640,19 @@
           "case_ids": [
             "TEST-UART-001/C001"
           ]
+        },
+        {
+          "sources": [
+            "tb/common/tp3_case_data.sv",
+            "rtl/serial_input_sync.sv",
+            "tb/serial_input_sync_tb.sv"
+          ],
+          "top": "serial_input_sync_tb",
+          "level": "Unidad",
+          "timeout_seconds": 5,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
         }
       ],
       "cases": [
