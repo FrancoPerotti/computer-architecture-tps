@@ -34,7 +34,7 @@ Los [modelos abstractos ejecutables](../../tools/verification/README.md) comprue
 
 - **Nivel:** unidad UART e integración uart_core.
 - **Tipo de estímulo:** legal y errores físicos dirigidos.
-- **Estado:** C001 unitario implementado para baud_tick_gen, serial_input_sync y rx_fsm; el resto de variantes y la integración RX/TX siguen pendientes.
+- **Estado:** C001 implementado al nivel unitario para los módulos UART y al nivel de integración local para `uart_core`; las demás variantes continúan pendientes.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -60,7 +60,7 @@ El clock y el generador de ticks se mantienen activos durante las observaciones.
 
 La prueba tiene 31 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-001/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
 
-La variante C001 ejecuta bancos unitarios de `baud_tick_gen`, `serial_input_sync`, `rx_fsm` y `rx_datapath`. `rx_fsm` se prueba con condiciones de datapath controladas; `rx_datapath` verifica los recursos y comparadores de forma aislada. Esto no acredita todavía la integración entre ambos ni su incorporación a `uart_rx`.
+La variante C001 ejecuta bancos unitarios de `baud_tick_gen`, `serial_input_sync`, `rx_fsm`, `rx_datapath`, `uart_rx`, `tx_fsm` y `tx_datapath`, pruebas de integración de `uart_rx` y `uart_tx`, y una prueba de integración local del `uart_core` completo. Esta última utiliza los módulos físicos reales y comprueba el tick compartido, recepción y orden de bytes, errores de trama y overflow, transmisión y retiro de FIFO al final del Stop, full-duplex y recuperación por reset. Las FSM unitarias usan condiciones de datapath controladas; las pruebas de integración ejercitan las conexiones reales.
 
 Los 24 casos nominales combinan los seis bytes dirigidos con RX o TX y las dos fases de inicio.
 
@@ -106,7 +106,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad FIFO e integración UART.
 - **Tipo de estímulo:** legal y overflow artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001 unitario de `fifo` implementado; las variantes restantes y la integración UART siguen pendientes.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-UART-010](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -157,6 +157,8 @@ Con FIFO vacía y wr y rd simultáneos, solo se acepta la escritura. Con FIFO ll
 Los bytes deben mantener su orden sin pérdidas ni duplicaciones. Los flags representan la ocupación de cero a cuatro. Una cola vacía puede mostrar residuos sin que sean datos válidos.
 
 Reset pone la cuenta y los punteros en cero y suprime las operaciones del flanco, sin exigir borrar el array. El quinto byte produce overflow sin ampliar la capacidad.
+
+La variante C001 ejecuta una prueba unitaria de la FIFO que cubre ocupaciones vacía, intermedia y llena, orden, simultaneidad, wrap de punteros y reset. Las variantes restantes y los escenarios de integración UART continúan pendientes.
 
 La aprobación exige decisiones preflanco correctas en todas las fronteras y simultaneidades. El overflow es un error UART y no un nuevo fault arquitectónico.
 

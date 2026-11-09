@@ -49,6 +49,8 @@ El catálogo utiliza nombres en inglés, con minúsculas y guiones bajos; cada n
 | `uart_rx`           | `rx_fsm`              | Decisiones RX y señales de acción                                                                  |
 | `uart_rx`           | `rx_datapath`         | Contadores RX y registro de desplazamiento                                                         |
 | `uart_core`         | `uart_tx`             | Transmisión de tramas                                                                             |
+| `uart_tx`           | `tx_fsm`              | Decisiones TX y señales de acción                                                                  |
+| `uart_tx`           | `tx_datapath`         | Contadores, selector y registros de transmisión                                                    |
 | `uart_core`         | `fifo`                | Dos instancias del mismo módulo: RX y TX                                                          |
 | `processor_top`     | `if_stage`            | PC, próximo PC, búsqueda y candidato de fault de fetch                                            |
 | `processor_top`     | `id_stage`            | Decodificación, RF, operandos, inmediato, fault ID y detección load-use                           |

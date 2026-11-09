@@ -131,6 +131,8 @@ Los siguientes 19 tipos se suman a los 23 módulos específicos recomendados. Lo
 | `rx_fsm`              | `uart_rx`       | `rx_fsm.sv`; control RX one-hot                 |
 | `rx_datapath`         | `uart_rx`       | `rx_datapath.sv`; contadores y shift register   |
 | `uart_tx`             | `uart_core`     | `uart_tx.sv`                                  |
+| `tx_fsm`              | `uart_tx`       | `tx_fsm.sv`; control TX one-hot                 |
+| `tx_datapath`         | `uart_tx`       | `tx_datapath.sv`; contadores y registros TX     |
 | `fifo`                | `uart_core`     | `fifo.sv`; instancias RX y TX                 |
 | `if_stage`            | `processor_top` | `if_stage.sv`                                 |
 | `id_stage`            | `processor_top` | `id_stage.sv`                                 |

@@ -135679,6 +135679,87 @@
           "case_ids": [
             "TEST-UART-001/C001"
           ]
+        },
+        {
+          "sources": [
+            "tb/common/tp3_case_data.sv",
+            "rtl/rx_fsm.sv",
+            "rtl/rx_datapath.sv",
+            "rtl/uart_rx.sv",
+            "tb/uart_rx_tb.sv"
+          ],
+          "top": "uart_rx_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "tb/common/tp3_case_data.sv",
+            "rtl/tx_fsm.sv",
+            "tb/tx_fsm_tb.sv"
+          ],
+          "top": "tx_fsm_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/tp3_case_data.sv",
+            "rtl/tx_datapath.sv",
+            "tb/tx_datapath_tb.sv"
+          ],
+          "top": "tx_datapath_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/tp3_case_data.sv",
+            "rtl/tx_fsm.sv",
+            "rtl/tx_datapath.sv",
+            "rtl/uart_tx.sv",
+            "tb/uart_tx_tb.sv"
+          ],
+          "top": "uart_tx_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
+        },
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/tp3_case_data.sv",
+            "rtl/serial_input_sync.sv",
+            "rtl/baud_tick_gen.sv",
+            "rtl/rx_fsm.sv",
+            "rtl/rx_datapath.sv",
+            "rtl/uart_rx.sv",
+            "rtl/fifo.sv",
+            "rtl/tx_fsm.sv",
+            "rtl/tx_datapath.sv",
+            "rtl/uart_tx.sv",
+            "rtl/uart_core.sv",
+            "tb/uart_core_tb.sv"
+          ],
+          "top": "uart_core_tb",
+          "level": "Integración local",
+          "timeout_seconds": 30,
+          "case_ids": [
+            "TEST-UART-001/C001"
+          ]
         }
       ],
       "cases": [
@@ -136238,7 +136319,22 @@
       "source": "uart_debug.md#test-uart-002",
       "case_count": 21,
       "reuse_groups": [],
-      "executions": [],
+      "executions": [
+        {
+          "sources": [
+            "rtl/system_pkg.sv",
+            "tb/common/tp3_case_data.sv",
+            "rtl/fifo.sv",
+            "tb/fifo_tb.sv"
+          ],
+          "top": "fifo_tb",
+          "level": "Unidad",
+          "timeout_seconds": 10,
+          "case_ids": [
+            "TEST-UART-002/C001"
+          ]
+        }
+      ],
       "cases": [
         {
           "id": "TEST-UART-002/C001",
@@ -136259,7 +136355,7 @@
           "origins": [
             "Solicitud/ocupación"
           ],
-          "status": "pending"
+          "status": "implemented"
         },
         {
           "id": "TEST-UART-002/C002",

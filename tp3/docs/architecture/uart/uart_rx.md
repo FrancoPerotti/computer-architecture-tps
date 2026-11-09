@@ -11,7 +11,7 @@ El receptor UART convierte la señal serie que llega desde la PC en bytes de och
 
 El receptor trabaja sobre cada trama 8N1. La interpretación de esos bytes como códigos de operación, tamaños o contenido de un programa corresponde a los bloques que realizan el [protocolo](../../protocol.md). Una instrucción de 32 bits, por ejemplo, requiere recibir cuatro bytes y reconstruirlos fuera del receptor.
 
-El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). Se conserva la organización funcional en control, contador de muestreo, contador de bits y registro de desplazamiento. La decisión aprobada de implementación TP3 separa físicamente el control en `rx_fsm` y los recursos en `rx_datapath`; ambos se integrarán posteriormente dentro de `uart_rx`. Se conservan los cinco estados, comportamiento, indicadores y codificación one-hot del contrato. Las conexiones e integración se definen en [uart_core](uart_core.md).
+El diseño toma como referencia [uart_rx del TP2](../../../../tp2/rtl/uart_rx.sv), aplicando la [separación entre control y acciones](../../decisions/DEC-SYS-007.md#control-y-actualización-de-recursos). Se conserva la organización funcional en control, contador de muestreo, contador de bits y registro de desplazamiento. En TP3, `uart_rx` integra físicamente el control de `rx_fsm` y los recursos de `rx_datapath`, manteniendo sus fronteras internas separadas. Se conservan los cinco estados, comportamiento, indicadores y codificación one-hot del contrato. Las conexiones con el resto de la UART se definen en [uart_core](uart_core.md).
 
 ## Organización
 
@@ -21,7 +21,7 @@ El receptor se organiza funcionalmente en cuatro responsabilidades, realizadas e
 
 - `rx_fsm` contiene `RX Control`: estado registrado, transiciones y señales de acción.
 - `rx_datapath` contiene el contador de muestreo, el contador de bits y el registro de desplazamiento.
-- `uart_rx` integrará ambos bloques y expondrá el contrato externo ya definido.
+- `uart_rx` integra ambos bloques y expone el contrato externo ya definido.
 
 ```mermaid
 flowchart LR
@@ -46,7 +46,7 @@ flowchart LR
 
 Los contadores y el registro de desplazamiento conservan el estado de la recepción. `rx_fsm` consulta el nivel de la línea y los indicadores combinacionales `sample_half`, `sample_done` y `last_bit` de `rx_datapath` para decidir las acciones. Los controles se consumen en el flanco ascendente correspondiente del clock funcional.
 
-`rx_fsm` y `rx_datapath` son fronteras físicas internas que se integrarán en `uart_rx`. Esta separación no altera la interfaz externa ni agrega una etapa entre decisión y acción. El sincronizador, el generador de baud y las FIFO conservan sus fronteras propias.
+`rx_fsm` y `rx_datapath` son fronteras físicas internas de `uart_rx`. Esta separación no altera la interfaz externa ni agrega una etapa entre decisión y acción. El sincronizador, el generador de baud y las FIFO conservan sus fronteras propias.
 
 ### `RX Control`
 
