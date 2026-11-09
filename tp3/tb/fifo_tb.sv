@@ -1,21 +1,33 @@
 `timescale 1ns / 1ps
 
-// Verifica aceptación preflanco, orden, capacidad, wrap y reset de FIFO.
+// Ejecuta una variante canónica del contrato de FIFO indicada por el manifiesto.
 module fifo_tb;
   localparam integer DATA_WIDTH = system_pkg::UART_DATA_BITS;
   localparam integer CAPACITY   = system_pkg::UART_FIFO_DEPTH;
+  localparam integer ADDR_WIDTH = $clog2(CAPACITY);
+
   tp3_case_data data ();
-  logic                  clk = 1'b0;
-  logic                  reset = 1'b1;
-  logic                  rd = 1'b0;
-  logic                  wr = 1'b0;
-  logic [DATA_WIDTH-1:0] write_data = '0;
-  logic [DATA_WIDTH-1:0] read_data;
-  logic                  empty;
-  logic                  full;
+  logic                    clk = 1'b0;
+  logic                    reset = 1'b1;
+  logic                    rd = 1'b0;
+  logic                    wr = 1'b0;
+  logic   [DATA_WIDTH-1:0] write_data = '0;
+  logic   [DATA_WIDTH-1:0] read_data;
+  logic                    empty;
+  logic                    full;
+  integer                  initial_count;
+  integer                  expected_count;
+  integer                  old_read;
+  integer                  expected_write;
+  integer                  expected_read;
+  integer                  write_request;
+  integer                  read_request;
+  integer                  expected_value;
+  integer                  sequence_size;
+  integer                  read_wraps;
+  integer                  write_wraps;
 
   fifo dut (.*);
-
   always #10 clk = ~clk;
 
   task automatic fail(input string reason);
@@ -23,143 +35,172 @@ module fifo_tb;
     $fatal(1, "%s", reason);
   endtask
 
-  task automatic check_flags(input integer expected_count);
-    if (dut.count !== expected_count) fail("occupancy count mismatch");
-    if (empty !== (expected_count == 0)) fail("empty flag mismatch");
-    if (full !== (expected_count == CAPACITY)) fail("full flag mismatch");
+  task automatic check_flags(input integer count_value);
+    if (dut.count !== count_value) fail("occupancy mismatch");
+    if (empty !== (count_value == 0)) fail("empty flag mismatch");
+    if (full !== (count_value == CAPACITY)) fail("full flag mismatch");
   endtask
 
-  task automatic write_byte(input logic [DATA_WIDTH-1:0] value);
-    logic   [DATA_WIDTH-1:0] old_head;
-    integer                  old_count;
+  task automatic write_accepted(input logic [DATA_WIDTH-1:0] value);
     @(negedge clk);
-    if (full) fail("write_byte called while FIFO full");
-    old_count  = dut.count;
-    old_head   = read_data;
+    if (full) fail("fixture attempted write while full");
     wr         = 1'b1;
+    rd         = 1'b0;
     write_data = value;
     @(posedge clk);
     #1;
-    check_flags(old_count + 1);
-    if (old_count == 0) begin
-      if (read_data !== value) fail("write to empty FIFO did not expose new head");
-    end else if (read_data !== old_head) begin
-      fail("write changed the existing FIFO head");
+    @(negedge clk);
+    wr = 1'b0;
+    #1;
+  endtask
+
+  task automatic run_vector;
+    integer index;
+    integer read_pointer_before;
+    integer write_pointer_before;
+    begin
+      initial_count = data.get_integer("/inputs/occupation_before");
+      sequence_size = data.get_size("/inputs/data_sequence");
+      if (initial_count != sequence_size) fail("catalog fixture count differs from sequence");
+
+      for (index = 0; index < sequence_size; index++) begin
+        write_accepted(DATA_WIDTH'(data.get_integer($sformatf("/inputs/data_sequence/%0d", index)
+                       )));
+        check_flags(index + 1);
+      end
+      reset = 1'b0;
+      check_flags(initial_count);
+      if (initial_count != 0 && read_data !== DATA_WIDTH'(data.get_integer(
+              "/inputs/data_sequence/0"
+          )))
+        fail("preflop head differs from catalog sequence");
+
+      write_request  = data.get_integer("/inputs/wr");
+      read_request   = data.get_integer("/inputs/rd");
+      expected_write = write_request && (initial_count < CAPACITY);
+      expected_read  = read_request && (initial_count > 0);
+      expected_count = data.get_integer("/expected/occupation_after");
+      if (data.get_boolean("/expected/write_accepted") !== (expected_write != 0))
+        fail("catalog write acceptance is inconsistent with request");
+      if (data.get_boolean("/expected/read_accepted") !== (expected_read != 0))
+        fail("catalog read acceptance is inconsistent with request");
+      expected_value = data.get_integer("/inputs/new_byte");
+      old_read       = initial_count == 0 ? -1 : data.get_integer("/inputs/data_sequence/0");
+
+      @(negedge clk);
+      rd                   = read_request;
+      wr                   = write_request;
+      write_data           = DATA_WIDTH'(expected_value);
+      read_pointer_before  = dut.read_pointer;
+      write_pointer_before = dut.write_pointer;
+      if (dut.count != initial_count) fail("occupancy changed before request edge");
+      if (expected_read) begin
+        if (empty || read_data !== DATA_WIDTH'(old_read)) fail("wrong preflop read data");
+      end
+      if (expected_write && full) fail("catalog accepted write while full");
+      if (!expected_write && wr && !full) fail("fixture acceptance expectation error");
+      if (!expected_read && rd && !empty) fail("fixture read expectation error");
+      @(posedge clk);
+      #1;
+      check_flags(expected_count);
+      if (dut.read_pointer !== ADDR_WIDTH'(read_pointer_before + expected_read))
+        fail("read pointer acceptance mismatch");
+      if (dut.write_pointer !== ADDR_WIDTH'(write_pointer_before + expected_write))
+        fail("write pointer acceptance mismatch");
+
+      if (expected_read && !data.is_null(
+              "/expected/read_consumed"
+          ) && old_read != data.get_integer(
+              "/expected/read_consumed"
+          ))
+        fail("preflop consumed byte differs from catalog expectation");
+      if (expected_count > 0) begin
+        if (expected_read && initial_count > 1) begin
+          if (read_data !== DATA_WIDTH'(data.get_integer("/inputs/data_sequence/1")))
+            fail("next FIFO head mismatch after accepted read");
+        end else if (expected_read && initial_count == 1) begin
+          if (read_data !== DATA_WIDTH'(expected_value))
+            fail("simultaneous empty boundary lost write");
+        end else if (read_data !== DATA_WIDTH'(old_read == -1 ? expected_value : old_read)) begin
+          fail("FIFO head changed unexpectedly");
+        end
+      end
+      @(negedge clk);
+      rd = 1'b0;
+      wr = 1'b0;
     end
-    @(negedge clk);
-    wr = 1'b0;
   endtask
 
-  task automatic read_byte(input logic [DATA_WIDTH-1:0] expected);
-    integer old_count;
-    @(negedge clk);
-    if (empty) fail("read_byte called while FIFO empty");
-    if (read_data !== expected) fail("read_data did not present the oldest byte");
-    old_count = dut.count;
-    rd        = 1'b1;
-    @(posedge clk);
-    #1;
-    check_flags(old_count - 1);
-    @(negedge clk);
-    rd = 1'b0;
-  endtask
+  task automatic run_wrap_scenario;
+    integer index;
+    integer before_read;
+    integer before_write;
+    integer expected_byte;
+    begin
+      sequence_size = data.get_size("/inputs/write_then_read_sequence");
+      if (sequence_size != data.get_size("/expected/read_sequence"))
+        fail("wrap input/output sequence sizes differ");
+      read_wraps  = 0;
+      write_wraps = 0;
+      reset       = 1'b0;
+      for (index = 0; index < sequence_size; index++) begin
+        expected_byte = data.get_integer($sformatf("/inputs/write_then_read_sequence/%0d", index));
+        @(negedge clk);
+        before_write = dut.write_pointer;
+        wr           = 1'b1;
+        write_data   = DATA_WIDTH'(expected_byte);
+        @(posedge clk);
+        #1;
+        if (before_write == CAPACITY - 1 && dut.write_pointer == 0) write_wraps++;
+        check_flags(1);
+        if (read_data !== DATA_WIDTH'(expected_byte)) fail("wrap scenario write head mismatch");
 
-  task automatic rejected_write(input logic [DATA_WIDTH-1:0] value);
-    integer                  old_count;
-    logic   [DATA_WIDTH-1:0] old_head;
-    @(negedge clk);
-    if (!full) fail("rejected_write fixture was not full");
-    old_count  = dut.count;
-    old_head   = read_data;
-    wr         = 1'b1;
-    write_data = value;
-    @(posedge clk);
-    #1;
-    check_flags(old_count);
-    if (read_data !== old_head) fail("full FIFO accepted an extra write");
-    @(negedge clk);
-    wr = 1'b0;
-  endtask
-
-  task automatic rejected_read;
-    integer old_count;
-    @(negedge clk);
-    if (!empty) fail("rejected_read fixture was not empty");
-    old_count = dut.count;
-    rd        = 1'b1;
-    @(posedge clk);
-    #1;
-    check_flags(old_count);
-    @(negedge clk);
-    rd = 1'b0;
-  endtask
-
-  task automatic simultaneous(input logic [DATA_WIDTH-1:0] value,
-                              input logic [DATA_WIDTH-1:0] old_head,
-                              input logic [DATA_WIDTH-1:0] next_head, input integer expected_count);
-    @(negedge clk);
-    if (empty || full) fail("simultaneous middle-occupancy fixture invalid");
-    if (read_data !== old_head) fail("simultaneous operation started with wrong head");
-    rd         = 1'b1;
-    wr         = 1'b1;
-    write_data = value;
-    @(posedge clk);
-    #1;
-    check_flags(expected_count);
-    if (read_data !== next_head) fail("simultaneous read/write did not expose next byte");
-    @(negedge clk);
-    rd = 1'b0;
-    wr = 1'b0;
-  endtask
-
-  task automatic simultaneous_full(input logic [DATA_WIDTH-1:0] rejected_value,
-                                   input logic [DATA_WIDTH-1:0] old_head,
-                                   input logic [DATA_WIDTH-1:0] next_head);
-    @(negedge clk);
-    if (!full || read_data !== old_head) fail("full simultaneous fixture mismatch");
-    rd         = 1'b1;
-    wr         = 1'b1;
-    write_data = rejected_value;
-    @(posedge clk);
-    #1;
-    check_flags(CAPACITY - 1);
-    if (read_data !== next_head) fail("full simultaneous operation did not accept read only");
-    @(negedge clk);
-    rd = 1'b0;
-    wr = 1'b0;
-  endtask
-
-  task automatic simultaneous_empty(input logic [DATA_WIDTH-1:0] value);
-    @(negedge clk);
-    if (!empty) fail("empty simultaneous fixture mismatch");
-    rd         = 1'b1;
-    wr         = 1'b1;
-    write_data = value;
-    @(posedge clk);
-    #1;
-    check_flags(1);
-    if (read_data !== value) fail("empty simultaneous operation did not accept write only");
-    @(negedge clk);
-    rd = 1'b0;
-    wr = 1'b0;
-  endtask
-
-  task automatic reset_fifo;
-    @(negedge clk);
-    reset      = 1'b1;
-    rd         = 1'b1;
-    wr         = 1'b1;
-    write_data = 8'hEE;
-    @(posedge clk);
-    #1;
-    check_flags(0);
-    if (dut.read_pointer !== '0 || dut.write_pointer !== '0) begin
-      fail("reset did not clear FIFO pointers");
+        @(negedge clk);
+        before_read = dut.read_pointer;
+        wr          = 1'b0;
+        rd          = 1'b1;
+        if (read_data !== DATA_WIDTH'(data.get_integer(
+                $sformatf("/expected/read_sequence/%0d", index)
+            )))
+          fail("wrap scenario expected sequence differs from live head");
+        @(posedge clk);
+        #1;
+        if (before_read == CAPACITY - 1 && dut.read_pointer == 0) read_wraps++;
+        check_flags(0);
+      end
+      rd = 1'b0;
+      if (!data.get_boolean("/expected/pointer_wraps") || read_wraps != 3 || write_wraps != 3)
+        fail("read/write pointers did not wrap three times");
+      if (dut.read_pointer !== '0 || dut.write_pointer !== '0)
+        fail("pointers did not return to their initial position");
     end
-    @(negedge clk);
-    reset = 1'b0;
-    rd    = 1'b0;
-    wr    = 1'b0;
+  endtask
+
+  task automatic run_reset_scenario;
+    integer index;
+    begin
+      sequence_size = data.get_integer("/inputs/occupation_before");
+      for (index = 0; index < sequence_size; index++) begin
+        write_accepted(DATA_WIDTH'(8'h11 + index * 8'h11));
+      end
+      if (dut.count != data.get_integer("/inputs/occupation_before"))
+        fail("reset fixture did not reach catalog occupancy");
+      @(negedge clk);
+      reset      = data.get_integer("/inputs/reset");
+      rd         = data.get_integer("/inputs/rd");
+      wr         = data.get_integer("/inputs/wr");
+      write_data = 8'h55;
+      @(posedge clk);
+      #1;
+      check_flags(data.get_integer("/expected/occupation_after"));
+      if (dut.read_pointer !== '0 || dut.write_pointer !== '0 || data.get_integer(
+              "/expected/pointers"
+          ) != 0 || data.get_integer(
+              "/expected/accepted_operations"
+          ) != 0)
+        fail("reset did not suppress requests and clear pointers");
+      if (!empty || full) fail("reset flags are incorrect");
+    end
   endtask
 
   initial begin
@@ -169,61 +210,16 @@ module fifo_tb;
       #1;
     end
     check_flags(0);
-
     @(negedge clk);
     reset = 1'b0;
-    rejected_read();
-    write_byte(8'h11);
-    if (read_data !== 8'h11) fail("single-byte read_data mismatch");
-    read_byte(8'h11);
-    rejected_read();
 
-    // Llenado, rechazo en lleno y simultaneidad en FIFO llena: solo retira.
-    write_byte(8'h21);
-    write_byte(8'h32);
-    write_byte(8'h43);
-    write_byte(8'h54);
-    if (!full || read_data !== 8'h21) fail("FIFO did not fill with the expected head");
-    rejected_write(8'h65);
-    simultaneous_full(8'h76, 8'h21, 8'h32);
-    read_byte(8'h32);
-    read_byte(8'h43);
-    read_byte(8'h54);
-    check_flags(0);
-
-    // En vacío, rd y wr simultáneos aceptan solamente la escritura.
-    simultaneous_empty(8'h87);
-    read_byte(8'h87);
-
-    // En ocupación intermedia se aceptan ambas y se conserva el conteo.
-    write_byte(8'h98);
-    write_byte(8'hA9);
-    simultaneous(8'hBA, 8'h98, 8'hA9, 2);
-    read_byte(8'hA9);
-    read_byte(8'hBA);
-
-    // Recorrido circular con punteros desfasados y orden FIFO conservado.
-    write_byte(8'hC1);
-    write_byte(8'hC2);
-    write_byte(8'hC3);
-    write_byte(8'hC4);
-    read_byte(8'hC1);
-    read_byte(8'hC2);
-    write_byte(8'hC5);
-    write_byte(8'hC6);
-    read_byte(8'hC3);
-    read_byte(8'hC4);
-    read_byte(8'hC5);
-    read_byte(8'hC6);
-    check_flags(0);
-
-    // Reset sobre FIFO llena: punteros y ocupación se limpian sin borrar memoria.
-    write_byte(8'hD1);
-    write_byte(8'hD2);
-    write_byte(8'hD3);
-    write_byte(8'hD4);
-    reset_fifo();
-    if (!empty || full) fail("reset flags did not report an empty FIFO");
+    if (data.case_id == "TEST-UART-002/C017") begin
+      run_wrap_scenario();
+    end else if (data.case_id == "TEST-UART-002/C018") begin
+      run_reset_scenario();
+    end else begin
+      run_vector();
+    end
 
     $display("PASS %s", data.case_id);
     $finish;
