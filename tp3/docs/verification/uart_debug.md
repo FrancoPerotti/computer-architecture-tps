@@ -1,7 +1,7 @@
 # TP3 — UART, protocolo y Debug
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** catálogo parcial; `TEST-UART-001/C001–C031` y `TEST-UART-002/C001–C021` ejecutados. Las otras pruebas conservan su estado individual.
 
 ## Propósito y alcance
 
@@ -34,7 +34,7 @@ Los [modelos abstractos ejecutables](../../tools/verification/README.md) comprue
 
 - **Nivel:** unidad UART e integración uart_core.
 - **Tipo de estímulo:** legal y errores físicos dirigidos.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001–C031 implementados y ejecutados; 39/39 ejecuciones PASS, incluyendo nueve bancos asociados a C001.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -60,11 +60,13 @@ El clock y el generador de ticks se mantienen activos durante las observaciones.
 
 La prueba tiene 31 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-001/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
 
+La variante C001 ejecuta bancos unitarios de `baud_tick_gen`, `serial_input_sync`, `rx_fsm`, `rx_datapath`, `uart_rx`, `tx_fsm` y `tx_datapath`, pruebas de integración de `uart_rx` y `uart_tx`, y una prueba de integración local del `uart_core` completo. Esta última utiliza los módulos físicos reales y comprueba el tick compartido, recepción y orden de bytes, errores de trama y overflow, transmisión y retiro de FIFO al final del Stop, full-duplex y recuperación por reset. Las FSM unitarias usan condiciones de datapath controladas; las pruebas de integración ejercitan las conexiones reales. Las nueve ejecuciones de C001 y las variantes C002–C031 finalizaron PASS.
+
 Los 24 casos nominales combinan los seis bytes dirigidos con RX o TX y las dos fases de inicio.
 
 Se agrega un recorrido del generador después de reset durante tres períodos. Los tres errores RX comprueban Start falso, Stop bajo y línea baja hasta volver a alto.
 
-Un caso mantiene TX ocupada con el byte `0x55` mientras cambian `data_in` y `tx_start`. Los dos resets restantes interrumpen RX DATA y TX STOP, respectivamente.
+Un caso mantiene TX ocupada con el byte `0x55` mientras cambian `data_in` y `tx_start`. Los dos resets restantes interrumpen RX DATA y TX STOP, respectivamente. Además, C027 comprueba que la recuperación local de RX por Stop inválido no interrumpa una transmisión TX concurrente; este estímulo es evidencia adicional del caso dirigido y no crea una variante canónica.
 
 ### Estímulos concretos
 
@@ -104,7 +106,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad FIFO e integración UART.
 - **Tipo de estímulo:** legal y overflow artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C001–C018 unitarios y C019–C021 de integración local implementados y ejecutados; 21/21 PASS.
 
 **Requisitos:** [REQ-UART-001](../requirements.md#7-uart-y-debug-unit), [REQ-UART-010](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -124,7 +126,7 @@ La FIFO tiene cuatro posiciones de ocho bits. La ocupación del caso se alcanza 
 
 `read_data` presenta el byte más antiguo en preflanco cuando la FIFO no está vacía. Si `empty=1`, puede contener un residuo y no debe interpretarse como un byte disponible.
 
-El overflow se fuerza localmente con un quinto byte sin retiro. Ese fixture no representa el tráfico normal de un host que cumple el protocolo.
+El overflow local llega por RX serial real con un quinto byte sin retiro. C020 y C021 también transmiten bytes por RX serial real; no escriben directamente en la FIFO.
 
 ### Variantes cerradas
 
@@ -134,7 +136,7 @@ Los 16 vectores de solicitudes utilizan las cuatro ocupaciones previstas y las c
 
 Un caso comprueba el wrap mediante una secuencia de 12 bytes. Otro aplica reset con la cola llena y ambas solicitudes activas. Un caso comprueba overflow RX.
 
-Los dos casos de integración restantes coinciden en llegada RX y retiro, con FIFO vacía o llena. Se mantienen las decisiones basadas en los flags preflanco.
+Los casos C019–C021 integran `serial_input_sync`, `baud_tick_gen`, `uart_rx`, `uart_core` y la FIFO RX real. C019 completa cuatro tramas para llenar la FIFO y recibe una quinta. C020 inicia vacía; C021 inicia llena. En C020 y C021 `rd_uart` se activa al observar el `rx_done_tick` combinacional y antes del flanco siguiente que consume ambas solicitudes.
 
 ### Procedimiento
 
@@ -146,7 +148,7 @@ Los dos casos de integración restantes coinciden en llegada RX y retiro, con FI
 
 4. **Seguir la secuencia larga.** Leer los 12 bytes y comprobar que el wrap de punteros conserve su orden.
 
-5. **Aplicar reset y overflow.** Verificar las operaciones suprimidas por reset y el error UART combinado del quinto byte, sin generar una causa de CPU.
+5. **Aplicar reset y overflow.** C018 verifica que reset suprima las solicitudes con la FIFO llena. C019 verifica el error UART combinado del quinto byte físico. C020 y C021 verifican escritura/lectura concurrentes según `empty`/`full` preflanco.
 
 ### Resultados y criterio de aprobación
 
@@ -155,6 +157,8 @@ Con FIFO vacía y wr y rd simultáneos, solo se acepta la escritura. Con FIFO ll
 Los bytes deben mantener su orden sin pérdidas ni duplicaciones. Los flags representan la ocupación de cero a cuatro. Una cola vacía puede mostrar residuos sin que sean datos válidos.
 
 Reset pone la cuenta y los punteros en cero y suprime las operaciones del flanco, sin exigir borrar el array. El quinto byte produce overflow sin ampliar la capacidad.
+
+Evidencia ejecutada: C001–C016 comprueban individualmente ocupación, aceptación/rechazo, flags, cabeza preflanco y punteros; C017 recorre 12 bytes y observa tres wraps por puntero; C018 aplica reset con lectura y escritura activas sobre FIFO llena. C019–C021 usan el core UART real y prueban overflow RX, llegada con retiro sobre FIFO vacía y llegada con retiro sobre FIFO llena. Cada variante produce su propio marcador PASS/FAIL en el runner común.
 
 La aprobación exige decisiones preflanco correctas en todas las fronteras y simultaneidades. El overflow es un error UART y no un nuevo fault arquitectónico.
 
@@ -566,6 +570,24 @@ C006 integra el controlador y el serializador durante RECOVER_RX con un Debug te
 ### Variantes cerradas
 
 La prueba tiene 9 casos canónicos. El [manifiesto](cases.json) enumera los IDs `TEST-UART-009/Cnnn`, sus entradas, el tipo de estímulo y la expectativa. La selección es cerrada: no se agregan combinaciones implícitas.
+
+#### Estado para los cierres de las issues #10, #11 y #15
+
+Ninguna variante de TEST-UART-009 está implementada o aprobada actualmente: las nueve permanecen `pending` y el grupo no tiene ejecuciones en el runner. Los resultados de TEST-UART-001 y TEST-UART-002 acreditan componentes físicos reutilizados, pero no sustituyen una ejecución de estas variantes.
+
+| Variante | Bloques y nivel requerido | Relación con #10 y dependencia de #15 | Evidencia local disponible | Estado y motivo |
+|---|---|---|---|---|
+| C001 | `response_serializer` + FIFO TX; unidad e integración local de escritura/enqueue. | Usa FIFO TX y `tx_done_tick` de #10; depende de `response_serializer` de #11. No requiere #15 para el nivel local descrito. | T002/C001–C018 prueba FIFO; T001/C001 y C014–C025 comprueban la transmisión física y el fin del Stop. No se prueba retención del serializador. | Pendiente: no existe RTL del serializador ni banco registrado. |
+| C002 | `protocol_controller` + `uart_core`; fixture de unidad para `RECEIVE_LOAD_SIZE` con flags TX forzados. | Comprueba el retiro RX independiente de TX de #10; depende del Controller de #11. No requiere #15 para el fixture aislado. | T001 comprueba UART RX/full-duplex y T002 la FIFO; no comprueban la decisión `rd_uart` del Controller. | Pendiente: falta RTL del Controller y banco registrado. |
+| C003 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_COUNT`. | Igual que C001: necesita el camino físico TX de #10 y el serializador de #11; no requiere #15 en nivel local. | T002 prueba FIFO y T001 prueba TX física; sin evidencia de conservación del byte/cursor del serializador. | Pendiente: falta RTL del serializador y banco registrado. |
+| C004 | `protocol_controller` + `uart_core`; fixture de unidad para descarte en `RECOVER_RX` con TX ocupada. | Comprueba recuperación/consumo RX de #10 bajo control de #11. No requiere #15 para el fixture aislado. | T001/C026–C028 comprueba errores y recuperación física RX; no comprueba el descarte por Controller. | Pendiente: falta RTL del Controller y banco registrado. |
+| C005 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_ENTRY`. | Necesita FIFO/TX de #10 y serializador de #11; no requiere #15 en nivel local. | T002 prueba FIFO y T001 prueba TX física; no comprueban cursor ni byte ENTRY pendiente. | Pendiente: falta RTL del serializador y banco registrado. |
+| C006 | Controller + serializador + `uart_core`; integración local de `RECOVER_RX` con respuesta terminal RUN/FINISHED. | Cruza recuperación RX de #10 con coordinación de #11. El fixture catalogado es local; comprobarlo además con CPU/sistema reales corresponde a #15. | T001/C027 demuestra recuperación RX sin interrumpir TX física; no incluye Controller, serializador, respuesta Debug ni CPU real. | Pendiente: faltan Controller/serializador y banco de integración registrado; la variante de sistema real depende además de #15. |
+| C007 | `response_serializer` + FIFO TX; unidad/integración local de enqueue simultáneo con fin físico. | Necesita FIFO y evento de fin de #10 más contador de pendientes de #11. No requiere #15 para el caso local. | T002 prueba aceptación FIFO por flags preflanco; T001 comprueba `tx_done_tick` al final del Stop. No se verifica el contador del serializador. | Pendiente: falta RTL del serializador y banco registrado. |
+| C008 | Controller + serializador + UART; escenario local LOAD/ACCEPTED y cierre LOAD/DONE. | Usa el fin físico UART de #10 y coordinación temporal de #11. El escenario del catálogo no exige CPU real; su reproducción como sesión completa corresponde a #15. | T001 acredita que `tx_done_tick` coincide con el fin del Stop; no comprueba `WAIT_TX_DONE`, timeout de contenido ni cierre del Controller. | Pendiente: faltan Controller/serializador y banco registrado; integración de sistema adicional reservada a #15. |
+| C009 | Controller + serializador + UART; escenario local STEP/DONE con Debug y liberación al Stop final. | Usa UART de #10 y coordinación Debug de #11. La demostración con CPU/sistema real corresponde a #15. | T001 acredita TX física y fin de Stop; no prueba `debug_hold`, respuesta completa ni liberación del Controller. | Pendiente: faltan Controller/serializador y banco registrado; integración de sistema adicional reservada a #15. |
+
+La issue #11 define la implementación local del `protocol_controller` y `response_serializer`; #15 integra esos bloques con CPU y sistema reales. La suite local de #10 acredita las dependencias físicas UART/FIFO, no los resultados de TEST-UART-009 ni los hitos de sistema. Los estados pendientes no se convierten en aprobados por semejanza con pruebas de submódulos.
 
 C001, C003 y C005 comprueban la retención en FIXED, COUNT y ENTRY. C002 comprueba el procesamiento de tamaño en RECEIVE_LOAD_SIZE y C004 el descarte en RECOVER_RX, con TX llena y ocupada en ambos casos.
 

@@ -3,7 +3,64 @@
   "source": "uart_debug.md#test-uart-002",
   "case_count": 21,
   "reuse_groups": [],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/fifo.sv",
+        "tb/fifo_tb.sv"
+      ],
+      "top": "fifo_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-002/C001",
+        "TEST-UART-002/C002",
+        "TEST-UART-002/C003",
+        "TEST-UART-002/C004",
+        "TEST-UART-002/C005",
+        "TEST-UART-002/C006",
+        "TEST-UART-002/C007",
+        "TEST-UART-002/C008",
+        "TEST-UART-002/C009",
+        "TEST-UART-002/C010",
+        "TEST-UART-002/C011",
+        "TEST-UART-002/C012",
+        "TEST-UART-002/C013",
+        "TEST-UART-002/C014",
+        "TEST-UART-002/C015",
+        "TEST-UART-002/C016",
+        "TEST-UART-002/C017",
+        "TEST-UART-002/C018"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/fifo.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/uart_core.sv",
+        "tb/uart_fifo_boundary_tb.sv"
+      ],
+      "top": "uart_fifo_boundary_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-002/C019",
+        "TEST-UART-002/C020",
+        "TEST-UART-002/C021"
+      ]
+    }
+  ],
   "cases": [
     {
       "id": "TEST-UART-002/C001",
@@ -24,7 +81,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C002",
@@ -45,7 +102,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C003",
@@ -66,7 +123,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C004",
@@ -87,7 +144,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C005",
@@ -110,7 +167,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C006",
@@ -133,7 +190,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C007",
@@ -156,7 +213,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C008",
@@ -179,7 +236,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C009",
@@ -204,7 +261,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C010",
@@ -229,7 +286,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C011",
@@ -254,7 +311,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C012",
@@ -279,7 +336,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C013",
@@ -305,7 +362,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C014",
@@ -331,7 +388,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C015",
@@ -357,7 +414,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C016",
@@ -383,7 +440,7 @@
       "origins": [
         "Solicitud/ocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C017",
@@ -424,7 +481,7 @@
       "origins": [
         "Wrap de punteros"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C018",
@@ -443,7 +500,7 @@
       "origins": [
         "Reset con solicitudes"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C019",
@@ -460,7 +517,7 @@
       "origins": [
         "Overflow RX"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C020",
@@ -478,7 +535,7 @@
       "origins": [
         "Llegada RX yretiro"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-002/C021",
@@ -496,7 +553,7 @@
       "origins": [
         "Llegada RX yretiro"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

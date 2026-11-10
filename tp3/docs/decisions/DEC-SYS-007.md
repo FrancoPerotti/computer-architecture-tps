@@ -59,7 +59,7 @@ El divisor es el entero más próximo a `50.000.000 / (19.200 × 16)`. Produce a
 
 #### Recepción y actividad RX
 
-`uart_rx` contiene RX Control, Sample Counter de cuatro bits, Bit Counter de tres bits y RX Shift Register de ocho bits. La FSM utiliza cinco bits one-hot, en el orden `IDLE`, `START`, `DATA`, `STOP`, `RECOVER`, con `IDLE` en el bit cero y como estado de reset.
+`uart_rx` contiene RX Control, Sample Counter de cuatro bits, Bit Counter de tres bits y RX Shift Register de ocho bits. La FSM utiliza cinco bits one-hot, en el orden `IDLE`, `START`, `DATA`, `STOP`, `RECOVER`, con `IDLE` en el bit cero y como estado de reset. Para la implementación TP3, la separación control/recursos se realiza físicamente con `rx_fsm` y `rx_datapath`, integrados después por `uart_rx`; esta organización conserva estados, acciones, señales externas y temporización descritos aquí.
 
 `START` verifica el nivel bajo después de ocho ticks. `DATA` ordena ocho capturas separadas por dieciséis ticks. `STOP` verifica el nivel alto dieciséis ticks después de D7 y produce `rx_done_tick` solo para una trama válida. Un Start falso o Stop inválido produce error; `RECOVER` espera el retorno de la línea a alto. Esta recuperación de trama es distinta del silencio de recuperación del protocolo.
 
@@ -80,11 +80,11 @@ Un registro auxiliar `rx_previous`, inicializado en uno y actualizado cada clock
 
 #### Transmisión y fin físico
 
-`uart_tx` conserva TX Control, Sample Counter de cuatro bits, Bit Counter de tres bits, registro de desplazamiento de ocho bits y registro de salida serie de un bit. Su FSM utiliza cuatro bits one-hot, en el orden `IDLE`, `START`, `DATA`, `STOP`, con `IDLE` en el bit cero y como estado de reset.
+La implementación TP3 separa físicamente el control de `uart_tx` en `tx_fsm` y sus recursos en `tx_datapath`; `uart_tx` integra ambos sin cambiar la interfaz ni la temporización. `tx_fsm` conserva los cuatro estados one-hot `IDLE`, `START`, `DATA`, `STOP`, con `IDLE` en el bit cero y como estado de reset. `tx_datapath` contiene el Sample Counter de cuatro bits, Bit Counter de tres bits, registro de desplazamiento de ocho bits y registro de salida serie de un bit.
 
 El transmisor acepta `tx_start` en `IDLE`, con `data_in` estable antes del flanco. En ese flanco captura el byte, inicializa los contadores, registra el nivel bajo y entra en `START`. Start cuenta dieciséis ticks antes de D0; cada bit de datos se conserva durante dieciséis intervalos de tick. Las siete transiciones de D0 a D7 desplazan el byte, incrementan el índice y registran el bit siguiente en el mismo flanco. Al terminar D7 se registra alto y comienza `STOP`, que dura dieciséis intervalos completos. El registro serie conserva el nivel entre actualizaciones y se inicializa en alto. `tx_busy` vale uno en `START`, `DATA` y `STOP`; reset lleva a `IDLE` y suprime los indicadores de envío.
 
-El selector interno `tx_output_select[1:0]` utiliza estas alternativas:
+`tx_fsm` emite el selector interno `tx_output_select[1:0]`, que utiliza estas alternativas; el multiplexor y los registros pertenecen a `tx_datapath`:
 
 | Código | Selección     | Valor preparado                                                                      |
 | ------ | ------------- | ------------------------------------------------------------------------------------ |
