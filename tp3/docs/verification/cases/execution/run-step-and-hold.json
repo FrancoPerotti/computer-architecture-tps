@@ -1,0 +1,90 @@
+{
+  "id": "TEST-EXEC-003",
+  "source": "execution.md#test-exec-003",
+  "case_count": 4,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/session_lifecycle_tb.sv"
+      ],
+      "top": "session_lifecycle_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-EXEC-003/C001",
+        "TEST-EXEC-003/C002",
+        "TEST-EXEC-003/C003",
+        "TEST-EXEC-003/C004"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-EXEC-003/C001",
+        "TEST-EXEC-003/C003",
+        "TEST-EXEC-003/C002",
+        "TEST-EXEC-003/C004"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "file": "run-step-and-hold/cases-001-002.json"
+    },
+    {
+      "file": "run-step-and-hold/cases-003-004.json"
+    }
+  ]
+}

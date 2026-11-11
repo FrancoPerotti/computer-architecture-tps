@@ -1,0 +1,266 @@
+{
+  "id": "TEST-UART-008",
+  "source": "uart_debug.md#test-uart-008",
+  "case_count": 10,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-008/C001",
+      "inputs": {
+        "operations": [
+          "SB0@3",
+          "SH0x1234@0",
+          "SB0x56@1",
+          "LB@2",
+          "halt",
+          "restart_session"
+        ],
+        "profile": "REFERENCE"
+      },
+      "expected": {
+        "used_count": 3,
+        "entries": [
+          [
+            0,
+            52
+          ],
+          [
+            1,
+            86
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "used_count_new_session": 0
+      },
+      "kind": "program",
+      "origins": [
+        "Stores yreinicio"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C002",
+      "inputs": {
+        "C": 2048,
+        "bitmap_kind": "empty",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 0,
+        "response_length": 230,
+        "addresses": "[]",
+        "count_bytes": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C003",
+      "inputs": {
+        "C": 2048,
+        "bitmap_kind": "last-only",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 1,
+        "response_length": 235,
+        "addresses": "[C-1]",
+        "count_bytes": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C004",
+      "inputs": {
+        "C": 2048,
+        "bitmap_kind": "first-last",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 2,
+        "response_length": 240,
+        "addresses": "[0,C-1]",
+        "count_bytes": [
+          2,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C005",
+      "inputs": {
+        "C": 2048,
+        "bitmap_kind": "all",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 2048,
+        "response_length": 10470,
+        "addresses": "0..C-1",
+        "count_bytes": [
+          0,
+          8,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C006",
+      "inputs": {
+        "C": 1000,
+        "bitmap_kind": "empty",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 0,
+        "response_length": 230,
+        "addresses": "[]",
+        "count_bytes": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C007",
+      "inputs": {
+        "C": 1000,
+        "bitmap_kind": "last-only",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 1,
+        "response_length": 235,
+        "addresses": "[C-1]",
+        "count_bytes": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C008",
+      "inputs": {
+        "C": 1000,
+        "bitmap_kind": "first-last",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 2,
+        "response_length": 240,
+        "addresses": "[0,C-1]",
+        "count_bytes": [
+          2,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C009",
+      "inputs": {
+        "C": 1000,
+        "bitmap_kind": "all",
+        "data_rule": "value=a mod256"
+      },
+      "expected": {
+        "used_count": 1000,
+        "response_length": 5230,
+        "addresses": "0..C-1",
+        "count_bytes": [
+          232,
+          3,
+          0,
+          0,
+          0
+        ]
+      },
+      "kind": "serializer_fixture",
+      "origins": [
+        "Bitmap ycapacidad"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-008/C010",
+      "inputs": {
+        "used_count": 4294967296
+      },
+      "expected": {
+        "count_bytes": [
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "kind": "arithmetic_only",
+      "origins": [
+        "Cantidad máxima aislada"
+      ],
+      "status": "pending"
+    }
+  ]
+}

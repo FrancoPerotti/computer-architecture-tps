@@ -1,0 +1,29 @@
+{
+  "id": "TEST-PLAT-004",
+  "source": "platform.md#test-plat-004",
+  "case_count": 1,
+  "reuse_groups": [],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-PLAT-004/C001",
+      "inputs": {
+        "profile": "REFERENCE",
+        "part": "XC7A35T-1CPG236C",
+        "functional_frequency_Hz": 50000000
+      },
+      "expected": {
+        "WNS_min_ns": 0,
+        "TNS_ns": 0,
+        "WHS_min_ns": 0,
+        "THS_ns": 0,
+        "constraints_coverage": "todos loscaminosrelevantes"
+      },
+      "kind": "implementation_review",
+      "origins": [
+        "Build físico referencia"
+      ],
+      "status": "pending"
+    }
+  ]
+}

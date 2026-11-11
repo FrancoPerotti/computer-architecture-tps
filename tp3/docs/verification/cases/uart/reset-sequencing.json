@@ -1,0 +1,452 @@
+{
+  "id": "TEST-UART-013",
+  "source": "uart_debug.md#test-uart-013",
+  "case_count": 16,
+  "reuse_groups": [
+    "TEST-UART-006",
+    "TEST-UART-011"
+  ],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-UART-013/C001",
+      "inputs": {
+        "state": "RUNNING",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true,
+        "response_busy_before": false,
+        "prior_Debug_complete": false
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C002",
+      "inputs": {
+        "state": "FAULT",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_COMMAND",
+        "RUN_ACCEPTED_complete": false,
+        "prepare_active": false,
+        "run_result_required": false,
+        "response_busy_before": false,
+        "prior_Debug_complete": true
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C003",
+      "inputs": {
+        "state": "HALT_DRAIN_AUTO",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true,
+        "response_busy_before": false,
+        "prior_Debug_complete": false
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C004",
+      "inputs": {
+        "state": "FAULT_DRAIN_AUTO",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_RUN_END",
+        "RUN_ACCEPTED_complete": true,
+        "prepare_active": false,
+        "run_result_required": true,
+        "response_busy_before": false,
+        "prior_Debug_complete": false
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C005",
+      "inputs": {
+        "state": "HALT_DRAIN_STEP",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_COMMAND",
+        "RUN_ACCEPTED_complete": false,
+        "prepare_active": false,
+        "run_result_required": false,
+        "response_busy_before": false,
+        "prior_Debug_complete": true
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C006",
+      "inputs": {
+        "state": "FAULT_DRAIN_STEP",
+        "reset_request_opcode": 4,
+        "locked": 1,
+        "button": 0,
+        "transport_phase": "WAIT_COMMAND",
+        "RUN_ACCEPTED_complete": false,
+        "prepare_active": false,
+        "run_result_required": false,
+        "response_busy_before": false,
+        "prior_Debug_complete": true
+      },
+      "expected": {
+        "accept": "04 01",
+        "reset_after_second_Stop": true,
+        "first_free_edge_relative_Stop": 4,
+        "run_result_required_after_recognition": false,
+        "response_capture_on_recognition": true,
+        "CPU_not_paused_for_ACCEPTED": true
+      },
+      "kind": "protocol_fixture",
+      "origins": [
+        "RESETUARTporcontexto"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C007",
+      "inputs": {
+        "phase": "RUN",
+        "button_request": 1
+      },
+      "expected": {
+        "reset_NO_IMAGE": true,
+        "await_acceptance": false,
+        "partial_response_may_abort": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Botónporfase"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C008",
+      "inputs": {
+        "phase": "LOAD",
+        "button_request": 1
+      },
+      "expected": {
+        "reset_NO_IMAGE": true,
+        "await_acceptance": false,
+        "partial_response_may_abort": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Botónporfase"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C009",
+      "inputs": {
+        "phase": "PREPARING_READY",
+        "button_request": 1
+      },
+      "expected": {
+        "reset_NO_IMAGE": true,
+        "await_acceptance": false,
+        "partial_response_may_abort": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Botónporfase"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C010",
+      "inputs": {
+        "phase": "DEBUG",
+        "button_request": 1
+      },
+      "expected": {
+        "reset_NO_IMAGE": true,
+        "await_acceptance": false,
+        "partial_response_may_abort": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Botónporfase"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C011",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_ACCEPT_SENT",
+        "state": "RUNNING",
+        "response_busy_before": true,
+        "prepare_active": false,
+        "run_result_required": true,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": true
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_RUN_ACCEPT_SENT",
+        "run_result_required_after": true,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C012",
+      "inputs": {
+        "transport_phase": "WAIT_RUN_END",
+        "state": "PREPARING_RUN",
+        "response_busy_before": false,
+        "prepare_active": true,
+        "run_result_required": true,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": false
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_RUN_END",
+        "run_result_required_after": true,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C013",
+      "inputs": {
+        "transport_phase": "WAIT_LOAD_ACCEPT_SENT",
+        "state": "LOADING",
+        "response_busy_before": true,
+        "prepare_active": false,
+        "run_result_required": false,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": false
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_LOAD_ACCEPT_SENT",
+        "run_result_required_after": false,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C014",
+      "inputs": {
+        "transport_phase": "WAIT_PREP_DONE",
+        "state": "PREPARING_READY",
+        "response_busy_before": false,
+        "prepare_active": true,
+        "run_result_required": false,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": false
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_PREP_DONE",
+        "run_result_required_after": false,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C015",
+      "inputs": {
+        "transport_phase": "WAIT_STEP_END",
+        "state": "PREPARING_STEP",
+        "response_busy_before": false,
+        "prepare_active": true,
+        "run_result_required": false,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": false
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_STEP_END",
+        "run_result_required_after": false,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-UART-013/C016",
+      "inputs": {
+        "transport_phase": "WAIT_RESPONSE_SENT",
+        "state": "READY",
+        "response_busy_before": true,
+        "prepare_active": false,
+        "run_result_required": false,
+        "debug_hold": false,
+        "RX_opcode": 4,
+        "rx_empty": false,
+        "rx_error_tick": false,
+        "reset": false,
+        "fixture_scope": "one control edge; no claim that this window lasts a physical UART frame",
+        "program_finished": false,
+        "fault_terminal": false,
+        "response_done_tick": false,
+        "cpu_cycle_fire": false
+      },
+      "expected": {
+        "rd_uart": true,
+        "response_start": false,
+        "uart_reset_request": false,
+        "protocol_phase_after": "WAIT_RESPONSE_SENT",
+        "run_result_required_after": false,
+        "CPU_not_paused_by_RX": true,
+        "request_queued_for_later": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Ventanas de descarte de RESET UART"
+      ],
+      "status": "pending"
+    }
+  ]
+}

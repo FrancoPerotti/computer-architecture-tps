@@ -1,0 +1,123 @@
+{
+  "id": "TEST-ISA-004",
+  "source": "isa.md#test-isa-004",
+  "case_count": 409,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/decoder_tb.sv"
+      ],
+      "top": "decoder_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/id_stage_tb.sv"
+      ],
+      "top": "id_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "parameters": {
+        "DECODE_ONLY": "1'b1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/flow_control.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/flow_control_tb.sv"
+      ],
+      "top": "flow_control_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-ISA-004/C372",
+        "TEST-ISA-004/C409"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/ex_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/ex_fault_check_tb.sv"
+      ],
+      "top": "ex_fault_check_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": "64'd2048"
+      },
+      "case_ids": [
+        "TEST-ISA-004/C409"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "file": "decoder-whitelist/cases-001-024.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-025-048.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-049-072.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-073-096.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-097-120.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-121-145.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-146-168.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-169-192.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-193-216.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-217-240.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-241-265.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-266-290.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-291-314.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-315-339.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-340-364.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-365-388.json"
+    },
+    {
+      "file": "decoder-whitelist/cases-389-409.json"
+    }
+  ]
+}

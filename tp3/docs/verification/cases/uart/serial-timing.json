@@ -1,0 +1,761 @@
+{
+  "id": "TEST-UART-001",
+  "source": "uart_debug.md#test-uart-001",
+  "case_count": 31,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/baud_tick_gen.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/baud_tick_gen_tb.sv"
+      ],
+      "top": "baud_tick_gen_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "tb/common/tp3_case_data.sv",
+        "rtl/serial_input_sync.sv",
+        "tb/serial_input_sync_tb.sv"
+      ],
+      "top": "serial_input_sync_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "tb/common/tp3_case_data.sv",
+        "rtl/rx_fsm.sv",
+        "tb/rx_fsm_tb.sv"
+      ],
+      "top": "rx_fsm_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "tb/common/tp3_case_data.sv",
+        "rtl/rx_datapath.sv",
+        "tb/rx_datapath_tb.sv"
+      ],
+      "top": "rx_datapath_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "tb/common/tp3_case_data.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "tb/uart_rx_tb.sv"
+      ],
+      "top": "uart_rx_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "tb/common/tp3_case_data.sv",
+        "rtl/tx_fsm.sv",
+        "tb/tx_fsm_tb.sv"
+      ],
+      "top": "tx_fsm_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/tx_datapath.sv",
+        "tb/tx_datapath_tb.sv"
+      ],
+      "top": "tx_datapath_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "tb/uart_tx_tb.sv"
+      ],
+      "top": "uart_tx_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/fifo.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/uart_core.sv",
+        "tb/uart_core_tb.sv"
+      ],
+      "top": "uart_core_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/fifo.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/uart_core.sv",
+        "tb/uart_core_canonical_tb.sv"
+      ],
+      "top": "uart_core_canonical_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-001/C002",
+        "TEST-UART-001/C003",
+        "TEST-UART-001/C004",
+        "TEST-UART-001/C005",
+        "TEST-UART-001/C006",
+        "TEST-UART-001/C007",
+        "TEST-UART-001/C008",
+        "TEST-UART-001/C009",
+        "TEST-UART-001/C010",
+        "TEST-UART-001/C011",
+        "TEST-UART-001/C012",
+        "TEST-UART-001/C013",
+        "TEST-UART-001/C026",
+        "TEST-UART-001/C027",
+        "TEST-UART-001/C028",
+        "TEST-UART-001/C030",
+        "TEST-UART-001/C031"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "tb/uart_tx_phase_tb.sv"
+      ],
+      "top": "uart_tx_phase_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-001/C014",
+        "TEST-UART-001/C015",
+        "TEST-UART-001/C016",
+        "TEST-UART-001/C017",
+        "TEST-UART-001/C018",
+        "TEST-UART-001/C019",
+        "TEST-UART-001/C020",
+        "TEST-UART-001/C021",
+        "TEST-UART-001/C022",
+        "TEST-UART-001/C023",
+        "TEST-UART-001/C024",
+        "TEST-UART-001/C025",
+        "TEST-UART-001/C029"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-UART-001/C001",
+      "inputs": {
+        "clock_Hz": 50000000,
+        "divisor": 163,
+        "reset": true,
+        "periods_observed": 3
+      },
+      "expected": {
+        "first_registered_tick_edge": 163,
+        "first_consumed_tick_edge": 164,
+        "tick_width_clocks": 1,
+        "period_clocks": 163
+      },
+      "kind": "scenario",
+      "origins": [
+        "Generador continuo"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C002",
+      "inputs": {
+        "direction": "RX",
+        "byte": 0,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 0,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C003",
+      "inputs": {
+        "direction": "RX",
+        "byte": 255,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 255,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C004",
+      "inputs": {
+        "direction": "RX",
+        "byte": 85,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 85,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C005",
+      "inputs": {
+        "direction": "RX",
+        "byte": 170,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 170,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C006",
+      "inputs": {
+        "direction": "RX",
+        "byte": 1,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 1,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C007",
+      "inputs": {
+        "direction": "RX",
+        "byte": 128,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 128,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C008",
+      "inputs": {
+        "direction": "RX",
+        "byte": 0,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 0,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C009",
+      "inputs": {
+        "direction": "RX",
+        "byte": 255,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 255,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C010",
+      "inputs": {
+        "direction": "RX",
+        "byte": 85,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 85,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C011",
+      "inputs": {
+        "direction": "RX",
+        "byte": 170,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 170,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C012",
+      "inputs": {
+        "direction": "RX",
+        "byte": 1,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 1,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C013",
+      "inputs": {
+        "direction": "RX",
+        "byte": 128,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 128,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C014",
+      "inputs": {
+        "direction": "TX",
+        "byte": 0,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 0,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C015",
+      "inputs": {
+        "direction": "TX",
+        "byte": 255,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 255,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C016",
+      "inputs": {
+        "direction": "TX",
+        "byte": 85,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 85,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C017",
+      "inputs": {
+        "direction": "TX",
+        "byte": 170,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 170,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C018",
+      "inputs": {
+        "direction": "TX",
+        "byte": 1,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 1,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C019",
+      "inputs": {
+        "direction": "TX",
+        "byte": 128,
+        "start_tick_phase": 0
+      },
+      "expected": {
+        "decoded_byte": 128,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C020",
+      "inputs": {
+        "direction": "TX",
+        "byte": 0,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 0,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C021",
+      "inputs": {
+        "direction": "TX",
+        "byte": 255,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 255,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C022",
+      "inputs": {
+        "direction": "TX",
+        "byte": 85,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 85,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C023",
+      "inputs": {
+        "direction": "TX",
+        "byte": 170,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 170,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C024",
+      "inputs": {
+        "direction": "TX",
+        "byte": 1,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 1,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C025",
+      "inputs": {
+        "direction": "TX",
+        "byte": 128,
+        "start_tick_phase": 162
+      },
+      "expected": {
+        "decoded_byte": 128,
+        "one_done": true,
+        "frame": "Start0,D0..D7,Stop1"
+      },
+      "kind": "frame",
+      "origins": [
+        "Tramas nominales"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C026",
+      "inputs": {
+        "RX_scenario": "false-start"
+      },
+      "expected": {
+        "valid_byte": false,
+        "frame_error": true,
+        "recover_waits_high": true
+      },
+      "kind": "frame",
+      "origins": [
+        "ErroresRX"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C027",
+      "inputs": {
+        "RX_scenario": "bad-stop"
+      },
+      "expected": {
+        "valid_byte": false,
+        "frame_error": true,
+        "recover_waits_high": true
+      },
+      "kind": "frame",
+      "origins": [
+        "ErroresRX"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C028",
+      "inputs": {
+        "RX_scenario": "low-until-high"
+      },
+      "expected": {
+        "valid_byte": false,
+        "frame_error": true,
+        "recover_waits_high": true
+      },
+      "kind": "frame",
+      "origins": [
+        "ErroresRX"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C029",
+      "inputs": {
+        "TX_byte": 85,
+        "new_data_while_busy": 170,
+        "tx_start_while_busy": 1
+      },
+      "expected": {
+        "transmitted_byte": 85,
+        "additional_start_accepted": false
+      },
+      "kind": "frame",
+      "origins": [
+        "TXocupado"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C030",
+      "inputs": {
+        "reset_stage": "RX_DATA"
+      },
+      "expected": {
+        "normal_done": false,
+        "postreset_RX_IDLE": true,
+        "postreset_TX": 1
+      },
+      "kind": "frame",
+      "origins": [
+        "Resetdurante trama"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-001/C031",
+      "inputs": {
+        "reset_stage": "TX_STOP"
+      },
+      "expected": {
+        "normal_done": false,
+        "postreset_RX_IDLE": true,
+        "postreset_TX": 1
+      },
+      "kind": "frame",
+      "origins": [
+        "Resetdurante trama"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

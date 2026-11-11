@@ -1,0 +1,385 @@
+{
+  "id": "TEST-MEM-006",
+  "source": "memory.md#test-mem-006",
+  "case_count": 10,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/data_memory.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/data_memory_ownership_tb.sv"
+      ],
+      "top": "data_memory_ownership_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-MEM-006/C003",
+        "TEST-MEM-006/C005",
+        "TEST-MEM-006/C006",
+        "TEST-MEM-006/C007",
+        "TEST-MEM-006/C008"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": "64'd4"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/data_memory.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/data_memory_ownership_tb.sv"
+      ],
+      "top": "data_memory_ownership_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-MEM-006/C010"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": "64'd4"
+      },
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "result"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_ownership_tb.sv"
+      ],
+      "top": "processor_ownership_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-MEM-006/C001",
+        "TEST-MEM-006/C002",
+        "TEST-MEM-006/C003",
+        "TEST-MEM-006/C004",
+        "TEST-MEM-006/C005",
+        "TEST-MEM-006/C006"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_ownership_tb.sv"
+      ],
+      "top": "processor_ownership_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-MEM-006/C009"
+      ],
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "cpu_ownership_diagnostic"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_ownership_tb.sv"
+      ],
+      "top": "processor_ownership_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-MEM-006/C010"
+      ],
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "cpu_ownership_diagnostic"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-MEM-006/C001",
+      "inputs": {
+        "phase": "RUNNING",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C002",
+      "inputs": {
+        "phase": "LOADING",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C003",
+      "inputs": {
+        "phase": "PREPARING_READY",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C004",
+      "inputs": {
+        "phase": "STEP-cycle",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C005",
+      "inputs": {
+        "phase": "DEBUG-exclusive",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C006",
+      "inputs": {
+        "phase": "idle-no-agent",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "max_agents_per_memory": 1,
+        "IF_MEM_may_coexist": false
+      },
+      "kind": "scenario",
+      "origins": [
+        "Ownership legal"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C007",
+      "inputs": {
+        "conflict": "clear-store"
+      },
+      "expected": {
+        "result": "clear domina,no store"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Coincidencia artificial"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C008",
+      "inputs": {
+        "conflict": "reset-clear-store"
+      },
+      "expected": {
+        "result": "todas escrituras suprimidas"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Coincidencia artificial"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C009",
+      "inputs": {
+        "conflict": "IMEM-fetch-loader",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "result": "assertion de ownership falla,sin causa arquitectónica nueva",
+        "cpu_ownership_diagnostic": "IMEM_OWNERSHIP_CONFLICT"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Coincidencia artificial"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-MEM-006/C010",
+      "inputs": {
+        "conflict": "DMEM-CPU-debug",
+        "cpu_ownership_words": [
+          1048723,
+          1056803,
+          4288671855
+        ]
+      },
+      "expected": {
+        "result": "assertion de ownership falla,sin causa arquitectónica nueva",
+        "cpu_ownership_diagnostic": "DMEM_OWNERSHIP_CONFLICT"
+      },
+      "kind": "artificial",
+      "origins": [
+        "Coincidencia artificial"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

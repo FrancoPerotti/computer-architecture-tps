@@ -1,0 +1,813 @@
+[
+  {
+    "id": "TEST-PLAT-001/C001",
+    "inputs": {
+      "profile": "REFERENCE",
+      "IMEM_C": 1024,
+      "DMEM_C": 2048
+    },
+    "expected": {
+      "elaboration_ok": true,
+      "same_functional_logic": true,
+      "clock_uart_configuration": {
+        "FUNCTIONAL_CLOCK_HZ": 50000000,
+        "UART_BAUD_RATE": 19200,
+        "UART_DATA_BITS": 8,
+        "UART_PARITY_ENABLED": false,
+        "UART_STOP_BITS": 1,
+        "UART_OVERSAMPLE_FACTOR": 16,
+        "UART_FIFO_DEPTH": 4
+      },
+      "protocol_timing": {
+        "width": 64,
+        "constants": {
+          "PROTOCOL_LOAD_INACTIVITY_MS": 100,
+          "PROTOCOL_RECOVERY_SILENCE_MS": 100,
+          "PROTOCOL_LOAD_INACTIVITY_CYCLES": 5000000,
+          "PROTOCOL_RECOVERY_SILENCE_CYCLES": 5000000
+        }
+      },
+      "protocol_codes": {
+        "opcode": {
+          "width": 8,
+          "codes": {
+            "CMD_LOAD": 1,
+            "CMD_RUN": 2,
+            "CMD_STEP": 3,
+            "CMD_RESET": 4,
+            "CMD_CHECK_READY": 5
+          }
+        },
+        "result": {
+          "width": 8,
+          "codes": {
+            "RESULT_ACCEPTED": 1,
+            "RESULT_DONE": 2,
+            "RESULT_READY": 3,
+            "RESULT_BUSY": 4,
+            "RESULT_NO_IMAGE": 5,
+            "RESULT_INVALID_SIZE": 6,
+            "RESULT_INCOMPLETE_REQUEST": 7,
+            "RESULT_INCOMPLETE_DATA": 8,
+            "RESULT_UART_ERROR": 9,
+            "RESULT_FINISHED": 10,
+            "RESULT_FAULT": 11,
+            "RESULT_UNKNOWN_COMMAND": 12
+          }
+        },
+        "state_code": {
+          "width": 8,
+          "codes": {
+            "STATE_CODE_NO_IMAGE": 0,
+            "STATE_CODE_LOADING": 1,
+            "STATE_CODE_PREPARING_READY": 2,
+            "STATE_CODE_READY": 3,
+            "STATE_CODE_RUNNING": 4,
+            "STATE_CODE_STEPPING": 5,
+            "STATE_CODE_HALT_DRAIN_AUTO": 6,
+            "STATE_CODE_HALT_DRAIN_STEP": 7,
+            "STATE_CODE_FAULT_DRAIN_AUTO": 8,
+            "STATE_CODE_FAULT_DRAIN_STEP": 9,
+            "STATE_CODE_FINISHED": 10,
+            "STATE_CODE_FAULT": 11,
+            "STATE_CODE_PREPARING_RUN": 12,
+            "STATE_CODE_PREPARING_STEP": 13
+          }
+        }
+      },
+      "protocol_layout": {
+        "PROTOCOL_CODE_BYTES": 1,
+        "PROTOCOL_WORD_BYTES": 4,
+        "PROTOCOL_COUNTER_BYTES": 8,
+        "PROTOCOL_SIZE_BYTES": 5,
+        "PROTOCOL_RESPONSE_OPCODE_OFFSET": 0,
+        "PROTOCOL_RESPONSE_RESULT_OFFSET": 1,
+        "PROTOCOL_RESPONSE_HEADER_BYTES": 2,
+        "PROTOCOL_LOAD_SIZE_OFFSET": 1,
+        "PROTOCOL_LOAD_HEADER_BYTES": 6,
+        "DEBUG_STATE_CODE_OFFSET": 0,
+        "DEBUG_IMAGE_VALID_OFFSET": 1,
+        "DEBUG_PC_OFFSET": 2,
+        "DEBUG_CYCLE_COUNT_OFFSET": 6,
+        "DEBUG_FAULT_CAUSE_OFFSET": 14,
+        "DEBUG_FAULT_PC_OFFSET": 15,
+        "DEBUG_CONTEXT_BYTES": 19,
+        "DEBUG_RF_OFFSET": 19,
+        "DEBUG_RF_BYTES": 128,
+        "DEBUG_IFID_OFFSET": 147,
+        "DEBUG_IFID_VALID_OFFSET": 147,
+        "DEBUG_IFID_PC_OFFSET": 148,
+        "DEBUG_IFID_INSTRUCTION_OFFSET": 152,
+        "DEBUG_IFID_FETCH_FAULT_VALID_OFFSET": 156,
+        "DEBUG_IFID_FETCH_FAULT_CAUSE_OFFSET": 157,
+        "DEBUG_IFID_BYTES": 11,
+        "DEBUG_IDEX_OFFSET": 158,
+        "DEBUG_IDEX_VALID_OFFSET": 158,
+        "DEBUG_IDEX_PC_OFFSET": 159,
+        "DEBUG_IDEX_INSTRUCTION_OFFSET": 163,
+        "DEBUG_IDEX_RS1_OFFSET": 167,
+        "DEBUG_IDEX_RS2_OFFSET": 168,
+        "DEBUG_IDEX_RD_OFFSET": 169,
+        "DEBUG_IDEX_RS1_VALUE_OFFSET": 170,
+        "DEBUG_IDEX_RS2_VALUE_OFFSET": 174,
+        "DEBUG_IDEX_IMMEDIATE_OFFSET": 178,
+        "DEBUG_IDEX_ALU_OP_OFFSET": 182,
+        "DEBUG_IDEX_ALU_SRC_OFFSET": 183,
+        "DEBUG_IDEX_RESULT_SEL_OFFSET": 184,
+        "DEBUG_IDEX_FLOW_OP_OFFSET": 185,
+        "DEBUG_IDEX_MEM_OP_OFFSET": 186,
+        "DEBUG_IDEX_REG_WRITE_OFFSET": 187,
+        "DEBUG_IDEX_BYTES": 30,
+        "DEBUG_EXMEM_OFFSET": 188,
+        "DEBUG_EXMEM_VALID_OFFSET": 188,
+        "DEBUG_EXMEM_PC_OFFSET": 189,
+        "DEBUG_EXMEM_INSTRUCTION_OFFSET": 193,
+        "DEBUG_EXMEM_RD_OFFSET": 197,
+        "DEBUG_EXMEM_REG_WRITE_OFFSET": 198,
+        "DEBUG_EXMEM_MEM_OP_OFFSET": 199,
+        "DEBUG_EXMEM_EX_RESULT_OFFSET": 200,
+        "DEBUG_EXMEM_STORE_DATA_OFFSET": 204,
+        "DEBUG_EXMEM_BYTES": 20,
+        "DEBUG_MEMWB_OFFSET": 208,
+        "DEBUG_MEMWB_VALID_OFFSET": 208,
+        "DEBUG_MEMWB_PC_OFFSET": 209,
+        "DEBUG_MEMWB_INSTRUCTION_OFFSET": 213,
+        "DEBUG_MEMWB_RD_OFFSET": 217,
+        "DEBUG_MEMWB_REG_WRITE_OFFSET": 218,
+        "DEBUG_MEMWB_WB_VALUE_OFFSET": 219,
+        "DEBUG_MEMWB_BYTES": 15,
+        "DEBUG_USED_COUNT_OFFSET": 223,
+        "DEBUG_USED_COUNT_BYTES": 5,
+        "DEBUG_MEMORY_LIST_OFFSET": 228,
+        "DEBUG_FIXED_BYTES": 228,
+        "DEBUG_RESPONSE_FIXED_BYTES": 230,
+        "DEBUG_MEMORY_ADDRESS_OFFSET": 0,
+        "DEBUG_MEMORY_VALUE_OFFSET": 4,
+        "DEBUG_MEMORY_ENTRY_BYTES": 5
+      },
+      "processor_widths": {
+        "image_size": 11,
+        "imem_byte": 10,
+        "imem_word": 8,
+        "dmem_byte": 11,
+        "prepare_index": 12
+      }
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Perfiles soportados"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C002",
+    "inputs": {
+      "profile": "ALT_1000",
+      "IMEM_C": 1000,
+      "DMEM_C": 1000
+    },
+    "expected": {
+      "elaboration_ok": true,
+      "same_functional_logic": true,
+      "processor_widths": {
+        "image_size": 10,
+        "imem_byte": 10,
+        "imem_word": 8,
+        "dmem_byte": 10,
+        "prepare_index": 10
+      }
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Perfiles soportados"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C003",
+    "inputs": {
+      "target": "bloquesgenéricos,sinwrapper",
+      "IMEM_C": 4,
+      "DMEM_C": 4
+    },
+    "expected": {
+      "positive_widths": true,
+      "one_row": true,
+      "processor_widths": {
+        "image_size": 3,
+        "imem_byte": 2,
+        "imem_word": 1,
+        "dmem_byte": 2,
+        "prepare_index": 3
+      }
+    },
+    "kind": "elaboration",
+    "origins": [
+      "Elaboración mínima"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PLAT-001/C004",
+    "inputs": {
+      "C": 4,
+      "control_fixture": {
+        "imem_capacity_bytes": 4,
+        "state_onehot": null,
+        "cycle_count": null,
+        "loaded_image_size_bytes": null,
+        "fault_cause": null,
+        "fault_pc": null,
+        "fsm_source": "custom",
+        "resource_defaults": {
+          "prepare_init": 0,
+          "act_ex_fault": 0,
+          "act_id_fault": 0,
+          "ex_fault_cause": 7,
+          "idex_pc": 320,
+          "id_fault_cause": 2,
+          "id_fault_pc": 36,
+          "ifid_next_valid": 0,
+          "idex_next_valid": 0,
+          "exmem_next_valid": 0,
+          "memwb_next_valid": 0,
+          "pending_image_size_bytes": 1024,
+          "counter_fire_override": null,
+          "prepare_init_first_clock": false
+        }
+      },
+      "control_steps": [
+        {
+          "label": "LOAD con capacidad completa",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 1,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4
+        },
+        {
+          "label": "load_ok todavía no publica",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 1,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4
+        },
+        {
+          "label": "Mantenimiento",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "prepare_init": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4
+        },
+        {
+          "label": "Publicación inclusive",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 1,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4
+        },
+        {
+          "label": "El pendiente cambia sin alterar la imagen confirmada",
+          "clocks": 1,
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 0
+        },
+        {
+          "label": "Reset de la imagen confirmada",
+          "clocks": 1,
+          "reset": 1,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_ok": 0,
+          "load_fail": 0,
+          "prepare_done": 0,
+          "halt_confirm": 0,
+          "pending_image_size_bytes": 4
+        }
+      ],
+      "loader_capacity": 4,
+      "loader_fixture": {
+        "partial_word": "0xDEADBE",
+        "indices": [
+          0,
+          1
+        ],
+        "memory": [
+          "0x89ABCDEF",
+          "0x76543210"
+        ],
+        "defaults": {
+          "reset": 0,
+          "load_request": 0,
+          "run_request": 0,
+          "step_request": 0,
+          "load_start": 0,
+          "loader_active": 1,
+          "size": 4,
+          "remaining": 4,
+          "valid": 0,
+          "byte": 0,
+          "last": 0,
+          "abort": 0,
+          "prepare_init": 0,
+          "prepare_done": 0
+        }
+      },
+      "loader_steps": [
+        {
+          "label": "Aceptación de LOAD",
+          "load_request": 1,
+          "load_start": 1,
+          "loader_active": 0
+        },
+        {
+          "label": "Entrega offset 0",
+          "valid": 1,
+          "byte": 19
+        },
+        {
+          "label": "Entrega offset 1",
+          "remaining": 3,
+          "valid": 1,
+          "byte": 5
+        },
+        {
+          "label": "Entrega offset 2",
+          "remaining": 2,
+          "valid": 1,
+          "byte": 160
+        },
+        {
+          "label": "Entrega offset 3",
+          "remaining": 1,
+          "valid": 1,
+          "last": 1
+        },
+        {
+          "label": "Offset N sin entrega",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Inicialización modelada de sesión",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_init": 1
+        },
+        {
+          "label": "Preparación todavía pendiente",
+          "loader_active": 0,
+          "remaining": 0
+        },
+        {
+          "label": "Publicación después de preparar",
+          "loader_active": 0,
+          "remaining": 0,
+          "prepare_done": 1
+        },
+        {
+          "label": "READY conserva imagen y no escribe",
+          "loader_active": 0,
+          "remaining": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "last_index": 3
+      }
+    },
+    "expected": {
+      "BYTE_ADDRESS_WIDTH": 2,
+      "WORD_INDEX_WIDTH": 1,
+      "ROW_INDEX_WIDTH": 1,
+      "CAPACITY_INCLUSIVE_WIDTH": 3,
+      "control_steps": [
+        {
+          "before": {
+            "command_accepted": true,
+            "load_start": true,
+            "cpu_cycle_fire": false,
+            "global_state_code": 0,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 1,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 1,
+            "loader_active": true,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 2,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 2,
+            "loader_active": false,
+            "prepare_active": true,
+            "drain_mode": false,
+            "load_available": false,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 4,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 3,
+              "loaded_image_size_bytes": 4,
+              "image_valid": true,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        },
+        {
+          "before": {
+            "command_accepted": false,
+            "load_start": false,
+            "cpu_cycle_fire": false,
+            "global_state_code": 3,
+            "loader_active": false,
+            "prepare_active": false,
+            "drain_mode": false,
+            "load_available": true,
+            "program_finished": false,
+            "fault_terminal": false
+          },
+          "after": [
+            {
+              "global_state_code": 0,
+              "loaded_image_size_bytes": 0,
+              "image_valid": false,
+              "cycle_count": "0x0000000000000000",
+              "fault_cause": null,
+              "fault_pc": null
+            }
+          ]
+        }
+      ],
+      "loader_steps": [
+        {
+          "start": true,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xDEADBE",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": true,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xDEAD13",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 1,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xDE0513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 2,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 0,
+          "memory_after": [
+            "0x89ABCDEF",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 1,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": true,
+          "offset": 3,
+          "write": true,
+          "index": 0,
+          "data": "0x00A00513",
+          "ok": true,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 2,
+          "size_after": 0,
+          "image_valid_after": false,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": true,
+          "state_after": 3,
+          "size_after": 4,
+          "image_valid_after": true,
+          "cycles_after": 0
+        },
+        {
+          "start": false,
+          "active": false,
+          "offset": 0,
+          "write": false,
+          "index": 0,
+          "data": null,
+          "ok": false,
+          "fail": false,
+          "pending_size": 4,
+          "partial_after": "0xA00513",
+          "writes_after": 1,
+          "memory_after": [
+            "0x00A00513",
+            "0x76543210"
+          ],
+          "accepted": false,
+          "fire": false,
+          "prepare_active": false,
+          "state_after": 3,
+          "size_after": 4,
+          "image_valid_after": true,
+          "cycles_after": 0
+        }
+      ],
+      "prep_capacity_probe": {
+        "limit": 4
+      }
+    },
+    "kind": "arithmetic_only",
+    "origins": [
+      "Funciones de anchura"
+    ],
+    "status": "implemented"
+  }
+]

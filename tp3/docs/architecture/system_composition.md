@@ -17,7 +17,7 @@ Define la jerarquía del sistema FPGA, los puertos de sus tops y las conexiones 
 | `system_top`     | Conecta `uart_core`, `protocol_controller`, `response_serializer` y `processor_top`; distribuye `clk`/`reset`, capacidades y señales |
 | `processor_top`  | Contiene la CPU/pipeline, RF, IMEM/DMEM, hazards, `Execution Control`, `Loader` y `Session Preparation`                              |
 
-`uart_core`, `protocol_controller` y `response_serializer` mantienen sus fronteras/FSM/recursos aprobados. Dentro de `processor_top`, los 51 bloques funcionales conservan las conexiones de `interfaces.md`; los grupos de la tabla de cobertura describen su ubicación.
+`uart_core`, `protocol_controller` y `response_serializer` mantienen sus fronteras/FSM/recursos aprobados. `uart_rx` integrará físicamente `rx_fsm` y `rx_datapath` sin cambiar su frontera UART. Dentro de `processor_top`, los 51 bloques funcionales conservan las conexiones de `interfaces.md`; los grupos de la tabla de cobertura describen su ubicación.
 
 La agrupación utiliza un módulo por etapa y submódulos seleccionados según responsabilidad y valor de verificación, según el [inventario completo y comparación](module_inventory.md). Los 51 bloques conservan ubicación/archivo explícitos: 23 tienen módulo específico y 28 son lógica/estado local.
 
@@ -46,7 +46,11 @@ El catálogo utiliza nombres en inglés, con minúsculas y guiones bajos; cada n
 | `uart_core`         | `serial_input_sync`   | Sincronización de RX                                                                              |
 | `uart_core`         | `baud_tick_gen`       | Tick compartido de RX/TX                                                                          |
 | `uart_core`         | `uart_rx`             | Recepción y validación de tramas                                                                  |
+| `uart_rx`           | `rx_fsm`              | Decisiones RX y señales de acción                                                                  |
+| `uart_rx`           | `rx_datapath`         | Contadores RX y registro de desplazamiento                                                         |
 | `uart_core`         | `uart_tx`             | Transmisión de tramas                                                                             |
+| `uart_tx`           | `tx_fsm`              | Decisiones TX y señales de acción                                                                  |
+| `uart_tx`           | `tx_datapath`         | Contadores, selector y registros de transmisión                                                    |
 | `uart_core`         | `fifo`                | Dos instancias del mismo módulo: RX y TX                                                          |
 | `processor_top`     | `if_stage`            | PC, próximo PC, búsqueda y candidato de fault de fetch                                            |
 | `processor_top`     | `id_stage`            | Decodificación, RF, operandos, inmediato, fault ID y detección load-use                           |
@@ -108,6 +112,24 @@ Los cuatro nodos de registro son módulos *_register instanciados en `processor_
 La selección de metadatos, sus registros de causa/PC, el tamaño confirmado, el contador de ciclos y la reducción de próximos `valid` se realizan como lógica o estado local en `execution_control.sv`. Los recursos reciben las señales de acción y realizan sus actualizaciones al flanco funcional.
 
 `loader` y `session_preparation` son hijos de `processor_top`. Reciben de `execution_control` los controles de inicio, carga y preparación, y devuelven sus condiciones de finalización.
+
+### Realización de processor_top en #9
+
+`processor_top.sv` instancia las cinco etapas de producción y los cuatro
+registros interetapa. IF/ID usa los payloads de `system_pkg`; EX recibe
+`idex`, `exmem_producer` y `memwb_producer` y forma `exmem_input`; MEM recibe
+`exmem` y forma `memwb_input`; WB consume `memwb` y entrega
+`rf_write_register`, dato, habilitación y selecciones de bypass a ID.
+Los controles locales del top aplican las ocho acciones de hazards a los
+registros; sus próximos `valid` retornan a la reducción de vacío de
+`execution_control`. La autorización de ciclo depende del estado actual.
+
+Loader y Session Preparation acceden a IMEM y a las marcas DMEM por sus
+interfaces aprobadas. Las assertions detectan colisiones IMEM/fetch y
+CPU/Debug sin introducir efectos arquitectónicos. Cada instancia tiene un
+comentario que identifica su función. Debug expone los campos actuales sin
+copiar ni registrar snapshots. La [verificación CPU](../verification/verification_plan.md#integracion-cpu-9)
+distingue programas legales, estado inicial de fixture y combinaciones locales.
 
 ## Puertos y parámetros de los tops
 

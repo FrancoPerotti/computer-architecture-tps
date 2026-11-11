@@ -1,0 +1,1123 @@
+{
+  "id": "TEST-EXEC-008",
+  "source": "execution.md#test-exec-008",
+  "case_count": 4,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/session_lifecycle_tb.sv"
+      ],
+      "top": "session_lifecycle_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-EXEC-008/C001",
+        "TEST-EXEC-008/C002",
+        "TEST-EXEC-008/C003",
+        "TEST-EXEC-008/C004"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_top_tb.sv"
+      ],
+      "top": "processor_top_tb",
+      "level": "CPU",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-EXEC-008/C001",
+        "TEST-EXEC-008/C002",
+        "TEST-EXEC-008/C003",
+        "TEST-EXEC-008/C004"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "processor_imem_capacity"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "processor_dmem_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-EXEC-008/C001",
+      "inputs": {
+        "program": "jal x0,0",
+        "reset_source": "UART",
+        "observe_CPU_cycles": 20,
+        "CHECK_READY_during_RUN": false,
+        "send_RESET_after_RUN_ACCEPTED_last_Stop": true,
+        "prepare_active_at_RESET": false,
+        "session_steps": [
+          {
+            "op": "load",
+            "size": 4,
+            "received": 4,
+            "abort": false,
+            "words": [
+              "0x0000006F"
+            ]
+          },
+          {
+            "op": "prepare"
+          },
+          {
+            "op": "cpu",
+            "mode": "RUN",
+            "cycles": 20,
+            "hold_clocks": 0,
+            "stall_at": -1
+          },
+          {
+            "op": "cpu",
+            "mode": "RUN",
+            "cycles": 3,
+            "hold_clocks": 0,
+            "stall_at": -1
+          },
+          {
+            "op": "reset"
+          },
+          {
+            "op": "no_image_requests",
+            "clocks": 3
+          }
+        ],
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "reset_program",
+            "words": [
+              111
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "no_FINISHED_before_reset": true,
+        "after_reset": "NO_IMAGE",
+        "RESET_ACCEPTED": "04 01",
+        "global_reset_after_RESET_ACCEPTED_last_Stop": true,
+        "CPU_not_paused_for_RESET_ACCEPTED": true,
+        "RUN_terminal_response": null,
+        "session_steps": [
+          {
+            "state": 2,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 3,
+            "size": 4,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 4,
+            "size": 4,
+            "count": 20,
+            "pc": 80,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 4,
+            "size": 4,
+            "count": 23,
+            "pc": 92,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 0,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 0,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          }
+        ],
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 20,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 4,
+            "pc": 8,
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "observed_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "reset_result": {
+              "rf": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "kind": "scenario",
+      "origins": [
+        "Loop recuperable"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-008/C002",
+      "inputs": {
+        "program": "jal x0,0",
+        "reset_source": "button",
+        "observe_CPU_cycles": 20,
+        "CHECK_READY_during_RUN": false,
+        "session_steps": [
+          {
+            "op": "load",
+            "size": 4,
+            "received": 4,
+            "abort": false,
+            "words": [
+              "0x0000006F"
+            ]
+          },
+          {
+            "op": "prepare"
+          },
+          {
+            "op": "cpu",
+            "mode": "RUN",
+            "cycles": 20,
+            "hold_clocks": 0,
+            "stall_at": -1
+          },
+          {
+            "op": "reset"
+          },
+          {
+            "op": "no_image_requests",
+            "clocks": 3
+          }
+        ],
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "reset_program",
+            "words": [
+              111
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "no_FINISHED_before_reset": true,
+        "after_reset": "NO_IMAGE",
+        "button_requires_UART_acceptance": false,
+        "session_steps": [
+          {
+            "state": 2,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 3,
+            "size": 4,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 4,
+            "size": 4,
+            "count": 20,
+            "pc": 80,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 0,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 0,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x0000006F"
+            ],
+            "physical_word_preserved": false
+          }
+        ],
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 20,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 4,
+            "pc": 8,
+            "fault_cause": 0,
+            "fault_pc": 0,
+            "observed_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "reset_result": {
+              "rf": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "kind": "scenario",
+      "origins": [
+        "Loop recuperable"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-008/C003",
+      "inputs": {
+        "program": "addi x1,x0,1",
+        "session_steps": [
+          {
+            "op": "load",
+            "size": 4,
+            "received": 4,
+            "abort": false,
+            "words": [
+              "0x00100093"
+            ]
+          },
+          {
+            "op": "prepare"
+          },
+          {
+            "op": "cpu",
+            "mode": "RUN",
+            "cycles": 2,
+            "hold_clocks": 0,
+            "stall_at": -1
+          },
+          {
+            "op": "terminal",
+            "mode": "RUN",
+            "result": "fault",
+            "cause": 1,
+            "fault_pc": 4
+          }
+        ],
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              1048723
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "terminal": "FAULT",
+        "cause": 1,
+        "fault_pc": 4,
+        "session_steps": [
+          {
+            "state": 2,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00100093"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 3,
+            "size": 4,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00100093"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 4,
+            "size": 4,
+            "count": 2,
+            "pc": 8,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00100093"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 11,
+            "size": 4,
+            "count": 3,
+            "pc": 12,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00100093"
+            ],
+            "physical_word_preserved": false
+          }
+        ],
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 5,
+            "stalls": 0,
+            "rf_commits": [
+              {
+                "cycle": 5,
+                "pc": 0,
+                "rd": 1,
+                "value": 1
+              }
+            ],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 11,
+            "pc": 8,
+            "fault_cause": 1,
+            "fault_pc": 4
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Ausencia dehalt noesfin"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-EXEC-008/C004",
+      "inputs": {
+        "program": "word0",
+        "session_steps": [
+          {
+            "op": "load",
+            "size": 4,
+            "received": 4,
+            "abort": false,
+            "words": [
+              "0x00000000"
+            ]
+          },
+          {
+            "op": "prepare"
+          },
+          {
+            "op": "cpu",
+            "mode": "RUN",
+            "cycles": 2,
+            "hold_clocks": 0,
+            "stall_at": -1
+          },
+          {
+            "op": "terminal",
+            "mode": "RUN",
+            "result": "fault",
+            "cause": 2,
+            "fault_pc": 0
+          }
+        ],
+        "processor": [
+          {
+            "start": "load",
+            "after_trace": "none",
+            "words": [
+              0
+            ],
+            "mode": "RUN",
+            "holds": [
+              0,
+              0
+            ],
+            "initial_rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "initial_memory": []
+          }
+        ],
+        "processor_imem_capacity": 1024,
+        "processor_dmem_capacity": 2048
+      },
+      "expected": {
+        "terminal": "FAULT",
+        "cause": 2,
+        "fault_pc": 0,
+        "session_steps": [
+          {
+            "state": 2,
+            "size": 0,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00000000"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 3,
+            "size": 4,
+            "count": 0,
+            "pc": 0,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00000000"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 4,
+            "size": 4,
+            "count": 2,
+            "pc": 8,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00000000"
+            ],
+            "physical_word_preserved": false
+          },
+          {
+            "state": 11,
+            "size": 4,
+            "count": 3,
+            "pc": 12,
+            "rf1": 0,
+            "rf2": 0,
+            "bitmap": 0,
+            "imem": [
+              "0x00000000"
+            ],
+            "physical_word_preserved": false
+          }
+        ],
+        "processor": [
+          {
+            "prepare_clears": 2048,
+            "cycles": 2,
+            "stalls": 0,
+            "rf_commits": [],
+            "store_commits": [],
+            "probes": [],
+            "rf": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "used_addresses": [],
+            "used_values": [],
+            "terminal": 11,
+            "pc": 4,
+            "fault_cause": 2,
+            "fault_pc": 0
+          }
+        ]
+      },
+      "kind": "program",
+      "origins": [
+        "Ausencia dehalt noesfin"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

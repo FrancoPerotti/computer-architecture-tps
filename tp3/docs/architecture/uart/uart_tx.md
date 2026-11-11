@@ -17,13 +17,11 @@ El diseño toma como referencia [uart_tx del TP2](../../../../tp2/rtl/uart_tx.sv
 
 ### Organización interna
 
-Se conserva `uart_tx` como módulo, con cinco partes funcionales:
+Se conserva la organización funcional en cinco responsabilidades, realizadas en TP3 mediante la separación física aprobada:
 
-- `TX Control`, que contiene el estado registrado y la lógica combinacional de la FSM.
-- `Sample Counter`, que cuenta los ticks correspondientes a la duración de cada bit.
-- `Bit Counter`, que identifica el bit de datos que se está transmitiendo.
-- `TX Shift Register`, que conserva el byte y prepara los bits sucesivos.
-- `TX Output Register`, que conserva el nivel de la línea serie entre actualizaciones.
+- `tx_fsm` contiene `TX Control`: estado registrado, transiciones y señales de acción.
+- `tx_datapath` contiene `Sample Counter`, `Bit Counter`, `TX Shift Register`, `TX Output Selection` y `TX Output Register`.
+- `uart_tx` integra ambos módulos y expone la interfaz de transmisión ya definida.
 
 ```mermaid
 flowchart LR
@@ -44,15 +42,15 @@ flowchart LR
     CTRL -->|tx_busy y tx_done_tick| STATUS["Integración UART y control del protocolo"]
 ```
 
-Los contadores y registros permanecen dentro de `uart_tx`. `TX Output Selection` es la lógica combinacional que selecciona el valor de entrada del registro de salida; forma parte del camino de datos y no requiere un módulo HDL independiente.
+`tx_fsm` y `tx_datapath` son fronteras físicas internas de `uart_tx`. `TX Output Selection` es lógica combinacional de `tx_datapath`; no requiere un módulo HDL independiente.
 
 La FSM determina cuándo cargar un byte, desplazar el registro, actualizar un contador o cambiar el nivel de salida. Cada recurso realiza su actualización mediante la señal correspondiente. El siguiente estado y las acciones autorizadas pueden registrarse en el mismo flanco.
 
 ### `TX Control`
 
-`TX Control` conserva el estado actual en un registro y calcula combinacionalmente el siguiente estado y las órdenes de acción. Su lógica combinacional expresa las decisiones mediante `casez` y patrones con `?` para las condiciones irrelevantes, conforme a las correcciones docentes registradas.
+`tx_fsm` conserva el estado actual en un registro y calcula combinacionalmente el siguiente estado y las órdenes de acción. Su lógica combinacional expresa las decisiones mediante `casez` y patrones con `?` para las condiciones irrelevantes, conforme a las correcciones docentes registradas.
 
-El control recibe `tx_start`, `s_tick`, `sample_count[3:0]` y `bit_count[2:0]`. Estas señales permiten reconocer una solicitud de envío, determinar cuándo termina el intervalo de un bit y distinguir el último bit de datos.
+El control recibe `tx_start`, `s_tick`, `sample_done` y `last_bit`. El datapath produce las dos condiciones combinacionales a partir de sus contadores; la FSM no contiene los contadores.
 
 #### Controles de acción
 
@@ -67,23 +65,23 @@ El control recibe `tx_start`, `s_tick`, `sample_count[3:0]` y `bit_count[2:0]`. 
 | `tx_write_enable`    | `TX Output Register`  | Registrar el nivel seleccionado para la salida serie.                                      |
 | `tx_output_select`   | `TX Output Selection` | Seleccionar nivel alto, nivel bajo, bit actual o bit siguiente.                            |
 
-Los enables son de un bit. `tx_output_select` tiene dos bits y utiliza la codificación aprobada en la tabla de selección de salida. Los controles de un mismo recurso evitan órdenes simultáneas incompatibles, como carga y desplazamiento del registro del byte o limpieza e incremento de un contador. Sin una orden de actualización, los recursos conservan su valor.
+Los enables son de un bit. `tx_output_select` tiene dos bits y utiliza la codificación aprobada en la tabla de selección de salida. `tx_datapath` consume estos controles; los controles de un mismo recurso evitan órdenes simultáneas incompatibles, como carga y desplazamiento del registro del byte o limpieza e incremento de un contador. Sin una orden de actualización, los recursos conservan su valor.
 
 La FSM también informa `tx_busy` y `tx_done_tick`, como en el TP2. La integración utiliza la ocupación para coordinar el comienzo de otra transmisión y el evento de finalización para reconocer que terminó el byte en curso. Sus condiciones y temporización se desarrollan junto con los estados.
 
 ### Contadores y registro del byte
 
-`Sample Counter` utiliza cuatro bits para representar los valores de cero a quince de cada intervalo de dieciséis ticks. El contador recibe órdenes de incremento y limpieza; el cálculo y registro del valor corresponden a su propia lógica.
+En TP3, `Sample Counter` pertenece a `tx_datapath` y utiliza cuatro bits para representar los valores de cero a quince de cada intervalo de dieciséis ticks. El contador recibe órdenes de incremento y limpieza; el cálculo y registro del valor corresponden a su propia lógica.
 
-`Bit Counter` utiliza tres bits para identificar D0 a D7. La FSM consulta ese índice y ordena su avance cuando corresponde comenzar el siguiente bit de datos.
+`Bit Counter` pertenece a `tx_datapath` y utiliza tres bits para identificar D0 a D7. La FSM recibe `last_bit` y ordena el avance cuando corresponde comenzar el siguiente bit de datos.
 
-`TX Shift Register` utiliza ocho bits. Captura `data_in` al aceptar el comienzo de un envío, como en el TP2, de manera que los cambios posteriores de la entrada no alteren el byte en curso. La carga y los desplazamientos son acciones diferenciadas de la FSM.
+`TX Shift Register` pertenece a `tx_datapath` y utiliza ocho bits. Captura `data_in` al aceptar el comienzo de un envío, como en el TP2, de manera que los cambios posteriores de la entrada no alteren el byte en curso. La carga y los desplazamientos son acciones diferenciadas que ordena `tx_fsm`.
 
 El desplazamiento hacia la derecha prepara los bits siguientes respetando el orden D0 a D7. Se realizan siete desplazamientos, al pasar de cada bit D0 a D6 al siguiente. Al terminar D7 se inicia el Stop y se conserva el registro del byte hasta una carga posterior.
 
 ### Registro del nivel de salida
 
-`TX Output Register` utiliza un bit. Su salida alimenta `tx`, que la integración conecta al pin `serial_tx`. El registro se inicializa en uno, el nivel de reposo, mientras los contadores y el registro del byte se inicializan en cero.
+`TX Output Register` pertenece a `tx_datapath` y utiliza un bit. Su salida alimenta `tx`, que la integración conecta al pin `serial_tx`. El registro se inicializa en uno, el nivel de reposo, mientras los contadores y el registro del byte se inicializan en cero.
 
 La lógica de selección prepara el valor que corresponde registrar: cero para Start, uno para reposo o Stop y el bit de datos correspondiente durante la transmisión. La FSM controla esa selección y emite `tx_write_enable`; el registro captura el nivel y lo conserva hasta la siguiente actualización.
 

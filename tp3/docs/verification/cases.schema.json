@@ -56,7 +56,14 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/group"
+        "oneOf": [
+          {
+            "$ref": "#/$defs/group"
+          },
+          {
+            "$ref": "#/$defs/fileReference"
+          }
+        ]
       }
     }
   },
@@ -144,7 +151,14 @@
         "cases": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/case"
+            "oneOf": [
+              {
+                "$ref": "#/$defs/case"
+              },
+              {
+                "$ref": "#/$defs/fileReference"
+              }
+            ]
           }
         },
         "replay_cases": {
@@ -334,6 +348,25 @@
             "implemented"
           ],
           "description": "Implementación del testbench registrada; no expresa aprobación ni validación física."
+        }
+      }
+    },
+    "fileReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file"
+      ],
+      "properties": {
+        "file": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/sourcePath"
+            },
+            {
+              "pattern": "\\.json$"
+            }
+          ]
         }
       }
     }

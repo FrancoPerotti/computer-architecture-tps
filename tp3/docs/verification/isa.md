@@ -1,7 +1,7 @@
 # TP3 — ISA y codificación
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** pruebas diseñadas, sin ejecutar.
+- **Estado documental:** unidad, integración local y CPU disponibles según el nivel de cada variante.
 
 ## Propósito y alcance
 
@@ -15,6 +15,11 @@ El alcance comprende:
 - La relación entre cada prueba y los contratos arquitectónicos que determinan su comportamiento.
 
 Los contratos enlazados son la fuente autoritativa del comportamiento; este documento no redefine la ISA ni inventa reglas alternativas. La [matriz de cobertura](coverage.md) registra qué requisitos quedan cubiertos y qué trabajo permanece fuera del alcance.
+
+La [integración CPU de #9](verification_plan.md#integracion-cpu-9) registra el
+alcance actual por ID y nivel. Los capítulos de evidencia de entregas locales
+conservan sus resultados y pendientes de aquel momento; el resumen de #9
+actualiza la contribución CPU sin acreditar transporte, timing ni placa.
 
 ## Índice
 
@@ -33,7 +38,7 @@ Los contratos enlazados son la fuente autoritativa del comportamiento; este docu
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad ALU y proyección aritmética de `ex_stage` implementadas; CPU pendiente.
+- **Estado:** Unidad y CPU disponibles.
 
 **Requisitos:** [REQ-ISA-008](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-009](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-013](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-014](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-015](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-023](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-024](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-025](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-026](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-001](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
@@ -134,7 +139,7 @@ La expectativa específica de cada caso está en el [manifiesto](cases.json) y d
 
 - **Nivel:** unidad ALU y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad ALU y proyección aritmética de `ex_stage` implementadas; CPU pendiente.
+- **Estado:** Unidad y CPU disponibles.
 
 **Requisitos:** [REQ-ISA-010](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-011](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-012](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-016](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-017](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-027](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-028](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-029](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-030](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-031](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-006](../requirements.md#2-procesador-y-pipeline).
 
@@ -226,7 +231,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad immediate_generator y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad implementada; comprobación CPU pendiente.
+- **Estado:** Formatos en unidad; LUI C021–C024 en CPU disponibles.
 
 **Requisitos:** [REQ-ISA-007](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-014](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline).
 
@@ -291,7 +296,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad decoder e integración ID.
 - **Tipo de estímulo:** legal y mutación de palabra.
-- **Estado:** unidad e integración local de ID implementadas.
+- **Estado:** Decoder e integración ID disponibles.
 
 **Requisitos:** [REQ-CPU-005](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-015](../requirements.md#2-procesador-y-pipeline), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-034](../requirements.md#3-conjunto-de-instrucciones).
 
@@ -372,7 +377,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad Flow Control y proyección local de branch en `ex_stage` implementadas; CPU pendiente.
+- **Estado:** C001–C004 en CPU y C005–C008 en EX local disponibles.
 
 **Requisitos:** [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-007](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-HAZ-008](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -445,7 +450,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal.
-- **Estado:** unidad Flow Control y proyección local de jumps en `ex_stage` implementadas; CPU pendiente.
+- **Estado:** C001–C008 en CPU y C009–C010 en EX local disponibles.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-009](../requirements.md#4-hazards-y-cambios-de-flujo).
 
@@ -512,13 +517,17 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ## TEST-ISA-007 — Loads y stores de la ISA
 
-- **Nivel:** CPU.
+- **Nivel:** integración MEM y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** MEM local y CPU disponibles.
 
 **Requisitos:** [REQ-ISA-002](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-003](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-004](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-018](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-019](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-020](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-021](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-022](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [stage_mem](../architecture/cpu/stage_mem.md); [dmem_access](../architecture/memory/dmem_access.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 22 casos con los ocho `mem_op` de la ISA. Comprueba lanes, extensión signed/unsigned, selección del valor hacia MEM/WB y los accesos con base 4 y offset -4. Esta proyección comienza en EX/MEM: no acredita todavía decoder, cálculo de dirección en EX, Register File, `halt` ni una CPU completa.
 
 ### Qué comprueba y por qué
 
@@ -576,7 +585,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU e integración EX.
 - **Tipo de estímulo:** legal, con condición local indicada.
-- **Estado:** unidad `ex_fault_check` y proyección de targets/faults en `ex_stage` implementadas; CPU pendiente.
+- **Estado:** EX local y CPU disponibles.
 
 **Requisitos:** [REQ-ISA-001](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-005](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-006](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-032](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-033](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 

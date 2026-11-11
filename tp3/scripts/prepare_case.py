@@ -9,7 +9,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from verification_manifest import MANIFEST, SCHEMA, load_manifest
+from verification_manifest import MANIFEST, SCHEMA, load_manifest, manifest_sources
 
 
 def load_case(manifest_path, case_id):
@@ -113,8 +113,8 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, required=True, help="Generated data file")
     args = parser.parse_args(argv)
     try:
-        if args.output.resolve() in {args.manifest.resolve(), SCHEMA.resolve()}:
-            raise ValueError("output must not replace the manifest or its schema")
+        if args.output.resolve() in manifest_sources(args.manifest) | {SCHEMA.resolve()}:
+            raise ValueError("output must not replace manifest files or their schema")
         write_data(args.output, load_case(args.manifest, args.case))
     except (OSError, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)

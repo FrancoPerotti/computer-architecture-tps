@@ -1,0 +1,567 @@
+{
+  "id": "TEST-PLAT-001",
+  "source": "platform.md#test-plat-001",
+  "case_count": 15,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/ex_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/ex_fault_check_tb.sv"
+      ],
+      "top": "ex_fault_check_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C009"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/ex_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/ex_fault_check_tb.sv"
+      ],
+      "top": "ex_fault_check_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C002"
+      ],
+      "parameters": {
+        "MEMORY_PROFILE": "system_pkg::ALT_1000"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C014"
+      ],
+      "parameters": {
+        "MEMORY_PROFILE": "32'hffffffff",
+        "FORBID_RESOURCES": "1"
+      },
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C004",
+        "TEST-PLAT-001/C005",
+        "TEST-PLAT-001/C006",
+        "TEST-PLAT-001/C007",
+        "TEST-PLAT-001/C008"
+      ],
+      "parameters": {
+        "CHECK_CAPACITY": "1",
+        "CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C009",
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "CHECK_CAPACITY": "1",
+        "CAPACITY_BYTES": {
+          "input": "C"
+        },
+        "FORBID_RESOURCES": "1"
+      },
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_minimum_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C003"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "IMEM_C"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "DMEM_C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_target_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C015"
+      ],
+      "parameters": {
+        "CAPACITY_BYTES": {
+          "input": "C"
+        }
+      },
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_clock_uart_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_protocol_codes_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/system_pkg_tb.sv"
+      ],
+      "top": "system_pkg_protocol_layout_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/fetch_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fetch_fault_check_tb.sv"
+      ],
+      "top": "fetch_fault_check_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C009"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/fetch_fault_check.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fetch_fault_check_tb.sv"
+      ],
+      "top": "fetch_fault_check_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/instruction_memory.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/instruction_memory_tb.sv"
+      ],
+      "top": "instruction_memory_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C009"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/instruction_memory.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/instruction_memory_tb.sv"
+      ],
+      "top": "instruction_memory_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/if_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/if_stage_tb.sv"
+      ],
+      "top": "if_stage_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C009"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/if_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/if_stage_tb.sv"
+      ],
+      "top": "if_stage_config_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      },
+      "case_ids": [
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/execution_control_tb.sv"
+      ],
+      "top": "execution_control_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C004",
+        "TEST-PLAT-001/C005",
+        "TEST-PLAT-001/C006",
+        "TEST-PLAT-001/C007",
+        "TEST-PLAT-001/C008"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/loader_tb.sv"
+      ],
+      "top": "loader_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C004",
+        "TEST-PLAT-001/C005",
+        "TEST-PLAT-001/C006",
+        "TEST-PLAT-001/C007",
+        "TEST-PLAT-001/C008"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "loader_capacity"
+        },
+        "WITH_CONTROL": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/session_preparation_tb.sv"
+      ],
+      "top": "session_preparation_capacity_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C004",
+        "TEST-PLAT-001/C005",
+        "TEST-PLAT-001/C006",
+        "TEST-PLAT-001/C007",
+        "TEST-PLAT-001/C008"
+      ],
+      "parameters": {
+        "DMEM_CAPACITY_BYTES": {
+          "input": "C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_configuration_tb.sv"
+      ],
+      "top": "processor_configuration_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PLAT-001/C001",
+        "TEST-PLAT-001/C002",
+        "TEST-PLAT-001/C003"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "IMEM_C"
+        },
+        "DMEM_CAPACITY_BYTES": {
+          "input": "DMEM_C"
+        }
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/processor_configuration_tb.sv"
+      ],
+      "top": "processor_configuration_invalid_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-PLAT-001/C009",
+        "TEST-PLAT-001/C010",
+        "TEST-PLAT-001/C011",
+        "TEST-PLAT-001/C012",
+        "TEST-PLAT-001/C013"
+      ],
+      "parameters": {
+        "CAPACITY_BYTES": {
+          "input": "C"
+        }
+      },
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "file": "memory-capacities/cases-001-004.json"
+    },
+    {
+      "file": "memory-capacities/cases-005-006.json"
+    },
+    {
+      "file": "memory-capacities/cases-007-015.json"
+    }
+  ]
+}

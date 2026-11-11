@@ -1,8 +1,8 @@
 # TP3 — Plan de verificación de hardware
 
 - **Tipo:** plan de verificación.
-- **Estado documental:** plan vigente; ejecución parcial de unidades y fixtures locales.
-- **Fecha:** 2026-10-24.
+- **Estado documental:** plan vigente; unidad, integración local y CPU real registrados por ID y nivel.
+- **Fecha:** 2026-11-05.
 
 ## Propósito y alcance
 
@@ -47,6 +47,12 @@ Las [reglas del protocolo y su coordinación](coverage.md#reglas-del-protocolo-y
 ### Registro de ejecución en el manifiesto
 
 El manifiesto `tp3-verification-cases` reúne la descripción de los casos y la configuración de sus ejecuciones en el mismo archivo. Cada grupo conserva sus IDs, fuentes documentales, entradas, expectativas y relaciones de reutilización, y contiene una lista `executions`.
+
+El catálogo se organiza en un [índice y archivos por grupo](cases/README.md).
+Los grupos grandes separan sus casos en listas de tamaño acotado. El cargador
+resuelve las referencias `file` antes de validar, seleccionar y preparar datos;
+los IDs, el orden, las entradas y las expectativas conservan su significado.
+Las rutas de fuentes y los comandos del ejecutor mantienen sus bases anteriores.
 
 Cada entrada de `executions` describe un testbench mediante sus fuentes en orden de compilación (`sources`), relativas a `tp3`, su módulo principal (`top`), el nivel de verificación que acredita (`level`) y el límite de tiempo por caso (`timeout_seconds`). Un grupo puede contener varias entradas para comprobar sus casos con distintos testbenches o en distintos niveles. Los IDs y las expectativas permanecen definidos en `cases` y `replay_cases`.
 
@@ -219,7 +225,147 @@ No se exige implementar físicamente `ALT_1000` ni utilizar arrays gigantes para
 
 Los [modelos ejecutables](../../tools/verification/README.md) comprueban recorridos de las 11 fases del Controller y las 14 Global, recuperación PC fuera de LOAD, integridad del catálogo y presupuestos de ambos perfiles. Se suministran eventos de CPU, fin de preparación y último Stop; el reloj PC es virtual. No se ejecutan instrucciones ni se produce el cuerpo Debug. El comando y los límites se documentan junto a las fuentes.
 
-La ejecución de los casos contra RTL, las tramas 8N1, el análisis de lazos y timing de la implementación, la placa y el cliente real siguen pendientes. El cliente debe comprobar también la recuperación propia de LOAD. Ningún resultado abstracto aprueba por sí solo un requisito completo ni una variante del catálogo RTL.
+La ejecución RTL disponible se registra por banco y nivel en el manifiesto. La integración CPU se detalla debajo; tramas 8N1, timing de implementación, placa y aceptación completa del cliente conservan sus comprobaciones propias. El cliente debe comprobar también la recuperación propia de LOAD. Ningún resultado abstracto aprueba por sí solo un requisito completo ni una variante del catálogo RTL.
+
+<a id="composicion-parcial-9"></a>
+<a id="integracion-cpu-9"></a>
+
+### Integración del CPU real en #9
+
+`rtl/processor_top.sv` conecta las cinco etapas de producción de #4–#6,
+los cuatro registros y hazards de #7, y ejecución, Loader y preparación de #8.
+Las capacidades se pasan explícitamente a cada consumidor. No hay sustitutos
+EX/MEM/WB ni parámetros para activar modelos en el producto. Los 34 campos
+Debug exponen directamente los 504 bits de los latches actuales.
+
+El catálogo conserva sus 66 grupos y 1484 variantes. #9 agrega 312 ejecuciones
+sobre IDs existentes: 281 CPU, 21 Integración local y diez Unidad. Las ejecuciones
+anteriores permanecen registradas, incluidos bancos con el mismo top y distintos
+parámetros. Los 38 grupos de la issue contienen 1103 casos canónicos; PIPE-010
+conserva sus veinte variantes aunque la tabla original de la issue indicaba una.
+
+| Banco | Nivel / ejecuciones adicionales | Comprobación |
+| --- | --- | --- |
+| `processor_top_tb` | CPU / 263 | Programas, trazas por ciclo, forwarding, stall, flujo, memoria, commits, fallas precisas, HALT, HOLD, reset y reemplazo corto |
+| `processor_preparation_tb` | CPU / 11 | Preparación READY/RUN/STEP sobre RF, PC, contador, latches y marcas reales; reset y reinicio del recorrido |
+| `processor_reprogramming_tb` | CPU / 4 | Conservación de A ante cabecera rechazada en la frontera; aborto de carga aceptada, recuperación y ejecución de B |
+| `processor_state_fixture_tb` | CPU / 3 | PC de fetch inválido y comparación del wrap del contador frente a 41, con el mismo datapath real |
+| `processor_loader_tb` | Integración local / 9 | Streams del catálogo sobre Loader, control e IMEM reales; cuarto byte, aborto, reset y publicación |
+| `processor_ownership_tb` | Integración local / 8 | Seis contextos de ownership y dos colisiones internas que deben rechazar las assertions |
+| `processor_frontier_tb` | Integración local / 4; Unidad / 2 | Fronteras artificiales EX/ID con store y WB anteriores reales; selección del valor MEM frente a EX y consumo del registro anterior |
+| `processor_configuration_tb` y `processor_configuration_invalid_tb` | Unidad / 8 | Propagación REFERENCE/ALT_1000/mínimo y cinco configuraciones inválidas rechazadas antes de instanciar recursos |
+
+La siguiente partición identifica qué variantes se observan en CPU y cuáles
+conservan el nivel local/unitario definido por su catálogo. No se convierte una
+combinación artificial en una trayectoria legal ni se agrega un producto cartesiano.
+
+| Grupo | Variantes y nivel pertinente de #9 |
+| --- | --- |
+| ISA-001 / ISA-002 | Todas en CPU y sus unidades previas |
+| ISA-003 | C021–C024 en CPU; formatos C001–C020 en unidad |
+| ISA-004 | Las 409 variantes en decoder e integración ID |
+| ISA-005 / ISA-006 | C001–C004 / C001–C008 en CPU; restantes en EX local |
+| ISA-007 / ISA-008 | Todas en CPU; se conservan unidades y EX/MEM locales |
+| PIPE-001 / PIPE-002 | C001 en CPU y revisión estructural / las 52 variantes de RF, ID y WB locales |
+| PIPE-003 / PIPE-004 | C025–C029 / C003 en CPU; restantes en forwarding local |
+| PIPE-005 / PIPE-006 | Las nueve / C010 en CPU; restantes de PIPE-006 locales |
+| PIPE-007 | Sus 21 variantes de acciones, HOLD y prioridades en unidad e integración local; controles reales también observados por las sesiones CPU |
+| PIPE-008 | C001–C005 en CPU; C006–C009 artificiales locales con efectos anteriores reales |
+| PIPE-009 | C008–C011 en CPU; C001–C007 en unidades MEM/WB/RF |
+| PIPE-010 | Sus veinte variantes CPU, incluidos loop, HOLD, reset y LOAD con trabajo pendiente |
+| MEM-001 / MEM-002 | Todas las variantes locales de stores, lanes y extensión, además de las instrucciones en ISA-007 |
+| MEM-003 | C001–C072 en CPU; C073–C078 con capacidad 2^32 solo en aritmética unitaria, sin arrays gigantes |
+| MEM-004 / MEM-005 | C023 / C003 en CPU; restantes en IF/memorias locales |
+| MEM-006 | Ownership, prioridades y colisiones en unidades e integración local; transporte físico fuera del CPU |
+| MEM-007 | Los nueve streams de interfaz en Loader/IMEM reales; C007/C008 son fixtures locales de cola de palabra |
+| MEM-008 | C001–C006 en CPU; C007 es revisión documental del formato secuencial |
+| EXEC-001 | Las 153 variantes de arbitraje/estados en Global FSM y Execution Control |
+| EXEC-002–EXEC-005 | Todas las variantes pertinentes en CPU y sus proyecciones locales previas |
+| EXEC-006 | C001–C005 en CPU; C006/C007 artificiales en unidad de FSM |
+| EXEC-007 / EXEC-008 | Las cuatro de cada grupo en CPU; respuestas UART y tiempo físico de EXEC-008 se verifican en sistema |
+| EXEC-009 / EXEC-010 | Contador en unidad y C008 comparado en CPU / todas las nueve variantes en CPU y prioridades locales |
+| PLAT-001 | Tres perfiles reales y cinco rechazos del top; se conservan todas las unidades de capacidades |
+| PLAT-003 | Revisión de los 51 bloques CPU, elaboración XML y lint; transporte, IP y netlist FPGA quedan para sistema/implementación |
+
+Los prefijos de las filas son `TEST-`. Los IDs exactos, parámetros y selección
+por banco están en `cases.json`. `status=implemented` indica disponibilidad de
+una simulación, no aprobación de todos los niveles de un requisito. MEM-008/C007
+y PLAT-003/C001 conservan `pending` en el ejecutor de simulación: sus revisiones
+se documentan en [memoria](memory.md#evidencia-cpu-9) y
+[plataforma](platform.md#revision-cpu-9), sin inventar un PASS funcional.
+
+#### Estímulos y comparación
+
+`inputs.processor` y `expected.processor` contienen palabras, sesiones, comandos,
+pausas, estados iniciales y expectativas externas. Los bancos SystemVerilog
+comparan commits RF/store en el flanco, PC, contador, terminal, causa/PC de falla,
+stalls y lecturas Debug de RF/DMEM. El banco lee una vez los bytes/marcas
+esperados del JSON y luego compara por Debug todas las direcciones DMEM; evita
+repetir búsquedas de texto por byte sin reducir las observaciones. Las trazas
+explícitas agregan acciones,
+próximos `valid`, identidad y payloads de latches. HOLD compara los 504 bits
+actuales, PC, contador y metadata durante 50 clocks, sin exigir ceros en
+payloads inválidos. Las lecturas RF y DMEM usan direcciones independientes.
+
+Los programas no reciben resultados preparados de EX, loads, WB ni candidatos.
+Solo se precarga el estado inicial declarado por cada caso. Preparación instala
+residuos físicos; los casos de PC inválido y wrap precargan el estado que define
+su fixture. Las fronteras artificiales C006–C009 de PIPE-008 instalan payloads
+y permiten comprobar commits reales de instrucciones anteriores. PIPE-009/C001–C002
+son unidades del mux: aíslan el operando local de load de MEM para distinguirlo
+del resultado EX; no se acreditan como sesiones ni accesos físicos de CPU.
+
+El driver respeta la frontera de solicitudes ya validadas: para N=0,1028,6
+no presenta `load_request`. La detección de cabecera inválida pertenece al
+Controller; el CPU comprueba que la imagen y sus efectos se conserven. El
+aborto representa la entrada `load_abort`, sin simular el timeout UART. C021
+de EXEC-002 acredita reset/preparación CPU; la cancelación de transporte se
+consolida en sistema. Un límite del banco agotado siempre es error.
+
+#### Reproducción y evidencia
+
+Desde la raíz del checkout, con Docker iniciado:
+
+```sh
+docker run --rm --network none --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/workspace" \
+  "$(cat tp3/docker/image.ref)" make check REPORTS=build/reports/full-cpu-final
+```
+
+La imagen fija el directorio `/workspace/tp3`. `make check` ejecuta formato,
+lint, validación, revisión estructural, infraestructura, software y toda la
+regresión RTL disponible. `results.json` identifica cada ID, banco y nivel;
+`simulation/` conserva los diagnósticos. `make review-cpu` genera XML y reportes
+para REFERENCE, ALT_1000 y mínimo genérico. La selección focalizada conserva
+`make test-rtl TESTS="TEST-PIPE-010 TEST-EXEC-004"`; no se modifica el runner común.
+El banco de tipos mantiene su timeout de 30 segundos para el archivo compartido
+ampliado, sin cambiar vectores ni expectativas previas. Los cuatro casos CPU de
+EXEC-007 disponen de 60 segundos: el primer CI completó sus dos ejecuciones CPU,
+pero tres agotaron 30 segundos en la comparación final de Debug. El watchdog
+simulado de 10 ms y todas las comparaciones se conservan. La suite completa tiene
+30 minutos en CI, dentro de un job de 45 minutos.
+
+Los controles negativos alteran una copia del valor esperado de un commit y
+retiran las assertions de ownership en una copia temporal del top. Deben fallar
+con diagnóstico de aserción, sin timeouts ni rechazos falsos del banco. Otro
+control negativo cambia de 7 a 8 un byte esperado de DMEM y exige el fallo de
+la comparación Debug con las expectativas cacheadas.
+La evidencia final identifica fuentes por SHA-256, HEAD/base, imagen, versiones,
+comandos y resultados. Las corridas parciales anteriores se conservan como
+históricas; no acreditan esta integración completa.
+
+La corrida local del 2026-11-05 aprobó **2421 ejecuciones RTL**, cero fallos y
+cero errores, además de 40 pruebas de infraestructura y 114 del assembler.
+Las 312 ejecuciones adicionales de #9 están incluidas, con sus 281 contextos
+CPU. La corrida final incluye el reinicio de preparación RUN/STEP tras reset y la
+lectura única de expectativas DMEM, con todos los bytes/marcas comparados. Sus
+reportes locales están en `build/reports/full-cpu-cached/`; CI conserva los suyos
+en `build/reports/`. Los 20 chequeos de modelos abstractos pasaron por separado. El catálogo completo conserva 262 IDs pendientes de otros
+niveles/entregas y revisiones sin simulación; no se suman como PASS de CPU.
+
+La revisión del compañero y el merge a la base siguen pendientes. Síntesis,
+timing, UART físico, bitstream y aceptación en placa conservan sus entregas
+propias y no se deducen de la simulación CPU.
 
 ## Resultados esperados y criterios de comparación
 

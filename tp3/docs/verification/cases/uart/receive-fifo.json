@@ -1,0 +1,559 @@
+{
+  "id": "TEST-UART-002",
+  "source": "uart_debug.md#test-uart-002",
+  "case_count": 21,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/fifo.sv",
+        "tb/fifo_tb.sv"
+      ],
+      "top": "fifo_tb",
+      "level": "Unidad",
+      "timeout_seconds": 10,
+      "case_ids": [
+        "TEST-UART-002/C001",
+        "TEST-UART-002/C002",
+        "TEST-UART-002/C003",
+        "TEST-UART-002/C004",
+        "TEST-UART-002/C005",
+        "TEST-UART-002/C006",
+        "TEST-UART-002/C007",
+        "TEST-UART-002/C008",
+        "TEST-UART-002/C009",
+        "TEST-UART-002/C010",
+        "TEST-UART-002/C011",
+        "TEST-UART-002/C012",
+        "TEST-UART-002/C013",
+        "TEST-UART-002/C014",
+        "TEST-UART-002/C015",
+        "TEST-UART-002/C016",
+        "TEST-UART-002/C017",
+        "TEST-UART-002/C018"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/fifo.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/uart_core.sv",
+        "tb/uart_fifo_boundary_tb.sv"
+      ],
+      "top": "uart_fifo_boundary_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-002/C019",
+        "TEST-UART-002/C020",
+        "TEST-UART-002/C021"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TEST-UART-002/C001",
+      "inputs": {
+        "occupation_before": 0,
+        "wr": 0,
+        "rd": 0,
+        "data_sequence": [],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 0,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C002",
+      "inputs": {
+        "occupation_before": 0,
+        "wr": 0,
+        "rd": 1,
+        "data_sequence": [],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 0,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C003",
+      "inputs": {
+        "occupation_before": 0,
+        "wr": 1,
+        "rd": 0,
+        "data_sequence": [],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": false,
+        "occupation_after": 1,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C004",
+      "inputs": {
+        "occupation_before": 0,
+        "wr": 1,
+        "rd": 1,
+        "data_sequence": [],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": false,
+        "occupation_after": 1,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C005",
+      "inputs": {
+        "occupation_before": 1,
+        "wr": 0,
+        "rd": 0,
+        "data_sequence": [
+          17
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 1,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C006",
+      "inputs": {
+        "occupation_before": 1,
+        "wr": 0,
+        "rd": 1,
+        "data_sequence": [
+          17
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": true,
+        "occupation_after": 0,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C007",
+      "inputs": {
+        "occupation_before": 1,
+        "wr": 1,
+        "rd": 0,
+        "data_sequence": [
+          17
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": false,
+        "occupation_after": 2,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C008",
+      "inputs": {
+        "occupation_before": 1,
+        "wr": 1,
+        "rd": 1,
+        "data_sequence": [
+          17
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": true,
+        "occupation_after": 1,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C009",
+      "inputs": {
+        "occupation_before": 3,
+        "wr": 0,
+        "rd": 0,
+        "data_sequence": [
+          17,
+          34,
+          51
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 3,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C010",
+      "inputs": {
+        "occupation_before": 3,
+        "wr": 0,
+        "rd": 1,
+        "data_sequence": [
+          17,
+          34,
+          51
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": true,
+        "occupation_after": 2,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C011",
+      "inputs": {
+        "occupation_before": 3,
+        "wr": 1,
+        "rd": 0,
+        "data_sequence": [
+          17,
+          34,
+          51
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": false,
+        "occupation_after": 4,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C012",
+      "inputs": {
+        "occupation_before": 3,
+        "wr": 1,
+        "rd": 1,
+        "data_sequence": [
+          17,
+          34,
+          51
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": true,
+        "read_accepted": true,
+        "occupation_after": 3,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C013",
+      "inputs": {
+        "occupation_before": 4,
+        "wr": 0,
+        "rd": 0,
+        "data_sequence": [
+          17,
+          34,
+          51,
+          68
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 4,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C014",
+      "inputs": {
+        "occupation_before": 4,
+        "wr": 0,
+        "rd": 1,
+        "data_sequence": [
+          17,
+          34,
+          51,
+          68
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": true,
+        "occupation_after": 3,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C015",
+      "inputs": {
+        "occupation_before": 4,
+        "wr": 1,
+        "rd": 0,
+        "data_sequence": [
+          17,
+          34,
+          51,
+          68
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": false,
+        "occupation_after": 4,
+        "read_consumed": null
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C016",
+      "inputs": {
+        "occupation_before": 4,
+        "wr": 1,
+        "rd": 1,
+        "data_sequence": [
+          17,
+          34,
+          51,
+          68
+        ],
+        "new_byte": 85
+      },
+      "expected": {
+        "write_accepted": false,
+        "read_accepted": true,
+        "occupation_after": 3,
+        "read_consumed": 17
+      },
+      "kind": "vector",
+      "origins": [
+        "Solicitud/ocupación"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C017",
+      "inputs": {
+        "write_then_read_sequence": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "expected": {
+        "read_sequence": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "pointer_wraps": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Wrap de punteros"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C018",
+      "inputs": {
+        "occupation_before": 4,
+        "wr": 1,
+        "rd": 1,
+        "reset": 1
+      },
+      "expected": {
+        "occupation_after": 0,
+        "pointers": 0,
+        "accepted_operations": 0
+      },
+      "kind": "vector",
+      "origins": [
+        "Reset con solicitudes"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C019",
+      "inputs": {
+        "rx_fifo_occupation": 4,
+        "rx_done_tick": 1,
+        "rd_uart": 0
+      },
+      "expected": {
+        "overflow_error": true,
+        "new_byte_stored": false
+      },
+      "kind": "artificial",
+      "origins": [
+        "Overflow RX"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C020",
+      "inputs": {
+        "occupation_before": 0,
+        "rx_done_tick": 1,
+        "rd_uart": 1
+      },
+      "expected": {
+        "read": false,
+        "write": true,
+        "occupation_after": 1
+      },
+      "kind": "vector",
+      "origins": [
+        "Llegada RX yretiro"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "TEST-UART-002/C021",
+      "inputs": {
+        "occupation_before": 4,
+        "rx_done_tick": 1,
+        "rd_uart": 1
+      },
+      "expected": {
+        "read": true,
+        "write": false,
+        "occupation_after": 3
+      },
+      "kind": "vector",
+      "origins": [
+        "Llegada RX yretiro"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

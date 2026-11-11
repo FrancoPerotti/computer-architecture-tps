@@ -1,13 +1,18 @@
 # TP3 — Memorias y accesos
 
 - **Tipo:** catálogo de verificación.
-- **Estado documental:** catálogo diseñado; ejecución parcial local de Loader y sesión.
+- **Estado documental:** unidad, integración local y CPU disponibles según el nivel de cada variante.
 
 ## Propósito y alcance
 
 Este documento reúne las pruebas de IMEM, DMEM y Loader. Incluye el direccionamiento, los límites de cada acceso, el orden little-endian, las marcas de validez y el reemplazo de imágenes. Las observaciones distinguen los datos físicos del estado lógico de DMEM.
 
 Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican a todos los casos. Los contratos enlazados determinan el comportamiento; la [matriz](coverage.md) relaciona las pruebas con los requisitos y el trabajo fuera de alcance.
+
+La [integración CPU de #9](verification_plan.md#integracion-cpu-9) registra el
+alcance actual por ID y nivel. Los capítulos de evidencia de entregas locales
+conservan sus resultados y pendientes de aquel momento; el resumen de #9
+actualiza la contribución CPU sin acreditar transporte, timing ni placa.
 
 ## Índice
 
@@ -28,11 +33,15 @@ Las [convenciones, niveles y límites del plan](verification_plan.md) se aplican
 
 - **Nivel:** unidad DMEM e integración MEM.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** Unidades e integración MEM disponibles.
 
 **Requisitos:** [REQ-MEM-005](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-006](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-ISA-002](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-003](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-004](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [dmem_access](../architecture/memory/dmem_access.md); [stage_mem](../architecture/cpu/stage_mem.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 18 casos con una DMEM de cuatro bytes. Instala los residuos físicos mediante el puerto de store, aplica `prepare_dmem_clear` para formar el bitmap inicial y comprueba por Debug el dato lógico y la marca de cada lane después del flanco. Las guardas de validez, ciclo efectivo y reset se ejercitan sin acceder jerárquicamente al almacenamiento.
 
 ### Qué comprueba y por qué
 
@@ -98,11 +107,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad DMEM/load_select_extend e integración MEM.
 - **Tipo de estímulo:** legal.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** Unidades e integración MEM disponibles.
 
 **Requisitos:** [REQ-MEM-005](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-006](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-ISA-018](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-019](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-020](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-021](../requirements.md#3-conjunto-de-instrucciones), [REQ-ISA-022](../requirements.md#3-conjunto-de-instrucciones), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-008](../requirements.md#2-procesador-y-pipeline).
 
 **Contratos:** [dmem_access](../architecture/memory/dmem_access.md); [stage_mem](../architecture/cpu/stage_mem.md).
+
+### Ejecución disponible
+
+`mem_stage_tb` ejecuta los 25 casos a través de `Data Memory`, `MEM Decode`, `Load Select/Extend` y el mux que forma `MEM/WB.wb_value`. Compara signo, cero lógico y selección little-endian, y vuelve a observar los cuatro bytes para exigir que el load conserve datos y marcas.
 
 ### Qué comprueba y por qué
 
@@ -168,7 +181,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad fetch/ex_fault_check, proyección EX y CPU.
 - **Tipo de estímulo:** legal salvo entradas locales de PC.
-- **Estado:** unidad `ex_fault_check` y proyección de dirección/fault en `ex_stage` implementadas; memoria física y CPU pendientes.
+- **Estado:** C001–C072 CPU y C073–C078 aritméticos unitarios disponibles.
 
 **Requisitos:** [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-017](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-021](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-018](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -240,7 +253,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad IMEM/IF y CPU.
 - **Tipo de estímulo:** legal y PCs locales artificiales.
-- **Estado:** validación unitaria de fetch e integración local de IF implementadas; Loader y CPU pendientes.
+- **Estado:** IF local y C023 CPU disponibles.
 
 **Requisitos:** [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-011](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-017](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-002](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-013](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-016](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-018](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -308,7 +321,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad memorias y CPU.
 - **Tipo de estímulo:** legal.
-- **Estado:** temporización unitaria de IMEM implementada; DMEM y CPU pendientes.
+- **Estado:** C001/C002 locales y C003 CPU disponibles.
 
 **Requisitos:** [REQ-CPU-003](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-004](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-007](../requirements.md#2-procesador-y-pipeline), [REQ-HAZ-001](../requirements.md#4-hazards-y-cambios-de-flujo), [REQ-MEM-014](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-027](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas).
 
@@ -316,9 +329,9 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 ### Ejecución disponible
 
-`instruction_memory_tb` ejecuta `C001` y `C002` en nivel `Unidad`, con capacidades explícitas de 1024 y 1000 bytes, respectivamente. El primer caso cambia la dirección con el reloj detenido. El segundo presenta una escritura y compara la salida antes y después del flanco, además de comprobar que una escritura deshabilitada conserve el valor anterior.
+`instruction_memory_tb` y `data_memory_timing_tb` ejecutan `C001` y `C002` en nivel `Unidad`, con capacidades explícitas de 1024 y 1000 bytes, respectivamente. El primer caso cambia la dirección con el reloj detenido. El segundo presenta una escritura y compara la salida antes y después del flanco, además de comprobar que una escritura deshabilitada conserve el valor anterior.
 
-Las palabras iniciales, las transacciones y las expectativas están en `inputs.initial_words`, `inputs.imem_steps` y `expected.imem_steps`. Las dos variantes acreditan IMEM; la temporización de DMEM y el programa `C003` siguen pendientes. Observar la salida durante una escritura local no representa un fetch activo de CPU concurrente con Loader.
+Las palabras iniciales, las transacciones y las expectativas están en `inputs.initial_words`, `inputs.imem_steps` y `expected.imem_steps`. Las dos variantes acreditan ambas memorias físicas; el programa `C003` y la coexistencia IF/MEM siguen pendientes de CPU. Observar la salida durante una escritura local no representa un fetch activo de CPU concurrente con Loader.
 
 ### Qué comprueba y por qué
 
@@ -384,11 +397,15 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** integración memorias/sistema y revisión.
 - **Tipo de estímulo:** legal y colisión artificial.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** Unidades e integración CPU local con ownership y rechazos disponibles.
 
 **Requisitos:** [REQ-MEM-019](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-020](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-025](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-028](../requirements.md#5-memorias-y-carga-de-programas), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución).
 
 **Contratos:** [memory_architecture](../architecture/memory/memory_architecture.md); [dmem_access](../architecture/memory/dmem_access.md); [execution_control](../architecture/session/execution_control.md).
+
+### Ejecución disponible
+
+`data_memory_ownership_tb` ejecuta `C003`, `C005`–`C008` y `C010`. Comprueba mantenimiento exclusivo, lectura Debug, espera estable y las prioridades reset > clear > store. `C010` es un rechazo esperado que exige la assertion `DMEM_OWNERSHIP_CONFLICT`. Las fases RUNNING, LOADING y STEP, y la colisión IMEM fetch/Loader, permanecen pendientes de integración global.
 
 ### Qué comprueba y por qué
 
@@ -444,7 +461,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad Loader e integración IMEM.
 - **Tipo de estímulo:** legal y guardas locales.
-- **Estado:** unidad y conexión con Execution Control ejecutadas con un fixture IMEM; integración con IMEM de producción y sistema pendiente.
+- **Estado:** Los nueve casos Loader/IMEM reales disponibles al nivel local.
 
 **Requisitos:** [REQ-MEM-001](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-003](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-023](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-UART-002](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-002](../requirements.md#7-uart-y-debug-unit).
 
@@ -513,7 +530,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** CPU/sistema.
 - **Tipo de estímulo:** legal.
-- **Estado:** C001–C006 con integración local disponible y C007 revisado documentalmente; CPU y sistema pendientes.
+- **Estado:** C001–C006 CPU disponibles; C007 revisado documentalmente, pendiente en el runner de simulación.
 
 **Requisitos:** [REQ-CPU-016](../requirements.md#2-procesador-y-pipeline), [REQ-CPU-018](../requirements.md#2-procesador-y-pipeline), [REQ-MEM-004](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-007](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-009](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-012](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit).
 
@@ -674,6 +691,39 @@ y [su interfaz](../interfaces.md#bloque-8-1). El formato secuencial no represent
 origen configurable ni huecos; no se agregaron campos wire. No hay un paquete
 inválido representativo que simular. El caso permanece `pending` en el runner,
 porque este acredita simulaciones, y su revisión queda registrada aquí.
+
+<a id="evidencia-cpu-9"></a>
+
+## Integración de memoria y reemplazo en #9
+
+`processor_top_tb` ejecuta ISA-007, MEM-003/C001–C072, MEM-004/C023 y MEM-005/C003
+con las memorias y etapas de producción. Los loads leen bytes/marcas reales;
+los stores se comparan por ciclo, dirección, dato y byte-enable antes del flanco,
+y por su efecto posterior en DMEM. Los casos aritméticos de capacidad 2^32
+conservan su nivel unitario sin instanciar arrays de ese tamaño.
+
+`processor_loader_tb` reproduce los nueve streams de MEM-007 sobre Loader,
+Execution Control e IMEM reales. Espera el recorrido real de preparación al
+publicar imagen; no inyecta `prepare_done`. C007/C008 conservan el estado inicial
+local de cola de palabra del catálogo y se acreditan en Integración local.
+`processor_ownership_tb` observa las fases legales y exige rechazo de las
+colisiones internas IMEM/fetch y CPU/Debug; las prioridades de reset/clear/store
+conservan además sus unidades previas.
+
+MEM-008/C001–C006 ejecutan A para producir sus residuos reales y verifican
+conservación o invalidación según aceptación de LOAD. El reemplazo más corto
+limpia RF/marcas y limita fetch al nuevo tamaño aun con sufijo físico anterior.
+N=0,1028,6 llegan a la frontera CPU como ausencia de solicitud: validar la
+cabecera es responsabilidad del Controller. C006 suministra `load_abort` tras
+tres bytes, verifica NO_IMAGE y carga/ejecuta una imagen HALT nueva; el timeout
+y las respuestas de transporte se consolidan en sistema.
+
+La revisión MEM-008/C007 contrasta la cabecera `01 + N[39:0]` y sus N bytes
+secuenciales con [Protocol](../protocol.md#códigos-de-operación), Loader e interfaces.
+No existe campo wire de origen, entrada PC ni huecos; `load_byte_offset` es
+posición interna del stream, no una extensión del protocolo. No hay paquete
+representable para simular esa propiedad negativa. El ID conserva `pending`
+en simulación y esta evidencia documental, sin inventar variantes.
 
 <a id="test-mem-009"></a>
 

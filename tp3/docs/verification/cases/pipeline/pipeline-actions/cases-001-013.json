@@ -1,0 +1,1308 @@
+[
+  {
+    "id": "TEST-PIPE-007/C001",
+    "inputs": {
+      "action_witness": "act_ex_fault",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 1,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_ex_fault",
+      "next_updates": [
+        "hold",
+        "invalidate_flags",
+        "bubble",
+        "invalidate",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_ex_fault",
+        "next_updates": [
+          "hold",
+          "invalidate_flags",
+          "bubble",
+          "invalidate",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C002",
+    "inputs": {
+      "action_witness": "act_ex_fault",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 1,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C003",
+    "inputs": {
+      "action_witness": "act_halt",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 1,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_halt",
+      "next_updates": [
+        "hold",
+        "invalidate_flags",
+        "bubble",
+        "invalidate",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_halt",
+        "next_updates": [
+          "hold",
+          "invalidate_flags",
+          "bubble",
+          "invalidate",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C004",
+    "inputs": {
+      "action_witness": "act_halt",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 1,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C005",
+    "inputs": {
+      "action_witness": "act_redirect",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 1,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_redirect",
+      "next_updates": [
+        "target",
+        "invalidate_flags",
+        "bubble",
+        "capture_EX",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_redirect",
+        "next_updates": [
+          "target",
+          "invalidate_flags",
+          "bubble",
+          "capture_EX",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C006",
+    "inputs": {
+      "action_witness": "act_redirect",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 1,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C007",
+    "inputs": {
+      "action_witness": "act_id_fault",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 1,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_id_fault",
+      "next_updates": [
+        "hold",
+        "invalidate_flags",
+        "bubble",
+        "capture_EX",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_id_fault",
+        "next_updates": [
+          "hold",
+          "invalidate_flags",
+          "bubble",
+          "capture_EX",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C008",
+    "inputs": {
+      "action_witness": "act_id_fault",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 1,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C009",
+    "inputs": {
+      "action_witness": "act_load_use",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 1
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_load_use",
+      "next_updates": [
+        "hold",
+        "hold_all_5_fields",
+        "bubble",
+        "capture_EX",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_load_use",
+        "next_updates": [
+          "hold",
+          "hold_all_5_fields",
+          "bubble",
+          "capture_EX",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C010",
+    "inputs": {
+      "action_witness": "act_load_use",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 1
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C011",
+    "inputs": {
+      "action_witness": "act_normal",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_normal",
+      "next_updates": [
+        "PC+4",
+        "capture_IF",
+        "capture_ID",
+        "capture_EX",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_normal",
+        "next_updates": [
+          "PC+4",
+          "capture_IF",
+          "capture_ID",
+          "capture_EX",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C012",
+    "inputs": {
+      "action_witness": "act_normal",
+      "cpu_cycle_fire": 0,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 0
+      },
+      "drain_mode": 0,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "ninguna",
+      "CPU_hold": true,
+      "next_updates": [
+        "hold",
+        "hold",
+        "hold",
+        "hold",
+        "hold"
+      ],
+      "composition": {
+        "selected_action": "ninguna",
+        "next_updates": [
+          "hold",
+          "hold",
+          "hold",
+          "hold",
+          "hold"
+        ]
+      }
+    },
+    "kind": "vector",
+    "origins": [
+      "Sin ciclo"
+    ],
+    "status": "implemented"
+  },
+  {
+    "id": "TEST-PIPE-007/C013",
+    "inputs": {
+      "action_witness": "act_drain_load_use",
+      "cpu_cycle_fire": 1,
+      "local_fixture": {
+        "PC": 64,
+        "redirect_target": 128,
+        "ex_fault_candidate": 0,
+        "ex_halt_candidate": 0,
+        "redirect_requested": 0,
+        "id_fault_candidate": 0,
+        "load_use_stall": 1
+      },
+      "drain_mode": 1,
+      "composition": {
+        "PC": 64,
+        "redirect_target": 128,
+        "preload_order": [
+          "current",
+          "alternate"
+        ],
+        "future_order": [
+          "alternate",
+          "current"
+        ],
+        "payloads": {
+          "alternate": {
+            "ifid": {
+              "valid": 0,
+              "pc": 2147483650,
+              "instruction": 0,
+              "fetch_fault_valid": 1,
+              "fetch_fault_cause": 0
+            },
+            "idex": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rs1": 0,
+              "rs2": 1,
+              "rd": 2,
+              "rs1_value": 4275878552,
+              "rs2_value": 1985229328,
+              "immediate": 4275878552,
+              "alu_op": 20,
+              "alu_src": 0,
+              "result_sel": 1,
+              "flow_op": 2,
+              "mem_op": 7,
+              "reg_write": 0
+            },
+            "exmem": {
+              "valid": 1,
+              "pc": 4275878552,
+              "instruction": 1985229328,
+              "rd": 0,
+              "reg_write": 0,
+              "mem_op": 7,
+              "ex_result": 4275878552,
+              "store_data": 1985229328
+            },
+            "memwb": {
+              "valid": 1,
+              "pc": 1985229328,
+              "instruction": 4275878552,
+              "rd": 0,
+              "reg_write": 0,
+              "wb_value": 1985229328
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "selected_action": "act_drain_load_use",
+      "next_updates": [
+        "hold",
+        "hold_all_5_fields",
+        "bubble",
+        "capture_EX",
+        "capture_MEM"
+      ],
+      "composition": {
+        "selected_action": "act_drain_load_use",
+        "next_updates": [
+          "hold",
+          "hold_all_5_fields",
+          "bubble",
+          "capture_EX",
+          "capture_MEM"
+        ]
+      }
+    },
+    "kind": "artificial",
+    "origins": [
+      "Fila habilitada"
+    ],
+    "status": "implemented"
+  }
+]

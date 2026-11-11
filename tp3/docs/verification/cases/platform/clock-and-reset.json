@@ -1,0 +1,179 @@
+{
+  "id": "TEST-PLAT-002",
+  "source": "platform.md#test-plat-002",
+  "case_count": 10,
+  "reuse_groups": [
+    "TEST-UART-013"
+  ],
+  "executions": [],
+  "cases": [
+    {
+      "id": "TEST-PLAT-002/C001",
+      "inputs": {
+        "event": "startup-lock",
+        "functional_clock_Hz": 50000000,
+        "button_min_hold_us": 0
+      },
+      "expected": {
+        "reset_release_synchronized": true,
+        "MMCM_reset_source": "solo botón",
+        "no_functional_operation_before_release": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Evento de plataforma"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C002",
+      "inputs": {
+        "event": "button-release",
+        "functional_clock_Hz": 50000000,
+        "button_min_hold_us": 1
+      },
+      "expected": {
+        "reset_release_synchronized": true,
+        "MMCM_reset_source": "solo botón",
+        "no_functional_operation_before_release": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Evento de plataforma"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C003",
+      "inputs": {
+        "event": "loss-of-lock",
+        "functional_clock_Hz": 50000000,
+        "button_min_hold_us": 0
+      },
+      "expected": {
+        "reset_release_synchronized": true,
+        "MMCM_reset_source": "solo botón",
+        "no_functional_operation_before_release": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Evento de plataforma"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C004",
+      "inputs": {
+        "event": "UART-reset",
+        "functional_clock_Hz": 50000000,
+        "button_min_hold_us": 0
+      },
+      "expected": {
+        "reset_release_synchronized": true,
+        "MMCM_reset_source": "solo botón",
+        "no_functional_operation_before_release": true
+      },
+      "kind": "scenario",
+      "origins": [
+        "Evento de plataforma"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C005",
+      "inputs": {
+        "release_source": "button",
+        "hold_source": "UART",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C006",
+      "inputs": {
+        "release_source": "button",
+        "hold_source": "not_locked",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C007",
+      "inputs": {
+        "release_source": "UART",
+        "hold_source": "button",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C008",
+      "inputs": {
+        "release_source": "UART",
+        "hold_source": "not_locked",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C009",
+      "inputs": {
+        "release_source": "not_locked",
+        "hold_source": "button",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "TEST-PLAT-002/C010",
+      "inputs": {
+        "release_source": "not_locked",
+        "hold_source": "UART",
+        "release_phase": "mitadentreflancosfuncionales"
+      },
+      "expected": {
+        "functional_reset_still_asserted": true
+      },
+      "kind": "artificial",
+      "origins": [
+        "Dosfuentes local"
+      ],
+      "status": "pending"
+    }
+  ]
+}

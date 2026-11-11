@@ -1,0 +1,32 @@
+{
+  "id": "TEST-PIPE-012",
+  "source": "pipeline.md#test-pipe-012",
+  "case_count": 14,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/id_stage_tb.sv"
+      ],
+      "top": "id_stage_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5
+    }
+  ],
+  "cases": [
+    {
+      "file": "decode-stage/cases-001-009.json"
+    },
+    {
+      "file": "decode-stage/cases-010-014.json"
+    }
+  ]
+}

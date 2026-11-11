@@ -1,0 +1,114 @@
+{
+  "id": "TEST-MEM-007",
+  "source": "memory.md#test-mem-007",
+  "case_count": 9,
+  "reuse_groups": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/loader_tb.sv"
+      ],
+      "top": "loader_tb",
+      "level": "Unidad",
+      "timeout_seconds": 5,
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "loader_capacity"
+        },
+        "WITH_CONTROL": "0"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/loader_tb.sv"
+      ],
+      "top": "loader_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "loader_capacity"
+        },
+        "WITH_CONTROL": "1"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/id_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/ex_stage.sv",
+        "rtl/processor_top.sv",
+        "tb/common/tp3_case_data.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "tb/common/processor_test_harness.sv",
+        "tb/processor_loader_tb.sv"
+      ],
+      "top": "processor_loader_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-MEM-007/C001",
+        "TEST-MEM-007/C002",
+        "TEST-MEM-007/C003",
+        "TEST-MEM-007/C004",
+        "TEST-MEM-007/C005",
+        "TEST-MEM-007/C006",
+        "TEST-MEM-007/C007",
+        "TEST-MEM-007/C008",
+        "TEST-MEM-007/C009"
+      ],
+      "parameters": {
+        "IMEM_CAPACITY_BYTES": {
+          "input": "loader_capacity"
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "file": "program-loader/cases-001-002.json"
+    },
+    {
+      "file": "program-loader/cases-003-005.json"
+    },
+    {
+      "file": "program-loader/cases-006-009.json"
+    }
+  ]
+}
