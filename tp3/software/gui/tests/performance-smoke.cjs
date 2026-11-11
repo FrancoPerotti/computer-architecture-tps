@@ -12,6 +12,13 @@ const gui = path.resolve(__dirname, '..'),
   tp3 = path.resolve(gui, '../..'),
   root = fs.mkdtempSync(path.join(os.tmpdir(), 'viewrv-perf-'))
 const output = fs.mkdtempSync(path.resolve(gui, '../build/performance-pc07-'))
+const waylandDisplay = process.env.WAYLAND_DISPLAY
+const waylandSocket =
+  waylandDisplay &&
+  (path.isAbsolute(waylandDisplay)
+    ? waylandDisplay
+    : process.env.XDG_RUNTIME_DIR && path.join(process.env.XDG_RUNTIME_DIR, waylandDisplay))
+const useWayland = Boolean(waylandSocket && fs.existsSync(waylandSocket))
 const env = {
   ...process.env,
   PYTHONPATH: tp3,
@@ -20,6 +27,7 @@ const env = {
   XDG_DATA_HOME: path.join(root, 'data'),
   XDG_CONFIG_HOME: path.join(root, 'config'),
   VIEWRV_TEST_CONTROL: root,
+  ...(useWayland ? { WAYLAND_DISPLAY: waylandSocket } : {}),
 }
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 async function until(predicate, timeout = 25000) {
@@ -69,6 +77,7 @@ const report = {
   motions: [],
   records: [],
   incidents: [],
+  motion_coverage_failures: [],
 }
 const save = () =>
   fs.writeFileSync(path.join(output, 'performance.json'), JSON.stringify(report, null, 2) + '\n')
@@ -98,7 +107,7 @@ const save = () =>
       executablePath: path.resolve(gui, 'node_modules/electron/dist/electron'),
       args: [
         gui,
-        '--ozone-platform=x11',
+        `--ozone-platform=${useWayland ? 'wayland' : 'x11'}`,
         ...(process.env.VIEWRV_PERF_SOFTWARE === '1' ? ['--disable-gpu'] : []),
         `--user-data-dir=${path.join(root, 'profile')}`,
       ],
@@ -156,8 +165,8 @@ const save = () =>
     await menuCommand(page, 'Ver', 'Abrir diagrama de depuración')
     const diagram = page.getByRole('region', { name: 'Diagrama de la sesión', exact: true })
     await diagram.waitFor()
-    const getFrame = async () => {
-      const element = await page.locator('iframe[title="Diagrama de la sesión"]').elementHandle()
+    const getFrame = async (title = 'Diagrama de la sesión') => {
+      const element = await page.locator(`iframe[title="${title}"]`).elementHandle()
       return element.contentFrame()
     }
     let frame
@@ -223,10 +232,14 @@ const save = () =>
       await page.getByRole('tab', { name: 'latency scratch.s', exact: true }).click()
       const editor = page.locator('.monaco-editor:visible [role="textbox"]').first()
       await editor.focus()
+      await page.keyboard.press('Control+End')
+      await page.keyboard.press('Enter')
       await page.evaluate(() => {
+        window.__viewrvPerformance.expected = ''
         window.__viewrvPerformance.typing = true
       })
-      await page.keyboard.type(label.startsWith('waiting') ? ' uart wait' : '# latency sample', {
+      const sample = label.startsWith('waiting') ? '# uart wait' : '# latency sample'
+      await page.keyboard.type(sample, {
         delay: 35,
       })
       await page.evaluate(() => {
@@ -273,11 +286,12 @@ const save = () =>
         expectedStart,
       )
       assert.ok(
-        counts.typing > 5 && counts.tab >= 8 && counts.module === 8,
+        counts.typing === sample.length && counts.tab >= 8 && counts.module === 8,
         'Missing corresponding point-response samples',
       )
     }
-    async function motion(label) {
+    async function motion(label, frame) {
+      await frame.locator('#fit').click()
       for (let index = 0; index < 3; index++) await frame.locator('#zoom-in').click()
       await probe.startMotion(frame, label + '-pan')
       const point = await frame.evaluate(() => {
@@ -291,8 +305,9 @@ const save = () =>
           }
         return { x: box.x + 90, y: box.y + 70 }
       })
-      const bounds = await page.locator('iframe[title="Diagrama de la sesión"]').boundingBox()
-      await page.mouse.move(bounds.x + point.x, bounds.y + point.y)
+      const frameBounds = await frame.locator('html').boundingBox()
+      const canvasBounds = await frame.locator('#diagram').boundingBox()
+      await page.mouse.move(frameBounds.x + point.x, frameBounds.y + point.y)
       await page.mouse.down()
       async function pacedInputs(count, createEvent) {
         const pending = [],
@@ -320,8 +335,8 @@ const save = () =>
         const angle = ((index + 1) / 90) * Math.PI * 2
         return {
           type: 'mouseMoved',
-          x: bounds.x + point.x + 55 * Math.sin(angle),
-          y: bounds.y + point.y + 30 * (1 - Math.cos(angle)),
+          x: frameBounds.x + point.x + 55 * Math.sin(angle),
+          y: frameBounds.y + point.y + 30 * (1 - Math.cos(angle)),
           button: 'left',
           buttons: 1,
         }
@@ -332,12 +347,14 @@ const save = () =>
       pan.summary = probe.motionSummary(pan)
       report.motions.push(pan)
       await probe.startMotion(frame, label + '-zoom')
-      await page.mouse.move(bounds.x + bounds.width * 0.6, bounds.y + bounds.height * 0.4)
+      const zoomX = canvasBounds.x + canvasBounds.width / 2
+      const zoomY = canvasBounds.y + canvasBounds.height / 2
+      await page.mouse.move(zoomX, zoomY)
       await page.keyboard.down('Control')
       const zoomInputs = await pacedInputs(60, (index) => ({
         type: 'mouseWheel',
-        x: bounds.x + bounds.width * 0.6,
-        y: bounds.y + bounds.height * 0.4,
+        x: zoomX,
+        y: zoomY,
         deltaX: 0,
         deltaY: index < 30 ? -8 : 8,
         modifiers: 2,
@@ -350,10 +367,11 @@ const save = () =>
       zoom.requested_inputs = zoomInputs
       zoom.summary = probe.motionSummary(zoom)
       report.motions.push(zoom)
-      assert.ok(
-        pan.summary.frames_with_camera_change > 20 && zoom.summary.frames_with_camera_change > 10,
-        'Motion input did not actually move or zoom the native camera',
+      if (
+        pan.summary.frames_with_camera_change <= 20 ||
+        zoom.summary.frames_with_camera_change <= 10
       )
+        report.motion_coverage_failures.push(label)
       save()
     }
     const configurations =
@@ -382,7 +400,7 @@ const save = () =>
         })),
       })
       await pointActions(condition)
-      await motion(condition)
+      await motion(condition, frame)
       await page.screenshot({ path: path.join(output, `normal-${index}.png`) })
     }
     assert.equal(
@@ -422,7 +440,7 @@ const save = () =>
       .getByText('Sin captura completa. Los valores no se presumen cero.', { exact: true })
       .waitFor()
     await pointActions('waiting-serial')
-    await motion('waiting-serial')
+    await motion('waiting-serial', frame)
     assert.equal(
       steps(),
       beforeRun,
@@ -430,6 +448,13 @@ const save = () =>
     )
     await page.getByRole('button', { name: 'Detener ejecución (RESET)', exact: true }).click()
     await page.getByText('Sin programa cargado', { exact: true }).waitFor()
+    await instance.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(1),
+    )
+    await page.getByRole('button', { name: 'Visor interactivo', exact: true }).click()
+    const explore = await getFrame('Visor interactivo del pipeline')
+    await explore.waitForFunction(() => !!window.tp3Viewer)
+    await motion('conceptual', explore)
     report.records = await page.evaluate(() => window.__viewrvPerformance.records)
     report.errors = errors
     report.point_first_and_repeated = {}
@@ -492,6 +517,11 @@ const save = () =>
     }
     save()
     assert.deepEqual(errors, [])
+    assert.deepEqual(
+      report.motion_coverage_failures,
+      [],
+      'Motion input did not move the native camera',
+    )
     assert.equal(
       report.incidents.length,
       0,

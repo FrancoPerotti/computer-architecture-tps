@@ -50,15 +50,17 @@ async function installMain(page) {
           return
         probe.expected += event.key
         const expected = probe.expected
+        const editor = event.target.closest('.monaco-editor')
         finish(
           'typing',
           performance.timeOrigin + event.timeStamp,
-          () =>
-            Array.from(document.querySelectorAll('.monaco-editor .view-lines')).some(
-              (node) =>
-                node.getBoundingClientRect().width > 0 &&
-                node.innerText.replaceAll('\u00a0', ' ').includes(expected),
-            ),
+          () => {
+            const line = editor?.querySelector('.view-lines .view-line:last-child')
+            return (
+              line?.getBoundingClientRect().width > 0 &&
+              line.innerText.replaceAll('\u00a0', ' ').startsWith(expected)
+            )
+          },
           { expected },
         )
       },
