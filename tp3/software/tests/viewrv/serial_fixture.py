@@ -1,16 +1,14 @@
 """Controlled byte streams and virtual monotonic time, never shipped in the product."""
 
 import heapq
-import json
 from functools import cache
-from pathlib import Path
+
+from scripts.verification_manifest import read_manifest
 
 
 @cache
 def literal(case_id="TEST-UART-007/C001"):
-    catalog = json.loads(
-        (Path(__file__).resolve().parents[3] / "docs/verification/cases.json").read_text()
-    )
+    catalog = read_manifest()
     group = next(group for group in catalog["groups"] if group["id"] == "TEST-UART-007")
     return bytes(
         next(case for case in group["cases"] if case["id"] == case_id)["expected"]["response_bytes"]
