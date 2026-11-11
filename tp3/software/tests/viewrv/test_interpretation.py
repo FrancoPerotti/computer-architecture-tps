@@ -115,6 +115,4 @@ class ObservationTests(unittest.TestCase):
                 for item in result["cycle_activity"]
             )
         )
-        self.assertIn(
-            "ACTIVITY_UNDETERMINED", [item["code"] for item in result["limitations"]]
-        )
+        self.assertIn("ACTIVITY_UNDETERMINED", [item["code"] for item in result["limitations"]])

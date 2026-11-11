@@ -2,10 +2,20 @@ name: viewrv quality
 
 on:
   pull_request:
-    paths: ["tp3/software/**", ".github/workflows/viewrv-gui.yml"]
+    paths:
+      - "tp3/software/**"
+      - "tp3/scripts/verification_manifest.py"
+      - "tp3/docs/verification/cases.json"
+      - "tp3/docs/verification/cases/uart/**"
+      - ".github/workflows/viewrv-gui.yml"
   push:
     branches: ["feature/tp3-*", "codex/**"]
-    paths: ["tp3/software/**", ".github/workflows/viewrv-gui.yml"]
+    paths:
+      - "tp3/software/**"
+      - "tp3/scripts/verification_manifest.py"
+      - "tp3/docs/verification/cases.json"
+      - "tp3/docs/verification/cases/uart/**"
+      - ".github/workflows/viewrv-gui.yml"
   workflow_dispatch:
 
 permissions:

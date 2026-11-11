@@ -93,7 +93,9 @@ class ExampleBankTests(unittest.TestCase):
                 elif name in i:
                     self.assertIn(f"    addi x1, x0, 8\n    {name} x3, x1, 2\n", source)
                 elif name in loads:
-                    self.assertIn("    lui x1, 0x8\n    addi x1, x1, 255\n    sw x1, 0(x0)\n", source)
+                    self.assertIn(
+                        "    lui x1, 0x8\n    addi x1, x1, 255\n    sw x1, 0(x0)\n", source
+                    )
                     self.assertEqual(
                         entry["expected_state"]["memory"], {"0": 255, "1": 128, "2": 0, "3": 0}
                     )

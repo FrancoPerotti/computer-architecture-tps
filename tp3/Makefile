@@ -48,7 +48,7 @@ help:
 	  'make review-cpu    Contrastar jerarquía, payloads y recursos del CPU con el inventario' \
 	  'make validate      Validar esquemas, catálogo y fuentes registradas' \
 	  'make test-infra    Probar la infraestructura de pruebas' \
-	  'make test-software Probar el software de PC' \
+	  'make test-software Probar el assembler; viewrv usa su entorno en software/gui' \
 	  'make test-rtl      Ejecutar todos los casos implementados' \
 	  'make test-rtl TESTS="ID1 ID2"  Seleccionar grupos o casos' \
 	  'make test          Infraestructura, software de PC y simulaciones RTL' \
@@ -125,7 +125,8 @@ test-infra:
 
 test-software:
 	@mkdir -p $(REPORTS)
-	python3 -m unittest discover -s software/tests -v 2>&1 | tee $(REPORTS)/software.log
+	# El contenedor de TP3 incluye el Python del sistema. El workflow de viewrv ejecuta su suite con el entorno fijado.
+	python3 -m unittest -v software.tests.test_assembler 2>&1 | tee $(REPORTS)/software.log
 
 test-rtl:
 	@mkdir -p $(REPORTS)
