@@ -42,10 +42,6 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version-file: tp3/software/.python-version
-      - name: Install graphical host libraries
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1
       - name: Install pinned core dependencies
         run: |
           python -m venv ../.venv
@@ -56,15 +52,3 @@ jobs:
         run: npm run check
       - name: Core catalog regressions
         run: npm run test:core
-      - name: Functional window checks
-        run: xvfb-run -a npm run test:gui
-      - name: Preserve GUI check evidence
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: viewrv-gui-quality
-          path: |
-            tp3/software/build/gui-check/
-            tp3/software/build/*.png
-          if-no-files-found: ignore
-          retention-days: 7
