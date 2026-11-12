@@ -39,21 +39,23 @@ module protocol_controller #(
 );
   import system_pkg::*;
 
-  (* fsm_encoding = "one_hot" *)logic [10:0] protocol_state;
-  logic [10:0] next_state;
-  logic        rx_byte_valid;
-  logic [22:0] inactivity_count;
-  logic        timer_clear;
-  logic        timer_inc;
-  logic        timer_limit_reached;
-  logic [39:0] load_size_received;
-  logic [39:0] load_size_candidate;
-  logic [ 2:0] size_byte_index;
-  logic        size_init;
-  logic        size_byte_capture;
-  logic        size_index_inc;
-  logic        load_size_valid;
-  logic        last_size_byte;
+  (* fsm_encoding = "one_hot" *)logic [                10:0] protocol_state;
+  logic [                10:0] next_state;
+  logic                        rx_byte_valid;
+  logic [                22:0] inactivity_count;
+  logic                        timer_clear;
+  logic                        timer_inc;
+  logic                        timer_limit_reached;
+  logic [                39:0] load_size_received;
+  logic [                39:0] load_size_candidate;
+  logic [                 2:0] size_byte_index;
+  logic [IMAGE_SIZE_WIDTH-1:0] load_bytes_remaining;
+  logic                        remaining_load;
+  logic                        size_init;
+  logic                        size_byte_capture;
+  logic                        size_index_inc;
+  logic                        load_size_valid;
+  logic                        last_size_byte;
 
   localparam logic [10:0] WAIT_COMMAND           = 11'b00000000001;
   localparam logic [10:0] RECEIVE_LOAD_SIZE      = 11'b00000000010;
@@ -89,6 +91,12 @@ module protocol_controller #(
     end
   end
 
+  always_ff @(posedge clk) begin
+    if (reset) load_bytes_remaining <= '0;
+    else if (remaining_load) load_bytes_remaining <= IMAGE_SIZE_WIDTH'(load_size_candidate);
+    else if (load_byte_valid) load_bytes_remaining <= load_bytes_remaining - 1'b1;
+  end
+
   always_comb begin
     next_state = protocol_state;
     rd_uart = !reset && !rx_empty;
@@ -103,23 +111,26 @@ module protocol_controller #(
     size_init = 1'b0;
     size_byte_capture = 1'b0;
     size_index_inc = 1'b0;
+    remaining_load = 1'b0;
 
     response_start      = 1'b0;
     response_opcode     = '0;
     response_result     = '0;
     response_with_debug = 1'b0;
 
-    load_request       = 1'b0;
-    run_request        = 1'b0;
-    step_request       = 1'b0;
-    load_size_bytes    = '0;
-    load_byte_valid    = 1'b0;
-    load_byte_data     = '0;
-    load_byte_offset   = '0;
-    load_last_byte     = 1'b0;
-    load_abort         = 1'b0;
+    load_request = 1'b0;
+    run_request = 1'b0;
+    step_request = 1'b0;
+    load_size_bytes =
+        ((protocol_state == WAIT_LOAD_ACCEPT_SENT) || (protocol_state == RECEIVE_LOAD_DATA) ||
+         (protocol_state == WAIT_PREP_DONE)) ? IMAGE_SIZE_WIDTH'(load_size_received) : '0;
+    load_byte_valid = 1'b0;
+    load_byte_data = '0;
+    load_byte_offset = '0;
+    load_last_byte = 1'b0;
+    load_abort = 1'b0;
     uart_reset_request = 1'b0;
-    debug_read_select  = 1'b0;
+    debug_read_select = 1'b0;
 
     if (!reset) begin
       case (protocol_state)
@@ -147,6 +158,53 @@ module protocol_controller #(
         WAIT_RESPONSE_SENT: begin
           if (response_done_tick) next_state = WAIT_COMMAND;
         end
+        WAIT_LOAD_ACCEPT_SENT: begin
+          if (response_done_tick) begin
+            next_state  = RECEIVE_LOAD_DATA;
+            timer_clear = 1'b1;
+          end
+        end
+        RECEIVE_LOAD_DATA: begin
+          if (rx_error_tick) begin
+            next_state      = RECOVER_RX;
+            timer_clear     = 1'b1;
+            load_abort      = 1'b1;
+            response_start  = 1'b1;
+            response_opcode = CMD_LOAD;
+            response_result = RESULT_UART_ERROR;
+          end else if (rx_byte_valid && load_bytes_remaining > 1) begin
+            load_byte_valid = 1'b1;
+            load_byte_data = r_data;
+            load_byte_offset =
+                BYTE_ADDRESS_WIDTH'(IMAGE_SIZE_WIDTH'(load_size_received) - load_bytes_remaining);
+            timer_clear = 1'b1;
+          end else if (rx_byte_valid && load_bytes_remaining == 1) begin
+            load_byte_valid = 1'b1;
+            load_last_byte = 1'b1;
+            load_byte_data = r_data;
+            load_byte_offset =
+                BYTE_ADDRESS_WIDTH'(IMAGE_SIZE_WIDTH'(load_size_received) - load_bytes_remaining);
+            timer_clear = 1'b1;
+            next_state = WAIT_PREP_DONE;
+          end else if (rx_empty && timer_limit_reached) begin
+            next_state      = RECOVER_RX;
+            timer_clear     = 1'b1;
+            load_abort      = 1'b1;
+            response_start  = 1'b1;
+            response_opcode = CMD_LOAD;
+            response_result = RESULT_INCOMPLETE_DATA;
+          end else if (rx_empty) begin
+            timer_inc = 1'b1;
+          end
+        end
+        WAIT_PREP_DONE: begin
+          if (!prepare_active && !response_busy) begin
+            next_state      = WAIT_RESPONSE_SENT;
+            response_start  = 1'b1;
+            response_opcode = CMD_LOAD;
+            response_result = RESULT_DONE;
+          end
+        end
         RECEIVE_LOAD_SIZE: begin
           if (rx_error_tick) begin
             next_state      = RECOVER_RX;
@@ -167,6 +225,7 @@ module protocol_controller #(
               response_opcode = CMD_LOAD;
               response_result = RESULT_INVALID_SIZE;
             end else begin
+              remaining_load  = command_accepted;
               load_request    = 1'b1;
               load_size_bytes = IMAGE_SIZE_WIDTH'(load_size_candidate);
               response_start  = 1'b1;

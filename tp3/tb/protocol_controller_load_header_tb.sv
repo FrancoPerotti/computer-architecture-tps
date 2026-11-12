@@ -117,6 +117,40 @@ module protocol_controller_load_header_tb #(
     check(observed_load_request && observed_size == SIZE_WIDTH'(valid_limit),
           "valid size request and width");
     check(dut.protocol_state == 11'b00000000100, "accepted header waits for ACCEPTED TX");
+    restart();
+    send_opcode();
+    command_accepted = 1;
+    send_size(40'd4);
+    check(observed_result == RESULT_ACCEPTED && dut.protocol_state == 11'b00000000100,
+          "small image accepted for content fixture");
+    response_done_tick = 1;
+    tick();
+    response_done_tick = 0;
+    check(dut.protocol_state == 11'b00000001000, "content starts after ACCEPTED physical end");
+    check(load_size_bytes == SIZE_WIDTH'(4), "accepted size remains stable through content");
+    begin
+      integer byte_index;
+      for (byte_index = 0; byte_index < 4; byte_index = byte_index + 1) begin
+        rx_empty = 0;
+        r_data   = 8'hA0 + byte_index;
+        #1;
+        check(load_byte_valid && load_byte_data == r_data, "loader byte transfer");
+        check(load_byte_offset == byte_index, "loader byte offset increments");
+        check(load_last_byte == (byte_index == 3), "last byte marker");
+        tick();
+      end
+    end
+    rx_empty = 1;
+    check(dut.protocol_state == 11'b00000010000, "last transfer enters preparation wait");
+    prepare_active = 1;
+    repeat (2) tick();
+    check(!response_start, "DONE waits for preparation");
+    prepare_active = 0;
+    #1;
+    check(response_start && response_opcode == CMD_LOAD && response_result == RESULT_DONE,
+          "LOAD DONE descriptor after preparation");
+    tick();
+    check(dut.protocol_state == 11'b00100000000, "DONE waits for physical transmission");
 
     restart();
     send_opcode();
