@@ -42,6 +42,9 @@ module protocol_controller #(
   (* fsm_encoding = "one_hot" *)logic [10:0] protocol_state;
   logic [10:0] next_state;
   logic        rx_byte_valid;
+  logic [22:0] inactivity_count;
+  logic timer_clear, timer_inc;
+  logic timer_limit_reached;
 
   localparam logic [10:0] WAIT_COMMAND           = 11'b00000000001;
   localparam logic [10:0] RECEIVE_LOAD_SIZE      = 11'b00000000010;
@@ -60,10 +63,18 @@ module protocol_controller #(
     else protocol_state <= next_state;
   end
 
+  always_ff @(posedge clk) begin
+    if (reset || timer_clear) inactivity_count <= '0;
+    else if (timer_inc && !timer_limit_reached) inactivity_count <= inactivity_count + 1'b1;
+  end
+
   always_comb begin
-    next_state    = protocol_state;
-    rd_uart       = !reset && !rx_empty;
-    rx_byte_valid = !rx_empty && !rx_error_tick;
+    next_state          = protocol_state;
+    rd_uart             = !reset && !rx_empty;
+    rx_byte_valid       = !rx_empty && !rx_error_tick;
+    timer_clear         = 1'b0;
+    timer_inc           = 1'b0;
+    timer_limit_reached = (inactivity_count == 23'd4_999_999);
 
     response_start      = 1'b0;
     response_opcode     = '0;
@@ -86,16 +97,31 @@ module protocol_controller #(
       case (protocol_state)
         WAIT_COMMAND: begin
           if (rx_error_tick) begin
-            next_state = RECOVER_RX;
+            next_state  = RECOVER_RX;
+            timer_clear = 1'b1;
           end else if (rx_byte_valid && r_data == CMD_CHECK_READY && !response_busy) begin
             response_start  = 1'b1;
             response_opcode = CMD_CHECK_READY;
             response_result = load_available ? RESULT_READY : RESULT_BUSY;
             next_state      = WAIT_RESPONSE_SENT;
+          end else if (rx_byte_valid && !(r_data >= CMD_LOAD && r_data <= CMD_CHECK_READY) &&
+                       !response_busy) begin
+            response_start  = 1'b1;
+            response_opcode = r_data;
+            response_result = RESULT_UNKNOWN_COMMAND;
+            next_state      = WAIT_RESPONSE_SENT;
           end
         end
         WAIT_RESPONSE_SENT: begin
           if (response_done_tick) next_state = WAIT_COMMAND;
+        end
+        RECOVER_RX: begin
+          if (rx_activity) begin
+            timer_clear = 1'b1;
+          end else begin
+            timer_inc = !timer_limit_reached;
+            if (timer_limit_reached && rx_empty && !response_busy) next_state = WAIT_COMMAND;
+          end
         end
         default: begin
           // Las otras fases quedan reservadas para iteraciones posteriores.
