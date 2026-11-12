@@ -114,6 +114,14 @@ module protocol_controller_recovery_tb;
     tick();
     check(dut.protocol_state == 11'b00000000001, "recovery completes after silence and idle TX");
 
+    dut.protocol_state = 11'b10000000000;
+    dut.debug_hold     = 1'b1;
+    rx_activity        = 1;
+    response_done_tick = 1;
+    tick();
+    check(!dut.debug_hold && dut.inactivity_count == 0,
+          "Debug releases when TX completes during RX activity");
+
     $display("PASS protocol_controller UNKNOWN_COMMAND and RECOVER_RX");
     $finish;
   end

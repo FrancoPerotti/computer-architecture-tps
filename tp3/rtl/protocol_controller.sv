@@ -56,6 +56,14 @@ module protocol_controller #(
   logic                        size_index_inc;
   logic                        load_size_valid;
   logic                        last_size_byte;
+  logic                        run_result_required;
+  logic                        run_result_required_set;
+  logic                        run_result_required_clear;
+  logic                        debug_hold;
+  logic                        debug_hold_set;
+  logic                        debug_hold_clear;
+  logic                        run_ended;
+  logic                        reset_request_set;
 
   localparam logic [10:0] WAIT_COMMAND           = 11'b00000000001;
   localparam logic [10:0] RECEIVE_LOAD_SIZE      = 11'b00000000010;
@@ -97,6 +105,21 @@ module protocol_controller #(
     else if (load_byte_valid) load_bytes_remaining <= load_bytes_remaining - 1'b1;
   end
 
+  always_ff @(posedge clk) begin
+    if (reset || run_result_required_clear) run_result_required <= 1'b0;
+    else if (run_result_required_set) run_result_required <= 1'b1;
+  end
+
+  always_ff @(posedge clk) begin
+    if (reset || debug_hold_clear) debug_hold <= 1'b0;
+    else if (debug_hold_set) debug_hold <= 1'b1;
+  end
+
+  always_ff @(posedge clk) begin
+    if (reset) uart_reset_request <= 1'b0;
+    else if (reset_request_set) uart_reset_request <= 1'b1;
+  end
+
   always_comb begin
     next_state = protocol_state;
     rd_uart = !reset && !rx_empty;
@@ -112,6 +135,12 @@ module protocol_controller #(
     size_byte_capture = 1'b0;
     size_index_inc = 1'b0;
     remaining_load = 1'b0;
+    run_ended = program_finished || fault_terminal;
+    run_result_required_set = 1'b0;
+    run_result_required_clear = 1'b0;
+    debug_hold_set = 1'b0;
+    debug_hold_clear = 1'b0;
+    reset_request_set = 1'b0;
 
     response_start      = 1'b0;
     response_opcode     = '0;
@@ -129,8 +158,7 @@ module protocol_controller #(
     load_byte_offset = '0;
     load_last_byte = 1'b0;
     load_abort = 1'b0;
-    uart_reset_request = 1'b0;
-    debug_read_select = 1'b0;
+    debug_read_select = !reset && (debug_hold || (run_result_required && run_ended));
 
     if (!reset) begin
       case (protocol_state)
@@ -142,6 +170,43 @@ module protocol_controller #(
             next_state  = RECEIVE_LOAD_SIZE;
             size_init   = 1'b1;
             timer_clear = 1'b1;
+          end else if (rx_byte_valid && r_data == CMD_RUN) begin
+            run_request = 1'b1;
+            if (command_accepted) begin
+              run_result_required_set = 1'b1;
+              response_start          = !response_busy;
+              response_opcode         = CMD_RUN;
+              response_result         = RESULT_ACCEPTED;
+              if (!response_busy) next_state = WAIT_RUN_ACCEPT_SENT;
+            end else if (!response_busy) begin
+              response_start  = 1'b1;
+              response_opcode = CMD_RUN;
+              response_result = image_valid ? RESULT_BUSY : RESULT_NO_IMAGE;
+              next_state      = WAIT_RESPONSE_SENT;
+            end
+          end else if (rx_byte_valid && r_data == CMD_STEP) begin
+            step_request = 1'b1;
+            if (!command_accepted && !response_busy) begin
+              response_start  = 1'b1;
+              response_opcode = CMD_STEP;
+              response_result = image_valid ? RESULT_BUSY : RESULT_NO_IMAGE;
+              next_state      = WAIT_RESPONSE_SENT;
+            end else if (command_accepted && cpu_cycle_fire && !response_busy) begin
+              debug_hold_set      = 1'b1;
+              response_start      = 1'b1;
+              response_with_debug = 1'b1;
+              response_opcode     = CMD_STEP;
+              response_result     = RESULT_DONE;
+              next_state          = WAIT_RESPONSE_SENT;
+            end else if (command_accepted && !cpu_cycle_fire) begin
+              next_state = WAIT_STEP_END;
+            end
+          end else if (rx_byte_valid && r_data == CMD_RESET && !response_busy) begin
+            run_result_required_clear = 1'b1;
+            response_start            = 1'b1;
+            response_opcode           = CMD_RESET;
+            response_result           = RESULT_ACCEPTED;
+            next_state                = WAIT_RESET_ACCEPT_SENT;
           end else if (rx_byte_valid && r_data == CMD_CHECK_READY && !response_busy) begin
             response_start  = 1'b1;
             response_opcode = CMD_CHECK_READY;
@@ -156,7 +221,10 @@ module protocol_controller #(
           end
         end
         WAIT_RESPONSE_SENT: begin
-          if (response_done_tick) next_state = WAIT_COMMAND;
+          if (response_done_tick) begin
+            next_state = WAIT_COMMAND;
+            if (debug_hold) debug_hold_clear = 1'b1;
+          end
         end
         WAIT_LOAD_ACCEPT_SENT: begin
           if (response_done_tick) begin
@@ -205,6 +273,40 @@ module protocol_controller #(
             response_result = RESULT_DONE;
           end
         end
+        WAIT_STEP_END: begin
+          if (cpu_cycle_fire && !response_busy) begin
+            next_state          = WAIT_RESPONSE_SENT;
+            debug_hold_set      = 1'b1;
+            response_start      = 1'b1;
+            response_with_debug = 1'b1;
+            response_opcode     = CMD_STEP;
+            response_result     = RESULT_DONE;
+          end
+        end
+        WAIT_RUN_ACCEPT_SENT: begin
+          if (response_done_tick) begin
+            next_state = run_ended ? WAIT_RESPONSE_SENT : WAIT_RUN_END;
+          end
+        end
+        WAIT_RUN_END: begin
+          if (run_ended) begin
+            next_state = WAIT_RESPONSE_SENT;
+          end else
+              if (!prepare_active && rx_byte_valid && r_data == CMD_RESET && !response_busy) begin
+            run_result_required_clear = 1'b1;
+            response_start            = 1'b1;
+            response_opcode           = CMD_RESET;
+            response_result           = RESULT_ACCEPTED;
+            next_state                = WAIT_RESET_ACCEPT_SENT;
+          end else if (!prepare_active &&
+                       (rx_error_tick || (rx_byte_valid && r_data != CMD_RESET))) begin
+            next_state  = RECOVER_RX;
+            timer_clear = 1'b1;
+          end
+        end
+        WAIT_RESET_ACCEPT_SENT: begin
+          if (response_done_tick) reset_request_set = 1'b1;
+        end
         RECEIVE_LOAD_SIZE: begin
           if (rx_error_tick) begin
             next_state      = RECOVER_RX;
@@ -244,17 +346,34 @@ module protocol_controller #(
           end
         end
         RECOVER_RX: begin
+          if (response_done_tick && debug_hold) debug_hold_clear = 1'b1;
           if (rx_activity) begin
             timer_clear = 1'b1;
           end else begin
             timer_inc = !timer_limit_reached;
-            if (timer_limit_reached && rx_empty && !response_busy) next_state = WAIT_COMMAND;
+            if (timer_limit_reached && rx_empty && !response_busy && !debug_hold &&
+                !run_result_required)
+              next_state = WAIT_COMMAND;
+            else if (timer_limit_reached && rx_empty && !response_busy && !debug_hold &&
+                     run_result_required && !run_ended)
+              next_state = WAIT_RUN_END;
           end
         end
         default: begin
           // Las otras fases quedan reservadas para iteraciones posteriores.
         end
       endcase
+
+      if (run_result_required && run_ended) begin
+        debug_hold_set = 1'b1;
+        if (!response_busy) begin
+          response_start            = 1'b1;
+          response_with_debug       = 1'b1;
+          response_opcode           = CMD_RUN;
+          response_result           = program_finished ? RESULT_FINISHED : RESULT_FAULT;
+          run_result_required_clear = 1'b1;
+        end
+      end
     end
   end
 endmodule
