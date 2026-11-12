@@ -6,36 +6,36 @@ module protocol_controller #(
     localparam integer BYTE_ADDRESS_WIDTH = system_pkg::byte_address_width(IMEM_CAPACITY_BYTES)
 ) (
     input  logic                          clk,
-    reset,
+    input  logic                          reset,
     input  logic                          rx_empty,
     input  logic [                   7:0] r_data,
     input  logic                          rx_error_tick,
-    rx_activity,
+    input  logic                          rx_activity,
     input  logic                          response_busy,
-    response_done_tick,
+    input  logic                          response_done_tick,
     input  logic                          load_available,
-    prepare_active,
-    program_finished,
-    fault_terminal,
+    input  logic                          prepare_active,
+    input  logic                          program_finished,
+    input  logic                          fault_terminal,
     input  logic                          image_valid,
-    command_accepted,
-    cpu_cycle_fire,
+    input  logic                          command_accepted,
+    input  logic                          cpu_cycle_fire,
     output logic                          rd_uart,
     output logic                          response_start,
     output logic [                   7:0] response_opcode,
-    response_result,
+    output logic [                   7:0] response_result,
     output logic                          response_with_debug,
     output logic                          load_request,
-    run_request,
-    step_request,
+    output logic                          run_request,
+    output logic                          step_request,
     output logic [  IMAGE_SIZE_WIDTH-1:0] load_size_bytes,
     output logic                          load_byte_valid,
     output logic [                   7:0] load_byte_data,
     output logic [BYTE_ADDRESS_WIDTH-1:0] load_byte_offset,
     output logic                          load_last_byte,
-    load_abort,
+    output logic                          load_abort,
     output logic                          uart_reset_request,
-    debug_read_select
+    output logic                          debug_read_select
 );
   import system_pkg::*;
 
@@ -43,8 +43,17 @@ module protocol_controller #(
   logic [10:0] next_state;
   logic        rx_byte_valid;
   logic [22:0] inactivity_count;
-  logic timer_clear, timer_inc;
-  logic timer_limit_reached;
+  logic        timer_clear;
+  logic        timer_inc;
+  logic        timer_limit_reached;
+  logic [39:0] load_size_received;
+  logic [39:0] load_size_candidate;
+  logic [ 2:0] size_byte_index;
+  logic        size_init;
+  logic        size_byte_capture;
+  logic        size_index_inc;
+  logic        load_size_valid;
+  logic        last_size_byte;
 
   localparam logic [10:0] WAIT_COMMAND           = 11'b00000000001;
   localparam logic [10:0] RECEIVE_LOAD_SIZE      = 11'b00000000010;
@@ -68,13 +77,32 @@ module protocol_controller #(
     else if (timer_inc && !timer_limit_reached) inactivity_count <= inactivity_count + 1'b1;
   end
 
+  always_ff @(posedge clk) begin
+    if (reset || size_init) begin
+      load_size_received <= '0;
+      size_byte_index    <= '0;
+    end else begin
+      if (size_byte_capture) begin
+        load_size_received[8*size_byte_index+:8] <= r_data;
+      end
+      if (size_index_inc) size_byte_index <= size_byte_index + 1'b1;
+    end
+  end
+
   always_comb begin
-    next_state          = protocol_state;
-    rd_uart             = !reset && !rx_empty;
-    rx_byte_valid       = !rx_empty && !rx_error_tick;
-    timer_clear         = 1'b0;
-    timer_inc           = 1'b0;
+    next_state = protocol_state;
+    rd_uart = !reset && !rx_empty;
+    rx_byte_valid = !rx_empty && !rx_error_tick;
+    timer_clear = 1'b0;
+    timer_inc = 1'b0;
     timer_limit_reached = (inactivity_count == 23'd4_999_999);
+    load_size_candidate = {r_data, load_size_received[31:0]};
+    last_size_byte = (size_byte_index == 3'd4);
+    load_size_valid = (load_size_candidate != 40'd0) &&
+        (load_size_candidate <= 40'(IMEM_CAPACITY_BYTES)) && (load_size_candidate[1:0] == 2'b00);
+    size_init = 1'b0;
+    size_byte_capture = 1'b0;
+    size_index_inc = 1'b0;
 
     response_start      = 1'b0;
     response_opcode     = '0;
@@ -99,6 +127,10 @@ module protocol_controller #(
           if (rx_error_tick) begin
             next_state  = RECOVER_RX;
             timer_clear = 1'b1;
+          end else if (rx_byte_valid && r_data == CMD_LOAD) begin
+            next_state  = RECEIVE_LOAD_SIZE;
+            size_init   = 1'b1;
+            timer_clear = 1'b1;
           end else if (rx_byte_valid && r_data == CMD_CHECK_READY && !response_busy) begin
             response_start  = 1'b1;
             response_opcode = CMD_CHECK_READY;
@@ -114,6 +146,43 @@ module protocol_controller #(
         end
         WAIT_RESPONSE_SENT: begin
           if (response_done_tick) next_state = WAIT_COMMAND;
+        end
+        RECEIVE_LOAD_SIZE: begin
+          if (rx_error_tick) begin
+            next_state      = RECOVER_RX;
+            timer_clear     = 1'b1;
+            response_start  = 1'b1;
+            response_opcode = CMD_LOAD;
+            response_result = RESULT_UART_ERROR;
+          end else if (rx_byte_valid && !last_size_byte) begin
+            size_byte_capture = 1'b1;
+            size_index_inc    = 1'b1;
+            timer_clear       = 1'b1;
+          end else if (rx_byte_valid && last_size_byte) begin
+            size_byte_capture = 1'b1;
+            timer_clear       = 1'b1;
+            if (!load_size_valid) begin
+              next_state      = WAIT_RESPONSE_SENT;
+              response_start  = 1'b1;
+              response_opcode = CMD_LOAD;
+              response_result = RESULT_INVALID_SIZE;
+            end else begin
+              load_request    = 1'b1;
+              load_size_bytes = IMAGE_SIZE_WIDTH'(load_size_candidate);
+              response_start  = 1'b1;
+              response_opcode = CMD_LOAD;
+              response_result = command_accepted ? RESULT_ACCEPTED : RESULT_BUSY;
+              next_state      = command_accepted ? WAIT_LOAD_ACCEPT_SENT : WAIT_RESPONSE_SENT;
+            end
+          end else if (rx_empty && timer_limit_reached) begin
+            next_state      = RECOVER_RX;
+            timer_clear     = 1'b1;
+            response_start  = 1'b1;
+            response_opcode = CMD_LOAD;
+            response_result = RESULT_INCOMPLETE_REQUEST;
+          end else if (rx_empty) begin
+            timer_inc = 1'b1;
+          end
         end
         RECOVER_RX: begin
           if (rx_activity) begin
