@@ -617,6 +617,60 @@
           "input": "DMEM_C"
         }
       }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/basys3_top.sv",
+        "rtl/reset_sync.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fixtures/clock_generator.platform_model.sv",
+        "tb/fixtures/system_top.platform_model.sv",
+        "tb/basys3_top_tb.sv"
+      ],
+      "top": "basys3_top_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C001"
+      ]
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/basys3_top.sv",
+        "rtl/reset_sync.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fixtures/clock_generator.platform_model.sv",
+        "tb/fixtures/system_top.platform_model.sv",
+        "tb/basys3_top_tb.sv"
+      ],
+      "top": "basys3_top_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C002"
+      ],
+      "parameters": {
+        "MEMORY_PROFILE": "system_pkg::ALT_1000"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/basys3_top.sv",
+        "tb/basys3_top_tb.sv"
+      ],
+      "top": "basys3_top_invalid_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5,
+      "case_ids": [
+        "TEST-PLAT-001/C014"
+      ],
+      "expected_rejection": {
+        "exit_code": 1,
+        "diagnostic_key": "diagnostic"
+      }
     }
   ],
   "cases": [

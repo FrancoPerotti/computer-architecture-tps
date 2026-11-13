@@ -211,7 +211,7 @@ def make_parser(format_parser):
         "--manifest", type=Path, default=MANIFEST, help="manifiesto a validar y consultar"
     )
     parser.add_argument(
-        "--reports-dir", type=Path, help="conservar logs de compilación y simulación"
+        "--reports-dir", type=Path, help="conservar logs y trazas VCD de la ejecución"
     )
     return parser
 

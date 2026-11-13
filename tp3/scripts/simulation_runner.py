@@ -288,10 +288,10 @@ def run_selection(manifest, selection, reports_dir=None):
                     )
         finally:
             if reports_dir is not None:
-                # Conserva solo diagnósticos; binarios y datos intermedios siguen siendo temporales.
-                for log in root.rglob("*"):
-                    if log.is_file() and log.suffix in {".stdout", ".stderr"}:
-                        destination = reports_dir / log.relative_to(root)
+                # Conserva diagnósticos y trazas; binarios y datos siguen siendo temporales.
+                for artifact in root.rglob("*"):
+                    if artifact.is_file() and artifact.suffix in {".stdout", ".stderr", ".vcd"}:
+                        destination = reports_dir / artifact.relative_to(root)
                         destination.parent.mkdir(parents=True, exist_ok=True)
-                        shutil.copyfile(log, destination)
+                        shutil.copyfile(artifact, destination)
     return result_report(results)
