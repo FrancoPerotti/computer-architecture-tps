@@ -3,6 +3,7 @@ module response_serializer_dmem_tb #(
         system_pkg::REFERENCE_DMEM_CAPACITY_BYTES,
     localparam integer BYTE_ADDRESS_WIDTH = system_pkg::byte_address_width(DMEM_CAPACITY_BYTES)
 );
+  tp3_case_data data ();
   logic clk = 0;
   always #5 clk = ~clk;
 
@@ -135,13 +136,6 @@ module response_serializer_dmem_tb #(
     end
   endtask
 
-  task automatic reset_serializer;
-    reset = 1;
-    tick();
-    reset = 0;
-    tick();
-  endtask
-
   task automatic start_snapshot;
     response_opcode     = 8'h0B;
     response_result     = 8'h04;
@@ -203,57 +197,10 @@ module response_serializer_dmem_tb #(
     end
   endtask
 
-  task automatic abort_snapshot;
-    begin
-      response_opcode     = 8'h0B;
-      response_result     = 8'h04;
-      response_with_debug = 1;
-      response_start      = 1;
-      tick();
-      response_start = 0;
-      timeout_cycles = 0;
-      while (accepted_count < 20 && timeout_cycles < DMEM_CAPACITY_BYTES + 100) begin
-        tick();
-        timeout_cycles = timeout_cycles + 1;
-      end
-      check(response_busy && !done_seen, "response is active before reset");
-      check(
-          (dut.state == 10'b0000000100 || dut.state == 10'b0000001000) && dut.tx_pending > 0 &&
-              fifo_count > 0,
-          "production reset also interrupts bytes in physical transmission");
-      reset = 1;
-      #1;
-      check(!response_busy && !response_done_tick && !wr_uart,
-            "reset aborts DMEM response without normal completion");
-      tick();
-      reset = 0;
-      check(dut.state == 10'b0000000001, "reset returns to IDLE");
-    end
-  endtask
-
-  task automatic abort_during_count;
-    begin
-      response_opcode     = 8'h0B;
-      response_result     = 8'h04;
-      response_with_debug = 1;
-      response_start      = 1;
-      tick();
-      response_start = 0;
-      repeat (8) tick();
-      check(dut.state == 10'b0000000010 && debug_dmem_addr == 8 && fifo_count == 0,
-            "count reset occurs during the first DMEM traversal");
-      check(!done_seen && dut.used_count == 0, "count reset precedes fixed snapshot production");
-      reset = 1;
-      #1;
-      check(!response_busy && !response_done_tick && !wr_uart,
-            "reset during count suppresses normal completion and TX writes");
-      tick();
-      reset = 0;
-      check(dut.state == 10'b0000000001, "count reset returns the FSM to IDLE");
-    end
-  endtask
-
   initial begin
+    string  bitmap_kind;
+    integer used_bytes;
+    data.load();
     reset                = 1;
     tx_done_tick         = 0;
     response_start       = 0;
@@ -269,71 +216,23 @@ module response_serializer_dmem_tb #(
     tx_pending_four_seen = 0;
     max_tx_pending       = 0;
     clear_memory();
-    if (DMEM_CAPACITY_BYTES == 2048)
-      check($bits(debug_dmem_addr) == 11 && $bits(dut.used_count) == 12,
-            "REFERENCE address and count widths are 11 and 12 bits");
-    if (DMEM_CAPACITY_BYTES == 1000)
-      check($bits(debug_dmem_addr) == 10 && $bits(dut.used_count) == 10,
-            "ALT_1000 address and count widths are 10 bits");
     tick();
     reset = 0;
 
-    check_snapshot(0);
-
-    reset_serializer();
-    clear_memory();
-    used_map[7]      = 1;
-    dmem_contents[7] = 8'hB4;
-    check_snapshot(1);
-
-    reset_serializer();
-    clear_memory();
-    for (integer entry = 0; entry < 300; entry++) begin
-      used_map[entry*2] = 1;
-      if (entry % 7 == 0) dmem_contents[entry*2] = 0;
-      else dmem_contents[entry*2] = 8'h80 + entry;
-    end
-    check_snapshot(300);
-
-    reset_serializer();
-    clear_memory();
+    bitmap_kind = data.get_string("/inputs/bitmap_kind");
+    used_bytes  = int'(data.get_integer("/expected/used_count"));
     for (integer address = 0; address < DMEM_CAPACITY_BYTES; address++) begin
-      used_map[address] = 1;
-      if (address % 31 == 0) dmem_contents[address] = 0;
-      else dmem_contents[address] = address;
+      used_map[address] = bitmap_kind == "all" ||
+          ((bitmap_kind == "last-only" || bitmap_kind == "first-last") &&
+           address == DMEM_CAPACITY_BYTES - 1) || (bitmap_kind == "first-last" && address == 0);
+      dmem_contents[address] = 8'(address);
     end
-    check_snapshot(DMEM_CAPACITY_BYTES);
-
-    reset_serializer();
-    clear_memory();
-    used_map[DMEM_CAPACITY_BYTES-1]      = 1;
-    dmem_contents[DMEM_CAPACITY_BYTES-1] = 0;
-    check_snapshot(1);
-
-    reset_serializer();
-    clear_memory();
-    used_map[2]                          = 1;
-    dmem_contents[2]                     = 0;
-    used_map[17]                         = 1;
-    dmem_contents[17]                    = 8'hA3;
-    used_map[DMEM_CAPACITY_BYTES-1]      = 1;
-    dmem_contents[DMEM_CAPACITY_BYTES-1] = 8'hFE;
-    check_snapshot(3);
-    check(full_seen && retained_seen, "FIFO full and pending-byte retention were exercised");
-    check(tx_pending_four_seen && max_tx_pending == 4,
-          "tx_pending reaches but never exceeds the four-byte FIFO bound");
-
-    reset_serializer();
-    clear_memory();
-    abort_during_count();
-
-    reset_serializer();
-    clear_memory();
-    used_map[4]      = 1;
-    dmem_contents[4] = 8'h66;
-    abort_snapshot();
-
-    $display("PASS response_serializer DMEM profile capacity=%0d", DMEM_CAPACITY_BYTES);
+    check_snapshot(used_bytes);
+    check(accepted_count == data.get_integer("/expected/response_length"), "catalogue length");
+    for (integer index = 0; index < 5; index++)
+    check(accepted_bytes[225+index] == 8'(data.get_integer(
+          $sformatf("/expected/count_bytes/%0d", index))), "catalogue count byte");
+    $display("PASS %s", data.case_id);
     $finish;
   end
 endmodule

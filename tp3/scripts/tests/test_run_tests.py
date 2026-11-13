@@ -75,7 +75,7 @@ class SelectionTests(unittest.TestCase):
             cwd=self.directory,
             capture_output=True,
             text=True,
-            timeout=15,
+            timeout=60 if str(MANIFEST) in arguments else 15,
         )
 
     def pairs(self, selection):

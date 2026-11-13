@@ -82,7 +82,7 @@ COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 RUN set -eu; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
-      bash coreutils findutils grep sed python3 \
+      bash coreutils findutils g++ grep sed python3 \
       make=4.3-4.1build2 verilator=5.020-1 shellcheck=0.9.0-1 shfmt=3.8.0-1 \
       libbz2-1.0 libreadline8t64 libstdc++6 zlib1g; \
     mkdir -p /usr/local/share/tp3-dev; \

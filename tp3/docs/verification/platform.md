@@ -215,6 +215,24 @@ revisión del compañero y, en sus entregas correspondientes, transporte, Wizard
 reset de sistema, netlist y timing FPGA. No se registra un PASS de simulación
 para una revisión estructural ni se acredita hardware de placa.
 
+### Revisión del sistema funcional en #15
+
+`make lint-system` elabora `system_top` en REFERENCE, ALT_1000 y mínimo genérico.
+Las cuatro instancias directas conectan explícitamente los puertos definidos en
+[composición](../architecture/system_composition.md#conexiones-entre-componentes-del-sistema).
+`TEST-PLAT-001/C001–C003` comprueba la propagación de capacidades, los anchos de
+tamaño y direcciones y los parámetros UART nominales en esas fronteras.
+`make review-cpu` verifica los 51 bloques CPU y los 504 bits de latches en cada
+configuración. La revisión de netlist y período de 20 ns corresponde a #16.
+
+Las dos FIFO tienen profundidad cuatro y ancho ocho. Cada flag sale de la
+ocupación registrada. El descriptor de respuesta tiene 17 bits y cada lectura
+RF/DMEM parte de un cursor registrado del serializador. El controlador decodifica
+las solicitudes antes de recibir aceptación y solo la transición de la FSM
+global consume los próximos `valid`. El controlador registra la solicitud de
+reset después del Stop y el wrapper la incorpora al reset común. El análisis
+de sistema se ejecuta con advertencias combinacionales fatales.
+
 ### Qué comprueba y por qué
 
 Esta prueba comprueba que la estructura del RTL y la netlist conserven los bloques, interfaces y recursos definidos por los contratos.

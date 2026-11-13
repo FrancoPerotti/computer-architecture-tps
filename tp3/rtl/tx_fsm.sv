@@ -58,6 +58,14 @@ module tx_fsm (
     endcase
   end
 
+  // El flag depende del estado registrado, independientemente de tx_start.
+  always_comb begin
+    case (state)
+      STATE_START, STATE_DATA, STATE_STOP: tx_busy = !reset;
+      default: tx_busy = 1'b0;
+    endcase
+  end
+
   always_comb begin
     sample_count_clear = 1'b0;
     sample_count_inc   = 1'b0;
@@ -67,7 +75,6 @@ module tx_fsm (
     data_shift_enable  = 1'b0;
     tx_write_enable    = 1'b0;
     tx_output_select   = OUTPUT_HIGH;
-    tx_busy            = 1'b0;
     tx_done_tick       = 1'b0;
 
     if (!reset) begin
@@ -82,7 +89,6 @@ module tx_fsm (
           end
         end
         STATE_START: begin
-          tx_busy = 1'b1;
           if (s_tick) begin
             if (sample_done) begin
               sample_count_clear = 1'b1;
@@ -94,7 +100,6 @@ module tx_fsm (
           end
         end
         STATE_DATA: begin
-          tx_busy = 1'b1;
           if (s_tick) begin
             if (sample_done) begin
               sample_count_clear = 1'b1;
@@ -112,7 +117,6 @@ module tx_fsm (
           end
         end
         STATE_STOP: begin
-          tx_busy         = 1'b1;
           tx_write_enable = 1'b1;
           if (s_tick) begin
             if (sample_done) begin

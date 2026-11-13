@@ -3,7 +3,8 @@ module system_top #(
     parameter system_pkg::memory_capacity_t IMEM_CAPACITY_BYTES =
         system_pkg::REFERENCE_IMEM_CAPACITY_BYTES,
     parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES =
-        system_pkg::REFERENCE_DMEM_CAPACITY_BYTES
+        system_pkg::REFERENCE_DMEM_CAPACITY_BYTES,
+    parameter longint unsigned BAUD_RATE = system_pkg::UART_BAUD_RATE
 ) (
     input  logic clk,
     input  logic reset,
@@ -65,13 +66,126 @@ module system_top #(
   logic [1:0] debug_idex_result_sel;
   logic [3:0] debug_idex_mem_op, debug_exmem_mem_op;
 
-  uart_core uart_inst (.*);
-  protocol_controller #(.IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)) controller_inst (.*);
+  uart_core #(
+      .BAUD_RATE(BAUD_RATE)
+  ) uart_inst (
+      .clk,
+      .reset,
+      .serial_rx,
+      .serial_tx,
+      .r_data,
+      .rd_uart,
+      .rx_empty,
+      .w_data,
+      .wr_uart,
+      .tx_full,
+      .rx_error_tick,
+      .rx_activity,
+      .rx_receiving,
+      .tx_done_tick
+  );
+  protocol_controller #(
+      .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
+  ) controller_inst (
+      .clk,
+      .reset,
+      .rx_empty,
+      .r_data,
+      .rx_error_tick,
+      .rx_activity,
+      .response_busy,
+      .response_done_tick,
+      .load_available,
+      .prepare_active,
+      .program_finished,
+      .fault_terminal,
+      .image_valid,
+      .command_accepted,
+      .cpu_cycle_fire,
+      .rd_uart,
+      .response_start,
+      .response_opcode,
+      .response_result,
+      .response_with_debug,
+      .load_request,
+      .run_request,
+      .step_request,
+      .load_size_bytes,
+      .load_byte_valid,
+      .load_byte_data,
+      .load_byte_offset,
+      .load_last_byte,
+      .load_abort,
+      .uart_reset_request,
+      .debug_read_select
+  );
   processor_top #(
       .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES),
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) processor_inst (
-      .*
+      .clk,
+      .reset,
+      .load_request,
+      .run_request,
+      .step_request,
+      .load_byte_valid,
+      .load_last_byte,
+      .load_abort,
+      .debug_read_select,
+      .load_size_bytes,
+      .load_byte_data,
+      .load_byte_offset,
+      .debug_rf_addr,
+      .debug_dmem_addr,
+      .command_accepted,
+      .load_available,
+      .prepare_active,
+      .program_finished,
+      .fault_terminal,
+      .cpu_cycle_fire,
+      .image_valid,
+      .debug_dmem_used,
+      .debug_rf_data,
+      .debug_pc,
+      .debug_fault_pc,
+      .debug_dmem_data,
+      .global_state_code,
+      .debug_fault_cause,
+      .debug_cycle_count,
+      .debug_ifid_valid,
+      .debug_ifid_pc,
+      .debug_ifid_instruction,
+      .debug_ifid_fetch_fault_valid,
+      .debug_ifid_fetch_fault_cause,
+      .debug_idex_valid,
+      .debug_idex_pc,
+      .debug_idex_instruction,
+      .debug_idex_rs1,
+      .debug_idex_rs2,
+      .debug_idex_rd,
+      .debug_idex_rs1_value,
+      .debug_idex_rs2_value,
+      .debug_idex_immediate,
+      .debug_idex_alu_op,
+      .debug_idex_alu_src,
+      .debug_idex_result_sel,
+      .debug_idex_flow_op,
+      .debug_idex_mem_op,
+      .debug_idex_reg_write,
+      .debug_exmem_valid,
+      .debug_exmem_pc,
+      .debug_exmem_instruction,
+      .debug_exmem_rd,
+      .debug_exmem_reg_write,
+      .debug_exmem_mem_op,
+      .debug_exmem_ex_result,
+      .debug_exmem_store_data,
+      .debug_memwb_valid,
+      .debug_memwb_pc,
+      .debug_memwb_instruction,
+      .debug_memwb_rd,
+      .debug_memwb_reg_write,
+      .debug_memwb_wb_value
   );
   response_serializer #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)

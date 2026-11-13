@@ -1,258 +1,184 @@
 `timescale 1ns / 1ps
 
-module system_top_recovery_tb;
-  localparam integer BIT_CYCLES = 2608;
-  localparam time    BIT_TIME   = 2ns * BIT_CYCLES;
-  logic clk = 1'b0, reset = 1'b1, serial_rx = 1'b1;
-  logic serial_tx, uart_reset_request;
-  string case_id;
-  integer cycle_counter = 0;
-  system_top dut (.*);
-  always #1ns clk = ~clk;
-  always @(posedge clk) cycle_counter = cycle_counter + 1;
+module system_top_recovery_tb #(
+    parameter integer CASE_INDEX   = 1,
+    parameter bit     FULL_SILENCE = 0
+);
+  localparam longint unsigned BAUD_RATE      = 64'd3_125_000;
+  localparam integer          SILENCE_CLOCKS = 5_000_000;
+  logic clk = 0;
+  logic reset = 1;
+  wire serial_rx, serial_tx, uart_reset_request;
+  integer captures = 0;
+  integer received_errors = 0;
 
-  task automatic tx_byte(input byte unsigned value, input bit response_follows = 1'b0);
-    integer bit_index;
-    begin
-      serial_rx = 0;
-      #(BIT_TIME);
-      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
-        serial_rx = value[bit_index];
-        #(BIT_TIME);
-      end
-      serial_rx = 1;
-      if (response_follows) #(1ns);
-      else #(BIT_TIME);
-    end
+  system_uart_host #(.BAUD_RATE(BAUD_RATE)) host (.*);
+  system_top #(.BAUD_RATE(BAUD_RATE)) dut (.*);
+  always #10ns clk = ~clk;
+
+  always @(posedge clk) begin
+    if (!reset && dut.response_start) captures++;
+    if (!reset && dut.rx_error_tick) received_errors++;
+  end
+
+  task automatic ready_query;
+    host.send_byte(8'h05, 1);
+    host.expect_header(8'h05, 8'h03);
   endtask
 
-  task automatic rx_byte(output byte unsigned value);
-    integer bit_index;
-    begin
-      @(negedge serial_tx);
-      #(BIT_TIME + BIT_TIME / 2);
-      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
-        value[bit_index] = serial_tx;
-        #(BIT_TIME);
-      end
-      if (serial_tx !== 1'b1) $fatal(1, "UART TX stop bit was low");
+  task automatic load_image(input logic [31:0] instruction);
+    host.load_header(40'd16);
+    for (integer index = 0; index < 16; index++) begin
+      if (index < 4) host.send_byte(instruction[index*8+:8]);
+      else host.send_byte(0, index == 15);
     end
+    host.expect_header(8'h01, 8'h02);
   endtask
 
-  task automatic expect_header(input byte unsigned opcode, input byte unsigned result);
-    byte unsigned value;
-    begin
-      rx_byte(value);
-      if (value !== opcode) $fatal(1, "expected opcode %02x, got %02x", opcode, value);
-      rx_byte(value);
-      if (value !== result) $fatal(1, "expected result %02x, got %02x", result, value);
-    end
+  task automatic provoke_overflow;
+`ifndef VERILATOR
+    wait (!dut.response_busy);
+    @(negedge clk);
+    // Preload coherent FIFO state. In normal use the Controller drains
+    // every edge, so a full FIFO at this boundary is a local fixture.
+    for (integer slot = 0; slot < 4; slot++) dut.uart_inst.rx_fifo.memory[slot] = 8'(slot + 6);
+    dut.uart_inst.rx_fifo.read_pointer  = 0;
+    dut.uart_inst.rx_fifo.write_pointer = 0;
+    dut.uart_inst.rx_fifo.count         = 4;
+    force dut.uart_inst.rx_fifo.rd = 0;
+    dut.controller_inst.protocol_state = dut.controller_inst.WAIT_RESPONSE_SENT;
+    fork
+      host.send_byte(8'h55);
+      begin
+        while (!dut.uart_inst.rx_done_tick) @(negedge clk);
+        dut.controller_inst.protocol_state = dut.controller_inst.WAIT_COMMAND;
+        #1ns;
+        if (!dut.rx_error_tick || dut.response_start) $fatal(1, "overflow preflank priority");
+        @(negedge clk);
+        if (dut.controller_inst.protocol_state !== dut.controller_inst.RECOVER_RX)
+          $fatal(1, "overflow did not enter recovery");
+        force dut.uart_inst.rx_fifo.rd = 1;
+        repeat (4) @(negedge clk);
+        release dut.uart_inst.rx_fifo.rd;
+      end
+    join
+`else
+    $fatal(1, "RX overflow fixture requires Icarus");
+`endif
   endtask
 
-  task automatic tx_bad_stop(input byte unsigned value);
-    integer bit_index;
-    begin
-      serial_rx = 0;
-      #(BIT_TIME);
-      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
-        serial_rx = value[bit_index];
-        #(BIT_TIME);
-      end
-      serial_rx = 0;
-      #(BIT_TIME);
-      serial_rx = 1;
-      #(1ns);
+  task automatic complete_silence;
+    wait (!dut.rx_activity);
+    @(negedge clk);
+    // Reproduce the last four clocks of the real counter without spending
+    // 5M event-simulation clocks on every UART recovery transaction.
+    if (FULL_SILENCE) begin
+      wait (dut.controller_inst.inactivity_count == 23'(SILENCE_CLOCKS - 4));
+      @(negedge clk);
+    end else dut.controller_inst.inactivity_count = 23'(SILENCE_CLOCKS - 4);
+    repeat (3) begin
+      @(negedge clk);
+      if (dut.controller_inst.protocol_state !== dut.controller_inst.RECOVER_RX)
+        $fatal(1, "recovery released before continuous silence completed");
     end
+    @(negedge clk);
   endtask
 
   initial begin : test
-    byte unsigned value;
-    bit           false_start_case;
-    bit           load_size_error_case;
-    bit           activity_recovery_case;
-    bit           running_recovery_case;
-    bit           terminal_recovery_case;
-    bit           activity_at_debug_stop_case;
-    integer       debug_index;
-    integer       bad_stop_cycle;
-    #200ns;
-    if (!$value$plusargs("CASE=%s", case_id)) $fatal(1, "missing canonical case ID");
-    false_start_case       = case_id == "TEST-UART-006/C001";
-    load_size_error_case   = case_id == "TEST-UART-006/C008";
-    activity_recovery_case = case_id == "TEST-UART-006/C002";
-    running_recovery_case  = case_id == "TEST-UART-006/C005";
-    terminal_recovery_case = (case_id == "TEST-UART-006/C013") ||
-                             (case_id == "TEST-UART-006/C014");
-    activity_at_debug_stop_case = case_id == "TEST-UART-006/C014";
-    @(negedge clk);
+    integer before_error;
+    integer before_responses;
+    bit     content;
+    repeat (10) @(negedge clk);
     reset = 0;
+    load_image(CASE_INDEX == 5 ? 32'h0000006f : 32'h0000000b);
+    content = CASE_INDEX == 11;
+    if (CASE_INDEX == 5) begin
+      host.send_byte(8'h02, 1);
+      host.expect_header(8'h02, 8'h01);
+      wait (dut.controller_inst.protocol_state == dut.controller_inst.WAIT_RUN_END);
+    end else if (content) begin
+      host.load_header(40'd8);
+      host.send_byte(8'h0b);
+    end else if (CASE_INDEX == 8) begin
+      host.send_byte(8'h01);
+      host.send_byte(8'h08);
+    end
 
-    // addi x5,x0,7; halt
-    tx_byte(8'h01);
-    tx_byte(terminal_recovery_case ? 8'h20 : 8'h08);
-    tx_byte(8'h00);
-    tx_byte(8'h00);
-    tx_byte(8'h00);
-    tx_byte(8'h00, 1'b1);
-    expect_header(8'h01, 8'h01);
-    if (terminal_recovery_case) begin
-      // Two nested counters keep RUN active until after its ACCEPTED response
-      // and the injected framing error, but finish before R expires.
-      tx_byte(8'h93); tx_byte(8'h00); tx_byte(8'h80); tx_byte(8'h0c); // addi x1,x0,200
-      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'h80); tx_byte(8'h0c); // addi x2,x0,200
-      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'hf1); tx_byte(8'hff); // addi x2,x2,-1
-      tx_byte(8'he3); tx_byte(8'h1e); tx_byte(8'h01); tx_byte(8'hfe); // bne x2,x0,-4
-      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'h80); tx_byte(8'h0c); // addi x2,x0,200
-      tx_byte(8'h93); tx_byte(8'h80); tx_byte(8'hf0); tx_byte(8'hff); // addi x1,x1,-1
-      tx_byte(8'he3); tx_byte(8'h98); tx_byte(8'h00); tx_byte(8'hfe); // bne x1,x0,-16
-      tx_byte(8'h0b); tx_byte(8'h00); tx_byte(8'h00); tx_byte(8'h00, 1'b1); // halt
-    end else if (running_recovery_case) begin
-      tx_byte(8'h6f);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h0b);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h00, 1'b1);
+    before_responses = captures;
+    before_error     = received_errors;
+    if (CASE_INDEX == 1) begin
+      host.serial_rx = 0;
+      #(host.BIT_TIME / 4);
+      host.serial_rx = 1;
+      wait (received_errors == before_error + 1);
+    end else if (CASE_INDEX == 3) begin
+      provoke_overflow();
+    end else if (CASE_INDEX == 8 || CASE_INDEX == 11) begin
+      host.send_byte(8'h00, 1, 0);
+      host.expect_header(8'h01, 8'h09);
+      host.serial_rx = 1;
     end else begin
-      tx_byte(8'h93);
-      tx_byte(8'h02);
-      tx_byte(8'h70);
-      tx_byte(8'h00);
-      tx_byte(8'h0b);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h00, 1'b1);
+      host.send_byte(8'h55, 0, 0);
+      host.serial_rx = 1;
     end
-    expect_header(8'h01, 8'h02);
+    @(negedge clk);
+    if (dut.controller_inst.protocol_state !== dut.controller_inst.RECOVER_RX ||
+        dut.image_valid !== !content)
+      $fatal(1, "LOAD timeout/error changed the wrong image or skipped recovery");
+    if (received_errors != before_error + 1) $fatal(1, "physical RX error was not delivered once");
 
-    if (terminal_recovery_case) begin
-      tx_byte(8'h02, 1'b1);
-      expect_header(8'h02, 8'h01);
-      tx_bad_stop(8'hA5);
-      bad_stop_cycle = cycle_counter;
-      // ACCEPTED is already complete. FINISHED must arrive during recovery.
-      expect_header(8'h02, 8'h0a);
-      debug_index = 0;
-      if (activity_at_debug_stop_case) begin
-        for (debug_index = 0; debug_index < 228; debug_index = debug_index + 1) begin
-          rx_byte(value);
-          if (debug_index >= 223 && value !== 8'h00)
-            $fatal(1, "expected empty Debug used_count, byte %0d was %02x", debug_index - 223, value);
-          if (debug_index == 227) begin
-            // rx_byte returns at the center of the final Stop bit. Start a new
-            // RX frame one functional clock before that Stop physically ends.
-            #(BIT_TIME / 2 - 2ns);
-            tx_bad_stop(8'hA5);
-          end
-        end
-      end else begin
-        fork
-          begin : receive_terminal_debug
-          for (debug_index = 0; debug_index < 228; debug_index = debug_index + 1) begin
-            rx_byte(value);
-            if (debug_index >= 223 && value !== 8'h00)
-              $fatal(1, "expected empty Debug used_count, byte %0d was %02x", debug_index - 223, value);
-          end
-          end
-          begin : check_recovery_before_debug_stop
-            wait (cycle_counter >= bad_stop_cycle + 5_000_000);
-            if (debug_index >= 228)
-              $fatal(1, "Debug Stop completed before the 5,000,000-clock recovery interval");
-          end
-        join
-      end
-      if (activity_at_debug_stop_case) begin
-        repeat (5_000_005) @(posedge clk);
-        @(negedge clk);
-        tx_byte(8'h05, 1'b1);
-        expect_header(8'h05, 8'h03);
-      end else begin
-        #(BIT_TIME / 2 + 1ns);
-        tx_byte(8'h05, 1'b1);
-        expect_header(8'h05, 8'h03);
-        #(3 * BIT_TIME);
-        if (serial_tx !== 1'b1) $fatal(1, "RUN terminal response was emitted more than once");
-      end
-    end else if (running_recovery_case) begin
-      tx_byte(8'h02, 1'b1);
-      expect_header(8'h02, 8'h01);
-      tx_bad_stop(8'hA5);
-    end else if (false_start_case) begin
-      // False Start: RX rises before its center sample.
-      serial_rx = 0;
-      #(BIT_TIME / 4);
-      serial_rx = 1;
-      #(BIT_TIME);
-    end else if (load_size_error_case) begin
-      tx_byte(8'h01);
-      fork
-        tx_bad_stop(8'h08);
-        expect_header(8'h01, 8'h09);
-      join
-    end else if (activity_recovery_case) begin
-      tx_bad_stop(8'hA5);
-      tx_byte(8'h05);
-      tx_byte(8'h04);
-      tx_byte(8'hA5);
-      repeat (4_990_000) @(posedge clk);
-      tx_byte(8'h05);
-      serial_rx = 0;
-      #(BIT_TIME * 3);
-      serial_rx = 1;
-      #(BIT_TIME);
-      repeat (12 * BIT_CYCLES) @(posedge clk);
+    if (CASE_INDEX != 1 && CASE_INDEX != 3) begin
+      host.send_byte(8'h05);
+      host.send_byte(8'h04);
+    end
+    repeat (5) @(negedge clk);
+    @(negedge clk);
+    if (captures != before_responses + ((CASE_INDEX == 8 || CASE_INDEX == 11) ? 1 : 0) ||
+        uart_reset_request || !dut.rx_empty)
+      $fatal(
+          1,
+          "recovery got %0d responses after %0d, RESET=%b, RX depth=%0d",
+          captures,
+          before_responses,
+          uart_reset_request,
+          dut.uart_inst.rx_fifo.count
+      );
+    if (CASE_INDEX == 2) begin
+      host.send_byte(8'ha5);
       @(negedge clk);
+      dut.controller_inst.inactivity_count = 23'(SILENCE_CLOCKS - 8);
+      host.serial_rx                       = 0;
+      #(2 * host.BIT_TIME);
+      if (dut.controller_inst.inactivity_count !== 0 ||
+          dut.controller_inst.protocol_state !== dut.controller_inst.RECOVER_RX)
+        $fatal(1, "RX activity near expiry did not restart silence");
+      host.serial_rx = 1;
+    end
+    complete_silence();
+    if (CASE_INDEX == 5) begin
+      if (dut.controller_inst.protocol_state !== dut.controller_inst.WAIT_RUN_END ||
+          !dut.controller_inst.run_result_required || !dut.cpu_cycle_fire)
+        $fatal(1, "recovery paused or canceled RUN");
     end else begin
-      tx_byte(8'h01);
-      tx_byte(8'h08);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h00);
-      tx_byte(8'h00, 1'b1);
-      expect_header(8'h01, 8'h01);
-      fork
-        tx_bad_stop(8'h93);
-        expect_header(8'h01, 8'h09);
-      join
-    end
-
-    if (!terminal_recovery_case) begin
-      repeat (5_000_005) @(posedge clk);
-      @(negedge clk);
-      if (activity_recovery_case && serial_tx !== 1'b1)
-        $fatal(1, "discarded recovery traffic generated TX response");
-
-      if (running_recovery_case) begin
-        tx_byte(8'h05);
-        #(3 * BIT_TIME);
-        if (serial_tx !== 1'b1 || uart_reset_request !== 1'b0)
-          $fatal(1, "RUN context was not retained after RX recovery");
+      if (dut.controller_inst.protocol_state !== dut.controller_inst.WAIT_COMMAND)
+        $fatal(1, "recovery did not reopen commands");
+      ready_query();
+      if (content) begin
+        host.send_byte(8'h02, 1);
+        host.expect_header(8'h02, 8'h05);
       end else begin
-        tx_byte(8'h05, 1'b1);
-        expect_header(8'h05, 8'h03);
-      end
-      if (running_recovery_case) begin
-        // The post-recovery CHECK_READY is consumed but ignored during RUN.
-      end else if (case_id == "TEST-UART-006/C011") begin
-        tx_byte(8'h02, 1'b1);
-        expect_header(8'h02, 8'h05);
-      end else begin
-        tx_byte(8'h03, 1'b1);
-        expect_header(8'h03, 8'h02);
-        rx_byte(value);  // Debug state
-        rx_byte(value);  // image_valid
-        if (!value[0]) $fatal(1, "RX recovery invalidated the prior image");
+        host.send_byte(8'h03, 1);
+        host.read_snapshot(8'h03, 8'h02);
+        if (host.response[1] !== 1 || host.cycles() !== 1)
+          $fatal(1, "recovery changed the prior executable image");
       end
     end
-
-    $display("PASS %s", case_id);
+    $display("PASS TEST-UART-006/C%03d", CASE_INDEX);
     $finish;
   end
 
   initial begin
-    #60ms;
-    $fatal(1, "TEST-UART-006 bounded timeout");
+    #(FULL_SILENCE ? 105ms : 3ms);
+    $fatal(1, "system recovery watchdog");
   end
 endmodule

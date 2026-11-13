@@ -162,7 +162,7 @@ Parámetros `IMEM_CAPACITY_BYTES` y `DMEM_CAPACITY_BYTES`, longint unsigned, exp
 | `serial_tx`          | salida    |     1 | `uart_core.serial_tx` → placa                                        |
 | `uart_reset_request` | salida    |     1 | petición registrada de `protocol_controller` → `reset` de plataforma |
 
-Este top funcional permite probar el sistema integrado con `clk`/`reset`/seriales en simulación, sin generar IP de placa. `processor_top` recibe ambas capacidades; `protocol_controller` recibe IMEM; `response_serializer` recibe DMEM. `uart_core` recibe constantes clock/UART de `system_pkg`: 50 MHz, 19200 baud, oversampling 16 y FIFO de cuatro ya aprobados.
+Este top funcional permite probar el sistema integrado con `clk`/`reset`/seriales en simulación, sin generar IP de placa. `processor_top` recibe ambas capacidades; `protocol_controller` recibe IMEM; `response_serializer` recibe DMEM. `uart_core` recibe constantes clock/UART de `system_pkg`: 50 MHz, 19200 baud, oversampling 16 y FIFO de cuatro ya aprobados. La configuración nominal de `BAUD_RATE` proviene de `system_pkg`. El banco funcional puede sobreescribir ese parámetro para acelerar tramas 8N1 conservando el reloj y el sobremuestreo. `TEST-UART-014` conserva el valor nominal y mide desde los eventos físicos de RX/TX.
 
 ### processor_top: comandos, carga y consultas
 

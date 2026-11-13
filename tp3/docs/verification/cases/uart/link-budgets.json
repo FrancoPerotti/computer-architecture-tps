@@ -3,7 +3,136 @@
   "source": "uart_debug.md#test-uart-014",
   "case_count": 10,
   "reuse_groups": [],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/id_stage.sv",
+        "rtl/ex_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/fifo.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/uart_core.sv",
+        "rtl/processor_top.sv",
+        "rtl/protocol_controller.sv",
+        "rtl/response_serializer.sv",
+        "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
+        "tb/system_top_budget_tb.sv"
+      ],
+      "top": "system_top_budget_tb",
+      "level": "Sistema",
+      "simulator": "verilator",
+      "timeout_seconds": 4500,
+      "case_ids": [
+        "TEST-UART-014/C001",
+        "TEST-UART-014/C002",
+        "TEST-UART-014/C003",
+        "TEST-UART-014/C004",
+        "TEST-UART-014/C005"
+      ],
+      "parameters": {
+        "ALT_PROFILE": "0"
+      }
+    },
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/decoder.sv",
+        "rtl/immediate_generator.sv",
+        "rtl/register_file.sv",
+        "rtl/id_fault_check.sv",
+        "rtl/load_use_detector.sv",
+        "rtl/forwarding_unit.sv",
+        "rtl/alu.sv",
+        "rtl/flow_control.sv",
+        "rtl/ex_fault_check.sv",
+        "rtl/id_stage.sv",
+        "rtl/ex_stage.sv",
+        "rtl/fetch_fault_check.sv",
+        "rtl/instruction_memory.sv",
+        "rtl/if_stage.sv",
+        "rtl/mem_decode.sv",
+        "rtl/dmem_write_control.sv",
+        "rtl/load_select_extend.sv",
+        "rtl/data_memory.sv",
+        "rtl/mem_stage.sv",
+        "rtl/wb_stage.sv",
+        "rtl/if_id_register.sv",
+        "rtl/id_ex_register.sv",
+        "rtl/ex_mem_register.sv",
+        "rtl/mem_wb_register.sv",
+        "rtl/pipeline_hazard_control.sv",
+        "rtl/global_fsm.sv",
+        "rtl/execution_control.sv",
+        "rtl/loader.sv",
+        "rtl/session_preparation.sv",
+        "rtl/rx_fsm.sv",
+        "rtl/rx_datapath.sv",
+        "rtl/uart_rx.sv",
+        "rtl/fifo.sv",
+        "rtl/tx_fsm.sv",
+        "rtl/tx_datapath.sv",
+        "rtl/uart_tx.sv",
+        "rtl/serial_input_sync.sv",
+        "rtl/baud_tick_gen.sv",
+        "rtl/uart_core.sv",
+        "rtl/processor_top.sv",
+        "rtl/protocol_controller.sv",
+        "rtl/response_serializer.sv",
+        "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
+        "tb/system_top_budget_tb.sv"
+      ],
+      "top": "system_top_budget_tb",
+      "level": "Sistema",
+      "simulator": "verilator",
+      "timeout_seconds": 4500,
+      "case_ids": [
+        "TEST-UART-014/C006",
+        "TEST-UART-014/C007",
+        "TEST-UART-014/C008",
+        "TEST-UART-014/C009",
+        "TEST-UART-014/C010"
+      ],
+      "parameters": {
+        "ALT_PROFILE": "1"
+      }
+    }
+  ],
   "cases": [
     {
       "id": "TEST-UART-014/C001",
@@ -29,7 +158,7 @@
       "origins": [
         "Carga continua máxima"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C002",
@@ -51,7 +180,7 @@
       "origins": [
         "Respuesta breve"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C003",
@@ -76,7 +205,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C004",
@@ -101,7 +230,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C005",
@@ -126,7 +255,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C006",
@@ -152,7 +281,7 @@
       "origins": [
         "Carga continua máxima"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C007",
@@ -174,7 +303,7 @@
       "origins": [
         "Respuesta breve"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C008",
@@ -199,7 +328,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C009",
@@ -224,7 +353,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-014/C010",
@@ -249,7 +378,7 @@
       "origins": [
         "Debugporocupación"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 La entrada [scripts/run_tests.sh](../../scripts/run_tests.sh) delega en
 [Python](../../scripts/run_tests.py) la validación del manifiesto, la
-selección de grupos y casos y la ejecución con Icarus. El
+selección de grupos y casos y la ejecución con Icarus o Verilator. El
 [coordinador de simulaciones](../../scripts/simulation_runner.py) compila
 las fuentes, prepara los datos externos y recoge los resultados.
 `--list` permite inspeccionar la selección sin ejecutar pruebas. Además de los
@@ -180,7 +180,7 @@ referencias a grupos y casos.
 
 Al ejecutar, el comando exige configuraciones de ejecución para todos los
 casos implementados seleccionados y comprueba que las fuentes aplicables existan, relativas a `tp3`.
-La ejecución por Icarus admite los niveles `Unidad`, `Integración local`,
+La ejecución RTL admite los niveles `Unidad`, `Integración local`,
 `CPU` y `Sistema`. Los niveles `Elaboración/revisión`, `Implementación` y
 `Placa` se rechazan: una simulación no acredita esas comprobaciones.
 
@@ -206,6 +206,12 @@ una vez por invocación, con
 `iverilog -g2012`, el `top` solicitado y los archivos de `sources` en el
 orden declarado. La compilación se realiza desde `tp3`; las rutas de
 las fuentes se resuelven respecto de ese directorio.
+
+Icarus es el motor predeterminado. Una ejecución con `"simulator": "verilator"`
+usa `verilator --binary --timing --assert -j 2 -Wno-TIMESCALEMOD` con el mismo
+top, parámetros, orden de fuentes y argumentos de caso. Requiere `g++` y
+permite recorrer el enlace de 19.200 baud y los temporizadores completos.
+El ejecutor conserva los mismos marcadores y límites de tiempo por caso.
 
 `case_ids` limita una ejecución a los casos indicados del grupo. Si se omite,
 se aplica a todos sus casos implementados. Los casos sin ejecución
