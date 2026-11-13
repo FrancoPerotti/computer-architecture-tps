@@ -15,6 +15,8 @@ from verification_manifest import MANIFEST, TP3_ROOT, case_executions, index_man
 # se convierten en ejecuciones por el mero hecho de pertenecer a estos grupos.
 ISSUE_GROUPS = {
     11: tuple(f"TEST-UART-{number:03}" for number in range(3, 15)),
+    15: tuple(f"TEST-UART-{number:03}" for number in range(1, 15))
+    + ("TEST-PLAT-001", "TEST-PLAT-003"),
 }
 
 
@@ -180,6 +182,7 @@ def make_parser(format_parser):
             "  bash scripts/run_tests.sh --test TEST-PIPE-001\n"
             "  bash scripts/run_tests.sh --test TEST-PLAT-001/C003 --test TEST-PIPE-001 --format json\n"
             "  bash scripts/run_tests.sh --issue 11\n"
+            "  bash scripts/run_tests.sh --issue 15\n"
             "  bash scripts/run_tests.sh --all --list --format json"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,

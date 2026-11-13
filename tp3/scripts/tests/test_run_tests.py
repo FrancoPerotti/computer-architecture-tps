@@ -223,6 +223,32 @@ class SelectionTests(unittest.TestCase):
             },
         )
 
+    def test_issue_15_selects_uart_and_platform_groups(self):
+        """Incluye UART/Debug y plataforma, con C002 registrado en nivel de sistema."""
+        result = self.cli(
+            "--manifest", str(MANIFEST), "--issue", "15", "--list", "--format", "json"
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rows = json.loads(result.stdout)
+        self.assertEqual(len(rows), 264)
+        selected_groups = {row["group_id"] for row in rows}
+        self.assertIn("TEST-UART-001", selected_groups)
+        self.assertIn("TEST-UART-014", selected_groups)
+        self.assertIn("TEST-PLAT-001", selected_groups)
+        self.assertIn("TEST-PLAT-003", selected_groups)
+        c002 = [row for row in rows if row["case_id"] == "TEST-UART-010/C002"]
+        self.assertEqual(
+            c002,
+            [
+                {
+                    "group_id": "TEST-UART-010",
+                    "case_id": "TEST-UART-010/C002",
+                    "status": "implemented",
+                    "execution_count": 1,
+                }
+            ],
+        )
+
     def test_cli_argument_errors_produce_nonzero_and_json(self):
         """Comprueba el código de uso inválido y la estructura de error para argumentos incorrectos."""
         for arguments in [
