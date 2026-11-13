@@ -1,0 +1,109 @@
+{
+  "name": "viewrv-gui",
+  "version": "0.7.0",
+  "private": true,
+  "description": "Aplicación de escritorio del procesador TP3",
+  "author": "Franco Perotti y Federico Arnaudo",
+  "main": "out/main/index.js",
+  "engines": {
+    "node": "24.22.1"
+  },
+  "scripts": {
+    "dev": "node ../packaging/build_viewer.cjs && electron-vite dev",
+    "typecheck": "tsc --noEmit",
+    "pretest": "node ../packaging/build_viewer.cjs",
+    "build": "node ../packaging/build_viewer.cjs && npm run typecheck && electron-vite build",
+    "preview:browser": "npm run build && node scripts/browser-preview.cjs",
+    "preview:debug": "npm run build && node scripts/browser-preview.cjs --debug-demo",
+    "preview:debug:background": "npm run build && node scripts/start-debug-preview.cjs",
+    "test": "tsc -p tsconfig.tests.json && node --test tests/*.test.cjs",
+    "package:linux": "electron-builder --linux tar.gz --publish never",
+    "package:windows": "electron-builder --win nsis --publish never",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,html}\" \"tests/*.cjs\" \"scripts/*.{cjs,mjs}\" \"*.{json,ts}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,html}\" \"tests/*.cjs\" \"scripts/*.{cjs,mjs}\" \"*.{json,ts}\"",
+    "test:gui": "node scripts/test-gui.cjs",
+    "test:core": "node scripts/test-core.cjs",
+    "check": "npm run format:check && npm run build && npm test",
+    "check:all": "npm run check && npm run test:core && npm run test:gui"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.9.0",
+    "@microsoft/fetch-event-source": "2.0.1",
+    "@monaco-editor/react": "4.7.0",
+    "@vanilla-extract/css": "1.21.3",
+    "flexlayout-react": "0.11.1",
+    "lucide-react": "1.61.0",
+    "monaco-editor": "0.57.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zustand": "5.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vanilla-extract/vite-plugin": "5.2.6",
+    "@vitejs/plugin-react": "6.1.2",
+    "@xmldom/xmldom": "0.8.15",
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
+    "playwright": "1.62.1",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "vite": "8.3.5"
+  },
+  "build": {
+    "appId": "ar.edu.tp3.viewrv",
+    "productName": "viewrv",
+    "executableName": "viewrv-gui",
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "extraFiles": [
+      {
+        "from": "../build/python/viewrv",
+        "to": "."
+      },
+      {
+        "from": "../build/stage-release.json",
+        "to": "release.json"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "../build/python/viewrv-core",
+        "to": "core"
+      },
+      {
+        "from": "../resources/content",
+        "to": "content"
+      },
+      {
+        "from": "../resources/programmer",
+        "to": "programmer"
+      },
+      {
+        "from": "../resources/hardware",
+        "to": "hardware"
+      }
+    ],
+    "linux": {
+      "target": "tar.gz",
+      "category": "Education"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "beforePack": "../packaging/check_package.cjs",
+    "afterPack": "../packaging/stage_linux.cjs"
+  },
+  "license": "MIT"
+}

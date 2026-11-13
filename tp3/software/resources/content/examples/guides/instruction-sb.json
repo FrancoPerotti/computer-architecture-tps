@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "example_id": "instruction-sb",
+  "source_sha256": "1fe0ecedbcc6daab081707e578e7ceceda61e8b6ccb83f59c876ab2825364729",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 12,
+          "occurrence": "occurrence-4"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "El store completa EX; toma el dato más reciente de x1 mediante forwarding."
+    },
+    {
+      "cycle": 6,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        }
+      ],
+      "explanation": "SB confirma dato y marcas de 1 bytes en MEM. HALT se consume en EX sin cancelar el store anterior."
+    },
+    {
+      "cycle": 7,
+      "positions": [],
+      "explanation": "El pipeline queda vacío; no hay escritura de RF atribuible al store."
+    }
+  ],
+  "terminal": {
+    "cycle": 7,
+    "execution_status": "finished"
+  },
+  "prefix_only": false
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "example_id": "fetch-past-image",
+  "source_sha256": "42ecd3e3bd519ff73d059379a6bc4bb44b6909e583224e5571c5f7ee380f9db2",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Se registra un candidato de fetch de PC=4, independiente de valid."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Se confirma el candidato en ID; la ADDI anterior completa EX y no se descarta."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Drena la ADDI en MEM."
+    },
+    {
+      "cycle": 5,
+      "positions": [],
+      "explanation": "WB confirma x3=7; FAULT con pipeline vacío."
+    }
+  ],
+  "terminal": {
+    "cycle": 5,
+    "execution_status": "fault",
+    "fault_cause": 1,
+    "fault_pc": 4
+  },
+  "prefix_only": false
+}

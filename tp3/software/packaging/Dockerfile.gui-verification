@@ -1,0 +1,12 @@
+# Test environment only: no host packages or application resources are changed.
+# The base uses the signed Ubuntu 20261018 snapshot from the TP3 toolchain.
+FROM ghcr.io/francoperotti/tp3-dev@sha256:de4cb5924aed933ee4023a4235d275decf9779895797272ee8c7fd52e0ba6e7c
+USER root
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       xvfb xauth libgtk-3-0t64 libnss3 libasound2t64 libgbm1 libcups2t64 \
+       fonts-dejavu-core \
+    && dpkg-query -W > /usr/local/share/viewrv-gui-verification-packages.tsv \
+    && rm -rf /var/lib/apt/lists/*
+USER ubuntu
+WORKDIR /tmp

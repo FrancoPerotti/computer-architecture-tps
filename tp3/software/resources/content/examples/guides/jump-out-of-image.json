@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "example_id": "jump-out-of-image",
+  "source_sha256": "80b533aa5a4b6604a3c3b8e18ab7b07cda62edd763489a0248747a8bf46cfcb4",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "JAL redirige al target alineado 16. EX no compara ese target contra la imagen de 8 bytes."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "El fetch de PC=16 genera candidato IF/ID con valid=0 y fetch_fault_valid=1."
+    },
+    {
+      "cycle": 5,
+      "positions": [],
+      "explanation": "Se confirma el fault de fetch en ID; el WB del JAL anterior confirma x3=4 y el pipeline termina."
+    }
+  ],
+  "terminal": {
+    "cycle": 5,
+    "execution_status": "fault",
+    "fault_cause": 1,
+    "fault_pc": 16
+  },
+  "prefix_only": false
+}

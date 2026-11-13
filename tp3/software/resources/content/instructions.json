@@ -1,0 +1,669 @@
+[
+  {
+    "mnemonic": "add",
+    "description": "Suma los dos registros fuente y escribe los 32 bits bajos del resultado en rd.",
+    "syntax": "add rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "add x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "addi",
+    "description": "Extiende imm con signo, lo suma a rs1 y escribe los 32 bits bajos del resultado en rd.",
+    "syntax": "addi rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "addi x5, x1, -8",
+    "notes": []
+  },
+  {
+    "mnemonic": "and",
+    "description": "Escribe en rd el AND bit a bit de rs1 y rs2.",
+    "syntax": "and rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "and x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "andi",
+    "description": "Extiende imm con signo y escribe en rd el AND bit a bit con rs1.",
+    "syntax": "andi rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "andi x5, x1, -8",
+    "notes": []
+  },
+  {
+    "mnemonic": "beq",
+    "description": "Si rs1 y rs2 son iguales, continúa en el destino relativo al PC de esta instrucción. Si no, sigue con PC + 4.",
+    "syntax": "beq rs1, rs2, destino",
+    "operands": [
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "destino",
+        "description": "Etiqueta o desplazamiento en bytes relativo al PC de esta instrucción. Rango −4096 a 4094, con valor par."
+      }
+    ],
+    "example": "beq x1, x2, 16",
+    "notes": [
+      "En este procesador el destino debe estar alineado a 4 bytes. Un destino desalineado provoca un fallo al ejecutar."
+    ]
+  },
+  {
+    "mnemonic": "bne",
+    "description": "Si rs1 y rs2 son distintos, continúa en el destino relativo al PC de esta instrucción. Si no, sigue con PC + 4.",
+    "syntax": "bne rs1, rs2, destino",
+    "operands": [
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "destino",
+        "description": "Etiqueta o desplazamiento en bytes relativo al PC de esta instrucción. Rango −4096 a 4094, con valor par."
+      }
+    ],
+    "example": "bne x1, x2, 16",
+    "notes": [
+      "En este procesador el destino debe estar alineado a 4 bytes. Un destino desalineado provoca un fallo al ejecutar."
+    ]
+  },
+  {
+    "mnemonic": "halt",
+    "description": "Detiene el ingreso de nuevas instrucciones al confirmarse en EX y permite terminar las anteriores antes de finalizar la ejecución.",
+    "syntax": "halt",
+    "operands": [],
+    "example": "halt",
+    "notes": [
+      "No recibe operandos. La codificación propia de TP3 es 0x0000000B."
+    ]
+  },
+  {
+    "mnemonic": "jal",
+    "description": "Guarda PC + 4 en rd y salta al destino relativo al PC de esta instrucción.",
+    "syntax": "jal rd, destino",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "destino",
+        "description": "Etiqueta o desplazamiento en bytes relativo al PC de esta instrucción. Rango −1048576 a 1048574, con valor par."
+      }
+    ],
+    "example": "jal x5, 16",
+    "notes": [
+      "En este procesador el destino debe estar alineado a 4 bytes. Un destino desalineado provoca un fallo al ejecutar."
+    ]
+  },
+  {
+    "mnemonic": "jalr",
+    "description": "Guarda PC + 4 en rd y salta a rs1 + offset, después de poner en cero el bit 0 de esa dirección.",
+    "syntax": "jalr rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "jalr x5, 8(x1)",
+    "notes": [
+      "En este procesador el destino debe estar alineado a 4 bytes. Un destino desalineado provoca un fallo al ejecutar."
+    ]
+  },
+  {
+    "mnemonic": "lb",
+    "description": "Lee un byte de la dirección rs1 + offset, extiende su signo a 32 bits y lo escribe en rd.",
+    "syntax": "lb rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "lb x6, 8(x3)",
+    "notes": [
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "lbu",
+    "description": "Lee un byte de la dirección rs1 + offset, completa con ceros hasta 32 bits y lo escribe en rd.",
+    "syntax": "lbu rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "lbu x6, 8(x3)",
+    "notes": [
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "lh",
+    "description": "Lee 16 bits de la dirección rs1 + offset, extiende su signo a 32 bits y los escribe en rd.",
+    "syntax": "lh rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "lh x6, 8(x3)",
+    "notes": [
+      "La dirección debe ser múltiplo de 2 bytes; un acceso desalineado provoca un fallo.",
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "lhu",
+    "description": "Lee 16 bits de la dirección rs1 + offset, completa con ceros hasta 32 bits y los escribe en rd.",
+    "syntax": "lhu rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "lhu x6, 8(x3)",
+    "notes": [
+      "La dirección debe ser múltiplo de 2 bytes; un acceso desalineado provoca un fallo.",
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "lui",
+    "description": "Coloca imm20 en los bits 31:12 de rd y deja los doce bits bajos en cero.",
+    "syntax": "lui rd, imm20",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "imm20",
+        "description": "Campo de 20 bits sin signo: 0 a 1048575 (0xFFFFF). No recibe un valor ya desplazado."
+      }
+    ],
+    "example": "lui x5, 0x12345",
+    "notes": []
+  },
+  {
+    "mnemonic": "lw",
+    "description": "Lee 32 bits de la dirección rs1 + offset y los escribe en rd.",
+    "syntax": "lw rd, offset(rs1)",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "lw x6, 8(x3)",
+    "notes": [
+      "La dirección debe ser múltiplo de 4 bytes; un acceso desalineado provoca un fallo.",
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "or",
+    "description": "Escribe en rd el OR bit a bit de rs1 y rs2.",
+    "syntax": "or rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "or x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "ori",
+    "description": "Extiende imm con signo y escribe en rd el OR bit a bit con rs1.",
+    "syntax": "ori rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "ori x5, x1, -8",
+    "notes": []
+  },
+  {
+    "mnemonic": "sb",
+    "description": "Escribe los ocho bits bajos de rs2 en la dirección rs1 + offset; conserva los otros bytes de memoria.",
+    "syntax": "sb rs2, offset(rs1)",
+    "operands": [
+      {
+        "name": "rs2",
+        "description": "Registro que contiene el dato a escribir: x0–x31 o alias ABI."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "sb x2, 8(x3)",
+    "notes": [
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "sh",
+    "description": "Escribe los 16 bits bajos de rs2 desde la dirección rs1 + offset, en orden little-endian.",
+    "syntax": "sh rs2, offset(rs1)",
+    "operands": [
+      {
+        "name": "rs2",
+        "description": "Registro que contiene el dato a escribir: x0–x31 o alias ABI."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "sh x2, 8(x3)",
+    "notes": [
+      "La dirección debe ser múltiplo de 2 bytes; un acceso desalineado provoca un fallo.",
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "sll",
+    "description": "Desplaza rs1 a la izquierda y completa con ceros. La cantidad se toma de los cinco bits bajos de rs2.",
+    "syntax": "sll rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "sll x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "slli",
+    "description": "Desplaza rs1 a la izquierda shamt posiciones, completa con ceros y escribe el resultado en rd.",
+    "syntax": "slli rd, rs1, shamt",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "shamt",
+        "description": "Cantidad de bits a desplazar: entero de 0 a 31."
+      }
+    ],
+    "example": "slli x5, x1, 3",
+    "notes": []
+  },
+  {
+    "mnemonic": "slt",
+    "description": "Escribe 1 en rd si rs1 es menor que rs2 interpretados con signo; en otro caso escribe 0.",
+    "syntax": "slt rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "slt x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "slti",
+    "description": "Escribe 1 en rd si rs1 es menor que imm, ambos con signo; en otro caso escribe 0.",
+    "syntax": "slti rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "slti x5, x1, -8",
+    "notes": []
+  },
+  {
+    "mnemonic": "sltiu",
+    "description": "Extiende imm con signo a 32 bits y luego compara ambos operandos sin signo. Escribe 1 si rs1 es menor y 0 en otro caso.",
+    "syntax": "sltiu rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "sltiu x5, x1, -8",
+    "notes": []
+  },
+  {
+    "mnemonic": "sltu",
+    "description": "Escribe 1 en rd si rs1 es menor que rs2 interpretados sin signo; en otro caso escribe 0.",
+    "syntax": "sltu rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "sltu x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "sra",
+    "description": "Desplaza rs1 a la derecha conservando su signo. La cantidad se toma de los cinco bits bajos de rs2.",
+    "syntax": "sra rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "sra x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "srai",
+    "description": "Desplaza rs1 a la derecha shamt posiciones, conserva el signo y escribe el resultado en rd.",
+    "syntax": "srai rd, rs1, shamt",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "shamt",
+        "description": "Cantidad de bits a desplazar: entero de 0 a 31."
+      }
+    ],
+    "example": "srai x5, x1, 3",
+    "notes": []
+  },
+  {
+    "mnemonic": "srl",
+    "description": "Desplaza rs1 a la derecha y completa con ceros. La cantidad se toma de los cinco bits bajos de rs2.",
+    "syntax": "srl rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "srl x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "srli",
+    "description": "Desplaza rs1 a la derecha shamt posiciones, completa con ceros y escribe el resultado en rd.",
+    "syntax": "srli rd, rs1, shamt",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "shamt",
+        "description": "Cantidad de bits a desplazar: entero de 0 a 31."
+      }
+    ],
+    "example": "srli x5, x1, 3",
+    "notes": []
+  },
+  {
+    "mnemonic": "sub",
+    "description": "Resta rs2 de rs1 y escribe los 32 bits bajos del resultado en rd.",
+    "syntax": "sub rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "sub x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "sw",
+    "description": "Escribe los 32 bits de rs2 desde la dirección rs1 + offset, en orden little-endian.",
+    "syntax": "sw rs2, offset(rs1)",
+    "operands": [
+      {
+        "name": "rs2",
+        "description": "Registro que contiene el dato a escribir: x0–x31 o alias ABI."
+      },
+      {
+        "name": "offset(rs1)",
+        "description": "rs1 es el registro base; offset es un desplazamiento en bytes con signo de −2048 a 2047."
+      }
+    ],
+    "example": "sw x2, 8(x3)",
+    "notes": [
+      "La dirección debe ser múltiplo de 4 bytes; un acceso desalineado provoca un fallo.",
+      "El acceso completo debe quedar dentro de la memoria de datos del perfil activo."
+    ]
+  },
+  {
+    "mnemonic": "xor",
+    "description": "Escribe en rd el XOR bit a bit de rs1 y rs2.",
+    "syntax": "xor rd, rs1, rs2",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "rs2",
+        "description": "Segundo registro fuente: x0–x31 o alias ABI."
+      }
+    ],
+    "example": "xor x5, x1, x2",
+    "notes": []
+  },
+  {
+    "mnemonic": "xori",
+    "description": "Extiende imm con signo y escribe en rd el XOR bit a bit con rs1.",
+    "syntax": "xori rd, rs1, imm",
+    "operands": [
+      {
+        "name": "rd",
+        "description": "Registro destino: x0–x31 o alias ABI. Las escrituras en x0 se descartan."
+      },
+      {
+        "name": "rs1",
+        "description": "Primer registro fuente: x0–x31 o alias ABI."
+      },
+      {
+        "name": "imm",
+        "description": "Inmediato de 12 bits con signo: −2048 a 2047. Admite decimal y hexadecimal."
+      }
+    ],
+    "example": "xori x5, x1, -8",
+    "notes": []
+  }
+]

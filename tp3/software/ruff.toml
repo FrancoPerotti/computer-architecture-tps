@@ -1,0 +1,7 @@
+extend = "../ruff.toml"
+extend-exclude = ["resources/licenses"]
+
+[lint.per-file-ignores]
+"packaging/**" = ["D"]
+"tests/viewrv/**" = ["D"]
+"viewrv/**" = ["D"]

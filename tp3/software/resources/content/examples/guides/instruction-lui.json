@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "example_id": "instruction-lui",
+  "source_sha256": "1ff8492621ed79f8c819c0b74cb829ce71d1dac13c898250e55014cd84dc2e35",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "LUI completa EX: la selección de resultado usa el inmediato alto; no es una suma de ALU."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 5,
+      "positions": [],
+      "explanation": "WB confirma x3=0x12345000."
+    }
+  ],
+  "terminal": {
+    "cycle": 5,
+    "execution_status": "finished"
+  },
+  "prefix_only": false
+}

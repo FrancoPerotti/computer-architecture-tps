@@ -1,0 +1,1843 @@
+[
+  {
+    "example_id": "addition",
+    "title": "Sumar dos números",
+    "objective": "Preparar dos operandos y sumar sus valores.",
+    "source_path": "examples/addition.s",
+    "expected_observations": [
+      "Al finalizar, x1=8, x2=2 y x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "intro",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/addition.json",
+    "source_sha256": "4ed4166966badb20aebf38a01c4b95769ed6119507ab01d13a67d479add562a2",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "dependency",
+    "title": "Una dependencia entre instrucciones",
+    "objective": "Reconocer el uso de un resultado por instrucciones posteriores.",
+    "source_path": "examples/dependency.s",
+    "expected_observations": [
+      "Al finalizar, x1=5, x2=10 y x3=11.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "intro",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/dependency.json",
+    "source_sha256": "ff20e7bb8f95afdb28158aff5428ea09841bca36d1a76e699a343c4ef79407cb",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 5,
+        "2": 10,
+        "3": 11
+      }
+    }
+  },
+  {
+    "example_id": "instruction-add",
+    "title": "ADD con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-add.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "add",
+    "guide_path": "examples/guides/instruction-add.json",
+    "source_sha256": "f0d1e85623281345345b41d4d9d5f15fb9fd23cb0a7116b06aaac5badab0befc",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-sub",
+    "title": "SUB con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-sub.s",
+    "expected_observations": [
+      "Al finalizar, x3=6.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sub",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sub",
+    "guide_path": "examples/guides/instruction-sub.json",
+    "source_sha256": "460e99859cd068d1fb69cd2a9e1d5b1ab7a450de60ca38a796bd671236847e88",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 6
+      }
+    }
+  },
+  {
+    "example_id": "instruction-sll",
+    "title": "SLL con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-sll.s",
+    "expected_observations": [
+      "Al finalizar, x3=32.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sll",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sll",
+    "guide_path": "examples/guides/instruction-sll.json",
+    "source_sha256": "55a9cd2f7d9af76660c38815416ebab637e60e98c38ab1894a9e4acb5fbfcf3d",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 32
+      }
+    }
+  },
+  {
+    "example_id": "instruction-slt",
+    "title": "SLT con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-slt.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "slt",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "slt",
+    "guide_path": "examples/guides/instruction-slt.json",
+    "source_sha256": "dbca36f6392f1460037d58dd717543a4af510637bfb200bf0bc04ebf4679e8f0",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-sltu",
+    "title": "SLTU con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-sltu.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sltu",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sltu",
+    "guide_path": "examples/guides/instruction-sltu.json",
+    "source_sha256": "f62d7170c2907cffdce7449776572b29e60ee6243ad1d1f1d3f1b30ba87e77b5",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-xor",
+    "title": "XOR con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-xor.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "xor",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "xor",
+    "guide_path": "examples/guides/instruction-xor.json",
+    "source_sha256": "b3e79a4c756039a497505f0cb2494fd371a21a1fc41c5001dcc32907bf5c7e84",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-srl",
+    "title": "SRL con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-srl.s",
+    "expected_observations": [
+      "Al finalizar, x3=2.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "srl",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "srl",
+    "guide_path": "examples/guides/instruction-srl.json",
+    "source_sha256": "d1b7ba79dc1aed3e0f6babef2285b0bd54fd00543899e354dc9329919a7b0cac",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 2
+      }
+    }
+  },
+  {
+    "example_id": "instruction-sra",
+    "title": "SRA con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-sra.s",
+    "expected_observations": [
+      "Al finalizar, x3=2.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sra",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sra",
+    "guide_path": "examples/guides/instruction-sra.json",
+    "source_sha256": "1903b3df7cb5f07d3e4f106dc3bfbc0e9e6afeceedfc41ba5a9b204105b51bb0",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 2
+      }
+    }
+  },
+  {
+    "example_id": "instruction-or",
+    "title": "OR con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-or.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "or",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "or",
+    "guide_path": "examples/guides/instruction-or.json",
+    "source_sha256": "71cfe80e35ffac939ac88d0d7a6fe8212060f07aa717264bfc01916d1a04be22",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-and",
+    "title": "AND con dos operandos",
+    "objective": "Preparar x1=8 y x2=2, operar a x3 y finalizar.",
+    "source_path": "examples/instruction-and.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "and",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "and",
+    "guide_path": "examples/guides/instruction-and.json",
+    "source_sha256": "d1ec9e69f6735148927402a8a608372ed73c82047d0009a71ae8aaf32f7b8c8c",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-addi",
+    "title": "ADDI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-addi.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "addi",
+    "guide_path": "examples/guides/instruction-addi.json",
+    "source_sha256": "141df342581fad731539a97c26908dd627a0f897510e4a4f8d4f8e1c9b6605c2",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-slti",
+    "title": "SLTI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-slti.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "slti",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "slti",
+    "guide_path": "examples/guides/instruction-slti.json",
+    "source_sha256": "a2ba2ed103c09043ec6960952b0c8eb9fe5d3f0a3d3ce4a02269a8d2a0db6b2b",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-sltiu",
+    "title": "SLTIU con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-sltiu.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sltiu",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sltiu",
+    "guide_path": "examples/guides/instruction-sltiu.json",
+    "source_sha256": "541e728fecfaa8b58790e8651b88036015a7fde043edada4ca0cae56ce9558ea",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-xori",
+    "title": "XORI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-xori.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "xori",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "xori",
+    "guide_path": "examples/guides/instruction-xori.json",
+    "source_sha256": "18476b3b0e3e21ce5a2d7b1d7621e683a109a36bc11cfffd1d41b1a3f0d00ed3",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-ori",
+    "title": "ORI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-ori.s",
+    "expected_observations": [
+      "Al finalizar, x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "ori",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "ori",
+    "guide_path": "examples/guides/instruction-ori.json",
+    "source_sha256": "1dff5c631ef472409903fef8be120d528742cf8417c486b44da79453f2272d84",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "instruction-andi",
+    "title": "ANDI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-andi.s",
+    "expected_observations": [
+      "Al finalizar, x3=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "andi",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "andi",
+    "guide_path": "examples/guides/instruction-andi.json",
+    "source_sha256": "b8c73e9728af40dc2be84a1ac2b7e66fab541df6013b4a5a5c2871aa419f3a2c",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-slli",
+    "title": "SLLI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-slli.s",
+    "expected_observations": [
+      "Al finalizar, x3=32.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "slli",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "slli",
+    "guide_path": "examples/guides/instruction-slli.json",
+    "source_sha256": "491d2363710623783e0ce585fde2f2cedac039604fe99291a73c17b7faa0d0bc",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 32
+      }
+    }
+  },
+  {
+    "example_id": "instruction-srli",
+    "title": "SRLI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-srli.s",
+    "expected_observations": [
+      "Al finalizar, x3=2.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "srli",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "srli",
+    "guide_path": "examples/guides/instruction-srli.json",
+    "source_sha256": "cece7e1feeb785f7384d8d01102ad89ba06a946d24284c598abc91dbebd9cee9",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 2
+      }
+    }
+  },
+  {
+    "example_id": "instruction-srai",
+    "title": "SRAI con inmediato",
+    "objective": "Preparar x1=8, operar con inmediato 2 y destino x3.",
+    "source_path": "examples/instruction-srai.s",
+    "expected_observations": [
+      "Al finalizar, x3=2.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "srai",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "srai",
+    "guide_path": "examples/guides/instruction-srai.json",
+    "source_sha256": "4e19bc3aa8b6005d1a15a58e2d9a40486b4595d34538202390375021e344a7f7",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "3": 2
+      }
+    }
+  },
+  {
+    "example_id": "instruction-lui",
+    "title": "LUI: formar la parte alta",
+    "objective": "Construir una constante de 32 bits sin suma de operandos.",
+    "source_path": "examples/instruction-lui.s",
+    "expected_observations": [
+      "Al finalizar, x3=0x12345000.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lui",
+    "guide_path": "examples/guides/instruction-lui.json",
+    "source_sha256": "1ff8492621ed79f8c819c0b74cb829ce71d1dac13c898250e55014cd84dc2e35",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "3": 305418240
+      }
+    }
+  },
+  {
+    "example_id": "instruction-lb",
+    "title": "LB: cargar y extender",
+    "objective": "Escribir 0x000080ff en dirección cero y distinguir tamaño y extensión.",
+    "source_path": "examples/instruction-lb.s",
+    "expected_observations": [
+      "x3 final = 0xffffffff.",
+      "Memoria recibida esperada: [0]=0xff, [1]=0x80, [2]=0x00, [3]=0x00; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "lb",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lb",
+    "guide_path": "examples/guides/instruction-lb.json",
+    "source_sha256": "048650284c068b6a8144175f84d7a07dda7e34037ad92379030c41b8d9756291",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 33023,
+        "3": 4294967295
+      },
+      "memory": {
+        "0": 255,
+        "1": 128,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-lbu",
+    "title": "LBU: cargar y extender",
+    "objective": "Escribir 0x000080ff en dirección cero y distinguir tamaño y extensión.",
+    "source_path": "examples/instruction-lbu.s",
+    "expected_observations": [
+      "x3 final = 0x000000ff.",
+      "Memoria recibida esperada: [0]=0xff, [1]=0x80, [2]=0x00, [3]=0x00; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "lbu",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lbu",
+    "guide_path": "examples/guides/instruction-lbu.json",
+    "source_sha256": "ab66e8ae40f80619b7710037f1cb3cd0e68445f234e988b2bdb4f60f4f6083f8",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 33023,
+        "3": 255
+      },
+      "memory": {
+        "0": 255,
+        "1": 128,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-lh",
+    "title": "LH: cargar y extender",
+    "objective": "Escribir 0x000080ff en dirección cero y distinguir tamaño y extensión.",
+    "source_path": "examples/instruction-lh.s",
+    "expected_observations": [
+      "x3 final = 0xffff80ff.",
+      "Memoria recibida esperada: [0]=0xff, [1]=0x80, [2]=0x00, [3]=0x00; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "lh",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lh",
+    "guide_path": "examples/guides/instruction-lh.json",
+    "source_sha256": "7acafae8875e23b195cdc9e56f9b018e3b2c995a8b343435445598434a523918",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 33023,
+        "3": 4294934783
+      },
+      "memory": {
+        "0": 255,
+        "1": 128,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-lhu",
+    "title": "LHU: cargar y extender",
+    "objective": "Escribir 0x000080ff en dirección cero y distinguir tamaño y extensión.",
+    "source_path": "examples/instruction-lhu.s",
+    "expected_observations": [
+      "x3 final = 0x000080ff.",
+      "Memoria recibida esperada: [0]=0xff, [1]=0x80, [2]=0x00, [3]=0x00; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "lhu",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lhu",
+    "guide_path": "examples/guides/instruction-lhu.json",
+    "source_sha256": "d9d09e26234fe106b61535ba827f4d727d6967190a164dfb4943f323db3bd4a5",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 33023,
+        "3": 33023
+      },
+      "memory": {
+        "0": 255,
+        "1": 128,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-lw",
+    "title": "LW: cargar y extender",
+    "objective": "Escribir 0x000080ff en dirección cero y distinguir tamaño y extensión.",
+    "source_path": "examples/instruction-lw.s",
+    "expected_observations": [
+      "x3 final = 0x000080ff.",
+      "Memoria recibida esperada: [0]=0xff, [1]=0x80, [2]=0x00, [3]=0x00; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "lw",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "lw",
+    "guide_path": "examples/guides/instruction-lw.json",
+    "source_sha256": "b388c189df1dd0f3aaa45b7299527ba3c5ac05369d8be2a8a1e5b8c393cc5313",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 33023,
+        "3": 33023
+      },
+      "memory": {
+        "0": 255,
+        "1": 128,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-sb",
+    "title": "SB: almacenar little-endian",
+    "objective": "Preparar 0x12345678 y observar los bytes escritos desde dirección cero.",
+    "source_path": "examples/instruction-sb.s",
+    "expected_observations": [
+      "Bytes esperados: [0]=0x78.",
+      "used_count=1; los demás bytes no se presumen recibidos.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sb",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sb",
+    "guide_path": "examples/guides/instruction-sb.json",
+    "source_sha256": "1fe0ecedbcc6daab081707e578e7ceceda61e8b6ccb83f59c876ab2825364729",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 305419896
+      },
+      "memory": {
+        "0": 120
+      },
+      "used_count": 1
+    }
+  },
+  {
+    "example_id": "instruction-sh",
+    "title": "SH: almacenar little-endian",
+    "objective": "Preparar 0x12345678 y observar los bytes escritos desde dirección cero.",
+    "source_path": "examples/instruction-sh.s",
+    "expected_observations": [
+      "Bytes esperados: [0]=0x78, [1]=0x56.",
+      "used_count=2; los demás bytes no se presumen recibidos.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sh",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sh",
+    "guide_path": "examples/guides/instruction-sh.json",
+    "source_sha256": "17a9f6546e9245702401406c07234ae26975d804a0452c6e729fa45fef67f2d9",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 305419896
+      },
+      "memory": {
+        "0": 120,
+        "1": 86
+      },
+      "used_count": 2
+    }
+  },
+  {
+    "example_id": "instruction-sw",
+    "title": "SW: almacenar little-endian",
+    "objective": "Preparar 0x12345678 y observar los bytes escritos desde dirección cero.",
+    "source_path": "examples/instruction-sw.s",
+    "expected_observations": [
+      "Bytes esperados: [0]=0x78, [1]=0x56, [2]=0x34, [3]=0x12.",
+      "used_count=4; los demás bytes no se presumen recibidos.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "sw",
+    "guide_path": "examples/guides/instruction-sw.json",
+    "source_sha256": "b831245f53396ad05c7f0fa97eef63bc18565004a7a0b02000486d7f0918a8ab",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 305419896
+      },
+      "memory": {
+        "0": 120,
+        "1": 86,
+        "2": 52,
+        "3": 18
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "instruction-beq",
+    "title": "BEQ: salto tomado",
+    "objective": "Contrastar el camino secuencial y el descarte por redirect.",
+    "source_path": "examples/instruction-beq.s",
+    "expected_observations": [
+      "x3 final=7. La escritura de 9 se descarta.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "beq",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "beq",
+    "guide_path": "examples/guides/instruction-beq.json",
+    "source_sha256": "a7d1a164d7925042f600ec5f5e6d456b89fb7e98cc6b5334624805173897d0f8",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 1,
+        "2": 1,
+        "3": 7
+      }
+    }
+  },
+  {
+    "example_id": "beq-not-taken",
+    "title": "BEQ: salto no tomado",
+    "objective": "Contrastar el camino secuencial y el descarte por redirect.",
+    "source_path": "examples/beq-not-taken.s",
+    "expected_observations": [
+      "x3 final=7. La escritura de 9 ocurre antes de la escritura de 7.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "beq",
+      "halt"
+    ],
+    "category": "control",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/beq-not-taken.json",
+    "source_sha256": "b39bfca5980543db220dc5894b0ce1e495f45e6cb0e45714663495665df47a3b",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 1,
+        "2": 2,
+        "3": 7
+      }
+    }
+  },
+  {
+    "example_id": "instruction-bne",
+    "title": "BNE: salto tomado",
+    "objective": "Contrastar el camino secuencial y el descarte por redirect.",
+    "source_path": "examples/instruction-bne.s",
+    "expected_observations": [
+      "x3 final=7. La escritura de 9 se descarta.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "bne",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "bne",
+    "guide_path": "examples/guides/instruction-bne.json",
+    "source_sha256": "1dce695fcb460be3e3058a345bf703fa125f20ee754b053abcd3b28968110916",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 1,
+        "2": 2,
+        "3": 7
+      }
+    }
+  },
+  {
+    "example_id": "bne-not-taken",
+    "title": "BNE: salto no tomado",
+    "objective": "Contrastar el camino secuencial y el descarte por redirect.",
+    "source_path": "examples/bne-not-taken.s",
+    "expected_observations": [
+      "x3 final=7. La escritura de 9 ocurre antes de la escritura de 7.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "bne",
+      "halt"
+    ],
+    "category": "control",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/bne-not-taken.json",
+    "source_sha256": "e78f401725af07dfdf6b6ce30e88a41cd1753e4aac82040353e8f1e8e6916b18",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 1,
+        "2": 1,
+        "3": 7
+      }
+    }
+  },
+  {
+    "example_id": "instruction-jal",
+    "title": "JAL: enlace y descarte",
+    "objective": "Saltar desde PC=0 a PC=8 y observar el enlace PC+4.",
+    "source_path": "examples/instruction-jal.s",
+    "expected_observations": [
+      "x3=4 y x4=0; la escritura de x4 se descarta.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "jal",
+      "addi",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "jal",
+    "guide_path": "examples/guides/instruction-jal.json",
+    "source_sha256": "aa0d4cbf03fb811f1fdc3930fce9ce931d5cc57bc9325fd704d6763b592fc5f7",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "3": 4,
+        "4": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-jalr",
+    "title": "JALR: destino indirecto",
+    "objective": "Preparar x1=12 y saltar desde PC=4, conservando enlace 8.",
+    "source_path": "examples/instruction-jalr.s",
+    "expected_observations": [
+      "x3=8 y x4=0; target=12 después de limpiar el bit cero.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "jalr",
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "jalr",
+    "guide_path": "examples/guides/instruction-jalr.json",
+    "source_sha256": "77f5bcae0b23df5acc31a556f64649d98cf4df9f11995df18bf0108cd09fae36",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 12,
+        "3": 8,
+        "4": 0
+      }
+    }
+  },
+  {
+    "example_id": "instruction-halt",
+    "title": "HALT como programa",
+    "objective": "Reconocer que el reconocimiento en ID no termina la sesión.",
+    "source_path": "examples/instruction-halt.s",
+    "expected_observations": [
+      "Se termina en EX, ciclo 3, sin escrituras arquitectónicas.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "halt"
+    ],
+    "category": "instruction",
+    "focus_instruction_id": "halt",
+    "guide_path": "examples/guides/instruction-halt.json",
+    "source_sha256": "a77a7f7dd42cc7a0d7b5972dc235af23cb74c3761491ff29e2659fcad2533385",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "0": 0
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "parallel-five",
+    "title": "Cinco etapas en paralelo",
+    "objective": "Identificar trabajo simultáneo sin dependencias.",
+    "source_path": "examples/parallel-five.s",
+    "expected_observations": [
+      "x1=1, x2=2, x3=3, x4=4, x5=5.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/parallel-five.json",
+    "source_sha256": "8a494defd1ad5c16a259f4313aecf68a00980ec2ca167d3037c2535e8472fb27",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5
+      }
+    }
+  },
+  {
+    "example_id": "forward-ex-mem",
+    "title": "Forwarding desde EX/MEM",
+    "objective": "Consumir inmediatamente un resultado todavía no escrito en RF.",
+    "source_path": "examples/forward-ex-mem.s",
+    "expected_observations": [
+      "x1=5 y x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/forward-ex-mem.json",
+    "source_sha256": "e3a1ec244326df799df3782bf619269c0dd7cd4b1e3f60624aef0770e51a6db8",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 5,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "forward-mem-wb",
+    "title": "Forwarding desde MEM/WB",
+    "objective": "Separar productor y consumidor con una instrucción independiente.",
+    "source_path": "examples/forward-mem-wb.s",
+    "expected_observations": [
+      "x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/forward-mem-wb.json",
+    "source_sha256": "1d89cc4906bf58ed5f19da7d25cde1de305ab8b9e2224691283ceb2fccc989e5",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 5,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "forward-two-sources",
+    "title": "Dos fuentes con productores distintos",
+    "objective": "Usar MEM/WB para rs1 y EX/MEM para rs2 en el mismo ciclo.",
+    "source_path": "examples/forward-two-sources.s",
+    "expected_observations": [
+      "x3=10.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/forward-two-sources.json",
+    "source_sha256": "332b6adaf3cab2bf4a7a2984eb8af5aae3a530ded1235b27316f77ab1b1010dd",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 8,
+        "2": 2,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "forward-youngest",
+    "title": "Prioridad del productor más reciente",
+    "objective": "Mantener dos productores de x1 y consumir el más nuevo.",
+    "source_path": "examples/forward-youngest.s",
+    "expected_observations": [
+      "x1=5 y x3=10; no se usa el x1=1 más antiguo.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/forward-youngest.json",
+    "source_sha256": "acd1da01aeada06c5559bede56f9c5a38b3240a47baea27d2c5ec5ce2efafa94",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 5,
+        "3": 10
+      }
+    }
+  },
+  {
+    "example_id": "load-use",
+    "title": "Load-use: retención y bubble",
+    "objective": "Consumir inmediatamente el dato de LW.",
+    "source_path": "examples/load-use.s",
+    "expected_observations": [
+      "Un ciclo de stall: IF/ID conserva ADD, ID/EX recibe bubble y el load avanza.",
+      "x2=9, x3=18; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sw",
+      "lw",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/load-use.json",
+    "source_sha256": "d5add33698c964cc76c02859dec6f2ded40349d3b474b6b16fe99078169cd8f9",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 9,
+        "2": 9,
+        "3": 18
+      },
+      "memory": {
+        "0": 9,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "wb-id-bypass",
+    "title": "Bypass de WB a ID",
+    "objective": "Hacer coincidir la lectura en ID con el WB de la fuente.",
+    "source_path": "examples/wb-id-bypass.s",
+    "expected_observations": [
+      "x3=10, sin stall.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/wb-id-bypass.json",
+    "source_sha256": "e4abff26514713685acf8e672fc9fbcd42c8590ea617de2d09d59bf29f41210e",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 5,
+        "3": 10,
+        "8": 8,
+        "9": 9
+      }
+    }
+  },
+  {
+    "example_id": "x0-write",
+    "title": "x0: escritura ignorada",
+    "objective": "Evitar una dependencia falsa con un productor cuyo rd es cero.",
+    "source_path": "examples/x0-write.s",
+    "expected_observations": [
+      "x0=0 y x3=0. El intento de escribir 99 no es productor válido para forwarding.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/x0-write.json",
+    "source_sha256": "fb9e1899b2cd7e6b81af7dc5381a3ce6cdcd79e02a2d0c7269ec28268e023ce5",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "0": 0,
+        "3": 0
+      }
+    }
+  },
+  {
+    "example_id": "x0-load-use",
+    "title": "Load a x0 y ceros escritos",
+    "objective": "Distinguir una lectura válida a x0 de una dependencia de datos.",
+    "source_path": "examples/x0-load-use.s",
+    "expected_observations": [
+      "No hay load-use por rd=x0. x0=0, x3=0.",
+      "Se reciben cuatro bytes cero escritos; used_count=4.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "sw",
+      "lw",
+      "add",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/x0-load-use.json",
+    "source_sha256": "580f9b7528878bfd002338c64f1b8630b27fdaa9a583900caef04a051a1e925c",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "0": 0,
+        "3": 0
+      },
+      "memory": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "halt-drain",
+    "title": "HALT con trabajo anterior",
+    "objective": "Conservar el store anterior y descartar la escritura posterior a HALT.",
+    "source_path": "examples/halt-drain.s",
+    "expected_observations": [
+      "El store confirma 7 en dirección cero; x4 sigue en cero. FINISHED después del drenado.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sw",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/halt-drain.json",
+    "source_sha256": "eea0a2e21fab31956041d767de4f27f0cb9740efc1897a0b543f72317a221ab6",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 7,
+        "4": 0
+      },
+      "memory": {
+        "0": 7,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "used_count": 4
+    }
+  },
+  {
+    "example_id": "loop-counter",
+    "title": "Bucle con PC repetido",
+    "objective": "Seguir la misma línea durante dos iteraciones sin mezclar apariciones.",
+    "source_path": "examples/loop-counter.s",
+    "expected_observations": [
+      "La primera iteración salta; la segunda no. x1 termina en cero.",
+      "La aparición de PC=4 de la primera vuelta puede coexistir con la búsqueda de la segunda.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "bne",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/loop-counter.json",
+    "source_sha256": "e82a37776e3545ecef754c36531eee3e30cd08b4b55cfce5e7f78da4d04a3c7e",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 0
+      }
+    }
+  },
+  {
+    "example_id": "loop-self",
+    "title": "BEQ a su propio PC",
+    "objective": "Observar apariciones distintas del mismo PC sin terminación automática.",
+    "source_path": "examples/loop-self.s",
+    "expected_observations": [
+      "El branch siempre vuelve a PC=0. No existe terminal automático: usar Pausar o Detener.",
+      "En los ciclos 4 y 7 coexisten una aparición en MEM y otra recién buscada del mismo PC.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "beq"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/loop-self.json",
+    "source_sha256": "549b39f3121594801e44c95ffd2962092b6f255a06694b3b7aa48ac9a62cdfae",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "0": 0
+      }
+    }
+  },
+  {
+    "example_id": "negative-compare",
+    "title": "Comparaciones con negativos",
+    "objective": "Contrastar comparación con signo y sin signo.",
+    "source_path": "examples/negative-compare.s",
+    "expected_observations": [
+      "x1=0xffffffff, x3=1, x4=0, x5=1, x6=0.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "slt",
+      "sltu",
+      "slti",
+      "sltiu",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/negative-compare.json",
+    "source_sha256": "7398defc5bab4ae24f537962aebe1c4b40c5352697103f53b0c80d5e1243ce24",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 4294967295,
+        "2": 1,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0
+      }
+    }
+  },
+  {
+    "example_id": "negative-shifts",
+    "title": "Shifts lógicos y aritméticos",
+    "objective": "Desplazar -8 y observar la extensión del signo.",
+    "source_path": "examples/negative-shifts.s",
+    "expected_observations": [
+      "SRA/SRAI: 0xfffffffc (-4). SRL/SRLI: 0x7ffffffc.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sra",
+      "srl",
+      "srai",
+      "srli",
+      "halt"
+    ],
+    "category": "interaction",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/negative-shifts.json",
+    "source_sha256": "7484af6fce5fbac29010727f06c8466248df549e19509c5b9992ff8dbfcc2261",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 4294967288,
+        "2": 1,
+        "3": 4294967292,
+        "4": 2147483644,
+        "5": 4294967292,
+        "6": 2147483644
+      }
+    }
+  },
+  {
+    "example_id": "load-misaligned",
+    "title": "Load desalineado",
+    "objective": "Comprobar alineación word antes de MEM.",
+    "source_path": "examples/load-misaligned.s",
+    "expected_observations": [
+      "FAULT: fault_cause=4, fault_pc=0. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lw",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/load-misaligned.json",
+    "source_sha256": "c9d7dceff13ee95eb1a90b77aed7b78319b5de34eb7110d9a026ace2bfd3d898",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "3": 0
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "store-misaligned",
+    "title": "Store desalineado",
+    "objective": "Rechazar el halfword de dirección impar sin escritura parcial.",
+    "source_path": "examples/store-misaligned.s",
+    "expected_observations": [
+      "FAULT: fault_cause=6, fault_pc=4. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "sh",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/store-misaligned.json",
+    "source_sha256": "5010fbdcb03049f7435ffc6da7a7041788af391a145cb7d243130bcdcb35ba77",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 7
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "x0-load-misaligned",
+    "title": "Un fault de load a x0 sigue siendo fault",
+    "objective": "Comprobar que rd=x0 no evita validar el acceso.",
+    "source_path": "examples/x0-load-misaligned.s",
+    "expected_observations": [
+      "FAULT: fault_cause=4, fault_pc=0. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lw",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/x0-load-misaligned.json",
+    "source_sha256": "9b1c4bf736ebca10b97e05a93c2cfe7884475a15d3bca57af8562e738d59efbb",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "0": 0
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "load-out-of-range",
+    "title": "Load fuera de DMEM REFERENCE",
+    "objective": "Formar la primera dirección fuera de los 2048 bytes de DMEM del perfil real.",
+    "source_path": "examples/load-out-of-range.s",
+    "expected_observations": [
+      "FAULT: fault_cause=5, fault_pc=8. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "lw",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/load-out-of-range.json",
+    "source_sha256": "6ac16342432c53ece46bf9370abf3b39ebfb668acfbe8d6f9a488567fe608ecd",
+    "memory_profiles": [
+      "REFERENCE"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 2048,
+        "3": 0
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "store-out-of-range",
+    "title": "Store fuera de DMEM REFERENCE",
+    "objective": "Rechazar un store en dirección 2048 sin marcas ni bytes parciales.",
+    "source_path": "examples/store-out-of-range.s",
+    "expected_observations": [
+      "FAULT: fault_cause=7, fault_pc=8. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "lui",
+      "addi",
+      "sw",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/store-out-of-range.json",
+    "source_sha256": "61c761083df100ce886d32a8f88a0384365bad025ef4caf968f6fcc1fbbc3b36",
+    "memory_profiles": [
+      "REFERENCE"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 2048
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "jump-misaligned",
+    "title": "JALR a un target desalineado",
+    "objective": "Limpiar bit cero y comprobar que bit uno todavía invalida target=2.",
+    "source_path": "examples/jump-misaligned.s",
+    "expected_observations": [
+      "FAULT: fault_cause=0, fault_pc=4. La causante no hace commit.",
+      "Las instrucciones anteriores conservan sus efectos; las posteriores se descartan.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi",
+      "jalr",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/jump-misaligned.json",
+    "source_sha256": "379caf094fdb81c24cf136d1138348e6f28851b3a4d19ce9e5c9001d394a3725",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "1": 2,
+        "3": 0
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "jump-out-of-image",
+    "title": "Salto válido fuera de la imagen",
+    "objective": "Separar el enlace JAL de un fault posterior del fetch.",
+    "source_path": "examples/jump-out-of-image.s",
+    "expected_observations": [
+      "JAL conserva x3=4. El fetch de PC=16 causa instruction-access-fault (1).",
+      "fault_pc=16, no el PC del JAL.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "jal",
+      "halt"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/jump-out-of-image.json",
+    "source_sha256": "80b533aa5a4b6604a3c3b8e18ab7b07cda62edd763489a0248747a8bf46cfcb4",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "3": 4
+      },
+      "used_count": 0
+    }
+  },
+  {
+    "example_id": "fetch-past-image",
+    "title": "Final de imagen sin HALT",
+    "objective": "Conservar el efecto anterior al fault de fetch.",
+    "source_path": "examples/fetch-past-image.s",
+    "expected_observations": [
+      "El fetch de PC=4 falla: causa 1 y fault_pc=4. x3=7 confirma su WB antes de FAULT.",
+      "Son expectativas del programa original; contrastalas con la captura recibida."
+    ],
+    "related_instruction_ids": [
+      "addi"
+    ],
+    "category": "boundary",
+    "focus_instruction_id": null,
+    "guide_path": "examples/guides/fetch-past-image.json",
+    "source_sha256": "42ecd3e3bd519ff73d059379a6bc4bb44b6909e583224e5571c5f7ee380f9db2",
+    "memory_profiles": [
+      "REFERENCE",
+      "ALT_1000"
+    ],
+    "expected_state": {
+      "registers": {
+        "3": 7
+      },
+      "used_count": 0
+    }
+  }
+]

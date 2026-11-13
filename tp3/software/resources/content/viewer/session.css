@@ -1,0 +1,6 @@
+/* The session keeps the complete approved graph and its camera controls. */
+body, body.sidebar-collapsed { display:block; height:100dvh; background:#fbfcfd; }
+#topbar, #controls, #step-navigation { display:none !important; }
+#canvas-area { position:absolute; inset:0; width:100%; height:100%; margin:0; border:0; border-radius:0; }
+#canvas-toolbar { left:10px; right:10px; bottom:10px; }
+#canvas-navigation { margin-left:auto; }

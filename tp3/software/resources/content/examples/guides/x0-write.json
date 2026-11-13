@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "example_id": "x0-write",
+  "source_sha256": "fb9e1899b2cd7e6b81af7dc5381a3ce6cdcd79e02a2d0c7269ec28268e023ce5",
+  "memory_profiles": [
+    "REFERENCE",
+    "ALT_1000"
+  ],
+  "assumptions": [
+    "Expectativa de diseño; no acredita una ejecución en FPGA.",
+    "Programa original sin cambios, LOAD confirmado y sesión nueva desde PC=0.",
+    "Cada ciclo de la guía corresponde a un ciclo CPU efectivo; pausas y tiempo de UART no agregan ciclos.",
+    "Las posiciones son posteriores al flanco. HALT se consume en EX; los efectos anteriores terminan durante el drenado.",
+    "Las señales de forwarding descritas son explicación del diseño; UART no mide esas entradas de multiplexores.",
+    "La tabla enumera solo posiciones válidas esperadas. Un latch ausente puede conservar bits residuales; ausencia no significa valor cero."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 2,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 3,
+      "positions": [
+        {
+          "latch": "IF/ID",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "ID/EX",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    },
+    {
+      "cycle": 4,
+      "positions": [
+        {
+          "latch": "ID/EX",
+          "pc": 8,
+          "occurrence": "occurrence-3"
+        },
+        {
+          "latch": "EX/MEM",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        },
+        {
+          "latch": "MEM/WB",
+          "pc": 0,
+          "occurrence": "occurrence-1"
+        }
+      ],
+      "explanation": "ADD usa cero para ambas fuentes: rd=x0 no habilita forwarding."
+    },
+    {
+      "cycle": 5,
+      "positions": [
+        {
+          "latch": "MEM/WB",
+          "pc": 4,
+          "occurrence": "occurrence-2"
+        }
+      ],
+      "explanation": "El WB de ADDI no modifica x0."
+    },
+    {
+      "cycle": 6,
+      "positions": [],
+      "explanation": "Las instrucciones válidas avanzan; las posiciones muestran entradas a la etapa siguiente, no la actividad recién terminada."
+    }
+  ],
+  "terminal": {
+    "cycle": 6,
+    "execution_status": "finished"
+  },
+  "prefix_only": false
+}
