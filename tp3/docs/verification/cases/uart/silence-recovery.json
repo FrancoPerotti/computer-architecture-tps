@@ -32,7 +32,9 @@
         "TEST-UART-006/C002",
         "TEST-UART-006/C005",
         "TEST-UART-006/C008",
-        "TEST-UART-006/C011"
+        "TEST-UART-006/C011",
+        "TEST-UART-006/C013",
+        "TEST-UART-006/C014"
       ]
     }
   ],
@@ -277,7 +279,7 @@
       "origins": [
         "TerminalenRECOVER"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-006/C014",
@@ -313,7 +315,7 @@
       "origins": [
         "TerminalenRECOVER"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

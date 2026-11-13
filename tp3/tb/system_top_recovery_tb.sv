@@ -6,8 +6,10 @@ module system_top_recovery_tb;
   logic clk = 1'b0, reset = 1'b1, serial_rx = 1'b1;
   logic serial_tx, uart_reset_request;
   string case_id;
+  integer cycle_counter = 0;
   system_top dut (.*);
   always #1ns clk = ~clk;
+  always @(posedge clk) cycle_counter = cycle_counter + 1;
 
   task automatic tx_byte(input byte unsigned value, input bit response_follows = 1'b0);
     integer bit_index;
@@ -69,24 +71,42 @@ module system_top_recovery_tb;
     bit           load_size_error_case;
     bit           activity_recovery_case;
     bit           running_recovery_case;
+    bit           terminal_recovery_case;
+    bit           activity_at_debug_stop_case;
+    integer       debug_index;
+    integer       bad_stop_cycle;
     #200ns;
     if (!$value$plusargs("CASE=%s", case_id)) $fatal(1, "missing canonical case ID");
     false_start_case       = case_id == "TEST-UART-006/C001";
     load_size_error_case   = case_id == "TEST-UART-006/C008";
     activity_recovery_case = case_id == "TEST-UART-006/C002";
     running_recovery_case  = case_id == "TEST-UART-006/C005";
+    terminal_recovery_case = (case_id == "TEST-UART-006/C013") ||
+                             (case_id == "TEST-UART-006/C014");
+    activity_at_debug_stop_case = case_id == "TEST-UART-006/C014";
     @(negedge clk);
     reset = 0;
 
     // addi x5,x0,7; halt
     tx_byte(8'h01);
-    tx_byte(8'h08);
+    tx_byte(terminal_recovery_case ? 8'h20 : 8'h08);
     tx_byte(8'h00);
     tx_byte(8'h00);
     tx_byte(8'h00);
     tx_byte(8'h00, 1'b1);
     expect_header(8'h01, 8'h01);
-    if (running_recovery_case) begin
+    if (terminal_recovery_case) begin
+      // Two nested counters keep RUN active until after its ACCEPTED response
+      // and the injected framing error, but finish before R expires.
+      tx_byte(8'h93); tx_byte(8'h00); tx_byte(8'h80); tx_byte(8'h0c); // addi x1,x0,200
+      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'h80); tx_byte(8'h0c); // addi x2,x0,200
+      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'hf1); tx_byte(8'hff); // addi x2,x2,-1
+      tx_byte(8'he3); tx_byte(8'h1e); tx_byte(8'h01); tx_byte(8'hfe); // bne x2,x0,-4
+      tx_byte(8'h13); tx_byte(8'h01); tx_byte(8'h80); tx_byte(8'h0c); // addi x2,x0,200
+      tx_byte(8'h93); tx_byte(8'h80); tx_byte(8'hf0); tx_byte(8'hff); // addi x1,x1,-1
+      tx_byte(8'he3); tx_byte(8'h98); tx_byte(8'h00); tx_byte(8'hfe); // bne x1,x0,-16
+      tx_byte(8'h0b); tx_byte(8'h00); tx_byte(8'h00); tx_byte(8'h00, 1'b1); // halt
+    end else if (running_recovery_case) begin
       tx_byte(8'h6f);
       tx_byte(8'h00);
       tx_byte(8'h00);
@@ -107,7 +127,55 @@ module system_top_recovery_tb;
     end
     expect_header(8'h01, 8'h02);
 
-    if (running_recovery_case) begin
+    if (terminal_recovery_case) begin
+      tx_byte(8'h02, 1'b1);
+      expect_header(8'h02, 8'h01);
+      tx_bad_stop(8'hA5);
+      bad_stop_cycle = cycle_counter;
+      // ACCEPTED is already complete. FINISHED must arrive during recovery.
+      expect_header(8'h02, 8'h0a);
+      debug_index = 0;
+      if (activity_at_debug_stop_case) begin
+        for (debug_index = 0; debug_index < 228; debug_index = debug_index + 1) begin
+          rx_byte(value);
+          if (debug_index >= 223 && value !== 8'h00)
+            $fatal(1, "expected empty Debug used_count, byte %0d was %02x", debug_index - 223, value);
+          if (debug_index == 227) begin
+            // rx_byte returns at the center of the final Stop bit. Start a new
+            // RX frame one functional clock before that Stop physically ends.
+            #(BIT_TIME / 2 - 2ns);
+            tx_bad_stop(8'hA5);
+          end
+        end
+      end else begin
+        fork
+          begin : receive_terminal_debug
+          for (debug_index = 0; debug_index < 228; debug_index = debug_index + 1) begin
+            rx_byte(value);
+            if (debug_index >= 223 && value !== 8'h00)
+              $fatal(1, "expected empty Debug used_count, byte %0d was %02x", debug_index - 223, value);
+          end
+          end
+          begin : check_recovery_before_debug_stop
+            wait (cycle_counter >= bad_stop_cycle + 5_000_000);
+            if (debug_index >= 228)
+              $fatal(1, "Debug Stop completed before the 5,000,000-clock recovery interval");
+          end
+        join
+      end
+      if (activity_at_debug_stop_case) begin
+        repeat (5_000_005) @(posedge clk);
+        @(negedge clk);
+        tx_byte(8'h05, 1'b1);
+        expect_header(8'h05, 8'h03);
+      end else begin
+        #(BIT_TIME / 2 + 1ns);
+        tx_byte(8'h05, 1'b1);
+        expect_header(8'h05, 8'h03);
+        #(3 * BIT_TIME);
+        if (serial_tx !== 1'b1) $fatal(1, "RUN terminal response was emitted more than once");
+      end
+    end else if (running_recovery_case) begin
       tx_byte(8'h02, 1'b1);
       expect_header(8'h02, 8'h01);
       tx_bad_stop(8'hA5);
@@ -150,31 +218,33 @@ module system_top_recovery_tb;
       join
     end
 
-    repeat (5_000_005) @(posedge clk);
-    @(negedge clk);
-    if (activity_recovery_case && serial_tx !== 1'b1)
-      $fatal(1, "discarded recovery traffic generated TX response");
+    if (!terminal_recovery_case) begin
+      repeat (5_000_005) @(posedge clk);
+      @(negedge clk);
+      if (activity_recovery_case && serial_tx !== 1'b1)
+        $fatal(1, "discarded recovery traffic generated TX response");
 
-    if (running_recovery_case) begin
-      tx_byte(8'h05);
-      #(3 * BIT_TIME);
-      if (serial_tx !== 1'b1 || uart_reset_request !== 1'b0)
-        $fatal(1, "RUN context was not retained after RX recovery");
-    end else begin
-      tx_byte(8'h05, 1'b1);
-      expect_header(8'h05, 8'h03);
-    end
-    if (running_recovery_case) begin
-      // The post-recovery CHECK_READY is consumed but ignored during RUN.
-    end else if (case_id == "TEST-UART-006/C011") begin
-      tx_byte(8'h02, 1'b1);
-      expect_header(8'h02, 8'h05);
-    end else begin
-      tx_byte(8'h03, 1'b1);
-      expect_header(8'h03, 8'h02);
-      rx_byte(value);  // Debug state
-      rx_byte(value);  // image_valid
-      if (!value[0]) $fatal(1, "RX recovery invalidated the prior image");
+      if (running_recovery_case) begin
+        tx_byte(8'h05);
+        #(3 * BIT_TIME);
+        if (serial_tx !== 1'b1 || uart_reset_request !== 1'b0)
+          $fatal(1, "RUN context was not retained after RX recovery");
+      end else begin
+        tx_byte(8'h05, 1'b1);
+        expect_header(8'h05, 8'h03);
+      end
+      if (running_recovery_case) begin
+        // The post-recovery CHECK_READY is consumed but ignored during RUN.
+      end else if (case_id == "TEST-UART-006/C011") begin
+        tx_byte(8'h02, 1'b1);
+        expect_header(8'h02, 8'h05);
+      end else begin
+        tx_byte(8'h03, 1'b1);
+        expect_header(8'h03, 8'h02);
+        rx_byte(value);  // Debug state
+        rx_byte(value);  // image_valid
+        if (!value[0]) $fatal(1, "RX recovery invalidated the prior image");
+      end
     end
 
     $display("PASS %s", case_id);
