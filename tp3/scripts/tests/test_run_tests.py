@@ -193,8 +193,35 @@ class SelectionTests(unittest.TestCase):
             timeout=5,
         )
         self.assertEqual(help_result.returncode, 0)
-        for flag in ["--test", "--all", "--list", "--format", "--manifest"]:
+        for flag in ["--test", "--issue", "--all", "--list", "--format", "--manifest"]:
             self.assertIn(flag, help_result.stdout)
+
+    def test_issue_11_selects_uart_debug_groups(self):
+        """Selecciona los grupos UART/Debug y conserva pendientes las variantes sin banco."""
+        result = self.cli(
+            "--manifest",
+            str(MANIFEST),
+            "--issue",
+            "11",
+            "--list",
+            "--format",
+            "json",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rows = json.loads(result.stdout)
+        self.assertEqual(len(rows), 44 + 18 + 24 + 8 + 7 + 10 + 9 + 5 + 31 + 14 + 16 + 10)
+        registered = {
+            row["case_id"]: (row["status"], row["execution_count"])
+            for row in rows
+            if row["case_id"] in {"TEST-UART-009/C008", "TEST-UART-009/C009"}
+        }
+        self.assertEqual(
+            registered,
+            {
+                "TEST-UART-009/C008": ("implemented", 1),
+                "TEST-UART-009/C009": ("implemented", 1),
+            },
+        )
 
     def test_cli_argument_errors_produce_nonzero_and_json(self):
         """Comprueba el código de uso inválido y la estructura de error para argumentos incorrectos."""

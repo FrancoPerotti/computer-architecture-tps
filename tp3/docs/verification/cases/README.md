@@ -62,7 +62,8 @@ El [cargador común](../../../scripts/verification_manifest.py) proporciona
 `load_manifest()` para agregar validación de esquema y coherencia, y
 `manifest_sources()` para enumerar sus archivos. Los consumidores deben usar
 ese acceso para trabajar con grupos y casos. `json.load(cases.json)` obtiene
-únicamente el índice. La CLI y sus selectores conservan su uso anterior.
+únicamente el índice. La CLI conserva la selección por `--test` y `--all`, y
+agrega `--issue 11` para los grupos UART/Debug TEST-UART-003–014.
 
 El preparador protege todos los archivos del catálogo frente a `--output`.
 El documento completo usado para validar el esquema es temporal y se elimina

@@ -10,6 +10,13 @@ from pathlib import Path
 from simulation_runner import SIMULATION_LEVELS, run_selection
 from verification_manifest import MANIFEST, TP3_ROOT, case_executions, index_manifest, load_manifest
 
+# Grupos UART/Debug cuyo alcance contiene verificaciones locales de la Issue #11.
+# Las variantes que dependen de CPU, UART física o placa siguen pendientes y no
+# se convierten en ejecuciones por el mero hecho de pertenecer a estos grupos.
+ISSUE_GROUPS = {
+    11: tuple(f"TEST-UART-{number:03}" for number in range(3, 15)),
+}
+
 
 class UsageError(ValueError):
     """Error de argumentos que la CLI informa con código de uso inválido."""
@@ -172,12 +179,20 @@ def make_parser(format_parser):
             "Ejemplos:\n"
             "  bash scripts/run_tests.sh --test TEST-PIPE-001\n"
             "  bash scripts/run_tests.sh --test TEST-PLAT-001/C003 --test TEST-PIPE-001 --format json\n"
+            "  bash scripts/run_tests.sh --issue 11\n"
             "  bash scripts/run_tests.sh --all --list --format json"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     selection = parser.add_mutually_exclusive_group(required=True)
     selection.add_argument("--test", action="append", metavar="ID", help="grupo o caso; repetible")
+    selection.add_argument(
+        "--issue",
+        type=int,
+        choices=tuple(ISSUE_GROUPS),
+        metavar="N",
+        help="seleccionar los grupos de verificación asociados a una issue",
+    )
     selection.add_argument(
         "--all",
         action="store_true",
@@ -220,7 +235,8 @@ def main(argv=None):
             require_executions(manifest, runnable)
             print(json.dumps({"status": "valid"}) if args.format == "json" else "Catálogo válido.")
             return 0
-        selection = select_cases(manifest, args.test or (), args.all)
+        selectors = args.test or ISSUE_GROUPS.get(args.issue, ())
+        selection = select_cases(manifest, selectors, args.all)
         if args.list:
             print_selection(manifest, selection, args.format)
             return 0

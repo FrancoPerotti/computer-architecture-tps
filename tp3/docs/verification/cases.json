@@ -2,7 +2,7 @@
   "$schema": "./cases.schema.json",
   "schema": "tp3-verification-cases",
   "status": "partially-executed",
-  "date": "2026-10-29",
+  "date": "2026-11-12",
   "scope": "finite logical cases; replays listed separately",
   "latch_fixture": {
     "ifid": [

@@ -1397,8 +1397,10 @@ I09 se observa aquí como retención local; I11–I13 como selección/exclusión
 se observa en los registros; los efectos arquitectónicos de I01, I02, I04,
 I06, I07, I16, I17 e I18 mantienen su comprobación global pendiente.
 
-La selección usa `--test` repetible y `--all`, sin añadir `--issue`. Con la
-imagen exacta de `docker/image.ref`, desde el entorno de desarrollo:
+La selección general usa `--test` repetible y `--all`. El selector específico
+`--issue 11` agrega los grupos UART/Debug TEST-UART-003–014 y conserva como
+pendientes los casos que no tienen bancos completos registrados. Con la imagen
+exacta de `docker/image.ref`, desde el entorno de desarrollo:
 
 ~~~bash
 make test-rtl TESTS="TEST-PIPE-001 TEST-PIPE-007 TEST-PIPE-008 TEST-PIPE-009 TEST-PIPE-010"
