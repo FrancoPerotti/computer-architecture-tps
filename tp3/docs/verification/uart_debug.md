@@ -385,6 +385,8 @@ La prueba comprende ocho casos canónicos del [manifiesto](cases.json):
 - C008 y C011: Stop inválido en tamaño y contenido LOAD, respectivamente.
 - C013 y C014: terminal FINISHED durante `RECOVER_RX`, con R completo antes o después del último Stop Debug.
 
+En nivel Sistema, C013 y C014 se ejecutan con `system_top_terminal_recovery_tb.sv` a 19.200 baudios y 50 MHz. El banco genera el Stop inválido y, en C014, un CHECK_READY sobre la línea RX. Verifica el snapshot completo por TX, la espera de los cinco millones de clocks y la respuesta a un nuevo CHECK_READY tras la recuperación.
+
 El tráfico válido fuera de fase durante RUN y su recuperación sin respuesta se reutilizan de TEST-UART-003, sin duplicar sus IDs.
 
 ### Procedimiento

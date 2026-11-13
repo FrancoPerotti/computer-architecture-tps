@@ -3,7 +3,19 @@
   "source": "uart_debug.md#test-uart-007",
   "case_count": 7,
   "reuse_groups": [],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/response_serializer.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/response_serializer_debug_fixed_tb.sv"
+      ],
+      "top": "response_serializer_debug_fixed_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30
+    }
+  ],
   "cases": [
     {
       "file": "fixed-snapshot/cases-001-005.json"

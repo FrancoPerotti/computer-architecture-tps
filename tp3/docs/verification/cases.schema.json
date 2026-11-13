@@ -204,6 +204,10 @@
             "Placa"
           ]
         },
+        "simulator": {
+          "description": "Motor de simulación; Icarus por defecto. Verilator se usa para corridas largas de UART nominal.",
+          "enum": ["iverilog", "verilator"]
+        },
         "timeout_seconds": {
           "description": "Tiempo real máximo en segundos por caso de simulación; no incluye la compilación.",
           "type": "integer",

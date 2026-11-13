@@ -253,7 +253,7 @@
     "origins": [
       "Basecompleta"
     ],
-    "status": "pending"
+    "status": "implemented"
   },
   {
     "id": "TEST-UART-007/C002",
@@ -512,7 +512,7 @@
     "origins": [
       "IFIDcandidato"
     ],
-    "status": "pending"
+    "status": "implemented"
   },
   {
     "id": "TEST-UART-007/C003",
@@ -771,7 +771,7 @@
     "origins": [
       "IFIDresiduo"
     ],
-    "status": "pending"
+    "status": "implemented"
   },
   {
     "id": "TEST-UART-007/C004",
@@ -1029,7 +1029,7 @@
     "origins": [
       "idexinvalid"
     ],
-    "status": "pending"
+    "status": "implemented"
   },
   {
     "id": "TEST-UART-007/C005",
@@ -1287,6 +1287,6 @@
     "origins": [
       "exmeminvalid"
     ],
-    "status": "pending"
+    "status": "implemented"
   }
 ]

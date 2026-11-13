@@ -369,7 +369,7 @@ class SimulationRunnerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         report = self.validate_report(result)
         self.assertEqual(report["results"], [])
-        self.assertIn("no corresponde a una simulación Icarus", result.stderr)
+        self.assertIn("no corresponde a una simulación RTL", result.stderr)
 
     def test_empty_results_cannot_be_reported_as_passed(self):
         """Impide generar una aprobación para una corrida sin resultados."""

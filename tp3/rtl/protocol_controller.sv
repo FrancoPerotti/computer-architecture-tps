@@ -120,45 +120,52 @@ module protocol_controller #(
     else if (reset_request_set) uart_reset_request <= 1'b1;
   end
 
+  assign rd_uart = !reset && !rx_empty;
+  assign rx_byte_valid = !rx_empty && !rx_error_tick;
+  assign timer_limit_reached = (inactivity_count == 23'd4_999_999);
+  assign load_size_candidate = {r_data, load_size_received[31:0]};
+  assign last_size_byte = (size_byte_index == 3'd4);
+  assign load_size_valid = (load_size_candidate != 40'd0) &&
+      (load_size_candidate <= 40'(IMEM_CAPACITY_BYTES)) && (load_size_candidate[1:0] == 2'b00);
+  assign run_ended = program_finished || fault_terminal;
+  assign debug_read_select = !reset && (debug_hold || (run_result_required && run_ended));
+
+  // Requests precede acceptance on the same edge. Keep this decode independent
+  // of the CPU and serializer handshakes used by the transition logic.
+  assign load_request = !reset && protocol_state == RECEIVE_LOAD_SIZE && rx_byte_valid &&
+      last_size_byte && load_size_valid;
+  assign
+      run_request = !reset && protocol_state == WAIT_COMMAND && rx_byte_valid && r_data == CMD_RUN;
+  assign step_request = !reset && protocol_state == WAIT_COMMAND && rx_byte_valid &&
+      r_data == CMD_STEP;
+  assign load_size_bytes = load_request ? IMAGE_SIZE_WIDTH'(load_size_candidate) :
+      ((protocol_state == WAIT_LOAD_ACCEPT_SENT) || (protocol_state == RECEIVE_LOAD_DATA) ||
+       (protocol_state == WAIT_PREP_DONE)) ? IMAGE_SIZE_WIDTH'(load_size_received) : '0;
+
   always_comb begin
-    next_state = protocol_state;
-    rd_uart = !reset && !rx_empty;
-    rx_byte_valid = !rx_empty && !rx_error_tick;
-    timer_clear = 1'b0;
-    timer_inc = 1'b0;
-    timer_limit_reached = (inactivity_count == 23'd4_999_999);
-    load_size_candidate = {r_data, load_size_received[31:0]};
-    last_size_byte = (size_byte_index == 3'd4);
-    load_size_valid = (load_size_candidate != 40'd0) &&
-        (load_size_candidate <= 40'(IMEM_CAPACITY_BYTES)) && (load_size_candidate[1:0] == 2'b00);
-    size_init = 1'b0;
-    size_byte_capture = 1'b0;
-    size_index_inc = 1'b0;
-    remaining_load = 1'b0;
-    run_ended = program_finished || fault_terminal;
-    run_result_required_set = 1'b0;
+    next_state                = protocol_state;
+    timer_clear               = 1'b0;
+    timer_inc                 = 1'b0;
+    size_init                 = 1'b0;
+    size_byte_capture         = 1'b0;
+    size_index_inc            = 1'b0;
+    remaining_load            = 1'b0;
+    run_result_required_set   = 1'b0;
     run_result_required_clear = 1'b0;
-    debug_hold_set = 1'b0;
-    debug_hold_clear = 1'b0;
-    reset_request_set = 1'b0;
+    debug_hold_set            = 1'b0;
+    debug_hold_clear          = 1'b0;
+    reset_request_set         = 1'b0;
 
     response_start      = 1'b0;
     response_opcode     = '0;
     response_result     = '0;
     response_with_debug = 1'b0;
 
-    load_request = 1'b0;
-    run_request = 1'b0;
-    step_request = 1'b0;
-    load_size_bytes =
-        ((protocol_state == WAIT_LOAD_ACCEPT_SENT) || (protocol_state == RECEIVE_LOAD_DATA) ||
-         (protocol_state == WAIT_PREP_DONE)) ? IMAGE_SIZE_WIDTH'(load_size_received) : '0;
-    load_byte_valid = 1'b0;
-    load_byte_data = '0;
+    load_byte_valid  = 1'b0;
+    load_byte_data   = '0;
     load_byte_offset = '0;
-    load_last_byte = 1'b0;
-    load_abort = 1'b0;
-    debug_read_select = !reset && (debug_hold || (run_result_required && run_ended));
+    load_last_byte   = 1'b0;
+    load_abort       = 1'b0;
 
     if (!reset) begin
       case (protocol_state)
@@ -171,7 +178,6 @@ module protocol_controller #(
             size_init   = 1'b1;
             timer_clear = 1'b1;
           end else if (rx_byte_valid && r_data == CMD_RUN) begin
-            run_request = 1'b1;
             if (command_accepted) begin
               run_result_required_set = 1'b1;
               response_start          = !response_busy;
@@ -185,7 +191,6 @@ module protocol_controller #(
               next_state      = WAIT_RESPONSE_SENT;
             end
           end else if (rx_byte_valid && r_data == CMD_STEP) begin
-            step_request = 1'b1;
             if (!command_accepted && !response_busy) begin
               response_start  = 1'b1;
               response_opcode = CMD_STEP;
@@ -328,8 +333,6 @@ module protocol_controller #(
               response_result = RESULT_INVALID_SIZE;
             end else begin
               remaining_load  = command_accepted;
-              load_request    = 1'b1;
-              load_size_bytes = IMAGE_SIZE_WIDTH'(load_size_candidate);
               response_start  = 1'b1;
               response_opcode = CMD_LOAD;
               response_result = command_accepted ? RESULT_ACCEPTED : RESULT_BUSY;

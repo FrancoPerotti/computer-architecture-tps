@@ -255,7 +255,7 @@
     "origins": [
       "memwbinvalid"
     ],
-    "status": "pending"
+    "status": "implemented"
   },
   {
     "id": "TEST-UART-007/C007",
@@ -511,6 +511,6 @@
     "origins": [
       "Metadatano vigente"
     ],
-    "status": "pending"
+    "status": "implemented"
   }
 ]

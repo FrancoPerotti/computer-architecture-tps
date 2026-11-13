@@ -3,7 +3,19 @@
   "source": "uart_debug.md#test-uart-003",
   "case_count": 44,
   "reuse_groups": [],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/protocol_controller.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/protocol_commands_tb.sv"
+      ],
+      "top": "protocol_commands_tb",
+      "level": "Unidad",
+      "timeout_seconds": 30
+    }
+  ],
   "cases": [
     {
       "id": "TEST-UART-003/C001",
@@ -31,7 +43,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C002",
@@ -68,7 +80,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C003",
@@ -105,7 +117,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C004",
@@ -133,7 +145,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C005",
@@ -171,7 +183,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C006",
@@ -211,7 +223,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C007",
@@ -239,7 +251,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C008",
@@ -277,7 +289,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C009",
@@ -317,7 +329,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C010",
@@ -345,7 +357,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C011",
@@ -383,7 +395,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C012",
@@ -423,7 +435,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C013",
@@ -451,7 +463,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C014",
@@ -489,7 +501,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C015",
@@ -529,7 +541,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C016",
@@ -557,7 +569,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C017",
@@ -595,7 +607,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C018",
@@ -641,7 +653,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C019",
@@ -669,7 +681,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C020",
@@ -707,7 +719,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C021",
@@ -753,7 +765,7 @@
       "origins": [
         "Estado ycomando"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C022",
@@ -791,7 +803,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C023",
@@ -829,7 +841,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C024",
@@ -867,7 +879,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C025",
@@ -905,7 +917,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C026",
@@ -943,7 +955,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C027",
@@ -981,7 +993,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C028",
@@ -1019,7 +1031,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C029",
@@ -1057,7 +1069,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C030",
@@ -1095,7 +1107,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C031",
@@ -1135,7 +1147,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C032",
@@ -1175,7 +1187,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C033",
@@ -1215,7 +1227,7 @@
       "origins": [
         "Tráfico fuera de fase durante RUN"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C034",
@@ -1249,7 +1261,7 @@
       "origins": [
         "Opcode desconocido"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C035",
@@ -1283,7 +1295,7 @@
       "origins": [
         "Opcode desconocido"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C036",
@@ -1317,7 +1329,7 @@
       "origins": [
         "Opcode desconocido"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C037",
@@ -1346,7 +1358,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C038",
@@ -1375,7 +1387,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C039",
@@ -1404,7 +1416,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C040",
@@ -1433,7 +1445,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C041",
@@ -1465,7 +1477,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C042",
@@ -1497,7 +1509,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C043",
@@ -1529,7 +1541,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-003/C044",
@@ -1561,7 +1573,7 @@
       "origins": [
         "Datos nocomandos"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

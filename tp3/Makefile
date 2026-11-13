@@ -33,18 +33,21 @@ EX_FAULT_LINT_CAPACITIES := 4 1000 2048 4294967296
 DMEM_RTL_TOPS := data_memory mem_stage
 DMEM_LINT_CAPACITIES := 4 1000 2048
 PROCESSOR_SOURCES := $(RTL_SOURCES) rtl/processor_top.sv
+SYSTEM_SOURCES := $(PROCESSOR_SOURCES) rtl/protocol_controller.sv \
+                  rtl/response_serializer.sv rtl/system_top.sv
 REPORTS := build/reports
 VERIBLE_LINT := verible-verilog-lint --ruleset=none --rules_config=.rules.verible_lint
 VERIBLE_FORMAT := verible-verilog-format --flagfile=.verible-format-flags
 export TESTS
 
-.PHONY: help format format-check lint lint-processor review-cpu validate test-infra test-software test-rtl test check
+.PHONY: help format format-check lint lint-processor lint-system review-cpu validate test-infra test-software test-rtl test check
 help:
 	@printf '%s\n' \
 	  'make format        Aplicar formato SystemVerilog, Python y Bash' \
 	  'make format-check  Comprobar formato sin modificar fuentes' \
 	  'make lint          Verible, Verilator, Ruff y ShellCheck' \
 	  'make lint-processor  Analizar el CPU real en tres configuraciones' \
+	  'make lint-system  Elaborar system_top y revisar su composición' \
 	  'make review-cpu    Contrastar jerarquía, payloads y recursos del CPU con el inventario' \
 	  'make validate      Validar esquemas, catálogo y fuentes registradas' \
 	  'make test-infra    Probar la infraestructura de pruebas' \
@@ -65,7 +68,7 @@ format-check:
 	ruff format --check $(PY_DIR) $(CPU_REVIEW_TOOL)
 	shfmt -ln bash -i 2 -d $(SH_SOURCES)
 
-lint: lint-processor
+lint: lint-processor lint-system
 	find $(SV_DIRS) -type f -name '*.sv' -print0 | xargs -0 -r $(VERIBLE_LINT)
 	@for top in $(RTL_TOPS); do \
 	  verilator --lint-only --language 1800-2012 --top-module "$$top" $(RTL_SOURCES); \
@@ -98,6 +101,15 @@ lint-processor:
 	  verilator --lint-only --language 1800-2012 --top-module processor_top \
 	    "-GIMEM_CAPACITY_BYTES=64'd$$imem" "-GDMEM_CAPACITY_BYTES=64'd$$dmem" \
 	    $(PROCESSOR_SOURCES); \
+	done
+
+# Elaboración y dependencias combinacionales del sistema en los tres perfiles.
+lint-system:
+	@for configuration in '1024 2048' '1000 1000' '4 4'; do \
+	  read -r imem dmem <<< "$$configuration"; \
+	  verilator --lint-only --language 1800-2012 --top-module system_top \
+	    "-GIMEM_CAPACITY_BYTES=64'd$$imem" "-GDMEM_CAPACITY_BYTES=64'd$$dmem" \
+	    $(SYSTEM_SOURCES); \
 	done
 
 # Esta revisión mecánica no sustituye el análisis de lógica local ni la implementación FPGA.

@@ -15,7 +15,8 @@ compilan, simulan y comprueban las fuentes con las mismas herramientas:
 | check-jsonschema     | 0.38.2              | Esquemas JSON y estructura del catálogo    |
 | GNU Make             | 4.3                 | Interfaz común de comprobaciones           |
 | Verible              | v0.0-4296-g0f262651 | Lint y formato SystemVerilog               |
-| Verilator            | 5.020               | Análisis técnico del RTL con `--lint-only` |
+| Verilator            | 5.020               | Lint y simulación compilada del enlace nominal |
+| GNU C++             | Ubuntu 24.04 snapshot | Compilación de los modelos Verilator       |
 | Ruff                 | 0.17.1              | Lint, docstrings y formato Python          |
 | ShellCheck           | 0.9.0               | Análisis de scripts Bash                   |
 | shfmt                | 3.8.0               | Formato Bash                               |
@@ -42,8 +43,7 @@ preparación; el entorno virtual distribuido se crea sin Pip.
 
 Los ejecutables de Verible y Ruff se instalan en `/opt/quality/bin` y sus
 licencias en `/opt/quality/share/licenses`. Se copian únicamente las herramientas
-de lint y formato de Verible. Verilator se instala sin las recomendaciones
-opcionales de APT; `make lint` no compila modelos C++.
+de lint y formato de Verible. El runtime incluye `g++` del snapshot para los bancos Verilator. `make lint` realiza análisis del RTL y `make test-rtl` compila los modelos C++ de los casos que declaran ese simulador.
 
 ## Entradas fijadas
 

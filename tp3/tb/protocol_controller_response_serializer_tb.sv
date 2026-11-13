@@ -348,7 +348,117 @@ module protocol_controller_response_serializer_tb;
     end
   endtask
 
+  task automatic set_terminal(input bit fault);
+    fault_terminal   = fault;
+    program_finished = !fault;
+  endtask
+
+  task automatic check_terminal_order(input integer scenario);
+    integer crossing;
+    bit     fault;
+    crossing = (scenario - 1) % 7;
+    fault    = scenario > 7;
+    add_short(CMD_RUN, RESULT_ACCEPTED);
+    if (crossing == 5) add_short(CMD_RESET, RESULT_ACCEPTED);
+    else add_debug(CMD_RUN, fault ? RESULT_FAULT : RESULT_FINISHED);
+
+    command_accepted = 1;
+    pause_tx         = crossing < 2;
+    send_rx(CMD_RUN);
+    wait_rx_idle();
+    check(controller.run_result_required, "RUN owns a terminal response");
+    if (crossing < 2) begin
+      if (crossing == 0) begin
+        set_terminal(fault);
+        #1;
+        check(debug_read_select && !response_start, "early terminal retains CPU during ACCEPTED");
+        pause_tx = 0;
+        while (!response_done_tick) begin
+          @(negedge clk);
+          #1;
+        end
+      end else begin
+        pause_tx = 0;
+        while (!response_done_tick) begin
+          @(negedge clk);
+          #1;
+        end
+      end
+      tick();
+      if (crossing == 1) set_terminal(fault);
+    end else begin
+      wait_response_idle();
+      check(controller.protocol_state == controller.WAIT_RUN_END, "RUN ACCEPTED closed");
+      if (crossing == 3 || crossing == 4) begin
+        pulse_rx_error();
+        check(controller.protocol_state == controller.RECOVER_RX, "RX in recovery");
+        if (crossing == 3) controller.inactivity_count = 23'd4999990;
+        set_terminal(fault);
+      end else if (crossing == 5) begin
+        send_rx(CMD_RESET);
+        #1;
+        check(response_start && response_opcode == CMD_RESET, "RESET wins when terminal is future");
+        tick();
+        set_terminal(fault);
+        wait_response_idle();
+        check(uart_reset_request && !controller.run_result_required, "RESET follows its Stop");
+        check_scoreboard_complete();
+        $display("PASS %s", selected_case);
+        $finish;
+      end else if (crossing == 6) begin
+        send_rx(CMD_RESET);
+        set_terminal(fault);
+      end else set_terminal(fault);
+    end
+
+    #1;
+    check(
+        response_start && !response_busy && response_with_debug && response_opcode == CMD_RUN &&
+            response_result == (fault ? RESULT_FAULT : RESULT_FINISHED),
+        $sformatf(
+        "terminal descriptor start=%b busy=%b hold=%b state=%b pending=%b",
+        response_start,
+        response_busy,
+        controller.debug_hold,
+        controller.protocol_state,
+        controller.run_result_required
+        ));
+    tick();
+    check(!controller.run_result_required && controller.debug_hold, "terminal captured once");
+    if (crossing == 3 || crossing == 4) begin
+      if (crossing == 3) begin
+        repeat (15) tick();
+        check(
+            controller.inactivity_count == 23'd4999999 && controller.debug_hold &&
+                controller.protocol_state == controller.RECOVER_RX,
+            "silence saturates during Debug");
+      end
+      while (!response_done_tick) begin
+        @(negedge clk);
+        #1;
+      end
+      if (crossing == 4) rx_activity = 1;
+      tick();
+      rx_activity = 0;
+      check(controller.protocol_state == controller.RECOVER_RX && !controller.debug_hold, $sformatf(
+            "last Stop state=%b hold=%b busy=%b",
+            controller.protocol_state,
+            controller.debug_hold,
+            response_busy
+            ));
+      if (crossing == 4) begin
+        check(controller.inactivity_count == 0, "activity near Stop restarts silence");
+        controller.inactivity_count = 23'd4999999;
+      end
+      tick();
+      check(controller.protocol_state == controller.WAIT_COMMAND, "recovery releases after both");
+    end else wait_response_idle();
+    check(!uart_reset_request && !debug_read_select, "terminal retired without UART reset");
+    check_scoreboard_complete();
+  endtask
+
   initial begin
+    integer order_case;
     reset                    = 1'b1;
     rx_error_tick            = 1'b0;
     rx_activity              = 1'b0;
@@ -371,6 +481,23 @@ module protocol_controller_response_serializer_tb;
     cpu_cycle_fire           = 1'b0;
     repeat (2) tick();
     reset = 1'b0;
+
+    if (!$value$plusargs("CASE=%s", selected_case)) selected_case = "TEST-UART-009/C008";
+    if (selected_case == "TEST-UART-006/C013" || selected_case == "TEST-UART-006/C014") begin
+      check_terminal_order(selected_case == "TEST-UART-006/C013" ? 4 : 5);
+      add_short(CMD_CHECK_READY, RESULT_READY);
+      send_rx(CMD_CHECK_READY);
+      wait_rx_idle();
+      wait_response_idle();
+      check_scoreboard_complete();
+      $display("PASS %s", selected_case);
+      $finish;
+    end
+    if ($sscanf(selected_case, "TEST-UART-012/C%d", order_case) == 1) begin
+      check_terminal_order(order_case);
+      $display("PASS %s", selected_case);
+      $finish;
+    end
 
     // CHECK_READY -> READY and BUSY; RX bytes arriving under a full TX queue
     // are still consumed and cannot become commands during WAIT_RESPONSE_SENT.
