@@ -172,13 +172,23 @@ module response_serializer_short_tb;
     #1;
     check(!response_busy && !response_done_tick, "second response returns idle");
 
-    // Reset aborta una respuesta y suprime cualquier finalización normal.
+    // Reset aborta una respuesta completa que todavía espera los Stops físicos.
     start_short(8'h04, 8'h01);
     tick();
+    tick();
+    tick();
+    tick();
+    check(
+        dut.state == 10'b1000000000 && dut.production_complete && dut.tx_pending == 2 &&
+            fifo_count == 2,
+        "reset case waits for physical transmission after production completes");
     reset = 1;
+    #1;
+    check(!response_busy && !response_done_tick && !wr_uart,
+          "reset suppresses completion while the last bytes are pending");
     tick();
     check(!response_busy && !response_done_tick && dut.state == 10'b0000000001,
-          "reset aborts without a normal completion");
+          "reset aborts the response without normal completion");
     reset = 0;
 
     $display("PASS response_serializer short responses");
