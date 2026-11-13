@@ -5,7 +5,9 @@ La entrada [scripts/run_tests.sh](../../scripts/run_tests.sh) delega en
 selección de grupos y casos y la ejecución con Icarus. El
 [coordinador de simulaciones](../../scripts/simulation_runner.py) compila
 las fuentes, prepara los datos externos y recoge los resultados.
-`--list` permite inspeccionar la selección sin ejecutar pruebas.
+`--list` permite inspeccionar la selección sin ejecutar pruebas. Además de los
+selectores generales, `--issue 11` selecciona TEST-UART-003–014 para el cierre
+local del Controller/Serializer y muestra sin aprobar las variantes pendientes.
 
 El manifiesto define las entradas y los valores esperados de los casos de
 hardware; los testbenches SystemVerilog realizan sus aserciones. Python
@@ -88,6 +90,8 @@ todos los casos implementados e informa los pendientes. Seleccionar un grupo
 aplica el mismo criterio. Pedir individualmente un caso pendiente es un error.
 Una selección de ejecución sin casos implementados también produce error;
 `--list` permite consultar pendientes y selecciones vacías sin simular.
+`--issue 11` es mutuamente excluyente con esos selectores y cubre los grupos
+UART/Debug 003–014; hoy solo ejecuta las variantes registradas en el catálogo.
 
 El comando conserva el orden de la primera aparición y elimina las
 repeticiones dentro del mismo grupo de ejecución. Las referencias

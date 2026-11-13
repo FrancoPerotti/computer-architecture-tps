@@ -3,7 +3,23 @@
   "source": "uart_debug.md#test-uart-009",
   "case_count": 9,
   "reuse_groups": [],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/protocol_controller.sv",
+        "rtl/response_serializer.sv",
+        "tb/protocol_controller_response_serializer_tb.sv"
+      ],
+      "top": "protocol_controller_response_serializer_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30,
+      "case_ids": [
+        "TEST-UART-009/C008",
+        "TEST-UART-009/C009"
+      ]
+    }
+  ],
   "cases": [
     {
       "id": "TEST-UART-009/C001",
@@ -204,7 +220,7 @@
       "origins": [
         "ÚltimoStop"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-009/C009",
@@ -225,7 +241,7 @@
       "origins": [
         "ÚltimoStop"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

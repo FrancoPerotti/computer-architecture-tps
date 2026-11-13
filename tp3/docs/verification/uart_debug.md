@@ -170,7 +170,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad protocolo con stubCPU; sistema por UART-004/010.
 - **Tipo de estímulo:** legal, tráfico fuera de fase y fixtures locales.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** bancos de Controller ejecutados manualmente; las 44 variantes canónicas no están registradas y varias solo tienen cobertura parcial.
 
 **Requisitos:** [REQ-UART-003](../requirements.md#7-uart-y-debug-unit), [REQ-UART-004](../requirements.md#7-uart-y-debug-unit), [REQ-UART-007](../requirements.md#7-uart-y-debug-unit), [REQ-UART-008](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-001](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-003](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -229,12 +229,11 @@ Las respuestas de rechazo BUSY se seleccionan con imagen válida cuando una soli
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
 <a id="test-uart-004"></a>
-
 ## TEST-UART-004 — LOAD mínimo, completo y tamaño de 40 bits
 
 - **Nivel:** sistema con UART físico.
 - **Tipo de estímulo:** legal y tamaños rechazados.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** banco de cabecera LOAD ejecutado manualmente en capacidades 1024 y 1000; las transacciones completas y variantes canónicas siguen pendientes.
 
 **Requisitos:** [REQ-UART-002](../requirements.md#7-uart-y-debug-unit), [REQ-UART-008](../requirements.md#7-uart-y-debug-unit), [REQ-UART-009](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-002](../requirements.md#7-uart-y-debug-unit), [REQ-MEM-003](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-010](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-012](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-015](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-024](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-030](../requirements.md#5-memorias-y-carga-de-programas), [REQ-EXEC-016](../requirements.md#6-finalización-y-modos-de-ejecución), [REQ-EXEC-017](../requirements.md#6-finalización-y-modos-de-ejecución).
 
@@ -291,7 +290,6 @@ La palabra ilegal puede cargarse y recibir DONE; al ejecutarla aparece FAULT por
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
 <a id="test-uart-005"></a>
-
 ## TEST-UART-005 — Timeout LOAD y prioridad error/byte/vencimiento
 
 - **Nivel:** unidad controlador e integración UART.
@@ -417,7 +415,7 @@ Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprob
 
 - **Nivel:** unidad serializador e integración Debug.
 - **Tipo de estímulo:** fixture retenido artificial y snapshot legal STEP.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** el banco de prefijo fijo se ejecutó manualmente; no cubre la respuesta completa de 230 bytes y no registra variantes canónicas.
 
 **Requisitos:** [REQ-DBG-005](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-006](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-007](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-008](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-009](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-013](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-014](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-016](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-017](../requirements.md#7-uart-y-debug-unit), [REQ-UART-005](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit).
 
@@ -476,12 +474,11 @@ La aprobación exige coincidencia de todos los campos, flags, padding, residuos 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
 <a id="test-uart-008"></a>
-
 ## TEST-UART-008 — Lista de memoria usada y cantidad inclusiva
 
 - **Nivel:** unidad serializador e integración CPU/Debug.
 - **Tipo de estímulo:** stores legales y fixtures de bitmap.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** el banco de DMEM se ejecutó manualmente para REFERENCE y ALT_1000; la matriz canónica completa sigue sin registrar.
 
 **Requisitos:** [REQ-DBG-010](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-012](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-013](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit), [REQ-MEM-008](../requirements.md#5-memorias-y-carga-de-programas), [REQ-MEM-029](../requirements.md#5-memorias-y-carga-de-programas), [REQ-UART-005](../requirements.md#7-uart-y-debug-unit).
 
@@ -538,12 +535,11 @@ Los dos recorridos cuentan y envían el mismo estado retenido, sin historial ni 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
 <a id="test-uart-009"></a>
-
 ## TEST-UART-009 — TX llena, byte retenido y fin físico
 
 - **Nivel:** unidad serializador/controlador e integración UART.
 - **Tipo de estímulo:** backpressure local dirigido.
-- **Estado:** diseñada, sin ejecutar.
+- **Estado:** C008 y C009 implementados y aprobados en integración local; C001–C007 siguen pendientes o con cobertura parcial.
 
 **Requisitos:** [REQ-UART-005](../requirements.md#7-uart-y-debug-unit), [REQ-UART-009](../requirements.md#7-uart-y-debug-unit), [REQ-UART-010](../requirements.md#7-uart-y-debug-unit), [REQ-UART-011](../requirements.md#7-uart-y-debug-unit), [REQ-DBG-015](../requirements.md#7-uart-y-debug-unit).
 
@@ -573,21 +569,21 @@ La prueba tiene 9 casos canónicos. El [manifiesto](cases.json) enumera los IDs 
 
 #### Estado para los cierres de las issues #10, #11 y #15
 
-Ninguna variante de TEST-UART-009 está implementada o aprobada actualmente: las nueve permanecen `pending` y el grupo no tiene ejecuciones en el runner. Los resultados de TEST-UART-001 y TEST-UART-002 acreditan componentes físicos reutilizados, pero no sustituyen una ejecución de estas variantes.
+El banco [`protocol_controller_response_serializer_tb.sv`](../../tb/protocol_controller_response_serializer_tb.sv) integra los dos RTL reales y modela FIFO RX/TX, Stops, Execution Control y fuentes Debug. Sus casos canónicos C008 y C009 están registrados como `Integración local`. C001–C007 permanecen `pending`: algunos bancos unitarios existentes ejercitan partes de esos recorridos, pero no todos reproducen las entradas y aserciones canónicas. Los resultados de TEST-UART-001 y TEST-UART-002 acreditan dependencias físicas reutilizadas, no las variantes completas de este grupo.
 
 | Variante | Bloques y nivel requerido | Relación con #10 y dependencia de #15 | Evidencia local disponible | Estado y motivo |
 |---|---|---|---|---|
-| C001 | `response_serializer` + FIFO TX; unidad e integración local de escritura/enqueue. | Usa FIFO TX y `tx_done_tick` de #10; depende de `response_serializer` de #11. No requiere #15 para el nivel local descrito. | T002/C001–C018 prueba FIFO; T001/C001 y C014–C025 comprueban la transmisión física y el fin del Stop. No se prueba retención del serializador. | Pendiente: no existe RTL del serializador ni banco registrado. |
-| C002 | `protocol_controller` + `uart_core`; fixture de unidad para `RECEIVE_LOAD_SIZE` con flags TX forzados. | Comprueba el retiro RX independiente de TX de #10; depende del Controller de #11. No requiere #15 para el fixture aislado. | T001 comprueba UART RX/full-duplex y T002 la FIFO; no comprueban la decisión `rd_uart` del Controller. | Pendiente: falta RTL del Controller y banco registrado. |
-| C003 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_COUNT`. | Igual que C001: necesita el camino físico TX de #10 y el serializador de #11; no requiere #15 en nivel local. | T002 prueba FIFO y T001 prueba TX física; sin evidencia de conservación del byte/cursor del serializador. | Pendiente: falta RTL del serializador y banco registrado. |
-| C004 | `protocol_controller` + `uart_core`; fixture de unidad para descarte en `RECOVER_RX` con TX ocupada. | Comprueba recuperación/consumo RX de #10 bajo control de #11. No requiere #15 para el fixture aislado. | T001/C026–C028 comprueba errores y recuperación física RX; no comprueba el descarte por Controller. | Pendiente: falta RTL del Controller y banco registrado. |
-| C005 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_ENTRY`. | Necesita FIFO/TX de #10 y serializador de #11; no requiere #15 en nivel local. | T002 prueba FIFO y T001 prueba TX física; no comprueban cursor ni byte ENTRY pendiente. | Pendiente: falta RTL del serializador y banco registrado. |
+| C001 | `response_serializer` + FIFO TX; unidad e integración local de escritura/enqueue. | Usa FIFO TX y `tx_done_tick` de #10; depende de `response_serializer` de #11. No requiere #15 para el nivel local descrito. | `response_serializer_short_tb.sv` retiene el opcode con TX llena; no cambia la fuente durante la espera como exige el caso. | Pendiente: cobertura parcial; variante no registrada. |
+| C002 | `protocol_controller` + `uart_core`; fixture de unidad para `RECEIVE_LOAD_SIZE` con flags TX forzados. | Comprueba el retiro RX independiente de TX de #10; depende del Controller de #11. No requiere #15 para el fixture aislado. | `protocol_controller_load_header_tb.sv` y el banco integrado prueban RX, pero no el cruce canónico de `RECEIVE_LOAD_SIZE` con TX forzada llena. | Pendiente: cobertura parcial; variante no registrada. |
+| C003 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_COUNT`. | Igual que C001: necesita el camino físico TX de #10 y el serializador de #11; no requiere #15 en nivel local. | `response_serializer_dmem_tb.sv` prueba backpressure de conteo, pero no el fixture del byte 123 con cambio de fuente requerido por C003. | Pendiente: cobertura parcial; variante no registrada. |
+| C004 | `protocol_controller` + `uart_core`; fixture de unidad para descarte en `RECOVER_RX` con TX ocupada. | Comprueba recuperación/consumo RX de #10 bajo control de #11. No requiere #15 para el fixture aislado. | `protocol_controller_recovery_tb.sv` descarta RX; no cruza ese descarte con TX ocupada como pide el caso. | Pendiente: cobertura parcial; variante no registrada. |
+| C005 | `response_serializer` + FIFO TX; unidad e integración local en `ENQUEUE_ENTRY`. | Necesita FIFO/TX de #10 y serializador de #11; no requiere #15 en nivel local. | `response_serializer_dmem_tb.sv` recorre entradas con backpressure, pero no prueba el fixture exacto de dirección/dato y cambio de fuente de C005. | Pendiente: cobertura parcial; variante no registrada. |
 | C006 | Controller + serializador + `uart_core`; integración local de `RECOVER_RX` con respuesta terminal RUN/FINISHED. | Cruza recuperación RX de #10 con coordinación de #11. El fixture catalogado es local; comprobarlo además con CPU/sistema reales corresponde a #15. | T001/C027 demuestra recuperación RX sin interrumpir TX física; no incluye Controller, serializador, respuesta Debug ni CPU real. | Pendiente: faltan Controller/serializador y banco de integración registrado; la variante de sistema real depende además de #15. |
 | C007 | `response_serializer` + FIFO TX; unidad/integración local de enqueue simultáneo con fin físico. | Necesita FIFO y evento de fin de #10 más contador de pendientes de #11. No requiere #15 para el caso local. | T002 prueba aceptación FIFO por flags preflanco; T001 comprueba `tx_done_tick` al final del Stop. No se verifica el contador del serializador. | Pendiente: falta RTL del serializador y banco registrado. |
-| C008 | Controller + serializador + UART; escenario local LOAD/ACCEPTED y cierre LOAD/DONE. | Usa el fin físico UART de #10 y coordinación temporal de #11. El escenario del catálogo no exige CPU real; su reproducción como sesión completa corresponde a #15. | T001 acredita que `tx_done_tick` coincide con el fin del Stop; no comprueba `WAIT_TX_DONE`, timeout de contenido ni cierre del Controller. | Pendiente: faltan Controller/serializador y banco registrado; integración de sistema adicional reservada a #15. |
-| C009 | Controller + serializador + UART; escenario local STEP/DONE con Debug y liberación al Stop final. | Usa UART de #10 y coordinación Debug de #11. La demostración con CPU/sistema real corresponde a #15. | T001 acredita TX física y fin de Stop; no prueba `debug_hold`, respuesta completa ni liberación del Controller. | Pendiente: faltan Controller/serializador y banco registrado; integración de sistema adicional reservada a #15. |
+| C008 | Controller + serializador + UART; escenario local LOAD/ACCEPTED y cierre LOAD/DONE. | Usa el Stop físico modelado de #10 y coordinación temporal de #11. Repetirlo con Loader/CPU reales corresponde a #15. | Banco integrado registrado; compara ACCEPTED y DONE completos, los cuatro bytes de contenido y la espera de preparación. | Implementado para integración local; sistema real sigue pendiente de #15. |
+| C009 | Controller + serializador + UART; escenario local STEP/DONE con Debug y liberación al Stop final. | Usa el Stop físico modelado de #10 y coordinación Debug de #11. La integración con CPU real corresponde a #15. | Banco integrado registrado; compara STEP/DONE+Debug de 230 bytes y comprueba liberación de Debug al fin físico. | Implementado para integración local; integración CPU/sistema sigue pendiente de #15. |
 
-La issue #11 define la implementación local del `protocol_controller` y `response_serializer`; #15 integra esos bloques con CPU y sistema reales. La suite local de #10 acredita las dependencias físicas UART/FIFO, no los resultados de TEST-UART-009 ni los hitos de sistema. Los estados pendientes no se convierten en aprobados por semejanza con pruebas de submódulos.
+La issue #11 define la implementación local del `protocol_controller` y `response_serializer`; #15 integra esos bloques con CPU y sistema reales. El selector `bash scripts/run_tests.sh --issue 11` desde `tp3` selecciona los grupos UART/Debug TEST-UART-003–014, ejecuta solo los casos registrados e informa el resto como pendientes. Los estados pendientes no se convierten en aprobaciones por semejanza con pruebas de submódulos.
 
 C001, C003 y C005 comprueban la retención en FIXED, COUNT y ENTRY. C002 comprueba el procesamiento de tamaño en RECEIVE_LOAD_SIZE y C004 el descarte en RECOVER_RX, con TX llena y ocupada en ambos casos.
 
@@ -620,7 +616,6 @@ La aprobación exige las tres políticas de retención, las dos acciones RX, la 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
 
 <a id="test-uart-010"></a>
-
 ## TEST-UART-010 — RUN/STEP completos y rechazo sin alterar sesión
 
 - **Nivel:** sistema.
@@ -1018,3 +1013,41 @@ RUN no tiene timeout de duración. Las ventanas del host comprueban el fixture d
 La aprobación exige ambos perfiles dentro de todas las cotas, midiendo desde los eventos correctos hasta el Stop físico. Una evidencia abstracta previa no sustituye la medición del RTL.
 
 Para aprobar la prueba deben cumplirse los resultados y las condiciones de aprobación de todos los casos propios y de todas las comprobaciones reutilizadas. La expectativa de cada variante se consulta en el [manifiesto](cases.json) y se calcula independientemente del DUT. Si aparece una contradicción con un contrato vigente, debe señalarse y resolverse antes de ejecutar; el contrato conserva la autoridad.
+
+## Cierre de verificación local de la Issue #11
+
+El selector de issue examina 196 variantes de TEST-UART-003–014. Solo TEST-UART-009/C008 y C009 cumplen hoy un caso canónico completo de integración local y están registradas. Los otros 194 permanecen `pending`, aunque algunos bancos existentes cubran partes de sus estímulos. Este estado evita atribuir a la Issue #11 la integración CPU/UART física que corresponde a #15.
+
+| Grupo y variantes | Banco relacionado | Cobertura observada | Cierre |
+|---|---|---|---|
+| TEST-UART-003/C001–C021 | `protocol_controller_check_ready_tb.sv`, `protocol_controller_run_tb.sv`, `protocol_controller_step_tb.sv` | CHECK_READY, rechazos RUN/STEP y aceptación local; las variantes de contextos y transiciones canónicas no están parametrizadas por caso en el runner. | Pendiente; parcial. |
+| TEST-UART-003/C022–C033 | `protocol_controller_recovery_tb.sv`, `protocol_controller_run_tb.sv` | Descarte y conservación de RUN en fixtures acotados; no se recorren todas las ventanas/bytes de cada variante. | Pendiente; parcial. |
+| TEST-UART-003/C034–C036 | `protocol_controller_recovery_tb.sv` | Opcode desconocido `A7` y recuperación; no cubre los tres opcodes canónicos ni su caso individual en el ejecutor. | Pendiente; parcial. |
+| TEST-UART-003/C037–C044 | `protocol_controller_load_header_tb.sv` | Bytes tratados como datos durante cabecera/contenido LOAD en la unidad Controller. | Pendiente; parcial. |
+| TEST-UART-004/C001–C018 | `protocol_controller_load_header_tb.sv`, integración local | Tamaño little-endian y cabecera LOAD; faltan todos los programas, tamaños y efectos reales de Loader/preparación del catálogo. | Pendiente; depende parcialmente de #15. |
+| TEST-UART-005/C001–C024 | `protocol_controller_load_header_tb.sv` | Timeout/prioridad en fixtures de Controller; no están cubiertas y registradas todas las combinaciones de actividad, byte y vencimiento. | Pendiente; parcial. |
+| TEST-UART-006/C001–C014 | `protocol_controller_recovery_tb.sv`, integración local | Entrada/salida de RECOVER_RX y descarte; la espera de cinco millones de clocks se fuerza al umbral y no se modela la actividad RX física completa. | Pendiente; parcial. |
+| TEST-UART-007/C001–C007 | `response_serializer_debug_fixed_tb.sv` | Ordena y compara los 225 bytes fijos, pero el propio banco termina antes de `used_count`/DMEM y afirma que la respuesta queda incompleta. | Pendiente; cobertura parcial. |
+| TEST-UART-008/C001–C010 | `response_serializer_dmem_tb.sv` | Cuenta/lista DMEM y límites en ambos tamaños; el escenario de stores legales y la matriz exacta de cada variante no están conectados al ejecutor. | Pendiente; cobertura parcial. |
+| TEST-UART-009/C001–C007 | bancos short/DMEM/Controller; `protocol_controller_response_serializer_tb.sv` | Retención, simultaneidad y RX aparecen en pruebas dirigidas, pero no se cumple el fixture específico completo de cada variante. | Pendiente; parcial. |
+| TEST-UART-009/C008–C009 | `protocol_controller_response_serializer_tb.sv` | LOAD/ACCEPTED→contenido→DONE y STEP/DONE+Debug con comparación completa del mensaje y liberación en Stop físico. | Implementado y aprobado en integración local. |
+| TEST-UART-010/C001–C005 | `protocol_controller_run_tb.sv`, `protocol_controller_step_tb.sv`, integración local | RUN/STEP y terminales modelados; los programas y efectos arquitectónicos requieren CPU real. | Pendiente; #15. |
+| TEST-UART-011/C001–C031 | integración local; `response_serializer_dmem_tb.sv` | Se verifica liberación local de Debug, pero no retención de la CPU/RF/DMEM reales ni la matriz de fronteras/ocupaciones. | Pendiente; #15. |
+| TEST-UART-012/C001–C014 | `protocol_controller_run_tb.sv`, `protocol_controller_reset_tb.sv`, integración local | Orden RUN terminal y RESET en algunos recorridos; faltan los cruces completos con recuperación, prioridad y estados de sistema. | Pendiente; parcial/#15. |
+| TEST-UART-013/C001–C016 | `protocol_controller_reset_tb.sv` | Captura RESET y espera local; no integra acondicionador/reset global ni botón físico. | Pendiente; #15. |
+| TEST-UART-014/C001–C010 | `tools/verification` (modelos abstractos) | Las cotas se calculan sin ejecutar RTL; no hay medición de enlace ni evidencia de timing estático de 20 ns. | Pendiente; #10/#15 y análisis de timing. |
+
+### Evidencia ejecutada — 2026-11-12
+
+Entorno: imagen fijada por `tp3/docker/image.ref` (`ghcr.io/francoperotti/tp3-dev@sha256:de4cb5924aed933ee4023a4235d275decf9779895797272ee8c7fd52e0ba6e7c`), Icarus Verilog y VVP.
+
+| Comando desde `tp3` | Resultado |
+|---|---|
+| `bash scripts/run_tests.sh --issue 11` | 2 PASS (C008/C009), 0 FAIL, 0 ERROR; 194 casos pendientes. |
+| `python3 -m unittest discover -s scripts/tests -p test_run_tests.py -v` | 18/18 PASS; incluye selección `--issue 11`. |
+| `bash scripts/run_tests.sh --validate` | Catálogo válido; todas las fuentes registradas existen. |
+| Regresión dirigida manual de los nueve bancos Controller/Serializer; perfiles de LOAD 1024/1000 y DMEM 2048/1000 | 11/11 simulaciones PASS. |
+
+La regresión dirigida compiló y ejecutó `protocol_controller_check_ready_tb`, `protocol_controller_load_header_tb` en capacidades 1024 y 1000, `protocol_controller_recovery_tb`, `protocol_controller_run_tb`, `protocol_controller_step_tb`, `protocol_controller_reset_tb`, `response_serializer_short_tb`, `response_serializer_debug_fixed_tb` y `response_serializer_dmem_tb` en capacidades 2048 y 1000. Los avisos de Icarus sobre sensibilidad de selecciones constantes son informativos; las once simulaciones terminaron con código cero.
+
+Limitaciones: el banco integrado modela FIFO/transmisor, Execution Control y fuentes Debug; no integra CPU, Loader, UART 8N1 física ni reset de placa. Los snapshots de esa prueba usan datos cero y DMEM vacía. RECOVER_RX alcanza el umbral temporal mediante carga del contador, no simulando los cinco millones de ciclos. El banco fijo de 225 bytes y los modelos abstractos no cuentan como cobertura completa de TEST-UART-007 ni TEST-UART-014.
