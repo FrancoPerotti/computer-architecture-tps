@@ -17,17 +17,7 @@ module system_top_recovery_tb #(
   always #10ns clk = ~clk;
 
   always @(posedge clk) begin
-    if (!reset && dut.response_start) begin
-      captures++;
-      if (CASE_INDEX == 3)
-        $display(
-            "overflow trace: capture %h/%h in %b at %0t",
-            dut.response_opcode,
-            dut.response_result,
-            dut.controller_inst.protocol_state,
-            $time
-        );
-    end
+    if (!reset && dut.response_start) captures++;
     if (!reset && dut.rx_error_tick) received_errors++;
   end
 
@@ -150,6 +140,7 @@ module system_top_recovery_tb #(
           dut.uart_inst.rx_fifo.count
       );
     if (CASE_INDEX == 2) begin
+      host.send_byte(8'ha5);
       @(negedge clk);
       dut.controller_inst.inactivity_count = 23'(SILENCE_CLOCKS - 8);
       host.serial_rx                       = 0;
@@ -171,6 +162,11 @@ module system_top_recovery_tb #(
       if (content) begin
         host.send_byte(8'h02, 1);
         host.expect_header(8'h02, 8'h05);
+      end else begin
+        host.send_byte(8'h03, 1);
+        host.read_snapshot(8'h03, 8'h02);
+        if (host.response[1] !== 1 || host.cycles() !== 1)
+          $fatal(1, "recovery changed the prior executable image");
       end
     end
     $display("PASS TEST-UART-006/C%03d", CASE_INDEX);
