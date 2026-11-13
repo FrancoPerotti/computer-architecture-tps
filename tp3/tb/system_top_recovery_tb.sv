@@ -68,11 +68,13 @@ module system_top_recovery_tb;
     bit           false_start_case;
     bit           load_size_error_case;
     bit           activity_recovery_case;
+    bit           running_recovery_case;
     #200ns;
     if (!$value$plusargs("CASE=%s", case_id)) $fatal(1, "missing canonical case ID");
     false_start_case       = case_id == "TEST-UART-006/C001";
     load_size_error_case   = case_id == "TEST-UART-006/C008";
     activity_recovery_case = case_id == "TEST-UART-006/C002";
+    running_recovery_case  = case_id == "TEST-UART-006/C005";
     @(negedge clk);
     reset = 0;
 
@@ -84,17 +86,32 @@ module system_top_recovery_tb;
     tx_byte(8'h00);
     tx_byte(8'h00, 1'b1);
     expect_header(8'h01, 8'h01);
-    tx_byte(8'h93);
-    tx_byte(8'h02);
-    tx_byte(8'h70);
-    tx_byte(8'h00);
-    tx_byte(8'h0b);
-    tx_byte(8'h00);
-    tx_byte(8'h00);
-    tx_byte(8'h00, 1'b1);
+    if (running_recovery_case) begin
+      tx_byte(8'h6f);
+      tx_byte(8'h00);
+      tx_byte(8'h00);
+      tx_byte(8'h00);
+      tx_byte(8'h0b);
+      tx_byte(8'h00);
+      tx_byte(8'h00);
+      tx_byte(8'h00, 1'b1);
+    end else begin
+      tx_byte(8'h93);
+      tx_byte(8'h02);
+      tx_byte(8'h70);
+      tx_byte(8'h00);
+      tx_byte(8'h0b);
+      tx_byte(8'h00);
+      tx_byte(8'h00);
+      tx_byte(8'h00, 1'b1);
+    end
     expect_header(8'h01, 8'h02);
 
-    if (false_start_case) begin
+    if (running_recovery_case) begin
+      tx_byte(8'h02, 1'b1);
+      expect_header(8'h02, 8'h01);
+      tx_bad_stop(8'hA5);
+    end else if (false_start_case) begin
       // False Start: RX rises before its center sample.
       serial_rx = 0;
       #(BIT_TIME / 4);
@@ -138,9 +155,18 @@ module system_top_recovery_tb;
     if (activity_recovery_case && serial_tx !== 1'b1)
       $fatal(1, "discarded recovery traffic generated TX response");
 
-    tx_byte(8'h05, 1'b1);
-    expect_header(8'h05, 8'h03);
-    if (case_id == "TEST-UART-006/C011") begin
+    if (running_recovery_case) begin
+      tx_byte(8'h05);
+      #(3 * BIT_TIME);
+      if (serial_tx !== 1'b1 || uart_reset_request !== 1'b0)
+        $fatal(1, "RUN context was not retained after RX recovery");
+    end else begin
+      tx_byte(8'h05, 1'b1);
+      expect_header(8'h05, 8'h03);
+    end
+    if (running_recovery_case) begin
+      // The post-recovery CHECK_READY is consumed but ignored during RUN.
+    end else if (case_id == "TEST-UART-006/C011") begin
       tx_byte(8'h02, 1'b1);
       expect_header(8'h02, 8'h05);
     end else begin

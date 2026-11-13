@@ -30,6 +30,7 @@
       "case_ids": [
         "TEST-UART-006/C001",
         "TEST-UART-006/C002",
+        "TEST-UART-006/C005",
         "TEST-UART-006/C008",
         "TEST-UART-006/C011"
       ]
@@ -175,7 +176,7 @@
       "origins": [
         "Ab orto ysilencio"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-006/C008",
