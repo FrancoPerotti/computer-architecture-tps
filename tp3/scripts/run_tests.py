@@ -10,7 +10,6 @@ from pathlib import Path
 from simulation_runner import SIMULATION_LEVELS, run_selection
 from verification_manifest import MANIFEST, TP3_ROOT, case_executions, index_manifest, load_manifest
 
-
 # Grupos UART/Debug cuyo alcance contiene verificaciones locales de la Issue #11.
 # Las variantes que dependen de CPU, UART física o placa siguen pendientes y no
 # se convierten en ejecuciones por el mero hecho de pertenecer a estos grupos.
