@@ -5,7 +5,22 @@
   "reuse_groups": [
     "TEST-UART-013"
   ],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/basys3_top.sv",
+        "rtl/reset_sync.sv",
+        "tb/common/tp3_case_data.sv",
+        "tb/fixtures/clock_generator.platform_model.sv",
+        "tb/fixtures/system_top.platform_model.sv",
+        "tb/basys3_top_tb.sv"
+      ],
+      "top": "basys3_top_tb",
+      "level": "Integración local",
+      "timeout_seconds": 5
+    }
+  ],
   "cases": [
     {
       "id": "TEST-PLAT-002/C001",
@@ -23,7 +38,7 @@
       "origins": [
         "Evento de plataforma"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C002",
@@ -41,7 +56,7 @@
       "origins": [
         "Evento de plataforma"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C003",
@@ -59,7 +74,7 @@
       "origins": [
         "Evento de plataforma"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C004",
@@ -77,7 +92,7 @@
       "origins": [
         "Evento de plataforma"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C005",
@@ -93,7 +108,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C006",
@@ -109,7 +124,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C007",
@@ -125,7 +140,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C008",
@@ -141,7 +156,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C009",
@@ -157,7 +172,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-PLAT-002/C010",
@@ -173,7 +188,7 @@
       "origins": [
         "Dosfuentes local"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

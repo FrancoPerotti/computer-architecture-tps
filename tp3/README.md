@@ -13,3 +13,5 @@ validación del catálogo y todas las pruebas implementadas. `make help` muestra
 los comandos y ejemplos de selección. Los mismos controles se usan en CI.
 
 [Ver la documentación de arquitectura](docs/architecture/system_overview.md)
+
+[Compilar y verificar la plataforma Basys 3 en Vivado](reports/issue-16.md)
