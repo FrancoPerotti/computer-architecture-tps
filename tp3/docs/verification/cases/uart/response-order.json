@@ -5,7 +5,19 @@
   "reuse_groups": [
     "TEST-UART-010"
   ],
-  "executions": [],
+  "executions": [
+    {
+      "sources": [
+        "rtl/system_pkg.sv",
+        "rtl/protocol_controller.sv",
+        "rtl/response_serializer.sv",
+        "tb/protocol_controller_response_serializer_tb.sv"
+      ],
+      "top": "protocol_controller_response_serializer_tb",
+      "level": "Integración local",
+      "timeout_seconds": 30
+    }
+  ],
   "cases": [
     {
       "id": "TEST-UART-012/C001",
@@ -41,7 +53,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C002",
@@ -78,7 +90,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C003",
@@ -114,7 +126,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C004",
@@ -150,7 +162,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C005",
@@ -187,7 +199,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C006",
@@ -226,7 +238,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C007",
@@ -266,7 +278,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C008",
@@ -302,7 +314,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C009",
@@ -339,7 +351,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C010",
@@ -375,7 +387,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C011",
@@ -411,7 +423,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C012",
@@ -448,7 +460,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C013",
@@ -487,7 +499,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     },
     {
       "id": "TEST-UART-012/C014",
@@ -527,7 +539,7 @@
       "origins": [
         "Orden de respuesta y prioridad preflanco"
       ],
-      "status": "pending"
+      "status": "implemented"
     }
   ]
 }

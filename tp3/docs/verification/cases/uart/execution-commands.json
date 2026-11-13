@@ -53,6 +53,7 @@
         "rtl/protocol_controller.sv",
         "rtl/response_serializer.sv",
         "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
         "tb/system_top_uart_tb.sv"
       ],
       "top": "system_top_uart_tb",
@@ -108,6 +109,7 @@
         "rtl/protocol_controller.sv",
         "rtl/response_serializer.sv",
         "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
         "tb/system_top_uart_tb.sv"
       ],
       "top": "system_top_uart_tb",
@@ -166,6 +168,7 @@
         "rtl/protocol_controller.sv",
         "rtl/response_serializer.sv",
         "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
         "tb/system_top_uart_tb.sv"
       ],
       "top": "system_top_uart_tb",
@@ -224,6 +227,7 @@
         "rtl/protocol_controller.sv",
         "rtl/response_serializer.sv",
         "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
         "tb/system_top_uart_tb.sv"
       ],
       "top": "system_top_uart_tb",
@@ -282,6 +286,7 @@
         "rtl/protocol_controller.sv",
         "rtl/response_serializer.sv",
         "rtl/system_top.sv",
+        "tb/system_uart_host.sv",
         "tb/system_top_uart_tb.sv"
       ],
       "top": "system_top_uart_tb",

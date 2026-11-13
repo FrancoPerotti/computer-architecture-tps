@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
 module system_top_load_tb #(
-    parameter integer CASE_INDEX = 1
+    parameter integer          CASE_INDEX = 1,
+    parameter longint unsigned BAUD_RATE  = 64'd3_125_000
 );
   import system_pkg::*;
 
@@ -10,86 +11,27 @@ module system_top_load_tb #(
       REFERENCE_IMEM_CAPACITY_BYTES;
   localparam memory_capacity_t DMEM_BYTES = ALT_PROFILE ? ALT_1000_DMEM_CAPACITY_BYTES :
       REFERENCE_DMEM_CAPACITY_BYTES;
-  localparam integer BIT_CYCLES = 2608;
-  localparam time BIT_TIME = 20ns * BIT_CYCLES;
-  localparam integer MAX_RESPONSE = 1024;
+  logic clk = 0;
+  logic reset = 1;
+  wire  serial_rx;
+  wire  serial_tx;
+  wire  uart_reset_request;
 
-  logic         clk = 1'b0;
-  logic         reset = 1'b1;
-  logic         serial_rx = 1'b1;
-  logic         serial_tx;
-  logic         uart_reset_request;
-  byte unsigned response           [MAX_RESPONSE];
-  integer       used_count;
-
+  system_uart_host #(
+      .BAUD_RATE     (BAUD_RATE),
+      .MAX_USED_BYTES(4)
+  ) host (
+      .serial_tx,
+      .serial_rx
+  );
   system_top #(
       .IMEM_CAPACITY_BYTES(IMEM_BYTES),
-      .DMEM_CAPACITY_BYTES(DMEM_BYTES)
+      .DMEM_CAPACITY_BYTES(DMEM_BYTES),
+      .BAUD_RATE          (BAUD_RATE)
   ) dut (
       .*
   );
   always #10ns clk = ~clk;
-
-  task automatic tx_byte(input byte unsigned value, input bit response_follows = 1'b0);
-    integer bit_index;
-    begin
-      serial_rx = 1'b0;
-      #(BIT_TIME);
-      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
-        serial_rx = value[bit_index];
-        #(BIT_TIME);
-      end
-      serial_rx = 1'b1;
-      if (response_follows) #(1ns);
-      else #(BIT_TIME);
-    end
-  endtask
-
-  task automatic rx_byte(output byte unsigned value);
-    integer bit_index;
-    begin
-      @(negedge serial_tx);
-      #(BIT_TIME + BIT_TIME / 2);
-      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
-        value[bit_index] = serial_tx;
-        #(BIT_TIME);
-      end
-      if (serial_tx !== 1'b1) $fatal(1, "UART TX stop bit was low");
-    end
-  endtask
-
-  task automatic expect_header(input byte unsigned opcode, input byte unsigned result);
-    byte unsigned value;
-    begin
-      rx_byte(value);
-      if (value !== opcode) $fatal(1, "response opcode expected %02x got %02x", opcode, value);
-      rx_byte(value);
-      if (value !== result) $fatal(1, "response result expected %02x got %02x", result, value);
-    end
-  endtask
-
-  task automatic read_debug_snapshot(input byte unsigned opcode, input byte unsigned result);
-    byte unsigned value;
-    integer       index;
-    begin
-      expect_header(opcode, result);
-      for (index = 0; index < 223; index = index + 1) begin
-        rx_byte(value);
-        response[index] = value;
-      end
-      for (index = 0; index < 5; index = index + 1) begin
-        rx_byte(value);
-        response[223+index] = value;
-      end
-      used_count = response[223] | (response[224] << 8) | (response[225] << 16) |
-          (response[226] << 24) | (response[227] << 32);
-      if (used_count > 128) $fatal(1, "snapshot used_count out of range: %0d", used_count);
-      for (index = 0; index < 5 * used_count; index = index + 1) begin
-        rx_byte(value);
-        response[228+index] = value;
-      end
-    end
-  endtask
 
   function automatic integer valid_image_size;
     if (CASE_INDEX == 1 || CASE_INDEX == 10) valid_image_size = 4;
@@ -134,63 +76,91 @@ module system_top_load_tb #(
     end
   endfunction
 
+  integer        delivered = 0;
+  integer        expected_size = 0;
+  integer        cycle = 0;
+  integer        publish_cycle = -1;
+  logic   [31:0] expected_word;
+
+  always @(posedge clk) begin
+    cycle++;
+    if (dut.load_request) begin
+      if (!dut.command_accepted || dut.load_size_bytes != expected_size || !dut.response_start ||
+          dut.response_opcode != 1 || dut.response_result != 1)
+        $fatal(1, "LOAD handshake mismatch at clock %0d", cycle);
+      delivered     = 0;
+      publish_cycle = -1;
+    end
+    if (dut.load_byte_valid) begin
+      expected_word = image_word(delivered / 4);
+      if (dut.load_byte_offset != delivered || dut.load_byte_data !== expected_word[
+          8*(delivered%4)+:8] || dut.load_last_byte !== (delivered == expected_size - 1) ||
+          dut.processor_inst.g_valid_capacity.imem_write_enable !== (delivered % 4 == 3) ||
+          dut.processor_inst.g_valid_capacity.load_ok !== (delivered == expected_size - 1) ||
+          dut.image_valid || dut.cpu_cycle_fire)
+        $fatal(1, "LOAD delivery mismatch at byte %0d", delivered);
+      delivered++;
+    end
+    if (dut.processor_inst.g_valid_capacity.prepare_done) publish_cycle = cycle;
+    if (dut.response_start && dut.response_opcode == 1 && dut.response_result == 2) begin
+      if (publish_cycle != cycle - 1 || dut.prepare_active || !dut.image_valid ||
+          dut.processor_inst.g_valid_capacity.loaded_image_size_bytes != expected_size ||
+          delivered != expected_size || dut.global_state_code != 3 || dut.debug_cycle_count != 0)
+        $fatal(1, "LOAD/DONE must follow publication by one clock");
+    end
+  end
+
   task automatic send_image(input integer image_size);
     integer        index;
     logic   [31:0] word_value;
     begin
       for (index = 0; index < image_size; index = index + 1) begin
         word_value = image_word(index / 4);
-        tx_byte(word_value[(index%4)*8+:8], index == image_size - 1);
+        host.send_byte(word_value[(index%4)*8+:8], index == image_size - 1);
       end
-      expect_header(8'h01, 8'h02);
+      host.expect_header(8'h01, 8'h02);
     end
   endtask
 
   task automatic send_valid_load(input integer image_size);
-    begin
-      tx_byte(8'h01);
-      tx_byte(8'(image_size));
-      tx_byte(8'(image_size >> 8));
-      tx_byte(8'(image_size >> 16));
-      tx_byte(8'(image_size >> 24));
-      tx_byte(8'h00, 1'b1);
-      expect_header(8'h01, 8'h01);
-      send_image(image_size);
-    end
+    expected_size = image_size;
+    host.send_byte(8'h05, 1);
+    host.expect_header(8'h05, 8'h03);
+    host.load_header(40'(image_size));
+    send_image(image_size);
   endtask
 
   task automatic send_invalid_load(input logic [39:0] image_size);
-    integer index;
-    begin
-      tx_byte(8'h01);
-      for (index = 0; index < 5; index = index + 1) tx_byte(image_size[index*8+:8], index == 4);
-      expect_header(8'h01, 8'h06);
-    end
+    host.send_byte(8'h05, 1);
+    host.expect_header(8'h05, 8'h03);
+    host.load_header(image_size, 8'h06);
+    if (!dut.image_valid || dut.processor_inst.g_valid_capacity.loaded_image_size_bytes != 16)
+      $fatal(1, "invalid LOAD changed the previous image");
   endtask
 
   task automatic run_and_read(input byte unsigned terminal_result);
     byte unsigned value;
     begin
-      tx_byte(8'h02, 1'b1);
-      expect_header(8'h02, 8'h01);
-      read_debug_snapshot(8'h02, terminal_result);
+      host.send_byte(8'h02, 1'b1);
+      host.expect_header(8'h02, 8'h01);
+      host.read_snapshot(8'h02, terminal_result);
       if (terminal_result == 8'h0a) begin
-        if (response[0] !== 8'h0a) $fatal(1, "RUN did not finish normally");
-        if (response[39] !== 8'd7 || response[40] !== 0 || response[41] !== 0 || response[42] !== 0)
+        if (host.response[0] !== 8'h0a) $fatal(1, "RUN did not finish normally");
+        if (host.response[39] !== 8'd7 || host.response[40] !== 0 || host.response[41] !== 0 ||
+            host.response[42] !== 0)
           $fatal(1, "preserved image x5 expected 7");
       end else begin
-        if (response[0] !== 8'h0b || response[14] !== 8'd2 || response[15] !== 0 ||
-            response[16] !== 0 || response[17] !== 0 || response[18] !== 0)
+        if (host.response[0] !== 8'h0b || host.response[14] !== 8'd2 || host.response[15] !== 0 ||
+            host.response[16] !== 0 || host.response[17] !== 0 || host.response[18] !== 0)
           $fatal(1, "loaded illegal word did not fault at PC zero");
       end
-      value = response[1];
+      value = host.response[1];
       if (!value[0]) $fatal(1, "RUN snapshot lost image_valid");
     end
   endtask
 
   initial begin : test
     byte unsigned        state_value;
-    integer              cycle_count;
     logic         [39:0] rejected_size;
     logic         [31:0] expected_first_word;
     #200ns;
@@ -207,17 +177,17 @@ module system_top_load_tb #(
       if (CASE_INDEX == 9 || CASE_INDEX == 18) begin
         run_and_read(8'h0b);
       end else begin
-        tx_byte(8'h03, 1'b1);
-        read_debug_snapshot(8'h03, 8'h02);
-        state_value = response[0];
-        cycle_count = response[6] | (response[7] << 8) | (response[8] << 16) | (response[9] << 24);
-        if (response[1] !== 8'h01) $fatal(1, "LOAD did not publish a valid image");
-        if (cycle_count != 1)
+        host.send_byte(8'h03, 1'b1);
+        host.read_snapshot(8'h03, 8'h02);
+        state_value = host.response[0];
+        if (host.response[1] !== 8'h01) $fatal(1, "LOAD did not publish a valid image");
+        if (host.cycles() !== 64'd1)
           $fatal(1, "LOAD publication caused a CPU cycle or STEP did not fire once");
         expected_first_word = (CASE_INDEX == 1 || CASE_INDEX == 10) ? 32'h0000_000b : 32'h0000_0093;
-        if (!response[147][0] || response[148] != 0 || response[149] != 0 || response[150] != 0 ||
-            response[151] != 0 ||
-            {response[155], response[154], response[153], response[152]} !== expected_first_word)
+        if (!host.response[147][0] || host.response[148] != 0 || host.response[149] != 0 ||
+            host.response[150] != 0 || host.response[151] != 0 ||
+            {host.response[155], host.response[154], host.response[153], host.response[152]} !==
+            expected_first_word)
           $fatal(1, "first instruction was not reconstructed at IMEM address zero");
         if (state_value !== 8'h05) $fatal(1, "first post-LOAD STEP did not remain in STEPPING");
       end
@@ -228,7 +198,7 @@ module system_top_load_tb #(
   end
 
   initial begin
-    #10s;
+    #(1400 * host.FRAME_TIME + 100us);
     $fatal(1, "TEST-UART-004 bounded timeout");
   end
 endmodule

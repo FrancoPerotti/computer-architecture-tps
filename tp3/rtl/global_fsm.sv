@@ -79,15 +79,13 @@ module global_fsm (
   assign {command_accepted, load_start, cpu_cycle_fire, image_publish} = authorization_controls;
 
   always_comb begin
-    next_state             = global_state;
-    authorization_controls = CTRL_NONE;
-    loader_active          = 1'b0;
-    prepare_active         = 1'b0;
-    drain_mode             = 1'b0;
-    load_available         = 1'b0;
-    program_finished       = 1'b0;
-    fault_terminal         = 1'b0;
-    global_state_code      = STATE_CODE_NO_IMAGE;
+    loader_active     = 1'b0;
+    prepare_active    = 1'b0;
+    drain_mode        = 1'b0;
+    load_available    = 1'b0;
+    program_finished  = 1'b0;
+    fault_terminal    = 1'b0;
+    global_state_code = STATE_CODE_NO_IMAGE;
     // Salidas Moore.
     case (global_state)
       STATE_NO_IMAGE: begin
@@ -154,6 +152,9 @@ module global_fsm (
       end
     endcase
 
+  end
+
+  always_comb begin
     // Autorización: estado | reset_LOAD_STEP_RUN_done.
     // No consulta confirmaciones ni próximos valid del pipeline.
     // verilog_format: off
@@ -197,6 +198,10 @@ module global_fsm (
     endcase
     // verilog_format: on
 
+  end
+
+  always_comb begin
+    next_state = global_state;
     // Los resultados solo seleccionan el destino del ciclo ya autorizado.
     // Columnas: estado | reset_LOAD_STEP_RUN | ok_fail_done | fault_halt_empty.
     // verilog_format: off

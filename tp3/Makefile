@@ -103,11 +103,14 @@ lint-processor:
 	    $(PROCESSOR_SOURCES); \
 	done
 
-# El sistema incluye cuatro dependencias combinacionales UNOPTFLAT conocidas;
-# se conservan como diagnóstico visible mientras Verilator completa elaboración.
+# Elaboración y dependencias combinacionales del sistema en los tres perfiles.
 lint-system:
-	verilator --lint-only --timing --language 1800-2012 --top-module system_top \
-	  -Wno-fatal $(SYSTEM_SOURCES)
+	@for configuration in '1024 2048' '1000 1000' '4 4'; do \
+	  read -r imem dmem <<< "$$configuration"; \
+	  verilator --lint-only --language 1800-2012 --top-module system_top \
+	    "-GIMEM_CAPACITY_BYTES=64'd$$imem" "-GDMEM_CAPACITY_BYTES=64'd$$dmem" \
+	    $(SYSTEM_SOURCES); \
+	done
 
 # Esta revisión mecánica no sustituye el análisis de lógica local ni la implementación FPGA.
 review-cpu:

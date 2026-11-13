@@ -1,4 +1,4 @@
-"""Compile and execute Icarus simulations using isolated temporary files."""
+"""Compile and execute RTL simulations using isolated temporary files."""
 
 import os
 import shutil
@@ -132,15 +132,36 @@ def compile_execution(execution, directory, parameters):
             encoding="utf-8",
         )
         top = "__tp3_runner_top"
-    command = ["iverilog", "-g2012", "-s", top, "-o", str(binary)]
-    command.extend(str((TP3_ROOT / source).resolve()) for source in execution["sources"])
+    sources = [str((TP3_ROOT / source).resolve()) for source in execution["sources"]]
     if wrapper is not None:
-        command.append(str(wrapper))
+        sources.append(str(wrapper))
+    simulator = execution.get("simulator", "iverilog")
+    if simulator == "verilator":
+        binary = directory / "obj" / "simulation"
+        command = [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "-j",
+            "2",
+            "-Wno-TIMESCALEMOD",
+            "--top-module",
+            top,
+            "--Mdir",
+            str(binary.parent),
+            "-o",
+            binary.name,
+            *sources,
+        ]
+    else:
+        command = ["iverilog", "-g2012", "-s", top, "-o", str(binary), *sources]
     try:
         outcome = run_process(command, TP3_ROOT, stdout, stderr)
     except OSError as error:
         return None, f"no se pudo iniciar la compilación: {error}"
-    diagnostics(stdout, f"compilación {execution['top']}: stdout")
+    if outcome.returncode != 0:
+        diagnostics(stdout, f"compilación {execution['top']}: stdout")
     diagnostics(stderr, f"compilación {execution['top']}: stderr")
     if outcome.returncode != 0:
         return None, f"falló la compilación de {execution['top']} (código {outcome.returncode})"
@@ -158,8 +179,11 @@ def run_case(manifest, case, execution, binary, directory):
     case_id = case["id"]
     try:
         write_data(data_file, case_payload(manifest, case))
+        command = (
+            [str(binary)] if execution.get("simulator") == "verilator" else ["vvp", str(binary)]
+        )
         outcome = run_process(
-            ["vvp", str(binary), f"+CASE={case_id}", f"+CASE_DATA={data_file}"],
+            [*command, f"+CASE={case_id}", f"+CASE_DATA={data_file}"],
             directory,
             stdout,
             stderr,
@@ -203,10 +227,18 @@ def result_report(results):
 
 def run_selection(manifest, selection, reports_dir=None):
     """Ejecuta la selección reutilizando compilaciones por configuración y aislando sus archivos."""
-    for tool in ("iverilog", "vvp"):
+    groups, cases = index_manifest(manifest)
+    simulators = {
+        execution.get("simulator", "iverilog")
+        for entry in selection
+        for _, execution in case_executions(groups[entry.group_id], entry.case_id)
+    }
+    required_tools = {"iverilog", "vvp"} if "iverilog" in simulators else set()
+    if "verilator" in simulators:
+        required_tools.update(("verilator", "g++"))
+    for tool in sorted(required_tools):
         if shutil.which(tool) is None:
             raise ValueError(f"no se encontró {tool}; utilice el entorno de desarrollo compartido")
-    groups, cases = index_manifest(manifest)
     results = []
     compiled = {}
     with tempfile.TemporaryDirectory(prefix="tp3-tests-") as temporary:

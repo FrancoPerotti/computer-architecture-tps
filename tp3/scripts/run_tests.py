@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select, compile and execute manifest cases with Icarus Verilog."""
+"""Select, compile and execute manifest cases with the registered simulator."""
 
 import argparse
 import json
@@ -105,7 +105,7 @@ def require_executions(manifest, selection):
             checked.add((group_id, index))
             if execution["level"] not in SIMULATION_LEVELS:
                 raise ValueError(
-                    f"el nivel {execution['level']!r} de {group_id} no corresponde a una simulación Icarus"
+                    f"el nivel {execution['level']!r} de {group_id} no corresponde a una simulación RTL"
                 )
             for source in execution["sources"]:
                 if not (TP3_ROOT / source).is_file():

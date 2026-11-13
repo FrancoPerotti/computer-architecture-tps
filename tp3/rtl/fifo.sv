@@ -23,13 +23,12 @@ module fifo #(
   logic                  read_accept;
   logic                  write_accept;
 
-  always_comb begin
-    empty        = (count == 0);
-    full         = (count == DEPTH_COUNT);
-    read_data    = memory[read_pointer];
-    read_accept  = rd && !empty;
-    write_accept = wr && !full;
-  end
+  // Flags and read data depend only on the stored state.
+  assign empty        = (count == 0);
+  assign full         = (count == DEPTH_COUNT);
+  assign read_data    = memory[read_pointer];
+  assign read_accept  = rd && !empty;
+  assign write_accept = wr && !full;
 
   always_ff @(posedge clk) begin
     if (reset) begin

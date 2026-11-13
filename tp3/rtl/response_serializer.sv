@@ -179,39 +179,19 @@ module response_serializer #(
     end
   end
 
+  assign response_busy = !reset && (state != IDLE);
+  assign debug_dmem_addr = dmem_addr;
+  assign used_count_extended = 40'(used_count);
+  assign dmem_addr_extended = 32'(dmem_addr);
+  assign rf_relative_index = fixed_byte_index[6:0] - 7'd21;
+  assign debug_rf_addr = !reset && descriptor[0] && fixed_byte_index >= 21 &&
+      fixed_byte_index <= 148 ? rf_relative_index[6:2] : '0;
+
+  // The read addresses come from registered cursors independently of the
+  // data returned by the CPU's combinational RF and DMEM read ports.
   always_comb begin
-    next_state              = state;
-    response_init           = 1'b0;
-    byte_load               = 1'b0;
-    byte_consume            = 1'b0;
-    fixed_index_inc         = 1'b0;
-    dmem_addr_inc           = 1'b0;
-    used_count_inc          = 1'b0;
-    shared_index_inc        = 1'b0;
-    shared_index_clear      = 1'b0;
-    list_init               = 1'b0;
-    entry_count_inc         = 1'b0;
-    production_complete_set = 1'b0;
-    tx_pending_inc          = 1'b0;
-    tx_pending_dec          = 1'b0;
-    write_accepted          = 1'b0;
-    wr_uart                 = 1'b0;
-    w_data                  = next_byte;
-    fixed_selected_byte     = '0;
-    response_busy           = !reset && (state != IDLE);
-    response_done_tick      = 1'b0;
-    debug_rf_addr           = '0;
-    debug_dmem_addr         = dmem_addr;
-    used_count_extended     = {{(40 - USED_COUNT_WIDTH) {1'b0}}, used_count};
-    dmem_addr_extended      = {{(32 - BYTE_ADDRESS_WIDTH) {1'b0}}, dmem_addr};
-    rf_relative_index       = '0;
-
+    fixed_selected_byte = '0;
     if (!reset) begin
-      if (descriptor[0] && fixed_byte_index >= 21 && fixed_byte_index <= 148) begin
-        rf_relative_index = fixed_byte_index[6:0] - 7'd21;
-        debug_rf_addr     = rf_relative_index[6:2];
-      end
-
       if (fixed_byte_index == 0) fixed_selected_byte = descriptor[16:9];
       else if (fixed_byte_index == 1) fixed_selected_byte = descriptor[8:1];
       else if (fixed_byte_index == 2) fixed_selected_byte = debug_state_code;
@@ -280,6 +260,29 @@ module response_serializer #(
         else fixed_selected_byte = dmem_addr_extended[shared_byte_index*8+:8];
       end
 
+    end
+  end
+
+  always_comb begin
+    next_state              = state;
+    response_init           = 1'b0;
+    byte_load               = 1'b0;
+    byte_consume            = 1'b0;
+    fixed_index_inc         = 1'b0;
+    dmem_addr_inc           = 1'b0;
+    used_count_inc          = 1'b0;
+    shared_index_inc        = 1'b0;
+    shared_index_clear      = 1'b0;
+    list_init               = 1'b0;
+    entry_count_inc         = 1'b0;
+    production_complete_set = 1'b0;
+    tx_pending_inc          = 1'b0;
+    tx_pending_dec          = 1'b0;
+    write_accepted          = 1'b0;
+    wr_uart                 = 1'b0;
+    w_data                  = next_byte;
+    response_done_tick      = 1'b0;
+    if (!reset) begin
       case (state)
         IDLE: begin
           if (response_start) begin
