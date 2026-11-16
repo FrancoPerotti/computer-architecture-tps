@@ -89,44 +89,36 @@ withGuiEnvironment(
     const choices = page.getByRole('dialog', { name: 'Apariciones de la línea 2', exact: true })
     await choices.getByRole('button', { name: 'Seguir en IF/ID', exact: true }).waitFor()
     await choices.getByRole('button', { name: 'Seguir en MEM/WB', exact: true }).click()
+    await inspector.getByRole('img', { name: 'Siguiendo una aparición', exact: true }).waitFor()
     assert.equal(await component.inputValue(), 'latch.mem_wb')
     await page.screenshot({
       path: path.resolve(gui, '../build/gui-pc-i07-loop-two-occurrences.png'),
     })
-    const camera = await frame.evaluate(() => {
-      const g = window.tp3Viewer.viewer.graph
-      return {
-        scale: g.view.scale,
-        x:
-          (g.container.scrollLeft + g.container.clientWidth / 2) / g.view.scale -
-          g.view.translate.x,
-        y:
-          (g.container.scrollTop + g.container.clientHeight / 2) / g.view.scale -
-          g.view.translate.y,
-      }
-    })
+    const cameraCentre = () =>
+      frame.evaluate(() => {
+        const { container, view } = window.tp3Viewer.viewer.graph
+        return {
+          scale: view.scale,
+          x: (container.scrollLeft + container.clientWidth / 2) / view.scale - view.translate.x,
+          y: (container.scrollTop + container.clientHeight / 2) / view.scale - view.translate.y,
+        }
+      })
+    const camera = await cameraCentre()
     await step(5)
     await inspector.getByText('La aparición terminó su recorrido.', { exact: true }).waitFor()
     assert.equal(await component.inputValue(), 'latch.mem_wb')
     assert.equal(await page.locator('.viewrv-selected-occurrence-line:visible').count(), 0)
-    const after = await frame.evaluate(() => {
-      const g = window.tp3Viewer.viewer.graph
-      return {
-        scale: g.view.scale,
-        x:
-          (g.container.scrollLeft + g.container.clientWidth / 2) / g.view.scale -
-          g.view.translate.x,
-        y:
-          (g.container.scrollTop + g.container.clientHeight / 2) / g.view.scale -
-          g.view.translate.y,
-      }
+    // The inspector notice resizes the iframe. Wait for its camera to handle that resize.
+    await until(async () => {
+      const after = await cameraCentre()
+      assert.equal(after.scale, camera.scale)
+      assert.ok(
+        Math.abs(after.x - camera.x) < 2 / camera.scale &&
+          Math.abs(after.y - camera.y) < 2 / camera.scale,
+        `Retirement moved the camera world centre from (${camera.x}, ${camera.y}) to (${after.x}, ${after.y})`,
+      )
+      return true
     })
-    assert.equal(after.scale, camera.scale)
-    assert.ok(
-      Math.abs(after.x - camera.x) < 2 / camera.scale &&
-        Math.abs(after.y - camera.y) < 2 / camera.scale,
-      'Retirement moved the camera world centre',
-    )
     await step(6)
     await inspector.getByText('La aparición terminó su recorrido.', { exact: true }).waitFor()
     assert.equal(await component.inputValue(), 'latch.mem_wb')
