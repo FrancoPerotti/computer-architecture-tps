@@ -2,12 +2,37 @@ import type { Observation, ProcessorProfile } from '../shared/contracts'
 import type { EducationalResources } from './educational-resources'
 import { colors } from './theme.css'
 import type { ConnectionSelection } from './inspection'
+
+export function forwardDiagramWheelZoom(frame: HTMLIFrameElement | null) {
+  if (!frame) return
+  // Chromium can target the iframe element itself with touchpad pinch events.
+  const forward = (event: WheelEvent) => {
+    if (!(event.ctrlKey || event.metaKey) || !frame.contentWindow) return
+    const { left, top, width, height } = frame.getBoundingClientRect()
+    if (!width || !height) return
+    if (event.cancelable) event.preventDefault()
+    frame.contentWindow.postMessage(
+      {
+        channel: 'viewrv-camera-v1',
+        deltaY: event.deltaY,
+        deltaMode: event.deltaMode,
+        x: ((event.clientX - left) * frame.clientWidth) / width,
+        y: ((event.clientY - top) * frame.clientHeight) / height,
+      },
+      '*',
+    )
+  }
+  frame.addEventListener('wheel', forward, { passive: false })
+  return () => frame.removeEventListener('wheel', forward)
+}
+
 export interface GraphObservation {
   session_id: string
   program_id: string
   source_version: string
   observation: Observation | null
   stale: boolean
+  follow?: { blocks: string[]; latch: string | null }
 }
 export class GraphViewerAdapter {
   private frame: HTMLIFrameElement | null = null
@@ -92,7 +117,11 @@ export class GraphViewerAdapter {
       else if (value.kind === 'error' && typeof value.message === 'string')
         this.callbacks.error(value.message)
     }
-    this.removeListener = () => window.removeEventListener('message', listener)
+    const stopForwardingWheelZoom = forwardDiagramWheelZoom(frame)
+    this.removeListener = () => {
+      window.removeEventListener('message', listener)
+      stopForwardingWheelZoom?.()
+    }
     window.addEventListener('message', listener)
     this.resizeObserver = new ResizeObserver(() => this.resize())
     this.resizeObserver.observe(container)

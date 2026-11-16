@@ -34,6 +34,7 @@ import {
   reportError,
   translations,
   useWorkspace,
+  type ViewRequest,
 } from './ide-state'
 import { actionReason, selectedSession } from './ide-workflow'
 import { layoutText } from './layout-text'
@@ -41,6 +42,7 @@ import { ExamplePicker } from './example-picker'
 import { RecoveryDialog } from './recovery-dialog'
 import type { MenuCommand } from './menus'
 import { exampleBank, type ExampleEntry } from './examples'
+import { useTouchTabDrag } from './touch-tab-drag'
 import * as styles from './theme.css'
 
 const model = Model.fromJson({
@@ -55,6 +57,64 @@ const model = Model.fromJson({
   borders: [],
   layout: { type: 'row', children: [{ type: 'tabset', id: 'programs', children: [] }] },
 })
+function isSessionView(component: string | undefined): component is 'debug' | 'diagram' {
+  return component === 'debug' || component === 'diagram'
+}
+
+function revealView(view: ViewRequest) {
+  const sessionView = isSessionView(view.component)
+  let existing: TabNode | undefined
+  let companion: TabNode | undefined
+  model.visitNodes((node) => {
+    if (!(node instanceof TabNode)) return
+    if (
+      node.getComponent() === view.component &&
+      (view.component !== 'example-info' || node.getConfig()?.program_id === view.program_id)
+    )
+      existing = node
+    else if (sessionView && isSessionView(node.getComponent())) companion = node
+  })
+  const name = {
+    debug: 'Estado del procesador',
+    diagram: 'Pipeline',
+    assembly: 'Vista ensamblada',
+    catalog: 'Catálogo de instrucciones',
+    connection: 'Conexión',
+    'example-info': 'Acerca del ejemplo',
+  }[view.component]
+  if (companion && companion.getConfig().session_id !== view.session_id) {
+    model.doAction(
+      Actions.updateNodeAttributes(companion.getId(), {
+        config: { ...companion.getConfig(), session_id: view.session_id },
+      }),
+    )
+  }
+  if (existing) {
+    if (!sessionView || existing.getConfig().session_id !== view.session_id)
+      model.doAction(Actions.updateNodeAttributes(existing.getId(), { config: view, name }))
+    model.doAction(Actions.selectTab(existing.getId()))
+    return
+  }
+  const source = view.program_id ? programNodes(view.program_id)[0] : undefined
+  const group =
+    companion?.getParent() ??
+    (view.group_id ? model.getNodeById(view.group_id) : undefined) ??
+    source?.getParent() ??
+    model.getActiveTabset() ??
+    model.getFirstTabSet()
+  model.doAction(
+    Actions.addTab(
+      { type: 'tab', name, component: view.component, config: view },
+      group?.getId() ?? 'programs',
+      !companion && (sessionView || view.placement === 'right')
+        ? DockLocation.RIGHT
+        : DockLocation.CENTER,
+      -1,
+      true,
+    ),
+  )
+}
+
 function programNodes(id?: string): TabNode[] {
   const result: TabNode[] = []
   model.visitNodes((node) => {
@@ -91,6 +151,7 @@ function reveal(document: DocumentSync, focus = true) {
   if (focus) focusProgramEditor(program.program_id)
 }
 export function Workbench() {
+  const touchTabDrag = useTouchTabDrag()
   const revision = useDocuments((state) => state.revision)
   const core = useCore((state) => state.live.state)
   const synchronized = useCore((state) => state.synchronized)
@@ -107,45 +168,7 @@ export function Workbench() {
   const previewOpened = useRef(false)
   useEffect(() => {
     if (!view) return
-    let existing: TabNode | undefined
-    model.visitNodes((node) => {
-      if (
-        node instanceof TabNode &&
-        node.getComponent() === view.component &&
-        (view.component !== 'example-info' || node.getConfig()?.program_id === view.program_id)
-      )
-        existing = node
-    })
-    const name = {
-      debug: 'Estado del procesador',
-      diagram: 'Pipeline',
-      assembly: 'Vista ensamblada',
-      catalog: 'Catálogo de instrucciones',
-      connection: 'Conexión',
-      'example-info': 'Acerca del ejemplo',
-    }[view.component]
-    if (existing) {
-      model.doAction(Actions.updateNodeAttributes(existing.getId(), { config: view, name }))
-      model.doAction(Actions.selectTab(existing.getId()))
-    } else {
-      const source = view.program_id ? programNodes(view.program_id)[0] : undefined
-      const group =
-        (view.group_id ? model.getNodeById(view.group_id) : undefined) ??
-        source?.getParent() ??
-        model.getActiveTabset() ??
-        model.getFirstTabSet()
-      model.doAction(
-        Actions.addTab(
-          { type: 'tab', name, component: view.component, config: view },
-          group?.getId() ?? 'programs',
-          view.component === 'debug' || view.placement === 'right'
-            ? DockLocation.RIGHT
-            : DockLocation.CENTER,
-          -1,
-          true,
-        ),
-      )
-    }
+    revealView(view)
     setFocus(null)
     redraw((value) => value + 1)
   }, [view?.id])
@@ -283,7 +306,12 @@ export function Workbench() {
         if (result) openView({ component: 'assembly', ...result })
         else notify('info', 'Ensamblá un programa para abrir su traducción')
       } else if (command === 'debug' || command === 'diagram') {
-        if (session) openView({ component: command, session_id: session.session_id })
+        if (session)
+          openView({
+            component: command,
+            session_id: session.session_id,
+            program_id: session.program_id,
+          })
         else notify('info', 'No hay una sesión para observar')
       } else editorCommand(command, focus)
     }
@@ -413,7 +441,7 @@ export function Workbench() {
             {item.message}
           </div>
         ))}
-      <div className={styles.workspace}>
+      <div className={styles.workspace} {...touchTabDrag}>
         <Layout
           model={model}
           icons={{
@@ -440,6 +468,8 @@ export function Workbench() {
           onModelChange={() => {
             const node = (model.getActiveTabset() ?? model.getFirstTabSet())?.getSelectedNode()
             setFocus(node?.getComponent() === 'program' ? node.getConfig().program_id : null)
+            const component = node?.getComponent()
+            if (isSessionView(component)) useWorkspace.setState({ debugView: component })
             redraw((value) => value + 1)
           }}
         />

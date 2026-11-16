@@ -13,6 +13,7 @@ const suites = [
   'drawing-smoke',
   'diagram-smoke',
   'graphical-smoke',
+  'touch-camera-smoke',
   'follow-loop-smoke',
   'examples-smoke',
   'editor-workspace-smoke',

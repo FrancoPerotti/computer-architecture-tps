@@ -1,5 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { colors, space } from '../ui-tokens'
+import { educationSection } from './education.css'
 
 export const graphView = style({
   height: '100%',
@@ -23,6 +24,14 @@ export const graphCanvas = style({
   minHeight: 180,
   overflow: 'hidden',
 })
+export const graphFetchCandidate = style({
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: space.xs,
+  flexBasis: '100%',
+  color: colors.muted,
+})
 export const graphInspector = style({
   padding: '10px 14px',
   borderTop: `1px solid ${colors.border}`,
@@ -30,6 +39,7 @@ export const graphInspector = style({
   overflow: 'auto',
   flex: '0 0 auto',
 })
+globalStyle(`${graphInspector} > ${educationSection}`, { marginTop: space.lg })
 export const inspectorControls = style({
   display: 'flex',
   alignItems: 'center',

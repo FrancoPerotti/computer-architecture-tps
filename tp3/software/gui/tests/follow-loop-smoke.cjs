@@ -51,6 +51,11 @@ withGuiEnvironment(
       assert.equal(steps(), cycle)
     }
     const component = inspector.getByLabel('Componente del circuito', { exact: true })
+    const ifMemoryOpacity = () =>
+      frame.evaluate(() => {
+        const graph = window.tp3Viewer.viewer.graph
+        return graph.view.getState(graph.model.getCell('PeWG_VKsY-f66Zm0Bl_l-193')).style.opacity
+      })
     await step(1)
     await component.selectOption('latch.if_id')
     await inspector.getByRole('button', { name: 'Seguir esta instrucción', exact: true }).click()
@@ -63,6 +68,8 @@ withGuiEnvironment(
       await step(cycle)
       await until(async () => (await component.inputValue()) === block)
     }
+    await diagram.getByText('● Participación inferida · MEM', { exact: true }).waitFor()
+    await until(async () => (await ifMemoryOpacity()) < 100)
     await page.getByRole('tab', { name: /loop.s/ }).click()
     await page.locator('.monaco-editor:visible [role="textbox"]').first().focus()
     await page.keyboard.press('Control+Home')
@@ -129,6 +136,10 @@ withGuiEnvironment(
       .click()
     await inspector.getByRole('img', { name: 'Siguiendo una aparición', exact: true }).waitFor()
     assert.equal(await page.locator('.viewrv-selected-occurrence-line:visible').count(), 1)
+    await diagram.getByText('● Participación inferida · EX', { exact: true }).waitFor()
+    await inspector.getByRole('button', { name: 'Dejar de seguir', exact: true }).click()
+    await diagram.getByText('● Participación inferida', { exact: true }).waitFor()
+    await until(async () => (await ifMemoryOpacity()) === 100)
     assert.equal(steps(), 6)
     assert.deepEqual(errors, [])
     const closed = page.waitForEvent('close', { timeout: 18000 })

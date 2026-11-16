@@ -6,7 +6,7 @@ El runtime GraphViewer conserva la huella aprobada `32c73b8e42e784d0ace7d59754cb
 
 El runtime aprobado corresponde a draw.io 32.0.2, commit upstream `2201e54124bfbbf09d8addec60e6f8d73eed6f92`. La [procedencia del runtime](licenses/provenance/viewer-provenance.json) registra su correspondencia con la fuente y sus avisos de licencia.
 
-`viewer/source-diagram.drawio.xml` conserva el XML de origen `TP3_PIPELINE_COMPLETO.drawio.xml`. El XML canónico `diagram.drawio.xml` se obtiene del dibujo completo preparado dentro del HTML aprobado, sin mover bloques ni cables; así ambas vistas renderizan el mismo circuito. `diagram_bindings.json` conserva las 44 correspondencias del documento canónico de GUI y visor, incluidos los muxes de bypass y la lógica interna de pipeline vacío. `representations` identifica además la celda interna `tp3-exec-empty`; `processor_profile.json` describe exclusivamente campos publicados por UART. El adaptador de sesión consume estas correspondencias; no acredita señales ni capturas medidas.
+`viewer/source-diagram.drawio.xml` conserva la copia histórica de la importación del visor. El XML canónico `content/diagram.drawio.xml` es el `TP3_PIPELINE_COMPLETO.drawio.xml` entregado para actualizar la aplicación. Ambas vistas renderizan ese archivo. `diagram_revision.json` registra su huella, los extremos revisados y las correspondencias de recorrido que cambian frente al catálogo del HTML aprobado. `diagram_bindings.json` conserva los IDs semánticos. La lógica de pipeline vacío se representa dentro de Execution Control. `processor_profile.json` describe los campos publicados por UART.
 
 Para repetir la importación, desde `tp3`:
 

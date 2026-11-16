@@ -178,6 +178,20 @@ def loop_captures():
     return [first, second, third, fourth, fifth, sixth]
 
 
+def fetch_fault_captures():
+    """STEP captures of a single ADDI that falls through the end of its image."""
+    first = v.put(v.snapshot(1, 4), "if_id", 0, v.ADDI)
+    second = v.put(v.snapshot(2, 8), "id_ex", 0, v.ADDI)
+    second["if_id"].update(pc=4, fetch_fault_valid=True, fetch_fault_cause=1)
+    third = v.put(v.snapshot(3, 8, 9, fault_pc=4, fault_cause=1), "ex_mem", 0, v.ADDI)
+    third["ex_mem"]["ex_result"] = 5
+    fourth = v.put(v.snapshot(4, 8, 9, fault_pc=4, fault_cause=1), "mem_wb", 0, v.ADDI)
+    fourth["mem_wb"]["wb_value"] = 5
+    fifth = v.snapshot(5, 8, 11, fault_pc=4, fault_cause=1)
+    fifth["registers"][1] = 5
+    return [first, second, third, fourth, fifth]
+
+
 class EducationalPort(LiteralPort):
     """Return only the fixed trace, and reject a different image or extra STEP."""
 
@@ -191,6 +205,7 @@ class EducationalPort(LiteralPort):
             "addition": (bytes.fromhex("9300800013012000b38120000b000000"), addition_captures),
             "memory": (bytes.fromhex("23200000a3030000832000000b000000"), memory_captures),
             "loop": (bytes.fromhex("63000000"), loop_captures),
+            "fetch-fault": (bytes(v.image(v.ADDI)), fetch_fault_captures),
         }
         if selected not in cases:
             raise ValueError("Unknown literal educational trace")

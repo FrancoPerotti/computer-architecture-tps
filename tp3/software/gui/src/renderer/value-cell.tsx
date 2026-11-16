@@ -4,6 +4,25 @@ import { formatValue, type NumberFormat } from './ide-workflow'
 import { colors } from './ui-tokens'
 import * as styles from './theme.css'
 
+// External global_state codes, in the order defined by the UART protocol.
+const globalStateNames = [
+  'NO_IMAGE',
+  'LOADING',
+  'PREPARING_READY',
+  'READY',
+  'RUNNING',
+  'STEPPING',
+  'HALT_DRAIN_AUTO',
+  'HALT_DRAIN_STEP',
+  'FAULT_DRAIN_AUTO',
+  'FAULT_DRAIN_STEP',
+  'FINISHED',
+  'FAULT',
+  'PREPARING_RUN',
+  'PREPARING_STEP',
+]
+type ValueFormat = NumberFormat | 'state-name'
+
 export function ValueCell({
   name,
   value,
@@ -17,7 +36,15 @@ export function ValueCell({
   changed?: boolean
   previous?: number | boolean | string | null
 }) {
-  const [format, setFormat] = useState<NumberFormat>('hex')
+  const globalState = name === 'global_state'
+  const [format, setFormat] = useState<ValueFormat>(
+    globalState ? 'state-name' : name === 'cycle_count' ? 'unsigned' : 'hex',
+  )
+  const stateName = globalStateNames[Number(value)]
+  const displayed =
+    format === 'state-name'
+      ? `${stateName ?? 'Estado desconocido'} (${formatValue(value, bits, 'hex')})`
+      : formatValue(value, bits, format)
   const lastChanged = useRef(changed)
   const underlay = useRef<HTMLSpanElement>(null)
   const curtain = useRef<HTMLSpanElement>(null)
@@ -60,12 +87,13 @@ export function ValueCell({
         {name}
         {changed && <span aria-label="Valor modificado"> · Δ</span>}
       </span>
-      <code>{formatValue(value, bits, format)}</code>
+      <code>{displayed}</code>
       <select
         aria-label={`Formato de ${name}`}
         value={format}
-        onChange={(event) => setFormat(event.target.value as NumberFormat)}
+        onChange={(event) => setFormat(event.target.value as ValueFormat)}
       >
+        {globalState && <option value="state-name">Nombre del estado</option>}
         <option value="hex">Hexadecimal</option>
         <option value="signed">Decimal con signo</option>
         <option value="unsigned">Decimal sin signo</option>

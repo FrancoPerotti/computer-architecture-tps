@@ -20,6 +20,8 @@ const profile=JSON.parse(read('processor_profile.json'));
 const bindings=JSON.parse(read('diagram_bindings.json'));
 const education=JSON.parse(read('es/education.json'));
 const xml=read('diagram.drawio.xml');
+const revisionFile='diagram_revision.json';
+const revision=fs.existsSync(path.join(content,revisionFile))?JSON.parse(read(revisionFile)):null;
 const examples=JSON.parse(read('examples/catalog.json'));
 const exampleInputs=['examples/catalog.json'];
 const exampleIds=new Set(),focusIds=new Set();
@@ -33,11 +35,11 @@ for(const entry of examples){
   if(entry.focus_instruction_id){if(focusIds.has(entry.focus_instruction_id))throw Error('Instrucción individual repetida: '+id);focusIds.add(entry.focus_instruction_id);}
 }
 if(focusIds.size!==33||profile.instruction_ids.some(id=>!focusIds.has(id.toLowerCase())))throw Error('Faltan ejemplos individuales del perfil.');
-data=prepareGraph(data,bindings,xml);
-profile.diagram_sha256=hash(xml);profile.bindings_sha256=hash(read('diagram_bindings.json'));
 if(Object.keys(education.instructions).length!==33||Object.keys(education.modules).length!==44)throw Error('El catálogo educativo está incompleto.');
+applyEducation(data,education,{blocks:bindings.source_blocks,representations:bindings.source_representations});
+data=prepareGraph(data,bindings,xml,revision);
+profile.diagram_sha256=hash(xml);profile.bindings_sha256=hash(read('diagram_bindings.json'));
 data.xml=pack(xml);
-applyEducation(data,education,bindings);
 const serialized=JSON.stringify({compressed:pack(JSON.stringify(data).replaceAll('<','\\u003c'))});
 let prepared=original.replace(match[0],match[0].replace(match[1],serialized));
 const cameraAdapter=read('viewer/camera-adapter.js');
@@ -61,6 +63,13 @@ prepared=prepared.replace(resizeAnchor,'    if (graph.view.scale !== camera.scal
 const sizeAnchor='    graph.sizeDidChange();\n    graph.container.style.overflow';
 if(prepared.split(sizeAnchor).length!==2)throw Error('Cambió el dimensionamiento de cámara del visor aprobado.');
 prepared=prepared.replace(sizeAnchor,'    if (!graph.view.viewrvFastViewport) graph.sizeDidChange();\n    graph.container.style.overflow');
+// Both viewers share camera gestures for direct and embedded input.
+const wheelHandler=/  let wheelFrame = null, wheelDelta = 0, wheelPosition;[\s\S]*?(?=\n  function zoomButton\(closer\))/;
+if(!wheelHandler.test(prepared))throw Error('Cambió la entrada de zoom del visor aprobado.');
+prepared=prepared.replace(wheelHandler,'  installViewrvTouchCamera(graph, zoomAt);\n  installViewrvWheelZoom(graph, zoomAt);');
+const diagramAnchor='      diagram = createDiagram({data, state, journey,';
+if(prepared.split(diagramAnchor).length!==2)throw Error('Cambió la inicialización del diagrama.');
+prepared=prepared.replace(diagramAnchor,'      await waitForViewrvCanvas();\n'+diagramAnchor);
 const outputs={};
 outputs['viewer/explore.html']=prepared;
 const adapter=read('viewer/session-adapter.js');
@@ -78,13 +87,19 @@ const runtimeEnd=prepared.indexOf('</script>',runtimeStart)+9;
 const headEnd=prepared.indexOf('</head>',runtimeEnd);
 if(runtimeStart<0||runtimeEnd<9||headEnd<runtimeEnd)throw Error('No se pudo localizar la cabecera del visor.');
 prepared=prepared.slice(0,headEnd)+'<style>'+sessionCSS+'</style>'+prepared.slice(headEnd);
+// A module or field in the debugger is a selection of that component alone.
+// The native connection inspector remains available for explicit wire clicks.
+const moduleHighlight='    const activeCells = new Set([...selectedCells, ...adjacent.flatMap(part => part.cells)]);\n    const activeBlocks = new Set([...selectedCells, ...adjacent.flatMap(part => [part.source_block, part.target_block]).filter(Boolean)]);\n    diagram.inspectSelection(activeCells, activeBlocks);';
+if(prepared.split(moduleHighlight).length!==2)throw Error('Cambió el resaltado de módulos del visor aprobado.');
+prepared=prepared.replace(moduleHighlight,'    diagram.inspectSelection(new Set(selectedCells), new Set(selectedCells));');
 prepared=prepared.replace("const accent = '#b80078';", "const accent = 'var(--viewrv-selection, #4338ca)';");
+prepared=prepared.replace("'var(--module-stroke, 4px)' : 'var(--inspection-stroke, 3px)'", "'min(var(--module-stroke, 4px), 2px)' : 'min(var(--inspection-stroke, 3px), 2px)'");
 prepared=prepared.replace("window.addEventListener('resize', () => diagram?.camera.resize());", "window.addEventListener('resize', () => { if (document.getElementById('diagram').clientWidth && document.getElementById('diagram').clientHeight) diagram?.camera.resize(); });");
 outputs['viewer/session.html']=prepared;
 // Hashes are derived build metadata. Validate every input before refreshing them.
 const profileText=JSON.stringify(profile,null,2)+'\n';
 if(read('processor_profile.json')!==profileText)fs.writeFileSync(path.join(content,'processor_profile.json'),profileText);
-const inputs=Object.fromEntries(['viewer/index.html','diagram.drawio.xml','diagram_bindings.json','processor_profile.json','es/education.json','viewer/session-adapter.js','viewer/session.css','viewer/camera-adapter.js',...exampleInputs].map(name=>[name,hash(read(name))]));
+const inputs=Object.fromEntries(['viewer/index.html','diagram.drawio.xml','diagram_bindings.json',...(revision?[revisionFile]:[]),'processor_profile.json','es/education.json','viewer/session-adapter.js','viewer/session.css','viewer/camera-adapter.js',...exampleInputs].map(name=>[name,hash(read(name))]));
 for(const [name,value] of Object.entries(outputs))fs.writeFileSync(path.join(content,name),value);
 fs.writeFileSync(path.join(content,'viewer/generated.json'),JSON.stringify({schema_version:1,generator_sha256:hash(fs.readFileSync(__filename)),tools:{'viewer_resources.cjs':hash(fs.readFileSync(path.join(__dirname,'viewer_resources.cjs')))},inputs,outputs:Object.fromEntries(Object.entries(outputs).map(([name,value])=>[name,hash(value)]))},null,2)+'\n');
 console.log('Visor preparado: exploración y sesión; 33 instrucciones, 165 etapas, XML único.');

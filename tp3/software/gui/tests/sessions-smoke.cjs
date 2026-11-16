@@ -132,6 +132,28 @@ withGuiEnvironment(
       (await api('session/show?session_id=' + opened.session_id)).source_text,
       'addi x1,x0,5\nhalt\n',
     )
+    const uart = readFileSync(resolve(root, 'uart.tx'), 'utf8')
+    await menuCommand(page, 'Ver', 'Abrir diagrama de depuración')
+    await page
+      .getByRole('region', { name: 'Diagrama de la sesión', exact: true })
+      .getByText('Ciclo observado · 1', { exact: true })
+      .waitFor()
+    await menuCommand(page, 'Ver', 'Abrir vista de depuración')
+    await page.getByRole('group', { name: 'Ciclo observado: 1', exact: true }).waitFor()
+    for (const tab of ['Pipeline', 'Estado del procesador']) {
+      await page.getByRole('tab', { name: tab, exact: true }).click()
+      for (const label of [
+        'Avanzar un ciclo',
+        'Continuar',
+        'Reiniciar depuración',
+        'Detener depuración',
+      ])
+        assert.equal(
+          await page.getByRole('button', { name: label, exact: true }).isDisabled(),
+          true,
+        )
+    }
+    assert.equal(readFileSync(resolve(root, 'uart.tx'), 'utf8'), uart)
     await menuCommand(page, 'Archivo', 'Crear programa')
     const editable = page.locator('.monaco-editor [role="textbox"]').last()
     await editable.waitFor({ state: 'attached' })

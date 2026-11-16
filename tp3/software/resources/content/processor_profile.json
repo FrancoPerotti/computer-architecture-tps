@@ -4,8 +4,8 @@
   "revision": 1,
   "memory_profile": "REFERENCE",
   "architecture_source": "f0c05f6d938bc9fb44ee3ead31db143d4ca9dda8",
-  "diagram_sha256": "a506b6892151a6d452b61e3167a830bd3edf5365bf608b55f402a58cf2a405bf",
-  "bindings_sha256": "bc548536fae6ec45da1c2dd202ddea3f9b456b471c7f7cd5711b37221e2843e1",
+  "diagram_sha256": "47214677b2fbd148b972cfb8a8e5dcae308222dbb4a55bacce02cc58a6d09eeb",
+  "bindings_sha256": "a79bf08c1df77490552e8fea4c39e718e7c72fc386a4b13ed3b9b373b9dedc87",
   "instruction_ids": [
     "ADD",
     "ADDI",

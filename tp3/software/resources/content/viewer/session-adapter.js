@@ -3,13 +3,14 @@ function createViewrvSessionAdapter({graph,data,diagram,inspector,state,resource
   const channel='viewrv-graph-v1',token=location.hash.slice(1);
   const roots=resources.bindings.blocks,representations=resources.bindings.representations||{};
   const cellFor=block=>representations[block]?.[0]||roots[block];
+  const selectionColor='var(--viewrv-selection, #4338ca)';
   const semantics=new Map(Object.keys(roots).map(block=>[cellFor(block),block]));
   const owned=new Map();
   for(const [id,owner] of Object.entries(data.owners)){
     if(!owned.has(owner))owned.set(owner,new Set([owner]));
     owned.get(owner).add(id);
   }
-  let selected=null,focus=new Set(),observation=null,disposed=false,frame=0,pendingCentre=null;
+  let selected=null,focus=new Set(),focusConnections=new Set(),observation=null,disposed=false,frame=0,pendingCentre=null;
   let theme={accent:'#4338ca',functional:'#b80078',active:'#e0ddff',functionalSoft:'#fff0f7'};
   const originalStyle=graph.getCellStyle,originalTooltip=graph.getTooltipForCell;
   const post=value=>parent.postMessage({channel,token,...value},'*');
@@ -17,29 +18,36 @@ function createViewrvSessionAdapter({graph,data,diagram,inspector,state,resource
   function cells(blocks){
     return new Set([...blocks].flatMap(block=>[...(owned.get(cellFor(block))||[cellFor(block)])]));
   }
-  function repaint(blocks){
+  function repaint(blocks,{all=false,connections=[]}={}){
     if(disposed)return;
     const view=graph.view,scale=view.scale,translate=view.translate;
     try{
       if(graph.useCssTransforms){view.scale=1;view.translate=new mxPoint(0,0);}
-      for(const id of cells(blocks)){
+      for(const id of all?Object.keys(graph.model.cells):new Set([...cells(blocks),...connections])){
         const cell=graph.model.getCell(id),render=cell&&view.getState(cell);
         if(!render?.shape)continue;
         const style=graph.getCellStyle(cell);
         if(!mxUtils.equalEntries(style,render.style)){render.style=style;graph.cellRenderer.redraw(render,false,true);}
       }
     }finally{view.scale=scale;view.translate=translate;}
+    if(view.viewrvFastViewport)updateViewrvStrokes(graph,scale);
   }
+  const visibleSelection=()=>observation?.follow?observation.follow.latch:selected;
   graph.getCellStyle=function(cell,...args){
     const style=originalStyle.call(this,cell,...args),block=semantics.get(ownerFor(cell));
-    if(!block||(!focus.has(block)&&selected!==block)||graph.model.isEdge(cell))return style;
+    const scope=observation?.follow,selection=block&&block===visibleSelection();
+    if(!cell||cell.id==='0'||cell.id==='1')return style;
+    const base=diagram.savedStyle(cell.id)||style;
+    if(focusConnections.has(cell.id))return {...base,opacity:100,textOpacity:100};
+    if(!block||graph.model.isEdge(cell)||(!selection&&!focus.has(block))){
+      return scope?{...base,opacity:data.levels.other,textOpacity:data.levels.other}:style;
+    }
     // Ownership includes text labels. Only outlined circuit shapes receive a
     // colored frame; highlighting a module must not turn its labels into boxes.
-    const base=diagram.savedStyle(cell.id)||style;
-    if(base.shape==='text'||!base.strokeColor||base.strokeColor==='none')return {...style,opacity:100,textOpacity:100};
-    const selection=selected===block;
-    return {...style,opacity:100,textOpacity:100,strokeColor:selection?theme.accent:theme.functional,
-      strokeWidth:selection?4:3,fillColor:selection?theme.active:theme.functionalSoft};
+    const visible={...base,opacity:100,textOpacity:100};
+    if(base.shape==='text'||!base.strokeColor||base.strokeColor==='none'||(selection&&cell.id!==cellFor(block)))return visible;
+    return {...visible,strokeColor:selection?selectionColor:theme.functional,
+      strokeWidth:3,fillColor:selection?theme.active:theme.functionalSoft};
   };
   graph.getTooltipForCell=function(cell){
     const original=originalTooltip.call(this,cell),block=semantics.get(ownerFor(cell));
@@ -58,7 +66,7 @@ function createViewrvSessionAdapter({graph,data,diagram,inspector,state,resource
     // echoed by the parent also retains its field inspection.
     const native=state.selectedModule||data.fields[state.selectedField]?.owner;
     if(previous!==block||native!==cellFor(block)||state.selectedConnection)inspector.selectModule(cellFor(block));
-    repaint(new Set([...focus,previous,selected].filter(Boolean)));
+    repaint(new Set([...focus,previous,selected,visibleSelection()].filter(Boolean)));
     if(centre)centreOn(block);
     if(notify)post({kind:'select',block_id:block});
   }
@@ -70,14 +78,32 @@ function createViewrvSessionAdapter({graph,data,diagram,inspector,state,resource
     const camera=diagram.camera.cameraCentre();
     diagram.camera.resizeDiagram({...camera,x:(render.x+render.width/2)/scale-translate.x,y:(render.y+render.height/2)/scale-translate.y});
   }
-  function setFocus(blocks){
-    const previous=focus;focus=new Set(blocks.filter(block=>Object.hasOwn(roots,block)));
-    repaint(new Set([...previous,...focus,selected].filter(Boolean)));
+  function setFocus(blocks,{previousSelection=visibleSelection(),maskChanged=false}={}){
+    const previous=focus,previousConnections=focusConnections;
+    focus=new Set(blocks.filter(block=>Object.hasOwn(roots,block)));
+    focusConnections=new Set();
+    const scope=observation?.follow;
+    if(scope){
+      const endpoints=new Set([...focus].map(cellFor));
+      const destinationLatch=scope.latch&&cellFor(scope.latch);
+      // Keep complete branches between participating blocks and from those
+      // blocks to the latch holding the instruction after this cycle.
+      for(const route of data.connections){
+        const reachesLatch=destinationLatch&&route.target_block===destinationLatch;
+        if(endpoints.has(route.source_block)&&(endpoints.has(route.target_block)||reachesLatch)){
+          for(const id of route.cells)if(!data.owners[id])focusConnections.add(id);
+        }
+      }
+    }
+    repaint(new Set([...previous,...focus,previousSelection,visibleSelection(),selected].filter(Boolean)),{
+      all:maskChanged,connections:[...previousConnections,...focusConnections]
+    });
   }
   function setObservation(context){
     if(observation&&['session_id','program_id','source_version'].some(key=>observation[key]!==context[key]))throw Error('La observación cambió de sesión o revisión.');
+    const previousSelection=visibleSelection(),maskChanged=Boolean(observation?.follow)!==Boolean(context.follow);
     observation=context;graph.tooltipHandler.hide();
-    setFocus((context.observation?.interpretation?.cycle_activity||[]).flatMap(row=>row.blocks));
+    setFocus(context.follow?.blocks??(context.observation?.interpretation?.cycle_activity||[]).flatMap(row=>row.blocks),{previousSelection,maskChanged});
     post({kind:'observed',step_index:context.observation?.step_index??null,cycle_count:context.observation?.snapshot?.cycle_count??null});
   }
   const mouse={mouseDown(){},mouseMove(){},mouseUp(){
@@ -102,7 +128,7 @@ function createViewrvSessionAdapter({graph,data,diagram,inspector,state,resource
       else if(value.kind==='select')selectComponent(value.block_id,{centre:!!value.centre});
       else if(value.kind==='focus')setFocus(value.blocks);
       else if(value.kind==='resize')resize();
-      else if(value.kind==='theme'){theme=value.theme;document.documentElement.style.setProperty('--viewrv-selection',theme.accent);repaint(new Set([...focus,selected].filter(Boolean)));}
+      else if(value.kind==='theme'){theme=value.theme;document.documentElement.style.setProperty('--viewrv-selection',theme.accent);repaint(new Set([...focus,visibleSelection()].filter(Boolean)));}
       else if(value.kind==='dispose')dispose();
     }catch(error){post({kind:'error',message:String(error.message)});}
   }

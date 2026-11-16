@@ -46,7 +46,7 @@ npm run check
 npm run test:gui -- formatter-smoke
 ```
 
-`check` comprueba formato, construye con TypeScript estricto y ejecuta las pruebas unitarias de GUI. `npm run test:core` ejecuta la suite Python de viewrv con el entorno `../.venv`. `npm run test:gui` ejecuta los 19 recorridos de ventana secuencialmente sobre la construcción existente; sus resultados temporales quedan en `../build/gui-check/`. `npm run check:all` reúne los tres niveles; CI los ejecuta como pasos separados. Los ensayos de paquete y rendimiento se ejecutan aparte según el cambio o la entrega.
+`check` comprueba formato, construye con TypeScript estricto y ejecuta las pruebas unitarias de GUI. `npm run test:core` ejecuta la suite Python de viewrv con el entorno `../.venv`. `npm run test:gui` ejecuta los recorridos de ventana secuencialmente sobre la construcción existente; sus resultados temporales quedan en `../build/gui-check/`. `npm run check:all` reúne los tres niveles; CI los ejecuta como pasos separados. Los ensayos de paquete y rendimiento se ejecutan aparte según el cambio o la entrega.
 
 Las pruebas conservan la relación con el [catálogo de aceptación](../../docs/software/viewrv/verificacion.md). Comprueban resultados, conservación de datos y acciones del usuario; evitan fijar colores, radios, espaciados exactos o tiempos internos de animación. La apariencia se revisa visualmente. Al cambiar una implementación, conservar la expectativa funcional y adaptar el montaje de la prueba cuando sea necesario.
 

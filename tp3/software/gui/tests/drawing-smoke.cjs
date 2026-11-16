@@ -7,6 +7,7 @@ const { pathToFileURL } = require('node:url')
 const { execFileSync } = require('node:child_process')
 const assert = require('node:assert/strict')
 const { copyContent, editDrawing } = require('./drawing-fixture.cjs')
+const { graphCells } = require('../../packaging/viewer_resources.cjs')
 const gui = path.resolve(__dirname, '..'),
   temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'viewrv-drawing-gui-')),
   content = path.join(temporary, 'content')
@@ -80,6 +81,9 @@ async function until(predicate, timeout = 20000) {
           fieldOwner: data.fields[ids.field].owner,
           wirePoint: points.some((value) => value.x === point.x && value.y === point.y),
           tooltip: graph.getTooltipForCell(field),
+          loadAddressTooltip: graph.getTooltipForCell(
+            graph.model.getCell('3MnTVxVksF03tweEaCV9-3'),
+          ),
           camera,
           refresh: data.viewrv_refresh_cameras,
         }
@@ -89,6 +93,7 @@ async function until(predicate, timeout = 20000) {
       assert.equal(measured.fieldOwner, ids.root)
       assert.equal(measured.wirePoint, true)
       assert.match(measured.tooltip, /valid/)
+      assert.match(measured.loadAddressTooltip, /Load Select\/Extend/)
       assert.equal(measured.refresh, false)
       assert.ok(
         measured.camera.x <= edit.rootX && measured.camera.x + measured.camera.width >= edit.rootX,
@@ -153,7 +158,10 @@ async function until(predicate, timeout = 20000) {
       window.__keptModel = graph.model
       return Object.keys(graph.model.cells).length
     })
-    assert.ok(identity > 1700)
+    assert.equal(
+      identity,
+      graphCells(fs.readFileSync(path.join(content, 'diagram.drawio.xml'), 'utf8')).size,
+    )
     await page.evaluate(() => window.tp3SessionAdapter.resize())
     assert.equal(
       await page.evaluate(
