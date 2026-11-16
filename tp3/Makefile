@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 # Solo fuentes propias; las salidas generadas de Vivado y build quedan fuera.
 SV_DIRS := rtl tb scripts/tests/fixtures
-PY_DIR := scripts software
+PY_DIR := scripts software tools/board_acceptance
 CPU_REVIEW_TOOL := tools/verification/check_cpu_structure.py
 SH_SOURCES := scripts/run_tests.sh
 RTL_SOURCES := rtl/system_pkg.sv rtl/decoder.sv rtl/immediate_generator.sv \

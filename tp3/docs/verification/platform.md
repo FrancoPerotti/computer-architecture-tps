@@ -412,7 +412,7 @@ Estas 151 reejecuciones forman una selección cerrada y están también en `repl
 - En [TEST-PIPE-005](pipeline.md#test-pipe-005) se vuelven a ejecutar los casos `C001`, `C002`, `C003`, `C004`, `C005`, `C006`, `C007`, `C008`,
   `C009`.
 
-- En [TEST-EXEC-004](execution.md#test-exec-004) se vuelven a ejecutar los casos `C001`, `C002`, `C003`, `C004`, `C005`, `C007`, `C008`.
+- En [TEST-EXEC-004](execution.md#test-exec-004) se vuelven a ejecutar los casos `C001`, `C002`, `C003`, `C004`, `C005`, `C007`, `C008`. `C006` corresponde a ALT_1000.
 
 - En [TEST-EXEC-008](execution.md#test-exec-008) se vuelven a ejecutar los casos `C001`, `C002`, `C003`, `C004`.
 
@@ -424,6 +424,10 @@ Estas 151 reejecuciones forman una selección cerrada y están también en `repl
 - En [TEST-UART-008](uart_debug.md#test-uart-008) se vuelven a ejecutar los casos `C001`, `C002`, `C003`, `C005`.
 
 - En [TEST-UART-013](uart_debug.md#test-uart-013) se vuelven a ejecutar los casos `C001`, `C002`, `C007`, `C008`, `C009`, `C010`.
+
+El [procedimiento de aceptación de la #17](board_acceptance.md) permite generar los
+programas y expectativas por ID, probar el ejecutor sin placa y conservar la
+evidencia de la sesión REFERENCE.
 
 ### Procedimiento
 
