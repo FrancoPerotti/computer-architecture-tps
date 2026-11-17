@@ -1,0 +1,1053 @@
+{
+  "input": {
+    "name": "TP3_PIPELINE_COMPLETO.drawio.xml",
+    "sha256": "47214677b2fbd148b972cfb8a8e5dcae308222dbb4a55bacce02cc58a6d09eeb"
+  },
+  "retired_cells": [
+    "FnS0bkd4gSxqp38Bwt3y-10",
+    "FnS0bkd4gSxqp38Bwt3y-11",
+    "FnS0bkd4gSxqp38Bwt3y-12",
+    "FnS0bkd4gSxqp38Bwt3y-13",
+    "FnS0bkd4gSxqp38Bwt3y-14",
+    "FnS0bkd4gSxqp38Bwt3y-15",
+    "FnS0bkd4gSxqp38Bwt3y-17",
+    "FnS0bkd4gSxqp38Bwt3y-18",
+    "FnS0bkd4gSxqp38Bwt3y-20",
+    "FnS0bkd4gSxqp38Bwt3y-21",
+    "FnS0bkd4gSxqp38Bwt3y-23",
+    "FnS0bkd4gSxqp38Bwt3y-8",
+    "FnS0bkd4gSxqp38Bwt3y-9",
+    "Tt5he3O3EYmpKgI4cT62-1",
+    "Tt5he3O3EYmpKgI4cT62-10",
+    "Tt5he3O3EYmpKgI4cT62-15",
+    "Tt5he3O3EYmpKgI4cT62-16",
+    "Tt5he3O3EYmpKgI4cT62-2",
+    "Tt5he3O3EYmpKgI4cT62-3",
+    "Tt5he3O3EYmpKgI4cT62-4",
+    "Tt5he3O3EYmpKgI4cT62-5",
+    "Tt5he3O3EYmpKgI4cT62-6",
+    "Tt5he3O3EYmpKgI4cT62-9",
+    "aZae86Sm4YJyi35RQj7u-343",
+    "aZae86Sm4YJyi35RQj7u-408",
+    "aZae86Sm4YJyi35RQj7u-419",
+    "aZae86Sm4YJyi35RQj7u-431",
+    "aZae86Sm4YJyi35RQj7u-526",
+    "aZae86Sm4YJyi35RQj7u-547",
+    "aZae86Sm4YJyi35RQj7u-548",
+    "aZae86Sm4YJyi35RQj7u-556",
+    "aZae86Sm4YJyi35RQj7u-623",
+    "aZae86Sm4YJyi35RQj7u-644",
+    "aZae86Sm4YJyi35RQj7u-652",
+    "aZae86Sm4YJyi35RQj7u-794",
+    "aZae86Sm4YJyi35RQj7u-852",
+    "aZae86Sm4YJyi35RQj7u-860",
+    "aZae86Sm4YJyi35RQj7u-880",
+    "cTusTiFrEAaOMj2go4Ax-44",
+    "d6Z_Gf_YBklqbeCfQCJ9-465",
+    "d6Z_Gf_YBklqbeCfQCJ9-475",
+    "d6Z_Gf_YBklqbeCfQCJ9-483",
+    "d6Z_Gf_YBklqbeCfQCJ9-492",
+    "d6Z_Gf_YBklqbeCfQCJ9-511",
+    "d6Z_Gf_YBklqbeCfQCJ9-554",
+    "d6Z_Gf_YBklqbeCfQCJ9-563",
+    "d6Z_Gf_YBklqbeCfQCJ9-629",
+    "d6Z_Gf_YBklqbeCfQCJ9-632",
+    "d6Z_Gf_YBklqbeCfQCJ9-647",
+    "d6Z_Gf_YBklqbeCfQCJ9-655",
+    "d6Z_Gf_YBklqbeCfQCJ9-666",
+    "d6Z_Gf_YBklqbeCfQCJ9-674",
+    "d6Z_Gf_YBklqbeCfQCJ9-682",
+    "d6Z_Gf_YBklqbeCfQCJ9-691",
+    "d6Z_Gf_YBklqbeCfQCJ9-692",
+    "d6Z_Gf_YBklqbeCfQCJ9-702",
+    "tp3-empty-state-input-0",
+    "tp3-empty-state-input-1",
+    "tp3-empty-state-input-2",
+    "tp3-empty-state-input-3",
+    "tp3-empty-state-input-4",
+    "tp3-empty-state-input-5",
+    "tp3-empty-state-input-6",
+    "tp3-empty-state-input-7",
+    "tp3-empty-state-wire-14",
+    "tp3-empty-state-wire-21",
+    "tp3-empty-state-wire-27",
+    "tp3-empty-state-wire-28",
+    "tp3-empty-state-wire-32",
+    "tp3-empty-state-wire-38",
+    "tp3-empty-state-wire-39",
+    "tp3-empty-state-wire-43",
+    "tp3-empty-state-wire-47",
+    "tp3-empty-state-wire-48",
+    "tp3-empty-state-wire-49",
+    "tp3-empty-state-wire-50",
+    "tp3-empty-state-wire-54",
+    "tp3-empty-state-wire-55",
+    "tp3-empty-state-wire-56",
+    "tp3-empty-state-wire-57",
+    "tp3-empty-state-wire-61",
+    "tp3-empty-state-wire-62",
+    "tp3-empty-state-wire-63",
+    "tp3-empty-state-wire-64",
+    "tp3-empty-state-wire-7",
+    "tp3-empty-state-wp-10",
+    "tp3-empty-state-wp-17",
+    "tp3-empty-state-wp-22",
+    "tp3-empty-state-wp-23",
+    "tp3-empty-state-wp-26",
+    "tp3-empty-state-wp-3",
+    "tp3-empty-state-wp-33",
+    "tp3-empty-state-wp-34",
+    "tp3-empty-state-wp-37",
+    "tp3-empty-state-wp-44",
+    "tp3-empty-state-wp-45",
+    "tp3-empty-state-wp-46",
+    "tp3-empty-state-wp-51",
+    "tp3-empty-state-wp-52",
+    "tp3-empty-state-wp-53",
+    "tp3-empty-state-wp-58",
+    "tp3-empty-state-wp-59",
+    "tp3-empty-state-wp-60",
+    "tp3-exec-empty",
+    "tp3-exec-empty-current",
+    "tp3-exec-empty-current-label",
+    "tp3-exec-empty-next",
+    "tp3-exec-empty-next-label",
+    "tp3-exec-fault-ex-feedback",
+    "tp3-exec-fault-id-feedback",
+    "tp3-exec-halt-feedback",
+    "tp3-exec-terminal_none-label",
+    "tp3-left-feedback-bend-0",
+    "tp3-left-feedback-bend-1",
+    "tp3-left-feedback-bend-2",
+    "tp3-left-feedback-lead-0",
+    "tp3-left-feedback-lead-1",
+    "tp3-left-feedback-lead-2",
+    "tp3-style-empty-in-0",
+    "tp3-style-empty-in-2",
+    "tp3-style-empty-in-4",
+    "tp3-style-empty-in-6",
+    "tp3-style-exec-in-pipeline_empty",
+    "tp3-style-exec-in-pipeline_empty_next",
+    "tp3-style-wire-130",
+    "tp3-style-wire-131",
+    "tp3-style-wire-132",
+    "tp3-style-wire-133",
+    "tp3-style-wire-169",
+    "tp3-style-wire-170",
+    "tp3-style-wire-171",
+    "tp3-style-wire-172",
+    "tp3-style-wire-36",
+    "tp3-style-wire-37",
+    "tp3-style-wire-38",
+    "tp3-style-wire-39",
+    "tp3-style-wire-40",
+    "tp3-style-wire-41",
+    "tp3-style-wire-84",
+    "tp3-style-wire-85",
+    "tp3-style-wire-86",
+    "tp3-style-wire-87",
+    "tp3-style-wp-127",
+    "tp3-style-wp-128",
+    "tp3-style-wp-129",
+    "tp3-style-wp-166",
+    "tp3-style-wp-167",
+    "tp3-style-wp-168",
+    "tp3-style-wp-184",
+    "tp3-style-wp-186",
+    "tp3-style-wp-188",
+    "tp3-style-wp-205",
+    "tp3-style-wp-208",
+    "tp3-style-wp-211",
+    "tp3-style-wp-31",
+    "tp3-style-wp-32",
+    "tp3-style-wp-33",
+    "tp3-style-wp-34",
+    "tp3-style-wp-35",
+    "tp3-style-wp-81",
+    "tp3-style-wp-82",
+    "tp3-style-wp-83"
+  ],
+  "retired_routes": [
+    "connection-6",
+    "connection-17",
+    "connection-29",
+    "connection-95",
+    "connection-100",
+    "connection-103",
+    "connection-137",
+    "connection-169",
+    "connection-171",
+    "connection-195",
+    "connection-196",
+    "connection-197",
+    "connection-198",
+    "connection-200",
+    "connection-202",
+    "connection-204",
+    "connection-206",
+    "connection-212",
+    "connection-213",
+    "connection-218"
+  ],
+  "edge_endpoints": {
+    "3MnTVxVksF03tweEaCV9-2": [
+      "d6Z_Gf_YBklqbeCfQCJ9-147",
+      "3MnTVxVksF03tweEaCV9-1"
+    ],
+    "3MnTVxVksF03tweEaCV9-3": [
+      "3MnTVxVksF03tweEaCV9-1",
+      "cTusTiFrEAaOMj2go4Ax-49"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-16": [
+      "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "9XnDQYvoR_so7hwzEaN5-4"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-17": [
+      "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "9XnDQYvoR_so7hwzEaN5-7"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-18": [
+      "9XnDQYvoR_so7hwzEaN5-4",
+      "9XnDQYvoR_so7hwzEaN5-5"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-19": [
+      "9XnDQYvoR_so7hwzEaN5-7",
+      "9XnDQYvoR_so7hwzEaN5-6"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-20": [
+      "9XnDQYvoR_so7hwzEaN5-8",
+      "9XnDQYvoR_so7hwzEaN5-10"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-21": [
+      "9XnDQYvoR_so7hwzEaN5-5",
+      "9XnDQYvoR_so7hwzEaN5-11"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-22": [
+      "9XnDQYvoR_so7hwzEaN5-6",
+      "9XnDQYvoR_so7hwzEaN5-12"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-24": [
+      "9XnDQYvoR_so7hwzEaN5-12",
+      "9XnDQYvoR_so7hwzEaN5-15"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-25": [
+      "9XnDQYvoR_so7hwzEaN5-10",
+      "9XnDQYvoR_so7hwzEaN5-13"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-26": [
+      "9XnDQYvoR_so7hwzEaN5-11",
+      "9XnDQYvoR_so7hwzEaN5-14"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-27": [
+      "9XnDQYvoR_so7hwzEaN5-9",
+      "9XnDQYvoR_so7hwzEaN5-8"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-29": [
+      "d6Z_Gf_YBklqbeCfQCJ9-280",
+      "9XnDQYvoR_so7hwzEaN5-9"
+    ],
+    "9XnDQYvoR_so7hwzEaN5-30": [
+      "aZae86Sm4YJyi35RQj7u-228",
+      "aZae86Sm4YJyi35RQj7u-227"
+    ],
+    "aZae86Sm4YJyi35RQj7u-32": [
+      "9XnDQYvoR_so7hwzEaN5-13",
+      "tp3-exec-control"
+    ],
+    "aZae86Sm4YJyi35RQj7u-389": [
+      "3MnTVxVksF03tweEaCV9-1",
+      "aZae86Sm4YJyi35RQj7u-253"
+    ],
+    "d6Z_Gf_YBklqbeCfQCJ9-576": [
+      null,
+      null
+    ],
+    "d6Z_Gf_YBklqbeCfQCJ9-98": [
+      "9XnDQYvoR_so7hwzEaN5-14",
+      "tp3-exec-control"
+    ],
+    "d6Z_Gf_YBklqbeCfQCJ9-99": [
+      "9XnDQYvoR_so7hwzEaN5-15",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-0-wire": [
+      "exec-vigente-clock-reset",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-1-wire": [
+      "exec-vigente-protocol-controller",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-2-wire": [
+      "exec-vigente-loader",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-3-wire": [
+      "exec-vigente-loader",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-4-wire": [
+      "exec-vigente-session-preparation",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-5-wire": [
+      "exec-vigente-session-preparation",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-6-wire": [
+      "exec-vigente-loader",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-8-wire": [
+      "exec-vigente-in-8-wire-orden-wp-2",
+      "tp3-exec-control"
+    ],
+    "exec-vigente-in-8-wire-orden-segment-0": [
+      "cTusTiFrEAaOMj2go4Ax-96",
+      "exec-vigente-in-8-wire-orden-wp-0"
+    ],
+    "exec-vigente-in-8-wire-orden-segment-1": [
+      "exec-vigente-in-8-wire-orden-wp-0",
+      "exec-vigente-in-8-wire-orden-wp-1"
+    ],
+    "exec-vigente-in-8-wire-orden-segment-2": [
+      "exec-vigente-in-8-wire-orden-wp-1",
+      "exec-vigente-in-8-wire-orden-wp-2"
+    ],
+    "exec-vigente-next-0-wire": [
+      null,
+      "tp3-exec-control"
+    ],
+    "exec-vigente-next-1-wire": [
+      null,
+      "tp3-exec-control"
+    ],
+    "exec-vigente-next-2-wire": [
+      null,
+      "tp3-exec-control"
+    ],
+    "exec-vigente-next-3-wire": [
+      null,
+      "tp3-exec-control"
+    ],
+    "exec-vigente-out-0-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-1-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-10-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-11-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-12-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-2-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-3-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-4-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-5-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-6-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-7-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-8-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "exec-vigente-out-9-wire": [
+      "tp3-exec-control",
+      null
+    ],
+    "tp3-exec-commands-input": [
+      "exec-vigente-protocol-controller",
+      "tp3-exec-control"
+    ],
+    "tp3-exec-reset-input": [
+      "exec-vigente-clock-reset",
+      "tp3-exec-control"
+    ],
+    "tp3-style-wire-187": [
+      "exec-vigente-protocol-controller",
+      "tp3-exec-control"
+    ],
+    "tp3-style-wire-207": [
+      "tp3-style-wire-207-orden-wp-2",
+      "tp3-exec-control"
+    ],
+    "tp3-style-wire-207-orden-segment-0": [
+      "tp3-exec-halt-tap",
+      "tp3-style-wire-207-orden-wp-0"
+    ],
+    "tp3-style-wire-207-orden-segment-1": [
+      "tp3-style-wire-207-orden-wp-0",
+      "tp3-style-wire-207-orden-wp-1"
+    ],
+    "tp3-style-wire-207-orden-segment-2": [
+      "tp3-style-wire-207-orden-wp-1",
+      "tp3-style-wire-207-orden-wp-2"
+    ],
+    "tp3-style-wire-210": [
+      "tp3-style-wire-210-orden-wp-2",
+      "tp3-exec-control"
+    ],
+    "tp3-style-wire-210-orden-segment-0": [
+      "tp3-exec-fault-ex-tap",
+      "tp3-style-wire-210-orden-wp-0"
+    ],
+    "tp3-style-wire-210-orden-segment-1": [
+      "tp3-style-wire-210-orden-wp-0",
+      "tp3-style-wire-210-orden-wp-1"
+    ],
+    "tp3-style-wire-210-orden-segment-2": [
+      "tp3-style-wire-210-orden-wp-1",
+      "tp3-style-wire-210-orden-wp-2"
+    ],
+    "tp3-style-wire-213": [
+      "tp3-style-wire-213-orden-wp-2",
+      "tp3-exec-control"
+    ],
+    "tp3-style-wire-213-orden-segment-0": [
+      "tp3-exec-fault-id-tap",
+      "tp3-style-wire-213-orden-wp-0"
+    ],
+    "tp3-style-wire-213-orden-segment-1": [
+      "tp3-style-wire-213-orden-wp-0",
+      "tp3-style-wire-213-orden-wp-1"
+    ],
+    "tp3-style-wire-213-orden-segment-2": [
+      "tp3-style-wire-213-orden-wp-1",
+      "tp3-style-wire-213-orden-wp-2"
+    ]
+  },
+  "routes": {
+    "connection-122": {
+      "edges": [
+        "9XnDQYvoR_so7hwzEaN5-16",
+        "9XnDQYvoR_so7hwzEaN5-18",
+        "9XnDQYvoR_so7hwzEaN5-21",
+        "9XnDQYvoR_so7hwzEaN5-26",
+        "d6Z_Gf_YBklqbeCfQCJ9-98"
+      ],
+      "flow_directions": {
+        "9XnDQYvoR_so7hwzEaN5-16": "normal",
+        "9XnDQYvoR_so7hwzEaN5-18": "normal",
+        "9XnDQYvoR_so7hwzEaN5-21": "normal",
+        "9XnDQYvoR_so7hwzEaN5-26": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-98": "normal"
+      },
+      "cells": [
+        "9XnDQYvoR_so7hwzEaN5-11",
+        "9XnDQYvoR_so7hwzEaN5-14",
+        "9XnDQYvoR_so7hwzEaN5-16",
+        "9XnDQYvoR_so7hwzEaN5-18",
+        "9XnDQYvoR_so7hwzEaN5-21",
+        "9XnDQYvoR_so7hwzEaN5-26",
+        "9XnDQYvoR_so7hwzEaN5-4",
+        "9XnDQYvoR_so7hwzEaN5-5",
+        "d6Z_Gf_YBklqbeCfQCJ9-102",
+        "d6Z_Gf_YBklqbeCfQCJ9-90",
+        "d6Z_Gf_YBklqbeCfQCJ9-98",
+        "exec-vigente-in-9-label",
+        "tp3-exec-control"
+      ],
+      "source": "ID Fault Check",
+      "source_terminal": "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "source_block": "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "exec-vigente-in-9-label"
+      ],
+      "description": "ID Fault Check entrega la causa candidata a Execution Control. Se conserva como metadato global si el control confirma el fallo de ID.",
+      "target_signal": "id_fault_cause[2:0]"
+    },
+    "connection-123": {
+      "edges": [
+        "9XnDQYvoR_so7hwzEaN5-17",
+        "9XnDQYvoR_so7hwzEaN5-19",
+        "9XnDQYvoR_so7hwzEaN5-22",
+        "9XnDQYvoR_so7hwzEaN5-24",
+        "d6Z_Gf_YBklqbeCfQCJ9-99"
+      ],
+      "flow_directions": {
+        "9XnDQYvoR_so7hwzEaN5-17": "normal",
+        "9XnDQYvoR_so7hwzEaN5-19": "normal",
+        "9XnDQYvoR_so7hwzEaN5-22": "normal",
+        "9XnDQYvoR_so7hwzEaN5-24": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-99": "normal"
+      },
+      "cells": [
+        "9XnDQYvoR_so7hwzEaN5-12",
+        "9XnDQYvoR_so7hwzEaN5-15",
+        "9XnDQYvoR_so7hwzEaN5-17",
+        "9XnDQYvoR_so7hwzEaN5-19",
+        "9XnDQYvoR_so7hwzEaN5-22",
+        "9XnDQYvoR_so7hwzEaN5-24",
+        "9XnDQYvoR_so7hwzEaN5-6",
+        "9XnDQYvoR_so7hwzEaN5-7",
+        "d6Z_Gf_YBklqbeCfQCJ9-101",
+        "d6Z_Gf_YBklqbeCfQCJ9-90",
+        "d6Z_Gf_YBklqbeCfQCJ9-99",
+        "exec-vigente-in-10-label",
+        "tp3-exec-control"
+      ],
+      "source": "ID Fault Check",
+      "source_terminal": "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "source_block": "d6Z_Gf_YBklqbeCfQCJ9-90",
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "exec-vigente-in-10-label"
+      ],
+      "description": "Execution Control recibe el PC candidato de ID Fault Check y lo conserva si se confirma el fallo de ID.",
+      "target_signal": "id_fault_pc[31:0]"
+    },
+    "connection-145": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "3MnTVxVksF03tweEaCV9-2",
+        "aZae86Sm4YJyi35RQj7u-389",
+        "aZae86Sm4YJyi35RQj7u-390",
+        "d6Z_Gf_YBklqbeCfQCJ9-148"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-146": "normal",
+        "3MnTVxVksF03tweEaCV9-2": "normal",
+        "aZae86Sm4YJyi35RQj7u-389": "normal",
+        "aZae86Sm4YJyi35RQj7u-390": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-148": "normal"
+      },
+      "cells": [
+        "3MnTVxVksF03tweEaCV9-1",
+        "3MnTVxVksF03tweEaCV9-2",
+        "3MnTVxVksF03tweEaCV9-4",
+        "PeWG_VKsY-f66Zm0Bl_l-337",
+        "PeWG_VKsY-f66Zm0Bl_l-344",
+        "aZae86Sm4YJyi35RQj7u-253",
+        "aZae86Sm4YJyi35RQj7u-254",
+        "aZae86Sm4YJyi35RQj7u-28",
+        "aZae86Sm4YJyi35RQj7u-389",
+        "aZae86Sm4YJyi35RQj7u-390",
+        "d6Z_Gf_YBklqbeCfQCJ9-145",
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-147",
+        "d6Z_Gf_YBklqbeCfQCJ9-148"
+      ],
+      "labels": [
+        "3MnTVxVksF03tweEaCV9-4"
+      ]
+    },
+    "connection-146": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-221",
+        "aZae86Sm4YJyi35RQj7u-346",
+        "aZae86Sm4YJyi35RQj7u-345",
+        "9XnDQYvoR_so7hwzEaN5-30",
+        "aZae86Sm4YJyi35RQj7u-314",
+        "d6Z_Gf_YBklqbeCfQCJ9-195",
+        "aZae86Sm4YJyi35RQj7u-316",
+        "d6Z_Gf_YBklqbeCfQCJ9-189"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-146": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-221": "normal",
+        "aZae86Sm4YJyi35RQj7u-346": "normal",
+        "aZae86Sm4YJyi35RQj7u-345": "normal",
+        "9XnDQYvoR_so7hwzEaN5-30": "normal",
+        "aZae86Sm4YJyi35RQj7u-314": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-195": "normal",
+        "aZae86Sm4YJyi35RQj7u-316": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-189": "normal"
+      },
+      "cells": [
+        "9XnDQYvoR_so7hwzEaN5-30",
+        "PeWG_VKsY-f66Zm0Bl_l-335",
+        "PeWG_VKsY-f66Zm0Bl_l-337",
+        "PeWG_VKsY-f66Zm0Bl_l-344",
+        "aZae86Sm4YJyi35RQj7u-187",
+        "aZae86Sm4YJyi35RQj7u-193",
+        "aZae86Sm4YJyi35RQj7u-227",
+        "aZae86Sm4YJyi35RQj7u-228",
+        "aZae86Sm4YJyi35RQj7u-252",
+        "aZae86Sm4YJyi35RQj7u-314",
+        "aZae86Sm4YJyi35RQj7u-316",
+        "aZae86Sm4YJyi35RQj7u-345",
+        "aZae86Sm4YJyi35RQj7u-346",
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-147",
+        "d6Z_Gf_YBklqbeCfQCJ9-189",
+        "d6Z_Gf_YBklqbeCfQCJ9-190",
+        "d6Z_Gf_YBklqbeCfQCJ9-195",
+        "d6Z_Gf_YBklqbeCfQCJ9-196",
+        "d6Z_Gf_YBklqbeCfQCJ9-221",
+        "d6Z_Gf_YBklqbeCfQCJ9-222"
+      ]
+    },
+    "connection-147": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-221",
+        "aZae86Sm4YJyi35RQj7u-346",
+        "aZae86Sm4YJyi35RQj7u-345",
+        "9XnDQYvoR_so7hwzEaN5-30",
+        "aZae86Sm4YJyi35RQj7u-314",
+        "d6Z_Gf_YBklqbeCfQCJ9-195",
+        "d6Z_Gf_YBklqbeCfQCJ9-197"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-146": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-221": "normal",
+        "aZae86Sm4YJyi35RQj7u-346": "normal",
+        "aZae86Sm4YJyi35RQj7u-345": "normal",
+        "9XnDQYvoR_so7hwzEaN5-30": "normal",
+        "aZae86Sm4YJyi35RQj7u-314": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-195": "normal",
+        "d6Z_Gf_YBklqbeCfQCJ9-197": "normal"
+      },
+      "cells": [
+        "9XnDQYvoR_so7hwzEaN5-30",
+        "PeWG_VKsY-f66Zm0Bl_l-336",
+        "PeWG_VKsY-f66Zm0Bl_l-337",
+        "PeWG_VKsY-f66Zm0Bl_l-344",
+        "aZae86Sm4YJyi35RQj7u-193",
+        "aZae86Sm4YJyi35RQj7u-227",
+        "aZae86Sm4YJyi35RQj7u-228",
+        "aZae86Sm4YJyi35RQj7u-252",
+        "aZae86Sm4YJyi35RQj7u-314",
+        "aZae86Sm4YJyi35RQj7u-345",
+        "aZae86Sm4YJyi35RQj7u-346",
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-147",
+        "d6Z_Gf_YBklqbeCfQCJ9-195",
+        "d6Z_Gf_YBklqbeCfQCJ9-196",
+        "d6Z_Gf_YBklqbeCfQCJ9-197",
+        "d6Z_Gf_YBklqbeCfQCJ9-204",
+        "d6Z_Gf_YBklqbeCfQCJ9-221",
+        "d6Z_Gf_YBklqbeCfQCJ9-222"
+      ]
+    },
+    "connection-161": {
+      "edges": [
+        "9XnDQYvoR_so7hwzEaN5-29",
+        "9XnDQYvoR_so7hwzEaN5-27",
+        "9XnDQYvoR_so7hwzEaN5-20",
+        "9XnDQYvoR_so7hwzEaN5-25",
+        "aZae86Sm4YJyi35RQj7u-32"
+      ],
+      "flow_directions": {
+        "9XnDQYvoR_so7hwzEaN5-29": "normal",
+        "9XnDQYvoR_so7hwzEaN5-27": "normal",
+        "9XnDQYvoR_so7hwzEaN5-20": "normal",
+        "9XnDQYvoR_so7hwzEaN5-25": "normal",
+        "aZae86Sm4YJyi35RQj7u-32": "normal"
+      },
+      "cells": [
+        "9XnDQYvoR_so7hwzEaN5-10",
+        "9XnDQYvoR_so7hwzEaN5-13",
+        "9XnDQYvoR_so7hwzEaN5-20",
+        "9XnDQYvoR_so7hwzEaN5-25",
+        "9XnDQYvoR_so7hwzEaN5-27",
+        "9XnDQYvoR_so7hwzEaN5-29",
+        "9XnDQYvoR_so7hwzEaN5-8",
+        "9XnDQYvoR_so7hwzEaN5-9",
+        "aZae86Sm4YJyi35RQj7u-32",
+        "aZae86Sm4YJyi35RQj7u-33",
+        "d6Z_Gf_YBklqbeCfQCJ9-280",
+        "exec-vigente-in-7-label",
+        "tp3-exec-control"
+      ],
+      "source": "EX Fault Check",
+      "source_terminal": "d6Z_Gf_YBklqbeCfQCJ9-280",
+      "source_block": "d6Z_Gf_YBklqbeCfQCJ9-280",
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "exec-vigente-in-7-label"
+      ],
+      "description": "EX Fault Check entrega la causa candidata a Execution Control. Se conserva como metadato global si el control confirma el fallo de EX.",
+      "target_signal": "ex_fault_cause[2:0]"
+    },
+    "connection-184": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-688",
+        "tp3-style-wire-207-orden-segment-0",
+        "tp3-style-wire-207-orden-segment-1",
+        "tp3-style-wire-207-orden-segment-2",
+        "tp3-style-wire-207"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-688": "normal",
+        "tp3-style-wire-207-orden-segment-0": "normal",
+        "tp3-style-wire-207-orden-segment-1": "normal",
+        "tp3-style-wire-207-orden-segment-2": "normal",
+        "tp3-style-wire-207": "normal"
+      },
+      "cells": [
+        "d6Z_Gf_YBklqbeCfQCJ9-404",
+        "d6Z_Gf_YBklqbeCfQCJ9-671",
+        "d6Z_Gf_YBklqbeCfQCJ9-688",
+        "tp3-exec-control",
+        "tp3-exec-halt-feedback-label",
+        "tp3-exec-halt-tap",
+        "tp3-style-wire-207",
+        "tp3-style-wire-207-orden-segment-0",
+        "tp3-style-wire-207-orden-segment-1",
+        "tp3-style-wire-207-orden-segment-2",
+        "tp3-style-wire-207-orden-wp-0",
+        "tp3-style-wire-207-orden-wp-1",
+        "tp3-style-wire-207-orden-wp-2"
+      ]
+    },
+    "connection-189": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-689",
+        "tp3-style-wire-210-orden-segment-0",
+        "tp3-style-wire-210-orden-segment-1",
+        "tp3-style-wire-210-orden-segment-2",
+        "tp3-style-wire-210"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-689": "normal",
+        "tp3-style-wire-210-orden-segment-0": "normal",
+        "tp3-style-wire-210-orden-segment-1": "normal",
+        "tp3-style-wire-210-orden-segment-2": "normal",
+        "tp3-style-wire-210": "normal"
+      },
+      "cells": [
+        "d6Z_Gf_YBklqbeCfQCJ9-404",
+        "d6Z_Gf_YBklqbeCfQCJ9-672",
+        "d6Z_Gf_YBklqbeCfQCJ9-689",
+        "tp3-exec-control",
+        "tp3-exec-fault-ex-feedback-label",
+        "tp3-exec-fault-ex-tap",
+        "tp3-style-wire-210",
+        "tp3-style-wire-210-orden-segment-0",
+        "tp3-style-wire-210-orden-segment-1",
+        "tp3-style-wire-210-orden-segment-2",
+        "tp3-style-wire-210-orden-wp-0",
+        "tp3-style-wire-210-orden-wp-1",
+        "tp3-style-wire-210-orden-wp-2"
+      ]
+    },
+    "connection-194": {
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-690",
+        "tp3-style-wire-213-orden-segment-0",
+        "tp3-style-wire-213-orden-segment-1",
+        "tp3-style-wire-213-orden-segment-2",
+        "tp3-style-wire-213"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-690": "normal",
+        "tp3-style-wire-213-orden-segment-0": "normal",
+        "tp3-style-wire-213-orden-segment-1": "normal",
+        "tp3-style-wire-213-orden-segment-2": "normal",
+        "tp3-style-wire-213": "normal"
+      },
+      "cells": [
+        "d6Z_Gf_YBklqbeCfQCJ9-404",
+        "d6Z_Gf_YBklqbeCfQCJ9-673",
+        "d6Z_Gf_YBklqbeCfQCJ9-690",
+        "tp3-exec-control",
+        "tp3-exec-fault-id-feedback-label",
+        "tp3-exec-fault-id-tap",
+        "tp3-style-wire-213",
+        "tp3-style-wire-213-orden-segment-0",
+        "tp3-style-wire-213-orden-segment-1",
+        "tp3-style-wire-213-orden-segment-2",
+        "tp3-style-wire-213-orden-wp-0",
+        "tp3-style-wire-213-orden-wp-1",
+        "tp3-style-wire-213-orden-wp-2"
+      ]
+    },
+    "connection-214": {
+      "edges": [
+        "tp3-exec-commands-input"
+      ],
+      "flow_directions": {
+        "tp3-exec-commands-input": "normal"
+      },
+      "cells": [
+        "exec-vigente-protocol-controller",
+        "tp3-exec-commands",
+        "tp3-exec-commands-input",
+        "tp3-exec-commands-input-source-label",
+        "tp3-exec-control"
+      ],
+      "source": "Protocol Controller",
+      "source_terminal": "exec-vigente-protocol-controller",
+      "source_block": null,
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "tp3-exec-commands-input-source-label"
+      ],
+      "description": "Protocol Controller solicita la ejecución continua a Execution Control."
+    },
+    "connection-215": {
+      "edges": [
+        "tp3-exec-reset-input"
+      ],
+      "flow_directions": {
+        "tp3-exec-reset-input": "normal"
+      },
+      "cells": [
+        "exec-vigente-clock-reset",
+        "tp3-exec-control",
+        "tp3-exec-reset",
+        "tp3-exec-reset-input",
+        "tp3-exec-reset-input-source-label"
+      ],
+      "source": "Clock / Reset",
+      "source_terminal": "exec-vigente-clock-reset",
+      "source_block": null,
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "tp3-exec-reset-input-source-label"
+      ],
+      "description": "La entrada reset llega desde Clock / Reset a Execution Control."
+    },
+    "connection-216": {
+      "edges": [
+        "tp3-style-wire-187"
+      ],
+      "flow_directions": {
+        "tp3-style-wire-187": "normal"
+      },
+      "cells": [
+        "exec-vigente-protocol-controller",
+        "tp3-exec-control",
+        "tp3-style-step-label",
+        "tp3-style-wire-187",
+        "tp3-style-wire-187-source-label"
+      ],
+      "source": "Protocol Controller",
+      "source_terminal": "exec-vigente-protocol-controller",
+      "source_block": null,
+      "target": "Execution Control",
+      "target_terminal": "tp3-exec-control",
+      "target_block": "tp3-exec-control",
+      "labels": [
+        "tp3-style-wire-187-source-label"
+      ],
+      "description": "Protocol Controller solicita un ciclo de avance por pasos a Execution Control."
+    },
+    "connection-address-low-bits": {
+      "source": "EX/MEM",
+      "target": "Load Select/Extend",
+      "source_block": "PeWG_VKsY-f66Zm0Bl_l-337",
+      "target_block": "cTusTiFrEAaOMj2go4Ax-49",
+      "source_signal": "ex_result",
+      "target_signal": "address_low_bits[1:0]",
+      "source_terminal": "PeWG_VKsY-f66Zm0Bl_l-344",
+      "target_terminal": "cTusTiFrEAaOMj2go4Ax-49",
+      "edges": [
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "3MnTVxVksF03tweEaCV9-2",
+        "3MnTVxVksF03tweEaCV9-3"
+      ],
+      "flow_directions": {
+        "d6Z_Gf_YBklqbeCfQCJ9-146": "normal",
+        "3MnTVxVksF03tweEaCV9-2": "normal",
+        "3MnTVxVksF03tweEaCV9-3": "normal"
+      },
+      "cells": [
+        "3MnTVxVksF03tweEaCV9-1",
+        "3MnTVxVksF03tweEaCV9-2",
+        "3MnTVxVksF03tweEaCV9-3",
+        "3MnTVxVksF03tweEaCV9-4",
+        "3MnTVxVksF03tweEaCV9-6",
+        "PeWG_VKsY-f66Zm0Bl_l-337",
+        "PeWG_VKsY-f66Zm0Bl_l-344",
+        "cTusTiFrEAaOMj2go4Ax-49",
+        "d6Z_Gf_YBklqbeCfQCJ9-146",
+        "d6Z_Gf_YBklqbeCfQCJ9-147"
+      ],
+      "target_function": "Convierte los datos de lectura de memoria en el valor de 32 bits que requiere el load. Selecciona el tamaño indicado y aplica extensión de signo o de ceros para bytes y medias palabras; en LW entrega la palabra completa sin extenderla.",
+      "description": "Load Select/Extend recibe los dos bits bajos de la dirección efectiva desde EX/MEM para seleccionar el byte o la media palabra de la lectura.",
+      "labels": [
+        "3MnTVxVksF03tweEaCV9-4",
+        "3MnTVxVksF03tweEaCV9-6"
+      ]
+    },
+    "connection-ex-fault-pc": {
+      "source": "ID/EX",
+      "target": "Execution Control",
+      "source_block": "PeWG_VKsY-f66Zm0Bl_l-288",
+      "target_block": "tp3-exec-control",
+      "source_signal": "pc",
+      "target_signal": "ID/EX.pc[31:0]",
+      "source_terminal": "PeWG_VKsY-f66Zm0Bl_l-290",
+      "target_terminal": "tp3-exec-control",
+      "edges": [
+        "cTusTiFrEAaOMj2go4Ax-95",
+        "exec-vigente-in-8-wire-orden-segment-0",
+        "exec-vigente-in-8-wire-orden-segment-1",
+        "exec-vigente-in-8-wire-orden-segment-2",
+        "exec-vigente-in-8-wire"
+      ],
+      "flow_directions": {
+        "cTusTiFrEAaOMj2go4Ax-95": "normal",
+        "exec-vigente-in-8-wire-orden-segment-0": "normal",
+        "exec-vigente-in-8-wire-orden-segment-1": "normal",
+        "exec-vigente-in-8-wire-orden-segment-2": "normal",
+        "exec-vigente-in-8-wire": "normal"
+      },
+      "cells": [
+        "PeWG_VKsY-f66Zm0Bl_l-288",
+        "PeWG_VKsY-f66Zm0Bl_l-290",
+        "cTusTiFrEAaOMj2go4Ax-95",
+        "cTusTiFrEAaOMj2go4Ax-96",
+        "exec-vigente-in-8-label",
+        "exec-vigente-in-8-wire",
+        "exec-vigente-in-8-wire-orden-segment-0",
+        "exec-vigente-in-8-wire-orden-segment-1",
+        "exec-vigente-in-8-wire-orden-segment-2",
+        "exec-vigente-in-8-wire-orden-wp-0",
+        "exec-vigente-in-8-wire-orden-wp-1",
+        "exec-vigente-in-8-wire-orden-wp-2",
+        "tp3-exec-control"
+      ],
+      "target_function": "Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.",
+      "description": "Execution Control recibe el PC de ID/EX para conservarlo si se confirma un fallo de EX.",
+      "labels": [
+        "exec-vigente-in-8-label"
+      ]
+    },
+    "connection-next-valid-0": {
+      "source": "IF/ID Update Control",
+      "target": "Execution Control",
+      "source_block": null,
+      "target_block": "tp3-exec-control",
+      "source_signal": "IF/ID.next.valid",
+      "target_signal": "IF/ID.next.valid",
+      "source_terminal": null,
+      "target_terminal": "tp3-exec-control",
+      "edges": [
+        "exec-vigente-next-0-wire"
+      ],
+      "flow_directions": {
+        "exec-vigente-next-0-wire": "normal"
+      },
+      "cells": [
+        "exec-vigente-next-0-wire",
+        "exec-vigente-next-0-wire-label",
+        "tp3-exec-control"
+      ],
+      "target_function": "Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.",
+      "description": "Execution Control usa los cuatro valores next.valid para determinar si el pipeline quedará vacío después del ciclo.",
+      "labels": [
+        "exec-vigente-next-0-wire-label"
+      ]
+    },
+    "connection-next-valid-1": {
+      "source": "ID/EX Update Control",
+      "target": "Execution Control",
+      "source_block": null,
+      "target_block": "tp3-exec-control",
+      "source_signal": "ID/EX.next.valid",
+      "target_signal": "ID/EX.next.valid",
+      "source_terminal": null,
+      "target_terminal": "tp3-exec-control",
+      "edges": [
+        "exec-vigente-next-1-wire"
+      ],
+      "flow_directions": {
+        "exec-vigente-next-1-wire": "normal"
+      },
+      "cells": [
+        "exec-vigente-next-1-wire",
+        "exec-vigente-next-1-wire-label",
+        "tp3-exec-control"
+      ],
+      "target_function": "Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.",
+      "description": "Execution Control usa los cuatro valores next.valid para determinar si el pipeline quedará vacío después del ciclo.",
+      "labels": [
+        "exec-vigente-next-1-wire-label"
+      ]
+    },
+    "connection-next-valid-2": {
+      "source": "EX/MEM Update Control",
+      "target": "Execution Control",
+      "source_block": null,
+      "target_block": "tp3-exec-control",
+      "source_signal": "EX/MEM.next.valid",
+      "target_signal": "EX/MEM.next.valid",
+      "source_terminal": null,
+      "target_terminal": "tp3-exec-control",
+      "edges": [
+        "exec-vigente-next-2-wire"
+      ],
+      "flow_directions": {
+        "exec-vigente-next-2-wire": "normal"
+      },
+      "cells": [
+        "exec-vigente-next-2-wire",
+        "exec-vigente-next-2-wire-label",
+        "tp3-exec-control"
+      ],
+      "target_function": "Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.",
+      "description": "Execution Control usa los cuatro valores next.valid para determinar si el pipeline quedará vacío después del ciclo.",
+      "labels": [
+        "exec-vigente-next-2-wire-label"
+      ]
+    },
+    "connection-next-valid-3": {
+      "source": "MEM/WB Update Control",
+      "target": "Execution Control",
+      "source_block": null,
+      "target_block": "tp3-exec-control",
+      "source_signal": "MEM/WB.next.valid",
+      "target_signal": "MEM/WB.next.valid",
+      "source_terminal": null,
+      "target_terminal": "tp3-exec-control",
+      "edges": [
+        "exec-vigente-next-3-wire"
+      ],
+      "flow_directions": {
+        "exec-vigente-next-3-wire": "normal"
+      },
+      "cells": [
+        "exec-vigente-next-3-wire",
+        "exec-vigente-next-3-wire-label",
+        "tp3-exec-control"
+      ],
+      "target_function": "Administra la sesión de ejecución y autoriza los ciclos efectivos de CPU mediante cpu_cycle_fire. Distingue la ejecución continua, el avance por pasos y el drenado tras halt o fault, usando el estado del pipeline para determinar cuándo finaliza la sesión.",
+      "description": "Execution Control usa los cuatro valores next.valid para determinar si el pipeline quedará vacío después del ciclo.",
+      "labels": [
+        "exec-vigente-next-3-wire-label"
+      ]
+    }
+  }
+}

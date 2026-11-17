@@ -17,6 +17,8 @@ import {
 import { useSessionView } from './session-view'
 import { ValueCell } from './value-cell'
 import { SessionExampleGuide } from './example-guide'
+import { InstructionStatus } from './instruction-status'
+import { ConfirmedFault, FetchCandidateDetails } from './fault-status'
 import * as styles from './theme.css'
 
 function fieldValue(snapshot: Snapshot, path: string): number | string | boolean | undefined {
@@ -71,6 +73,46 @@ export function SessionDiagram({ sessionId, onFocus }: { sessionId: string; onFo
   const selected = useInspection((state) => state.items[sessionId] ?? emptyInspection)
   const component = selected.connection ? '' : (selected.component ?? ''),
     module = resources?.education.modules[component]
+  const observation = session?.last_observation,
+    snapshot = observation?.snapshot,
+    changes = observation?.interpretation?.changes
+  const follow = selected.follow
+  const following = follow?.status === 'following'
+  const verified = follow && follow.step_index === observation?.step_index ? follow : null
+  const scoped =
+    live &&
+    !stale &&
+    (selected.starting ||
+      following ||
+      verified?.reason === 'retired' ||
+      verified?.reason === 'discarded')
+  const scopedLatch = verified?.status === 'following' ? latchComponents[verified.last_latch] : null
+  const rows = observation?.interpretation?.cycle_activity
+  let activity =
+    scoped && verified
+      ? rows?.find(
+          (row) =>
+            row.status === 'interpreted' &&
+            row.stage === selected.followStage &&
+            row.pc === verified.pc,
+        )
+      : undefined
+  if (
+    scoped &&
+    !activity &&
+    verified &&
+    verified.origin_step_index === verified.step_index &&
+    scopedLatch === latchComponents['IF/ID']
+  ) {
+    // A valid IF/ID can also be retained by a load-use hazard during decode.
+    activity = rows?.find(
+      (row) =>
+        row.status === 'interpreted' &&
+        row.stage === 'ID' &&
+        row.pc === verified.pc &&
+        row.blocks.includes('id.load_use_detector'),
+    )
+  }
   const container = useRef<HTMLDivElement>(null),
     adapter = useRef<GraphViewerAdapter | null>(null)
   const focusCallback = useRef(onFocus)
@@ -112,20 +154,19 @@ export function SessionDiagram({ sessionId, onFocus }: { sessionId: string; onFo
         source_version: session.source_version,
         observation: session.last_observation,
         stale: stale || !live,
+        follow: scoped ? { blocks: activity?.blocks ?? [], latch: scopedLatch } : undefined,
       })
-  }, [session, stale, live, ready])
+  }, [session, stale, live, ready, scoped, scopedLatch, activity])
   useEffect(() => {
     if (component) adapter.current?.selectComponent(component, selected.centre > 0)
   }, [component, selected.centre, ready])
-  const observation = session?.last_observation,
-    snapshot = observation?.snapshot,
-    changes = observation?.interpretation?.changes
   const latch =
     selected.latch ??
     (Object.keys(latchComponents) as LatchName[]).find(
       (name) => latchComponents[name] === component,
     ) ??
     null
+  const fetchPending = snapshot?.if_id.fetch_fault_valid === true
   const followReason =
     !session || !live || !session.debug_open || session.mode !== 'debug'
       ? 'Iniciá una depuración para seguir una instrucción.'
@@ -135,12 +176,13 @@ export function SessionDiagram({ sessionId, onFocus }: { sessionId: string; onFo
           ? 'Avanzá un ciclo para recibir la primera captura.'
           : !latch
             ? 'Elegí IF/ID, ID/EX, EX/MEM o MEM/WB en Componente.'
-            : !snapshot[latchKeys[latch]].valid
-              ? 'El registro está vacío. Elegí otro registro o avanzá un ciclo.'
-              : selected.starting
-                ? 'Iniciando seguimiento…'
-                : null
-  const following = selected.follow?.status === 'following'
+            : latch === 'IF/ID' && fetchPending
+              ? 'IF/ID contiene un candidato de fetch pendiente. Elegí otra instrucción o avanzá un ciclo.'
+              : !snapshot[latchKeys[latch]].valid
+                ? 'El registro está vacío. Elegí otro registro o avanzá un ciclo.'
+                : selected.starting
+                  ? 'Iniciando seguimiento…'
+                  : null
   const followStatus = following
     ? 'Siguiendo una aparición'
     : selected.follow
@@ -173,9 +215,25 @@ export function SessionDiagram({ sessionId, onFocus }: { sessionId: string; onFo
             ? `${stale || !live ? 'Último estado recibido' : 'Ciclo observado'} · ${snapshot.cycle_count}`
             : 'Sin captura recibida'}
         </span>
-        <span style={{ color: styles.colors.functional }}>● Participación inferida</span>
-        <span style={{ color: styles.colors.accent }}>● Selección</span>
+        <span style={{ color: styles.colors.functional }}>
+          ● Participación inferida{activity ? ` · ${activity.stage}` : ''}
+        </span>
+        {(!scoped || scopedLatch) && (
+          <span style={{ color: styles.colors.accent }}>● Selección</span>
+        )}
+        {(snapshot?.global_state === 0x06 || snapshot?.global_state === 0x07) && (
+          <span>HALT recibido: drenando el pipeline.</span>
+        )}
+        {snapshot?.global_state === 0x0a && <span>Ejecución finalizada</span>}
+        {fetchPending && (
+          <span className={styles.graphFetchCandidate}>
+            <InstructionStatus status="fetch-pending" />
+            <span>IF/ID · </span>
+            <FetchCandidateDetails latch={snapshot.if_id} />
+          </span>
+        )}
       </header>
+      {snapshot && <ConfirmedFault snapshot={snapshot} />}
       {(error || resourceError || graphError) && (
         <p className={styles.error} role="alert">
           {error ?? resourceError ?? graphError}
@@ -281,9 +339,6 @@ export function SessionDiagram({ sessionId, onFocus }: { sessionId: string; onFo
               señales adicionales.
             </p>
           </div>
-        )}
-        {latch === 'IF/ID' && snapshot?.if_id.fetch_fault_valid === true && (
-          <p>Hay un candidato de fetch independiente de valid. Se conserva su causa recibida.</p>
         )}
         {!snapshot ? (
           <p>Sin captura completa. Los valores no se presumen cero.</p>

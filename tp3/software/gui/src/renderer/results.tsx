@@ -8,15 +8,18 @@ import {
   ArrowRight,
   StepForward,
   ScanLine,
+  Cpu,
 } from 'lucide-react'
 import type { AssemblyView, LatchName, SourceCapture } from '../shared/contracts'
 import { useSessionView } from './session-view'
 import { emptyInspection, latchComponents, useInspection } from './inspection'
 import { useEducationalResources } from './educational-resources'
 import { formatValue } from './ide-workflow'
+import { openView } from './ide-state'
 import * as styles from './theme.css'
 import { ValueCell } from './value-cell'
 import { InstructionStatus } from './instruction-status'
+import { ConfirmedFault, FetchCandidateDetails } from './fault-status'
 import { MemoryPanel } from './memory-panel'
 import { CycleActivity } from './cycle-activity'
 
@@ -40,16 +43,6 @@ const widths: Record<string, number> = {
   flow_op: 3,
   mem_op: 4,
 }
-const faultNames = [
-  'INSTRUCTION_ADDRESS_MISALIGNED',
-  'INSTRUCTION_ACCESS_FAULT',
-  'ILLEGAL_INSTRUCTION',
-  'RESERVED',
-  'LOAD_ADDRESS_MISALIGNED',
-  'LOAD_ACCESS_FAULT',
-  'STORE_ADDRESS_MISALIGNED',
-  'STORE_ACCESS_FAULT',
-]
 export function Results({ sessionId }: { sessionId: string }) {
   const { session, live, error, synchronized, board, pending } = useSessionView(sessionId)
   const exampleId = useCore(
@@ -76,7 +69,7 @@ export function Results({ sessionId }: { sessionId: string }) {
   const terminal = session.execution_status === 'finished' || session.execution_status === 'fault'
   const awaitingFirstCapture = session.execution_status === 'ongoing' && session.debug_open
   const rf = snapshot && (
-    <details>
+    <details open>
       <summary>Banco de registros arquitectónicos · x0–x31</summary>
       <div className={styles.registerGrid}>
         {snapshot.registers.map((value, register) => {
@@ -98,6 +91,7 @@ export function Results({ sessionId }: { sessionId: string }) {
     <div className={styles.latchGrid}>
       {latches.map(([name, key]) => {
         const value = snapshot[key]
+        const fetchPending = key === 'if_id' && value.fetch_fault_valid === true
         const hit = observation?.breakpoint_hits?.some((item) => item.latch === name)
         const location = observation?.interpretation?.instruction_locations.find(
           (item) => item.latch === name,
@@ -111,13 +105,7 @@ export function Results({ sessionId }: { sessionId: string }) {
             <h3 className={styles.latchHeading}>
               <span>{name}</span>
               <InstructionStatus
-                status={
-                  key === 'if_id' && value.fetch_fault_valid
-                    ? 'fault'
-                    : value.valid
-                      ? 'valid'
-                      : 'empty'
-                }
+                status={fetchPending ? 'fetch-pending' : value.valid ? 'valid' : 'empty'}
               />
             </h3>
             {value.valid && location?.line && (
@@ -128,10 +116,9 @@ export function Results({ sessionId }: { sessionId: string }) {
                 </span>
               </div>
             )}
-            {key === 'if_id' && value.fetch_fault_valid === true && (
-              <p className={styles.muted}>
-                Fallo de fetch vigente: {faultNames[Number(value.fetch_fault_cause)]} · PC{' '}
-                {formatValue(value.pc, 32, 'hex')}
+            {fetchPending && (
+              <p>
+                <FetchCandidateDetails latch={value} />
               </p>
             )}
             {Object.entries(value).map(([field, item]) => {
@@ -166,6 +153,21 @@ export function Results({ sessionId }: { sessionId: string }) {
           <Clock3 size={18} aria-hidden="true" />
           <strong>{snapshot?.cycle_count ?? '—'}</strong>
         </div>
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="Abrir diagrama de depuración"
+          title="Abrir diagrama de depuración"
+          onClick={() =>
+            openView({
+              component: 'diagram',
+              session_id: sessionId,
+              program_id: session.program_id,
+            })
+          }
+        >
+          <Cpu size={19} aria-hidden="true" />
+        </button>
       </header>
       {snapshot && (
         <section className={styles.globalState} aria-label="Estado global recibido">
@@ -242,13 +244,7 @@ export function Results({ sessionId }: { sessionId: string }) {
             : 'Procesador detenido por fault'}
         </h2>
       )}
-      {snapshot && (snapshot.global_state === 9 || snapshot.global_state === 11) && (
-        <aside className={styles.persistentWarning}>
-          Causa: {faultNames[snapshot.fault_cause]} · PC del fault:{' '}
-          <code>{formatValue(snapshot.fault_pc, 32, 'hex')}</code>
-          {snapshot.global_state === 9 && <p>El pipeline está drenando; todavía no finalizó.</p>}
-        </aside>
-      )}
+      {snapshot && <ConfirmedFault snapshot={snapshot} />}
       {snapshot?.global_state === 7 && <p>HALT recibido: drenando el pipeline.</p>}
       {!!observation?.breakpoint_hits?.length && (
         <div className={styles.breakpointNotice} role="status" aria-label="Breakpoint alcanzado">
@@ -291,7 +287,7 @@ export function Results({ sessionId }: { sessionId: string }) {
         <>
           {pipeline}
           {rf}
-          {observation && <MemoryPanel observation={observation} debugOpen={session.debug_open} />}
+          {observation && <MemoryPanel observation={observation} />}
         </>
       )}
       <SessionExampleGuide
@@ -299,6 +295,7 @@ export function Results({ sessionId }: { sessionId: string }) {
         observation={observation}
         exampleId={exampleId}
         stale={stale}
+        initiallyOpen
       />
       {observation?.interpretation && (
         <CycleActivity

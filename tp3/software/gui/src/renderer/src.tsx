@@ -15,6 +15,7 @@ import { Modal } from './modal'
 import { Brand } from './brand'
 import { FileStatus } from './file-status'
 import { selectedSession } from './ide-workflow'
+import { forwardDiagramWheelZoom } from './graph-adapter'
 import * as styles from './theme.css'
 import './host.css'
 
@@ -194,6 +195,7 @@ function App() {
           >
             <div className={styles.viewerSurface}>
               <iframe
+                ref={forwardDiagramWheelZoom}
                 title="Visor interactivo del pipeline"
                 className={styles.frame}
                 sandbox="allow-scripts"

@@ -46,8 +46,21 @@ globalStyle('.flexlayout__tab_moveable', { borderRadius: '0 0 12px 12px' })
 globalStyle('.flexlayout__tab_button', {
   position: 'relative',
   fontSize: 12,
-  padding: '8px 12px',
+  padding: '0 4px 0 12px',
+  minHeight: 36,
   borderRadius: '8px 8px 0 0',
+  touchAction: 'none',
+  userSelect: 'none',
+})
+globalStyle('.flexlayout__tab_button_trailing', {
+  display: 'inline-grid',
+  placeItems: 'center',
+  width: 32,
+  height: 32,
+  flexShrink: 0,
+  '@media': {
+    '(any-pointer: coarse)': { width: 40, height: 40 },
+  },
 })
 globalStyle('.flexlayout__tab_button--selected', { zIndex: 1 })
 globalStyle('.flexlayout__tab_button--selected::before, .flexlayout__tab_button--selected::after', {

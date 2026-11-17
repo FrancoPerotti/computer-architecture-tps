@@ -4,13 +4,7 @@ import type { Observation } from '../shared/contracts'
 import { ValueCell } from './value-cell'
 import * as styles from './theme.css'
 
-export function MemoryPanel({
-  observation,
-  debugOpen,
-}: {
-  observation: Observation
-  debugOpen: boolean
-}) {
+export function MemoryPanel({ observation }: { observation: Observation }) {
   const [query, setQuery] = useState('')
   const { snapshot, interpretation } = observation
   const matches = snapshot.memory.filter(
@@ -20,7 +14,7 @@ export function MemoryPanel({
       ('0x' + item.address.toString(16)).includes(query.toLowerCase()),
   )
   return (
-    <details aria-label="Memoria observada" className={styles.memoryPanel} open={!debugOpen}>
+    <details aria-label="Memoria observada" className={styles.memoryPanel} open>
       <summary>
         <span>Memoria</span>
         <span className={styles.sectionCount}>{snapshot.used_count} bytes observados</span>

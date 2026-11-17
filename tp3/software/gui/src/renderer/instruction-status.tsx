@@ -1,13 +1,17 @@
 import { useLayoutEffect, useRef } from 'react'
-import { CircleCheck, CircleMinus, CircleX } from 'lucide-react'
+import { CircleCheck, CircleMinus, Clock3 } from 'lucide-react'
 import { feedbackAnimation } from './feedback-motion'
 import * as styles from './theme.css'
 
-export type InstructionStatusKind = 'valid' | 'empty' | 'fault'
+export type InstructionStatusKind = 'valid' | 'empty' | 'fetch-pending'
 const states = {
   valid: { icon: CircleCheck, label: 'Instrucción válida', className: styles.validIcon },
   empty: { icon: CircleMinus, label: 'Sin instrucción activa', className: styles.emptyIcon },
-  fault: { icon: CircleX, label: 'Fallo de fetch', className: styles.invalidIcon },
+  'fetch-pending': {
+    icon: Clock3,
+    label: 'Candidato de fallo de fetch',
+    className: styles.emptyIcon,
+  },
 }
 export function InstructionStatus({ status }: { status: InstructionStatusKind }) {
   const node = useRef<HTMLSpanElement>(null)

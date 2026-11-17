@@ -220,16 +220,18 @@ export function SessionExampleGuide({
   observation,
   exampleId,
   stale = false,
+  initiallyOpen = false,
 }: {
   source: string
   observation: Observation | null
   exampleId?: string | null
   stale?: boolean
+  initiallyOpen?: boolean
 }) {
   const { reference, error } = useExampleReference(source, exampleId)
   if (error) return <p role="alert">{error}</p>
   return reference ? (
-    <details className={styles.educationSection}>
+    <details className={styles.educationSection} open={initiallyOpen}>
       <summary>Guía educativa del ejemplo</summary>
       <ExampleDetails
         reference={reference}

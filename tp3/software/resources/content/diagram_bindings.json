@@ -46,11 +46,7 @@
     "session.pipeline_empty": "tp3-exec-control",
     "session.execution_control": "tp3-exec-control"
   },
-  "representations": {
-    "session.pipeline_empty": [
-      "tp3-exec-empty"
-    ]
-  },
+  "representations": {},
   "source_blocks": {
     "latch.id_ex": "PeWG_VKsY-f66Zm0Bl_l-288",
     "latch.ex_mem": "PeWG_VKsY-f66Zm0Bl_l-337",
@@ -102,5 +98,7 @@
       "tp3-exec-empty"
     ]
   },
-  "cell_ids": {}
+  "cell_ids": {
+    "cTusTiFrEAaOMj2go4Ax-25": "3MnTVxVksF03tweEaCV9-9"
+  }
 }

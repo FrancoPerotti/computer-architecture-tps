@@ -38,12 +38,62 @@ function graphCells(xml){
   }
   return cells;
 }
-function prepareGraph(data,bindings,xml){
+// Reconcile a reviewed circuit revision before applying ordinary layout aliases.
+// Retired routes are removed from every instruction, including its highlights.
+function applyDiagramRevision(data, revision) {
+  const retiredCells = new Set(revision.retired_cells);
+  const retiredRoutes = new Set(revision.retired_routes);
+  const overview = data.pages.find(page => page.id === data.presentation.overview.id);
+  const routes = new Map(data.connections.map(connection => [connection.id, connection]));
+  for (const id of retiredRoutes) {
+    if (!routes.delete(id)) throw Error('Conexión retirada inexistente: ' + id);
+    for (const page of data.pages) delete page.connections[id];
+  }
+  for (const [id, update] of Object.entries(revision.routes)) {
+    const { labels = [], ...route } = update;
+    const original = routes.get(id);
+    const connection = { ...original, ...route, id };
+    routes.set(id, connection);
+    for (const [cell, ids] of Object.entries(data.connection_lookup)) {
+      if (!connection.cells.includes(cell)) data.connection_lookup[cell] = ids.filter(key => key !== id);
+    }
+    for (const cell of [...connection.edges, ...labels]) {
+      const ids = data.connection_lookup[cell] ??= [];
+      if (!ids.includes(id)) ids.push(id);
+    }
+    if (!original) overview.connections[id] = {};
+    for (const page of data.pages) {
+      const detail = page.connections[id];
+      if (!detail) continue;
+      if (route.description) Object.assign(detail, {
+        description: route.description, paragraphs: [route.description],
+      });
+      if (detail.kind && route.edges) {
+        const list = detail.kind === 'support' ? page.support : page.highlight;
+        list.push(...connection.edges.filter(cell => !list.includes(cell)));
+      }
+    }
+  }
+  data.connections = [...routes.values()];
+  for (const [cell, ids] of Object.entries(data.connection_lookup)) {
+    const remaining = ids.filter(id => !retiredRoutes.has(id));
+    if (remaining.length) data.connection_lookup[cell] = remaining;
+    else delete data.connection_lookup[cell];
+  }
+  return retiredCells;
+}
+
+function prepareGraph(data,bindings,xml,revision){
   const sourceXML=unpack(data.xml),sourceCells=graphCells(sourceXML),currentCells=graphCells(xml);
+  const retired = revision ? applyDiagramRevision(data, revision) : new Set();
+  const revisedEdges = new Map(Object.entries(revision?.edge_endpoints ?? {}));
+  for (const id of retired) {
+    if (!sourceCells.has(id) || currentCells.has(id)) throw Error('Celda retirada inválida: ' + id);
+  }
   const sourceBlocks=bindings.source_blocks,blocks=bindings.blocks,aliases=new Map();
   if(!sourceBlocks||Object.keys(sourceBlocks).length!==44||Object.keys(blocks).length!==44||Object.keys(sourceBlocks).some(block=>!Object.hasOwn(blocks,block)))throw Error('Los bindings deben conservar los 44 source_blocks aprobados.');
   const add=(source,target)=>{
-    if(typeof source!=='string'||typeof target!=='string'||!sourceCells.has(source)||!currentCells.has(target)||['0','1'].includes(source)||['0','1'].includes(target))throw Error('Binding de celda inexistente o reservado: '+source+' → '+target);
+    if(typeof source!=='string'||typeof target!=='string'||retired.has(source)||(!sourceCells.has(source)&&!revisedEdges.has(source))||!currentCells.has(target)||['0','1'].includes(source)||['0','1'].includes(target))throw Error('Binding de celda inexistente o reservado: '+source+' → '+target);
     if(aliases.has(source)&&aliases.get(source)!==target)throw Error('Binding contradictorio para '+source);
     aliases.set(source,target);
   };
@@ -52,12 +102,13 @@ function prepareGraph(data,bindings,xml){
   if(Object.keys(representations).some(block=>!Object.hasOwn(originalRepresentations,block)))throw Error('La representación carece de referencia de origen.');
   for(const [block,sources] of Object.entries(originalRepresentations)){
     const targets=representations[block];
+    if (Array.isArray(sources) && sources.length && sources.every(source => retired.has(source)) && !targets) continue;
     if(!Object.hasOwn(blocks,block)||!Array.isArray(sources)||!Array.isArray(targets)||!sources.length||sources.length!==targets.length)throw Error('Representación alternativa incompleta: '+block);
     sources.forEach((source,index)=>add(source,targets[index]));
   }
   for(const [source,target] of Object.entries(bindings.cell_ids||{}))add(source,target);
   const identities=new Set();
-  for(const source of sourceCells.keys()){
+  for(const source of new Set([...sourceCells.keys(), ...revisedEdges.keys()])){
     const target=aliases.get(source)||source;
     if(identities.has(target))throw Error('Dos celdas de origen comparten ID de destino: '+target);
     identities.add(target);
@@ -65,27 +116,36 @@ function prepareGraph(data,bindings,xml){
   const translate=value=>{
     if(typeof value!=='string')return value;
     const result=aliases.get(value)||value;
-    if(sourceCells.has(value)&&!currentCells.has(result))throw Error('Referencia gráfica sin celda actual: '+value+'; actualizar cell_ids.');
+    if((sourceCells.has(value)||revisedEdges.has(value))&&!currentCells.has(result))throw Error('Referencia gráfica sin celda actual: '+value+'; actualizar cell_ids.');
     return result;
   };
   function remap(value){
-    if(Array.isArray(value))return value.map(remap);
-    if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,value])=>[translate(key),remap(value)]));
+    if(Array.isArray(value))return value.filter(item=>!retired.has(item)).map(remap);
+    if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).filter(([key,item])=>!retired.has(key)&&!retired.has(item)).map(([key,value])=>[translate(key),remap(value)]));
     return translate(value);
   }
   const result=remap(data);
   const native=element=>element.tagName==='mxCell'?element:element.getElementsByTagName('mxCell')[0];
-  for(const [id,element] of sourceCells){
-    const current=currentCells.get(aliases.get(id)||id),before=native(element),after=current?native(current):null;
-    if(before?.getAttribute('edge')!=='1'||!after)continue;
-    for(const attribute of ['source','target']){
-      const original=before.getAttribute(attribute)||'',expected=aliases.get(original)||original;
-      if((after.getAttribute(attribute)||'')!==expected)throw Error('Los extremos de una conexión cambiaron: '+id+'; revisar la semántica del dibujo.');
-    }
+  for(const id of new Set([...sourceCells.keys(), ...revisedEdges.keys()])){
+    const current=currentCells.get(aliases.get(id)||id),element=sourceCells.get(id);
+    const before=element?native(element):null,after=current?native(current):null;
+    const revised=revisedEdges.get(id);
+    if(!revised&&(before?.getAttribute('edge')!=='1'||!after))continue;
+    if (after?.getAttribute('edge')!=='1' || ['source','target'].some((attribute,index)=>{
+      const original=(revised?revised[index]:before.getAttribute(attribute))||'';
+      return (after.getAttribute(attribute)||'')!==(aliases.get(original)||original);
+    })) throw Error('Los extremos de una conexión cambiaron: '+id+'; revisar la semántica del dibujo.');
   }
   for(const block of Object.keys(blocks)){
     const target=representations[block]?.[0]||blocks[block];
     if(!Object.hasOwn(result.blocks,target))throw Error('Módulo sin metadatos aprobados: '+block);
+  }
+  for (const route of result.connections) {
+    const ids = [...route.cells, ...route.edges, ...Object.keys(route.flow_directions),
+      route.source_block, route.source_terminal, route.target_block, route.target_terminal];
+    for (const id of ids) {
+      if (id != null && !currentCells.has(id)) throw Error('Conexión ' + route.id + ' sin celda actual: ' + id);
+    }
   }
   result.viewrv_refresh_cameras=xml!==sourceXML;
   return result;

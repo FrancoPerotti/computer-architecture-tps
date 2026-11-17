@@ -13,6 +13,7 @@ const { tmpdir } = require('node:os')
 const { execFileSync } = require('node:child_process')
 const { createHash } = require('node:crypto')
 const { inflateRawSync } = require('node:zlib')
+const { graphCells } = require('../../packaging/viewer_resources.cjs')
 const content = resolve(__dirname, '../../resources/content')
 const read = (name) => readFileSync(resolve(content, name), 'utf8')
 const hash = (value) => createHash('sha256').update(value).digest('hex')
@@ -22,6 +23,10 @@ test('PC-I07 prepared views preserve the pinned runtime and use the canonical co
   const source = read('viewer/index.html'),
     runtime = source.match(/<script id="drawio-runtime">([\s\S]*?)<\/script>/)[1]
   const manifest = JSON.parse(read('viewer/generated.json'))
+  const revision = JSON.parse(read('diagram_revision.json'))
+  const xml = read('diagram.drawio.xml')
+  const cells = graphCells(xml)
+  assert.equal(hash(xml), revision.input.sha256, 'App does not contain the supplied draw.io file')
   assert.equal(
     manifest.generator_sha256,
     hash(readFileSync(resolve(__dirname, '../../packaging/build_viewer.cjs'))),
@@ -42,7 +47,7 @@ test('PC-I07 prepared views preserve the pinned runtime and use the canonical co
     )
     const packed = JSON.parse(html.match(/<script id="diagram-data"[^>]*>([\s\S]*?)<\/script>/)[1])
     const data = JSON.parse(unpack(packed.compressed))
-    assert.equal(unpack(data.xml), read('diagram.drawio.xml'))
+    assert.equal(unpack(data.xml), xml)
     assert.equal(Object.keys(data.instructions).length, 33)
     assert.equal(data.pages.length, 166)
     const originalData = JSON.parse(
@@ -54,12 +59,37 @@ test('PC-I07 prepared views preserve the pinned runtime and use the canonical co
     assert.deepEqual(data.signals, originalData.signals)
     for (const page of data.pages) {
       const original = originalData.pages.find((row) => row.id === page.id)
-      assert.deepEqual(page.module_explanations, original.module_explanations)
+      assert.deepEqual(
+        page.module_explanations,
+        Object.fromEntries(
+          Object.entries(original.module_explanations).filter(([id]) => cells.has(id)),
+        ),
+      )
       for (const [id, detail] of Object.entries(page.connections)) {
-        assert.equal(detail.description, original.connections[id].description)
-        assert.deepEqual(detail.paragraphs, original.connections[id].paragraphs)
+        const revisedDescription = revision.routes[id]?.description
+        assert.equal(detail.description, revisedDescription ?? original.connections[id].description)
+        assert.deepEqual(
+          detail.paragraphs,
+          revisedDescription ? [revisedDescription] : original.connections[id].paragraphs,
+        )
       }
+      assert.ok(revision.retired_routes.every((id) => !Object.hasOwn(page.connections, id)))
     }
+    const lowBits = data.connections.find((route) => route.id === 'connection-address-low-bits')
+    assert.equal(lowBits.source, 'EX/MEM')
+    assert.equal(lowBits.target, 'Load Select/Extend')
+    assert.equal(lowBits.target_signal, 'address_low_bits[1:0]')
+    const path = lowBits.edges.map((id) => {
+      const element = cells.get(id)
+      const edge =
+        element.tagName === 'mxCell' ? element : element.getElementsByTagName('mxCell')[0]
+      return [edge.getAttribute('source'), edge.getAttribute('target')]
+    })
+    assert.equal(path[0][0], lowBits.source_terminal)
+    assert.equal(path.at(-1)[1], lowBits.target_terminal)
+    for (let index = 1; index < path.length; index++)
+      assert.equal(path[index - 1][1], path[index][0])
+    assert.ok(data.connection_lookup[lowBits.edges.at(-1)].includes(lowBits.id))
   }
   const session = read('viewer/session.html')
   const sdkEnd = session.indexOf('</script>', session.indexOf('<script id="drawio-runtime">'))

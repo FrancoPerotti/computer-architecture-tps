@@ -86,3 +86,135 @@ function setViewrvStrokeScale(node,scale){
   node.style.setProperty('--module-stroke',Math.max(1,Math.min(4,4*scale))+'px');
   node.style.setProperty('--diagram-scale',scale);
 }
+
+// The native viewer defers graph creation at zero width. Its caller needs the
+// graph immediately, so wait for the tab to be shown before creating it.
+function waitForViewrvCanvas() {
+  const canvas = document.getElementById('diagram');
+  if (canvas.clientWidth && canvas.clientHeight) return;
+  return new Promise(resolve => {
+    const observer = new ResizeObserver(() => {
+      if (!canvas.clientWidth || !canvas.clientHeight) return;
+      observer.disconnect();
+      resolve();
+    });
+    observer.observe(canvas);
+  });
+}
+
+function installViewrvWheelZoom(graph, zoomAt) {
+  let frame = null, zoomDelta = 0, position;
+
+  function queueZoom(deltaY, deltaMode, x, y, sensitivity) {
+    const delta = deltaY * (deltaMode === 1 ? 16 : deltaMode === 2 ? innerHeight : 1);
+    if (!delta || ![delta, x, y].every(Number.isFinite)) return;
+    zoomDelta -= Math.max(-300, Math.min(300, delta)) * sensitivity;
+    position = { x, y };
+    if (frame !== null) return;
+    frame = requestAnimationFrame(() => {
+      frame = null;
+      const factor = Math.exp(zoomDelta);
+      zoomDelta = 0;
+      zoomAt(graph.view.scale * factor, position.x, position.y);
+    });
+  }
+
+  document.getElementById('canvas-area').addEventListener('wheel', event => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
+    queueZoom(event.deltaY, event.deltaMode, event.clientX, event.clientY, .002);
+  }, { passive: false, capture: true });
+
+  window.addEventListener('message', event => {
+    const value = event.data;
+    if (event.source !== parent || parent === window || value?.channel !== 'viewrv-camera-v1') return;
+    // Chromium encodes touchpad pinch as deltaY = -100 × log(scale).
+    queueZoom(value.deltaY, value.deltaMode, value.x, value.y, .01);
+  });
+}
+
+// Tap still selects native cells. A drag or a second contact takes over the camera.
+function installViewrvTouchCamera(graph, zoomAt) {
+  const canvas = graph.container;
+  const contacts = new Map();
+  const capture = { capture: true, passive: false };
+  let mode = null, suppressClick = false, last = null, frame = null;
+  graph.panningHandler.setPinchEnabled(false);
+
+  function measure() {
+    const [a, b] = contacts.values();
+    if (!b) return { x: a.clientX, y: a.clientY };
+    return {
+      distance: Math.max(1, Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)),
+      x: (a.clientX + b.clientX) / 2,
+      y: (a.clientY + b.clientY) / 2,
+    };
+  }
+  function apply() {
+    frame = null;
+    if (!last) return;
+    const next = measure();
+    canvas.scrollLeft += last.x - next.x;
+    canvas.scrollTop += last.y - next.y;
+    if (mode === 'pinch' && next.distance !== last.distance)
+      zoomAt(graph.view.scale * next.distance / last.distance, next.x, next.y);
+    last = next;
+  }
+  function flush() {
+    if (frame === null) return;
+    cancelAnimationFrame(frame);
+    apply();
+  }
+  function consume(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+  function takeOver() {
+    suppressClick = true;
+    graph.panningHandler.reset();
+    graph.currentPointerId = null;
+    graph.tapAndHoldValid = graph.tapAndHoldInProgress = false;
+    graph.lastTouchTime = 0;
+    graph.tooltipHandler.hide();
+  }
+
+  canvas.addEventListener('pointerdown', event => {
+    if (!mode) suppressClick = false;
+    if (event.pointerType !== 'touch') return;
+    flush();
+    contacts.set(event.pointerId, event);
+    if (contacts.size === 2) {
+      if (!mode) takeOver();
+      mode = 'pinch';
+    }
+    last = contacts.size <= 2 ? measure() : null;
+    if (mode) consume(event);
+  }, capture);
+  canvas.addEventListener('pointermove', event => {
+    if (event.pointerType !== 'touch' || !contacts.has(event.pointerId)) return;
+    contacts.set(event.pointerId, event);
+    if (!mode) {
+      const next = measure();
+      if (Math.hypot(next.x - last.x, next.y - last.y) < 5) return;
+      takeOver();
+      mode = 'pan';
+    }
+    consume(event);
+    if (last && frame === null) frame = requestAnimationFrame(apply);
+  }, capture);
+  function release(event) {
+    if (event.pointerType !== 'touch' || !contacts.has(event.pointerId)) return;
+    flush();
+    contacts.delete(event.pointerId);
+    if (mode) consume(event);
+    // After a pinch, a remaining finger stays inactive until lifted.
+    last = contacts.size === 2 ? measure() : null;
+    if (!contacts.size) mode = null;
+  }
+  canvas.addEventListener('pointerup', release, capture);
+  canvas.addEventListener('pointercancel', release, capture);
+  canvas.addEventListener('click', event => {
+    if (suppressClick && event.pointerType === 'touch') consume(event);
+  }, capture);
+}

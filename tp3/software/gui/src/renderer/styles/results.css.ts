@@ -135,7 +135,6 @@ export const instructionStatus = style({
   flexShrink: 0,
 })
 export const validIcon = style({ color: colors.success, flexShrink: 0 })
-export const invalidIcon = style({ color: colors.error, flexShrink: 0 })
 export const emptyIcon = style({ color: colors.muted, flexShrink: 0 })
 export const latchSource = style({
   display: 'flex',
@@ -167,6 +166,14 @@ export const persistentWarning = style({
   border: '1px solid #ead6a7',
   padding: space.md,
   borderRadius: 6,
+  lineHeight: 1.6,
+})
+export const confirmedFault = style({
+  display: 'grid',
+  gap: space.xs,
+  color: colors.error,
+  borderLeft: `3px solid ${colors.error}`,
+  padding: `${space.sm} ${space.md}`,
   lineHeight: 1.6,
 })
 export const breakpointNotice = style({

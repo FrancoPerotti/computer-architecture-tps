@@ -105,7 +105,7 @@ withGuiEnvironment(
         .filter((line) => line === '03').length
     while (await page.getByRole('button', { name: 'Cerrar notificación', exact: true }).count())
       await page.getByRole('button', { name: 'Cerrar notificación', exact: true }).first().click()
-    await page.getByText('Guía educativa del ejemplo', { exact: true }).click()
+    await page.getByLabel('Referencia educativa del ejemplo', { exact: true }).waitFor()
     assert.equal(steps(), 0)
     assert.equal(await page.getByLabel('Guía del ciclo observado', { exact: true }).count(), 0)
     for (let cycle = 1; cycle <= 7; cycle++) {

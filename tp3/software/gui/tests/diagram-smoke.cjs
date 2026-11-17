@@ -159,10 +159,61 @@ withGuiEnvironment(
     await region.getByRole('button', { name: 'Seguir esta instrucción', exact: true }).click()
     await region.getByRole('img', { name: 'Siguiendo una aparición', exact: true }).waitFor()
     assert.equal(steps(), 1, 'Selection/follow issued an extra STEP')
-    for (const [cycle, component] of [
-      [2, 'latch.id_ex'],
-      [3, 'latch.ex_mem'],
-      [4, 'latch.mem_wb'],
+    const routesByStage = {
+      IF: { visible: ['connection-36', 'connection-96'], dimmed: ['connection-72'] },
+      ID: { visible: ['connection-125', 'connection-116'], dimmed: ['connection-36'] },
+      EX: {
+        visible: ['connection-72', 'connection-85', 'connection-87'],
+        // An unrelated forwarding branch and a wire leaving EX/MEM stay dimmed.
+        dimmed: ['connection-73', 'connection-4', 'connection-36'],
+      },
+      MEM: { visible: ['connection-164', 'connection-143'], dimmed: ['connection-87'] },
+      WB: { visible: [], dimmed: ['connection-143'] },
+    }
+    async function checkScope(stage, latch, active, dimmed) {
+      await region.getByText(`● Participación inferida · ${stage}`, { exact: true }).waitFor()
+      const cellId = (block) => bindings.representations[block]?.[0] ?? bindings.blocks[block]
+      await until(() =>
+        graphFrame.evaluate(
+          ({ latch, active, dimmed, routes }) => {
+            const {
+              viewer: { graph: g },
+              data,
+            } = window.tp3Viewer
+            const rendered = (id) => g.view.getState(g.model.getCell(id))?.style
+            const purple = (style) => style?.strokeColor?.includes('--viewrv-selection')
+            const edges = (id) => data.connections.find((route) => route.id === id).edges
+            const visible = rendered(active)
+            return (
+              visible?.strokeColor === '#b80078' &&
+              visible.opacity === 100 &&
+              dimmed.every((id) => rendered(id)?.opacity < 100 && !purple(rendered(id))) &&
+              (!latch || (purple(rendered(latch)) && rendered(latch).opacity === 100)) &&
+              routes.visible.every((id) =>
+                edges(id).every((edge) => rendered(edge)?.opacity === 100),
+              ) &&
+              routes.dimmed.every((id) => rendered(edges(id).at(-1))?.opacity < 100) &&
+              Object.values(g.model.cells)
+                .filter((cell) => g.model.isEdge(cell))
+                .map((cell) => rendered(cell.id))
+                .filter(Boolean)
+                .every((style) => !purple(style))
+            )
+          },
+          {
+            latch: latch && cellId(latch),
+            active: cellId(active),
+            dimmed: dimmed.map(cellId),
+            routes: routesByStage[stage],
+          },
+        ),
+      )
+    }
+    await checkScope('IF', 'latch.if_id', 'if.instruction_memory', ['id.decoder', 'ex.alu'])
+    for (const [cycle, component, stage, active, dimmed] of [
+      [2, 'latch.id_ex', 'ID', 'id.decoder', ['if.instruction_memory', 'ex.alu']],
+      [3, 'latch.ex_mem', 'EX', 'ex.alu', ['if.instruction_memory', 'id.decoder', 'latch.id_ex']],
+      [4, 'latch.mem_wb', 'MEM', 'mem.wb_value_mux', ['id.decoder', 'ex.alu', 'latch.ex_mem']],
     ]) {
       await until(() =>
         page.getByRole('button', { name: 'Avanzar un ciclo', exact: true }).isEnabled(),
@@ -174,6 +225,7 @@ withGuiEnvironment(
           (await region.getByLabel('Componente del circuito', { exact: true }).inputValue()) ===
           component,
       )
+      await checkScope(stage, component, active, dimmed)
       assert.equal(steps(), cycle)
       assert.ok(
         (await page.locator('.viewrv-selected-occurrence-line:visible').count()) > 0,
@@ -183,6 +235,7 @@ withGuiEnvironment(
     await page.screenshot({ path: resolve(gui, '../build/gui-pc-i07-follow.png') })
     await page.getByRole('button', { name: 'Avanzar un ciclo', exact: true }).click()
     await region.getByText('La aparición terminó su recorrido.', { exact: true }).waitFor()
+    await checkScope('WB', null, 'rf.register_file', ['mem.wb_value_mux', 'latch.mem_wb'])
     assert.equal(steps(), 5)
     assert.equal(
       await region.getByLabel('Componente del circuito', { exact: true }).inputValue(),
@@ -197,6 +250,7 @@ withGuiEnvironment(
       )
       await page.getByRole('button', { name: 'Avanzar un ciclo', exact: true }).click()
       await region.getByText(`Ciclo observado · ${cycle}`, { exact: true }).waitFor()
+      await region.getByText('● Participación inferida', { exact: true }).waitFor()
     }
     assert.equal(
       await page.getByRole('button', { name: 'Avanzar un ciclo', exact: true }).isDisabled(),

@@ -17,7 +17,7 @@ export function CycleActivity({
   modules?: Record<string, ModuleContent>
 }) {
   return (
-    <details className={styles.activitySection}>
+    <details className={styles.activitySection} open>
       <summary>Actividad inferida del ciclo</summary>
       <div className={styles.activityContent}>
         <p className={styles.sectionIntro}>

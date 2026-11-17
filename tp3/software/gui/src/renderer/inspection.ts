@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { FollowState, LatchName, SessionView } from '../shared/contracts'
+import type { FollowState, LatchName, SessionView, StageName } from '../shared/contracts'
 import { request, useCore } from './core-client'
 
 export const latchComponents: Record<LatchName, string> = {
@@ -14,6 +14,12 @@ export const latchKeys = {
   'EX/MEM': 'ex_mem',
   'MEM/WB': 'mem_wb',
 } as const
+const stagesByLatch: Record<LatchName, { input: StageName; output: StageName }> = {
+  'IF/ID': { input: 'IF', output: 'ID' },
+  'ID/EX': { input: 'ID', output: 'EX' },
+  'EX/MEM': { input: 'EX', output: 'MEM' },
+  'MEM/WB': { input: 'MEM', output: 'WB' },
+}
 export const followReasons = {
   retired: 'La aparición terminó su recorrido.',
   discarded: 'La aparición fue descartada.',
@@ -31,6 +37,7 @@ export interface Inspection {
   component: string | null
   latch: LatchName | null
   follow: FollowState | null
+  followStage: StageName | null
   notice: string | null
   epoch: number
   centre: number
@@ -41,6 +48,7 @@ export const emptyInspection: Inspection = {
   component: null,
   latch: null,
   follow: null,
+  followStage: null,
   notice: null,
   epoch: 0,
   centre: 0,
@@ -67,6 +75,7 @@ export function pickComponent(id: string, component: string): void {
     component,
     latch,
     follow: null,
+    followStage: null,
     notice: null,
     epoch: previous.epoch + 1,
     centre: previous.centre + 1,
@@ -81,6 +90,7 @@ export function pickConnection(id: string, connection: ConnectionSelection): voi
     component: null,
     latch: null,
     follow: null,
+    followStage: null,
     notice: null,
     starting: false,
     epoch: previous.epoch + 1,
@@ -88,13 +98,23 @@ export function pickConnection(id: string, connection: ConnectionSelection): voi
 }
 export function stopFollowing(id: string): void {
   const value = current(id)
-  update(id, { follow: null, notice: null, epoch: value.epoch + 1, starting: false })
+  update(id, {
+    follow: null,
+    followStage: null,
+    notice: null,
+    epoch: value.epoch + 1,
+    starting: false,
+  })
 }
 function applyFollow(id: string, value: FollowState, epoch: number): void {
   const previous = current(id)
   if (previous.epoch !== epoch) return
   update(id, {
     follow: value,
+    // Cycle activity describes execution before the boundary captured in last_latch.
+    followStage: previous.follow
+      ? stagesByLatch[previous.follow.last_latch].output
+      : stagesByLatch[value.origin_latch].input,
     latch: value.last_latch,
     component: latchComponents[value.last_latch],
     notice: value.reason ? followReasons[value.reason] : null,
