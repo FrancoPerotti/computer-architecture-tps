@@ -6,6 +6,8 @@ El proyecto dispone de `system_pkg` y de infraestructura de compilación y prueb
 
 [Ver el índice general de documentación](docs/README.md)
 
+[Leer el informe del TP3](informe/README.md)
+
 [Preparar el entorno compartido de compilación y simulación](docs/development_environment.md)
 
 Dentro del contenedor, desde `tp3`, `make check` ejecuta formato, lint,
