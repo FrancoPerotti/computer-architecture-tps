@@ -1,0 +1,54 @@
+\section{Objetivo general}
+
+El objetivo del trabajo es diseñar, implementar y verificar un sistema digital
+que integre un procesador \tech{RISC-V} de 32 bits con pipeline de cinco etapas,
+una unidad de debug y un enlace \tech{UART}. El sistema debe recibir un
+programa, cargarlo en la FPGA, ejecutarlo en modo continuo o paso a paso y
+permitir que una aplicación de PC observe y controle la ejecución sin volver a
+sintetizar el diseño.
+
+\section{Objetivos específicos}
+
+\begin{itemize}
+  \item Implementar un subconjunto de \tech{RV32I} de 32 instrucciones más la
+    instrucción \code{halt}.
+  \item Organizar la ejecución en las etapas \tech{IF}, \tech{ID}, \tech{EX},
+    \tech{MEM} y \tech{WB}, con cuatro registros interetapa y avance
+    \emph{in-order}.
+  \item Resolver dependencias de datos mediante forwarding, bypass y stalls.
+  \item Implementar memorias de instrucciones y de datos independientes.
+  \item Implementar la carga por \tech{UART}, el control de ejecución y la
+    observación de PC, banco de registros, latches, memoria utilizada y
+    metadatos de fault.
+  \item Proveer un mecanismo para ensamblar código en assembly y una
+    aplicación de PC que permitan editar, traducir, cargar, ejecutar
+    y depurar programas.
+  \item Verificar cada bloque de forma aislada y después en los niveles de
+    integración, CPU, sistema y placa que correspondan.
+  \item Documentar las decisiones de implementación, las limitaciones y la
+    evidencia necesaria para la aceptación final.
+\end{itemize}
+
+\section{Criterios de aceptación}
+
+La aceptación final se apoya en los requisitos y en la matriz de
+cobertura definidas en la documentación. De forma resumida, la
+entrega debe demostrar:
+
+\begin{itemize}
+  \item que el procesador ejecuta las instrucciones del subconjunto aprobado y
+    conserva el orden arquitectónico;
+  \item que los hazards representativos producen el resultado correcto y los
+    efectos laterales esperados;
+  \item que las memorias respetan capacidad, alineación, rango, cero lógico y
+    atomicidad de stores;
+  \item que la observación de Debug es coherente y no agrega ciclos
+    innecesarios;
+  \item que la implementación física cumple los requerimientos de timing;
+  \item que la demostración recorre carga, ejecución paso a paso,
+    ejecución continua, un hazard, observación y reprogramación.
+\end{itemize}
+
+Los criterios detallados y los identificadores de requisito se
+encuentran en \doc{requirements.md}{la especificación de requisitos}
+y en \doc{verification/coverage.md}{la matriz de cobertura}.

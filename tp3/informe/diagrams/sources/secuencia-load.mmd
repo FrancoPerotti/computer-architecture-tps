@@ -1,0 +1,10 @@
+sequenceDiagram
+  participant PC as PC / viewrv
+  participant FPGA as FPGA
+  PC->>FPGA: CHECK_READY (05)
+  FPGA-->>PC: READY (05 03)
+  PC->>FPGA: LOAD + tamaño
+  FPGA-->>PC: ACCEPTED (01 01)
+  PC->>FPGA: N bytes de imagen
+  Note over FPGA: Loader escribe IMEM<br/>Preparación de sesión
+  FPGA-->>PC: DONE (01 02)

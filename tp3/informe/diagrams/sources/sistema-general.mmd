@@ -1,0 +1,11 @@
+flowchart TB
+  PC["PC / viewrv<br/>editor y assembler"]
+  U["uart_core"]
+  C["protocol_controller"]
+  CPU["processor_top<br/>5 etapas"]
+  S["response_serializer"]
+  PC -->|"UART 8N1"| U
+  U -->|"bytes RX"| C
+  C -->|"LOAD / RUN / STEP"| CPU
+  CPU -->|"estado"| S
+  S -->|"bytes TX"| U

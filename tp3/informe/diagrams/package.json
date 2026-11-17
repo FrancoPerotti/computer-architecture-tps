@@ -1,0 +1,14 @@
+{
+  "name": "tp3-report-diagrams",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Diagramas del informe TP3 renderizados con Pele",
+  "scripts": {
+    "render": "node render.mjs",
+    "render:existing": "bash render-existing.sh"
+  },
+  "dependencies": {
+    "pele": "1.13.0"
+  }
+}

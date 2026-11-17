@@ -1,0 +1,48 @@
+\section{Versiones y evidencia de entrega}\label{sec:versiones-entrega}
+
+La entrega reúne la base integrada de CPU, UART, Debug, plataforma y software
+de PC, y el aporte de aceptación de la \href{\projecturl/pull/37}{PR N.º~37}.
+La tabla~\ref{tab:revisiones-entrega} fija las revisiones de referencia. Los
+hashes abreviados enlazan a sus commits completos.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{L{4.0cm}L{3.1cm}Y}
+    \toprule
+    \textbf{Componente} & \textbf{Revisión} & \textbf{Identificación} \\
+    \midrule
+    Base integrada &
+    \href{\projecturl/commit/\baserevision}{\code{7025925f949c}} &
+    RTL, contratos y \tech{viewrv} 0.7.0. \\ \addlinespace
+    Build de FPGA &
+    \href{\projecturl/commit/d2ef373194b396f5a4367af22fe7e243ada5d49e}{\code{d2ef373194b3}} &
+    Vivado 2025.2, perfil \code{REFERENCE}; fuentes equivalentes a la base. \\
+    \addlinespace
+    Aceptación de la PR N.º~37 &
+    \href{\projecturl/commit/\acceptancerevision}{\code{cb3270b19b27}} &
+    Ejecutor, pruebas y guía de los 151 IDs. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Revisiones de referencia de la entrega.}
+  \label{tab:revisiones-entrega}
+\end{table}
+
+La \href{\projecturl/releases/tag/tp3-17-evidencia}{publicación de evidencia}
+ofrece dos archivos:
+
+\begin{itemize}
+  \item \evidencefile{resultados-por-id.csv}{\code{resultados-por-id.csv}}:
+    151 filas, con 150 aprobaciones en placa y una excepción física,
+    \code{TEST-UART-013/C009}, aprobada en simulación de sistema.
+  \item \evidencefile{tp3-issue-17-evidencia.zip}{\code{tp3-issue-17-evidencia.zip}}:
+    capturas por ID, logs de \tech{viewrv}, programas, resultados y el
+    directorio \code{vivado/}, con bitstream, manifiesto y reportes.
+\end{itemize}
+
+Dentro del ZIP, \code{uart-regression-7025925.json} contiene las 44 ejecuciones
+de sistema aprobadas, incluida C009. \code{viewrv-comparison.json} resume los
+resultados del recorrido CLI. Los directorios de los intentos de botón
+conservan los intentos iniciales y sus repeticiones; el CSV consolida el estado
+final. La huella del bitstream figura en el
+capítulo~\ref{chap:plataforma-timing}.

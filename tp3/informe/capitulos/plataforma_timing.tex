@@ -1,0 +1,252 @@
+La implementación del procesador debe adaptarse a los recursos y señales de la
+placa donde va a funcionar. Este capítulo presenta esa adaptación para la
+Basys 3, explica cómo se generan el reloj y el reset del sistema, y muestra los
+resultados obtenidos al implementar el diseño en la FPGA.
+
+\section{Plataforma física}
+
+La implementación de referencia utiliza una \tech{Basys 3} con el dispositivo
+\tech{XC7A35T-1CPG236C}. La placa proporciona el reloj de entrada, el botón de
+reset y la conexión USB-UART que permite intercambiar datos con la PC.
+
+El módulo superior de plataforma, \code{basys3_top}, conecta esas señales con
+el sistema. La tabla~\ref{tab:pines} identifica los pines utilizados y la
+función de cada uno.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Puerto} & \textbf{Dirección} & \textbf{Pin} & \textbf{Conexión} \\
+    \midrule
+    \code{clk_100mhz_i} & entrada & W5 & oscilador de 100 MHz \\
+    \code{reset_btn_i} & entrada & U18 & botón central BTNC; 1 pulsado,
+    0 libre \\
+    \code{uart_rx_i} & entrada & B18 & PC transmite; reposo 1 \\
+    \code{uart_tx_o} & salida & A18 & FPGA transmite; reposo 1 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Pines de la Basys 3.}
+  \label{tab:pines}
+\end{table}
+
+Dentro de \code{basys3_top} se encuentran el generador de reloj, el
+acondicionador de reset y \code{system_top}, que contiene el procesador y los
+bloques de comunicación. La señal de recepción UART se sincroniza dentro de
+\code{uart_core}. Las conexiones de pines y las restricciones temporales se
+especifican en los archivos XDC del proyecto.
+
+\section{Clock y reset}
+
+\subsection{Generación del reloj}
+
+El oscilador de la placa entrega un reloj de \SI{100}{\mega\hertz}. A partir
+de él, el Clocking Wizard utiliza un MMCM y un buffer global BUFG para generar
+el reloj funcional de \SI{50}{\mega\hertz} que comparten la CPU, la UART y el
+resto del sistema.
+
+El generador entrega la señal \code{locked} cuando su salida se estabiliza.
+Mientras el reloj todavía no está estable, el reset funcional permanece
+activo. El botón físico también reinicia el generador de reloj, mientras que la
+pérdida de \code{locked} solicita el reset funcional sin reiniciar el MMCM.
+
+\subsection{Fuentes y sincronización del reset}
+
+El sistema puede recibir una solicitud de reset desde el botón físico o desde
+un comando UART. Además, la plataforma solicita reset cuando el generador de
+reloj todavía no está estable. Estas fuentes se combinan antes de distribuir
+el reset funcional:
+
+\begin{codebox}
+async_reset_request = physical_reset_request
+                      OR clock_reset_request
+                      OR uart_reset_request
+reset = reset_sync(clk, async_reset_request)
+\end{codebox}
+
+El bloque \code{reset_sync} activa el reset de forma asíncrona y lo libera de
+forma sincronizada con el reloj funcional mediante dos etapas. Los registros
+del sistema aplican sus efectos de reset en el flanco de reloj.
+
+Cuando la solicitud llega por UART, primero se transmite completa la respuesta
+\code{RESET/ACCEPTED} y, después del bit de parada del último byte, se registra
+la solicitud de reset. La secuencia detallada se encuentra en
+\doc{architecture/platform/reset_integration.md}{Integración del reset}.
+
+\section{Implementación y análisis temporal}
+
+La implementación transforma el diseño descrito en RTL en una configuración
+que puede cargarse en la FPGA. Para ello, Vivado realiza la síntesis, asigna los
+recursos físicos y determina las conexiones entre ellos mediante colocación y
+ruteo. Con el diseño resultante se analiza si las señales cumplen las
+restricciones temporales y se genera el bitstream para programar la placa.
+
+Se utilizó Vivado ML Standard 2025.2, Clocking Wizard 6.0 y el perfil de
+memoria \code{REFERENCE}, con un reloj funcional de \SI{50}{\mega\hertz},
+equivalente a un período de \SI{20}{\nano\second}.
+
+\subsection{Resultados temporales}
+
+El análisis temporal comprueba que los datos lleguen a los registros dentro de
+los intervalos requeridos. La comprobación de \emph{setup} evalúa que lleguen
+a tiempo para el flanco de captura, mientras que la de \emph{hold} verifica que
+permanezcan estables durante el intervalo necesario después de ese flanco.
+
+La tabla~\ref{tab:resultados-timing} resume los márgenes obtenidos. WNS y WHS
+son los peores márgenes de setup y hold, respectivamente; TNS y THS acumulan
+los márgenes negativos de cada tipo. WPWS indica el peor margen para el ancho
+de pulso del reloj. Un margen positivo indica que la restricción correspondiente
+se cumple en el peor caso analizado.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{lr}
+    \toprule
+    \textbf{Métrica} & \textbf{Resultado} \\
+    \midrule
+    WNS & \SI[explicit-sign=+]{1.070}{\nano\second} \\
+    TNS & \SI{0}{\nano\second} \\
+    WHS & \SI[explicit-sign=+]{0.026}{\nano\second} \\
+    THS & \SI{0}{\nano\second} \\
+    WPWS & \SI[explicit-sign=+]{3.000}{\nano\second} \\
+    Clock funcional & \SI{50}{\mega\hertz} \\
+    Frecuencia estimada por setup & $\approx \SI{52.8}{\mega\hertz}$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Resultados de timing de la implementación \code{REFERENCE}.}
+  \label{tab:resultados-timing}
+\end{table}
+
+Los márgenes de setup y hold son positivos, y sus sumas de márgenes negativos
+son cero. Por lo tanto, los caminos analizados cumplen esas restricciones para
+el reloj de \SI{50}{\mega\hertz}.
+
+El camino con menor margen de setup parte del registro \code{EX/MEM}, en el bit
+3 del registro destino, y llega al bit 10 del registro de estado global. Su
+demora de datos es de \SI{18.845}{\nano\second}, de los cuales
+\SI{13.388}{\nano\second} corresponden a ruteo. La diferencia entre las
+llegadas del reloj a ambos extremos, denominada \emph{skew}, es de
+\SI{-0.034}{\nano\second}.
+
+A partir del margen de setup puede calcularse una frecuencia estimada:
+\[
+  f_{\mathrm{estimada}} =
+  \frac{1}{\SI{20}{\nano\second}-\SI{1.070}{\nano\second}}
+  \approx \SI{52.8}{\mega\hertz}.
+\]
+Esta estimación supone que se mantienen el ruteo, el skew y la incertidumbre
+del reloj. Sirve como referencia para setup; los análisis de la implementación
+se realizaron a \SI{50}{\mega\hertz}.
+
+El camino con menor margen de hold va de \code{ID/EX} a \code{EX/MEM}, para el
+bit 29 de la instrucción. En ese camino, la demora de datos es de
+\SI{0.362}{\nano\second} y el skew es de \SI{0.264}{\nano\second}.
+
+\subsection{Recursos utilizados}
+
+Además de la temporización, la implementación permite conocer qué recursos de
+la FPGA ocupa el diseño. La tabla~\ref{tab:recursos} resume los principales
+resultados para el perfil \code{REFERENCE}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{lrr}
+    \toprule
+    \textbf{Recurso} & \textbf{Uso} & \textbf{Porcentaje} \\
+    \midrule
+    LUT de slice & 3466 & 16,66\,\% \\
+    Registros & 1893 & 4,55\,\% \\
+    LUT como memoria & 700 & -- \\
+    MMCM & 1 & -- \\
+    BUFG & 2 & -- \\
+    IOB & 4 & -- \\
+    BRAM & 0 & 0\,\% \\
+    DSP & 0 & 0\,\% \\
+    \bottomrule
+  \end{tabular}
+  \caption{Utilización de recursos de la implementación \code{REFERENCE}.}
+  \label{tab:recursos}
+\end{table}
+
+De las 700 LUT utilizadas como memoria, 176 corresponden a IMEM, 512 a DMEM y
+12 a las FIFO de UART. El banco de registros utiliza 992 registros. En esta
+implementación, IMEM y DMEM conservan lectura combinacional y escritura
+síncrona.
+
+\subsection{Comprobaciones adicionales}
+
+Vivado no reportó hallazgos en la comprobación de reglas de diseño (DRC) ni
+errores de ruteo. La comprobación \code{check_timing} tampoco registró puntos
+internos sin restricción temporal, registros sin reloj, lazos combinacionales
+ni latches. También se analizaron las restricciones de los caminos de
+recepción y transmisión UART: ambas tuvieron cobertura del 100\,\% para una
+cota de \SI{20}{\nano\second}, con márgenes respectivos de
+\SI[explicit-sign=+]{17.166}{\nano\second} y
+\SI[explicit-sign=+]{13.654}{\nano\second}.
+
+Las excepciones temporales de reset se limitaron a las entradas asíncronas de
+las dos etapas del sincronizador y no quedaron excepciones ignoradas. La
+revisión de cruces de reloj reconoció ese sincronizador y la lógica que combina
+las fuentes de reset. Los 32 avisos de síntesis corresponden a las marcas de
+validez de DMEM implementadas en LUTRAM.
+
+La implementación generó el archivo \code{tp3-reference.bit}, utilizado para
+programar la FPGA. El bitstream y los reportes se encuentran en el
+\evidencefile{tp3-issue-17-evidencia.zip}{paquete de evidencia}.
+
+\section{Verificación de plataforma}
+
+La verificación de plataforma comprueba que el sistema pueda configurarse,
+implementarse y funcionar con las señales de la placa. También revisa que el
+reloj, el reset y las restricciones temporales estén conectados de acuerdo con
+el diseño. La tabla~\ref{tab:casos-plataforma} presenta los grupos utilizados
+para estas comprobaciones.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{L{2.9cm}Yr}
+    \toprule
+    \textbf{Grupo} & \textbf{Tema} & \textbf{Alcance} \\
+    \midrule
+    \code{TEST-PLAT-001} & Perfiles, capacidades y anchos & 15 casos \\
+    \code{TEST-PLAT-002} & Clocking Wizard, locked y reset & 10 casos \\
+    \code{TEST-PLAT-003} & Composición RTL y dependencias & 1 caso \\
+    \code{TEST-PLAT-004} & Constraints, recursos y timing & 1 caso \\
+    \code{TEST-PLAT-005} & Aceptación con un bitstream & 151 reejecuciones \\
+    \code{TEST-PLAT-006} & Correspondencia documental & 1 caso \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Grupos de verificación de plataforma.}
+  \label{tab:casos-plataforma}
+\end{table}
+
+El manifiesto contiene 28 casos de plataforma. Por su parte,
+\code{TEST-PLAT-005} selecciona 151 casos de otras áreas para volver a
+ejecutarlos en placa; esas reejecuciones se contabilizan por separado.
+
+Los grupos \code{TEST-PLAT-001} y \code{TEST-PLAT-002} comprueban las
+capacidades de memoria y los perfiles, además del arranque, las fuentes de
+reset y la pérdida y recuperación de \code{locked}.
+
+La revisión \code{TEST-PLAT-003} comprueba los 51 bloques funcionales de la CPU,
+sus conexiones y la composición del sistema, incluidos el MMCM y las dos etapas
+de \code{reset_sync}. Para
+\code{TEST-PLAT-004} se utilizan el bitstream y los reportes de implementación
+y temporización presentados en este capítulo. \code{TEST-PLAT-006} revisa la
+correspondencia de la documentación con la entrega.
+
+Las pruebas de \code{TEST-PLAT-005} se describen en el
+capítulo~\ref{chap:aceptacion-fisica}, junto con los resultados obtenidos y su
+alcance.
+
+\section{Resultado de aceptación}
+
+Los resultados de implementación muestran que el diseño cumple las
+restricciones analizadas a \SI{50}{\mega\hertz} y que el bitstream puede
+utilizarse para la validación en placa. El análisis conservó la relación entre
+el reloj de entrada y el reloj funcional, y las excepciones de reset se
+limitaron a los caminos indicados anteriormente.
