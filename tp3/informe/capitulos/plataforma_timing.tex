@@ -204,13 +204,11 @@ programar la FPGA. El bitstream y los reportes se encuentran en el
 
 La implementación de referencia se cerró a \SI{50}{\mega\hertz}. Para estudiar
 cuánto margen existe por encima de esa frecuencia, se realizó una campaña
-separada con una versión parametrizada del reloj funcional. La frecuencia no se
-cambió en el bitstream de referencia: el flujo de construcción configura el
-MMCM para una frecuencia solicitada, calcula la frecuencia efectiva a partir de
-los divisores y la propaga al RTL como \code{CLK_FREQ_HZ}. La UART y el
-controlador de protocolo usan ese valor para recalcular el divisor de baudios y
-los timeouts, respectivamente. El valor por defecto continúa siendo
-\SI{50}{\mega\hertz}.
+separada con una versión parametrizada del reloj funcional. El flujo de
+construcción configura el MMCM para una frecuencia solicitada, calcula la
+frecuencia efectiva a partir de los divisores y la propaga al RTL como
+\code{CLK_FREQ_HZ}. La UART y el controlador de protocolo usan ese valor para
+recalcular el divisor de baudios y los timeouts, respectivamente.
 
 \subsection{Parametrización del reloj}
 
@@ -261,9 +259,8 @@ La tabla~\ref{tab:frecuencia-resultados} reúne las implementaciones completas
 ensayadas entre \SI{50}{\mega\hertz} y \SI{65}{\mega\hertz}. Todas usaron el
 perfil \code{REFERENCE}, el mismo dispositivo y Vivado 2026.1. La frecuencia
 efectiva se obtuvo de los divisores del MMCM y el período corresponde al reloj
-ruteado que analizó la herramienta. La fila de \SI{50}{\mega\hertz} es una
-reimplementación de esta campaña y no reemplaza al bitstream de referencia
-descrito en la sección anterior.
+ruteado que analizó la herramienta. La fila de \SI{50}{\mega\hertz} corresponde
+a una reimplementación de esta campaña.
 
 \begin{table}[H]
   \centering
@@ -406,17 +403,14 @@ máxima garantizada ni como una frecuencia recomendada: su margen de
 \SI{0.002}{\nano\second} es demasiado pequeño para absorber variaciones de
 tensión, temperatura o jitter.
 
-La frecuencia de operación validada físicamente sigue siendo
-\SI{50}{\mega\hertz}. Para la comparación en placa se seleccionaron
-\SI{50}{\mega\hertz}, \SI{55}{\mega\hertz} y \SI{60}{\mega\hertz}. Los
-bitstreams de las tres configuraciones se generaron en la campaña, pero
-corresponden a una revisión previa del RTL y deben regenerarse antes de
-programar la placa. El bitstream de referencia de \SI{50}{\mega\hertz} usado en
-la aceptación física es el de la implementación anterior, no el de esta
-campaña. La campaña no incluye pruebas físicas de arranque, reset, UART, carga,
-\code{STEP} o \code{RUN} a \SI{55}{\mega\hertz} ni a \SI{60}{\mega\hertz}. Por
-lo tanto, la única frecuencia con aceptación en placa es la de
-\SI{50}{\mega\hertz}, documentada en el capítulo~\ref{chap:aceptacion-fisica}.
+La aceptación física disponible corresponde a \SI{50}{\mega\hertz}. Para la
+comparación en placa se seleccionaron \SI{50}{\mega\hertz},
+\SI{55}{\mega\hertz} y \SI{60}{\mega\hertz}, pero la campaña no incluye pruebas
+de arranque, reset, UART, carga, \code{STEP} o \code{RUN} a \SI{55}{\mega\hertz}
+ni a \SI{60}{\mega\hertz}. Los bitstreams de las tres configuraciones se
+generaron y deben regenerarse con la revisión final del RTL antes de programar
+la placa. Los resultados de esta sección son post-ruteo y no reemplazan la
+aceptación documentada en el capítulo~\ref{chap:aceptacion-fisica}.
 
 \section{Verificación de plataforma}
 
