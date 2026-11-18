@@ -9,9 +9,9 @@ ubuntu_root=$(realpath "$1")
 product_root=$(realpath "$2")
 software_root=$(cd "$(dirname "$0")/.." && pwd)
 repo_root=$(cd "$software_root/../.." && pwd)
-node_runtime="$software_root/build/toolchain/node_modules/node/bin/node"
+node_runtime=${VIEWRV_TEST_NODE:-"$software_root/build/toolchain/node_modules/node/bin/node"}
 [[ -x "$ubuntu_root/usr/bin/xvfb-run" && -x "$node_runtime" ]]
-[[ -f "$product_root/VERIFICATION-ONLY.txt" ]]
+[[ -f "$product_root/VERIFICATION-ONLY.txt" || -f "$product_root/release.json" ]]
 case "$3" in
   ide) command=("$node_runtime" tests/native-ide-smoke.cjs) ;;
   sandbox) command=("$node_runtime" tests/sandbox-smoke.cjs) ;;
@@ -28,6 +28,7 @@ exec bwrap --unshare-user --unshare-pid --unshare-net --unshare-ipc --unshare-ut
   --setenv PATH /usr/sbin:/usr/bin:/sbin:/bin --setenv LANG C.UTF-8 \
   --setenv HOME /tmp/viewrv-home --setenv XDG_CACHE_HOME /tmp/viewrv-cache \
   --setenv VIEWRV_PRODUCT "$product_root" --setenv VIEWRV_EVIDENCE_PREFIX pc-i08-ubuntu \
+  --setenv VIEWRV_TEST_NODE "$node_runtime" \
   --setenv LIBGL_ALWAYS_SOFTWARE 1 \
   /bin/bash -euo pipefail -c \
   'mkdir -p "$HOME" "$XDG_CACHE_HOME"; exec xvfb-run -a -s "-screen 0 1366x768x24" "$@"' \

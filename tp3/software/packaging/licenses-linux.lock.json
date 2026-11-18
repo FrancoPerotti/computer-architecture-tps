@@ -43,11 +43,13 @@
     },
     {
       "path": "build/pyinstaller/viewrv/viewrv/Analysis-00.toc",
-      "sha256": "09be99d7ae590d711e55a7c84f105113a4c3773d6fdaf546e6ad1bb813a45954"
+      "sha256": "2e919342d8e2dccf64471a64a45bd226db0bf74e9e3cbbaee04ddeb90409c129",
+      "format": "pyinstaller-analysis"
     },
     {
       "path": "build/pyinstaller/viewrv-core/viewrv-core/Analysis-00.toc",
-      "sha256": "0b84d26316c05681c97e46d78505a306552db4da6b025a06b154a0df0fcb13b8"
+      "sha256": "0a1cdb5d62e6f0e2100651bf5cc822ede2c2e24666d06d2cfe850f506c2d4637",
+      "format": "pyinstaller-analysis"
     },
     {
       "path": "build/ubuntu-venv/lib/python3.14/site-packages/pydantic_core-2.50.2.dist-info/sboms/pydantic-core.cyclonedx.json",
@@ -1822,6 +1824,7 @@
     {
       "path": "LICENSE",
       "destination": "Electron-LICENSE.txt",
+      "alternative": "LICENSE.electron.txt",
       "sha256": "5154e165bd6c2cc0cfbcd8916498c7abab0497923bafcd5cb07673fe8480087d"
     },
     {

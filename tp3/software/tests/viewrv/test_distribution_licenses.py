@@ -137,3 +137,50 @@ class DistributionLicensesTests(unittest.TestCase):
                 fetch(self.software)
         self.assertEqual(path.read_bytes(), b"old cache requiring refresh")
         self.assertEqual([p.name for p in path.parent.iterdir()], [path.name])
+
+    def test_source_downloads_can_precede_the_native_build(self):
+        """A clean checkout can fetch sources while staging still requires build inputs."""
+        (self.software / "dependencies.lock").unlink()
+        source = self.software / "build/license-sources/component.tar.gz"
+        source.unlink()
+        with patch("urllib.request.urlopen", return_value=io.BytesIO(b"source")):
+            fetch(self.software)
+        self.assertEqual(source.read_bytes(), b"source")
+        with self.assertRaisesRegex(ValueError, "dependencies.lock"):
+            stage(self.product, self.software)
+        self.assertFalse((self.product / "resources/licenses").exists())
+
+    def test_analysis_inventory_accepts_reordering_and_rejects_composition_changes(self):
+        """PyInstaller traversal order can vary between identical pinned builds."""
+        analysis = [[] for _ in range(20)]
+        analysis[0] = ["first_entry.py", "second_entry.py"]
+        for index in (14, 18, 19):
+            analysis[index] = [
+                ("first", "/build/first", "DATA"),
+                ("second", "/build/second", "DATA"),
+            ]
+        path = self.software / "analysis.toc"
+        self.lock["reviewed_inputs"].append(
+            {
+                "path": "analysis.toc",
+                "format": "pyinstaller-analysis",
+                "sha256": hashlib.sha256(
+                    json.dumps(analysis, separators=(",", ":")).encode()
+                ).hexdigest(),
+            }
+        )
+        self.save_lock()
+        for index in (14, 18, 19):
+            analysis[index].reverse()
+        path.write_text(repr(tuple(analysis)))
+        validate(self.software)
+
+        analysis[14].append(("extra", "/build/extra", "PYMODULE"))
+        path.write_text(repr(tuple(analysis)))
+        with self.assertRaisesRegex(ValueError, "analysis.toc"):
+            validate(self.software)
+        analysis[14].pop()
+        analysis[0].reverse()
+        path.write_text(repr(tuple(analysis)))
+        with self.assertRaisesRegex(ValueError, "analysis.toc"):
+            validate(self.software)

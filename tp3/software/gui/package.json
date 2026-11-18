@@ -59,7 +59,8 @@
     "executableName": "viewrv-gui",
     "files": [
       "out/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules/**/*"
     ],
     "asar": true,
     "extraFiles": [
@@ -102,8 +103,8 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
     },
-    "beforePack": "../packaging/check_package.cjs",
-    "afterPack": "../packaging/stage_linux.cjs"
+    "beforePack": "./scripts/package-hooks.cjs",
+    "afterPack": "./scripts/package-hooks.cjs"
   },
   "license": "MIT"
 }

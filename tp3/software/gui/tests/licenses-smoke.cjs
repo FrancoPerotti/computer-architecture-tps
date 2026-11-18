@@ -9,8 +9,12 @@ const { menuCommand, waitForCore } = require('./ui-commands.cjs')
 
 const gui = resolve(__dirname, '..'),
   product = process.env.VIEWRV_PRODUCT
-if (!product || !existsSync(resolve(product, 'VERIFICATION-ONLY.txt')))
-  throw Error('Indicá el producto de verificación que incluye avisos y fuentes.')
+if (
+  !product ||
+  (!existsSync(resolve(product, 'VERIFICATION-ONLY.txt')) &&
+    !existsSync(resolve(product, 'release.json')))
+)
+  throw Error('Indicá un paquete nativo con avisos y fuentes mediante VIEWRV_PRODUCT.')
 const root = mkdtempSync(resolve(tmpdir(), 'viewrv-license-gui-'))
 const expected = resolve(product, 'resources/licenses/index.html')
 const manifest = JSON.parse(readFileSync(resolve(product, 'resources/licenses/manifest.json')))

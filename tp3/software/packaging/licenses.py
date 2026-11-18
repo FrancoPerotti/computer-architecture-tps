@@ -1,6 +1,7 @@
 """Materialize reviewed third-party notices and corresponding sources without network at build time."""
 
 import argparse
+import ast
 import hashlib
 import html
 import json
@@ -16,6 +17,17 @@ def digest(path):
     """Hash a file without loading source archives into memory."""
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def analysis_digest(path):
+    """Hash PyInstaller composition while keeping its ordered build settings."""
+    analysis = list(ast.literal_eval(path.read_text()))
+    if len(analysis) != 20:
+        raise ValueError("Cambió el formato del análisis PyInstaller; revisar su composición.")
+    # Module, data and base-library entries are unordered inventories.
+    for index in (14, 18, 19):
+        analysis[index] = sorted(analysis[index])
+    return hashlib.sha256(json.dumps(analysis, separators=(",", ":")).encode()).hexdigest()
 
 
 def contained(root, name):
@@ -42,7 +54,10 @@ def contained(root, name):
 def checked(root, item):
     """Return a file only when its reviewed bytes are available."""
     path = contained(root, item["path"])
-    if not path.is_file() or digest(path) != item["sha256"]:
+    if not path.is_file():
+        raise ValueError(f"Falta o cambió el material de licencias: {item['path']}")
+    actual = analysis_digest(path) if item.get("format") == "pyinstaller-analysis" else digest(path)
+    if actual != item["sha256"]:
         raise ValueError(f"Falta o cambió el material de licencias: {item['path']}")
     return path
 
@@ -72,8 +87,8 @@ def validate(software=SOFTWARE, *, sources=True):
 
 
 def fetch(software=SOFTWARE):
-    """Download explicitly requested source files and atomically verify their hashes."""
-    lock = validate(software, sources=False)
+    """Fetch reviewed sources before building runtimes, verifying each download."""
+    lock = load(software)
     cache = software / "build/license-sources"
     cache.mkdir(parents=True, exist_ok=True)
     for item in lock["sources"]:
@@ -178,7 +193,10 @@ def stage(root, software=SOFTWARE, *, preview=False):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(software / "build/license-sources" / item["cache_name"], target)
     for item in lock["runtime_notices"]:
-        shutil.copyfile(checked(root, item), destination / item["destination"])
+        actual = item
+        if item.get("alternative") and (root / item["alternative"]).is_file():
+            actual = {**item, "path": item["alternative"]}
+        shutil.copyfile(checked(root, actual), destination / item["destination"])
     for source, name in (("LICENSE", "MIT.txt"), ("LICENSING.md", "LICENSING.md")):
         shutil.copyfile(software / source, destination / name)
     (destination / "manifest.json").write_text(

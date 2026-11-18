@@ -37,6 +37,7 @@ def stage(root, launcher=None):
     for name in ("install.sh", "uninstall.sh"):
         shutil.copy2(SOFTWARE / "packaging/linux" / name, root / name)
         (root / name).chmod(0o755)
+    shutil.copy2(SOFTWARE / "packaging/linux/README.txt", root / "README.txt")
     icon = root / "resources/icons/viewrv.svg"
     icon.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(SOFTWARE / "packaging/linux/viewrv.svg", icon)
@@ -50,6 +51,7 @@ def stage(root, launcher=None):
             *(entry["payload"] for entry in launchers.values()),
             "install.sh",
             "uninstall.sh",
+            "README.txt",
             "resources/icons/viewrv.svg",
             "linux-launchers.json",
         ):
