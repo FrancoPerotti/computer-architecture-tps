@@ -1,0 +1,10 @@
+flowchart LR
+  R[READY] -->|RUN| A[RUNNING]
+  R -->|STEP| S[STEPPING]
+  S -->|RUN| A
+  S -->|STEP: un ciclo| S
+  A -->|cada clock: un ciclo| A
+  T[FINISHED o FAULT] -->|RUN| PR[PREPARING_RUN]
+  T -->|STEP| PS[PREPARING_STEP]
+  PR -->|prepare_done| A
+  PS -->|prepare_done| S

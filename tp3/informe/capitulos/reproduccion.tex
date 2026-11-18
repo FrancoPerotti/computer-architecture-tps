@@ -1,0 +1,192 @@
+\input{capitulos/versiones_entrega.tex}
+
+\section{Entorno de RTL y assembler}
+
+Las comprobaciones del repositorio se ejecutan en la imagen publicada
+\code{tp3-dev} de GitHub Container Registry, fijada por digest en
+\code{tp3/docker/image.ref}. La imagen contiene Icarus Verilog 13.0, Verilator
+5.020, Verible, check-jsonschema, Ruff, ShellCheck, shfmt, GNU Make y CPython
+3.12.3. La descripción completa y las entradas fijadas se encuentran en
+\doc{development_environment.md}{Entorno de compilación y simulación}.
+
+Desde la raíz del repositorio, en una terminal Bash:
+
+\begin{codebox}[language=bash]
+TP3_IMAGE="$(cat tp3/docker/image.ref)"
+docker pull "$TP3_IMAGE"
+docker run --rm --network none \
+  --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/workspace" \
+  "$TP3_IMAGE" make check
+\end{codebox}
+
+La descarga requiere acceso al registro. Las comprobaciones se ejecutan sin
+red. La imagen aporta las herramientas; el RTL, los bancos y las pruebas se
+toman del checkout montado.
+
+\section{Comprobaciones desde \code{tp3}}
+
+Dentro del contenedor, desde \code{/workspace/tp3}:
+
+\begin{codebox}[language=bash]
+make help
+make check
+\end{codebox}
+
+\code{make check} ejecuta:
+
+\begin{enumerate}
+  \item \code{format-check}: formato SystemVerilog, Python y Bash;
+  \item \code{lint}: Verible, Verilator, Ruff y ShellCheck;
+  \item \code{validate}: esquemas JSON y catálogo de verificación;
+  \item \code{review-cpu}: estructura del CPU en tres configuraciones;
+  \item \code{test-infra}: pruebas de la infraestructura;
+  \item \code{test-software}: las 114 pruebas del assembler;
+  \item \code{test-rtl}: simulaciones RTL del manifiesto.
+\end{enumerate}
+
+Los comandos parciales son:
+
+\begin{codebox}[language=bash]
+make test-infra
+make test-software
+make test-rtl
+make test-rtl TESTS="TEST-PIPE-005/C001"
+\end{codebox}
+
+La guía de selección, los filtros y el formato JSON se consultan en
+\doc{verification/test_selection.md}{Ejecución y selección de pruebas}.
+
+Los targets guardan sus resultados en \code{build/reports/}. Para conservar
+también la salida completa de la regresión, desde \code{tp3}, en Bash:
+
+\begin{codebox}[language=bash]
+mkdir -p build/reports
+set -o pipefail
+make check 2>&1 | tee build/reports/check.log
+\end{codebox}
+
+\input{capitulos/reproduccion_viewrv.tex}
+
+\section{Resultados de la campaña registrada}
+
+La campaña documentada en el
+\href{\projecturl/blob/\baserevision/tp3/reports/issue-16.md}{informe de integración y timing}
+se ejecutó sin red. La corrida principal usó Icarus
+Verilog 13.0 y Verilator 5.054; la repetición de los tres casos de recuperación
+usó Verilator 5.020, la versión fijada por el repositorio. Los resultados
+fueron:
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{lr}
+    \toprule
+    \textbf{Comprobación} & \textbf{Resultado} \\
+    \midrule
+    Formato, lint, validación y revisión del CPU & OK (sin errores) \\
+    Infraestructura & OK \\
+    Assembler & 114 pruebas, OK \\
+    Simulaciones RTL & 2695 ejecuciones: 2692 PASS, 0 FAIL, 3 ERROR \\
+    Repetición con Verilator 5.020 & 3 de 3 PASS \\
+    Casos con estado pendiente en el runner & 4 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Resultado de la regresión ejecutada.}
+  \label{tab:corrida}
+\end{table}
+
+Los tres errores correspondieron a las ejecuciones de recuperación
+\code{TEST-UART-006/C001}, \code{C013} y \code{C014} con Verilator 5.054. Las
+tres pasaron al repetirse con Verilator 5.020, la versión fijada por el
+repositorio. La diferencia se conserva como una dependencia de la versión del
+simulador y no como un fallo funcional del diseño. El resto de la regresión no
+presentó fallos ni diferencias de resultado.
+
+Los registros de ambas corridas se identifican como \code{regression.json} y
+\code{retry-5.020.json} en el informe de integración. Una nueva ejecución de los
+comandos anteriores genera su propia evidencia bajo \code{build/reports/}; no
+se la confunde con los resultados históricos de la entrega.
+
+\section{Selección de casos}
+
+Para ejecutar un grupo o un caso:
+
+\begin{codebox}[language=bash]
+bash scripts/run_tests.sh --test TEST-PIPE-005 --list
+bash scripts/run_tests.sh --test TEST-PIPE-005/C001 --format json
+bash scripts/run_tests.sh --test TEST-EXEC-001 --test TEST-MEM-003
+bash scripts/run_tests.sh --all --format json
+\end{codebox}
+
+\code{--test} es repetible y se puede combinar con \code{--list} para
+inspeccionar sin ejecutar. \code{--all} ejecuta todos los casos implementados e
+informa los pendientes. Pedir individualmente un caso pendiente es un error;
+seleccionar un grupo informa sus pendientes sin ejecutarlos.
+
+\section{Aceptación en placa}
+
+Los comandos de esta sección requieren el aporte de la PR N.º~37, incorporado
+en el checkout o disponible en la revisión \code{cb3270b19b27}. No están
+incluidos en la base \code{7025925f949c} por sí sola. Para obtener una copia
+independiente y fijada, desde una carpeta de trabajo:
+
+\begin{codebox}[language=bash]
+git clone https://github.com/FrancoPerotti/computer-architecture-tps.git \
+  tp3-aceptacion
+cd tp3-aceptacion
+git checkout --detach cb3270b19b2721f3e72a23ab23e333b394d113b9
+cd tp3
+\end{codebox}
+
+Con Python 3.11 o posterior, preparar los planes, comprobar el transporte y
+ejecutar las pruebas del host:
+
+\begin{codebox}[language=bash]
+python3 -m tools.board_acceptance --output build/board-acceptance/prepared
+python3 -m tools.board_acceptance --simulate \
+  --output build/board-acceptance/transport
+python3 -m unittest -v scripts.tests.test_board_acceptance
+\end{codebox}
+
+La preparación exporta 151 planes: 150 preparados y C009 pendiente de
+instrumentación. \code{--simulate} ejecuta únicamente \code{smoke} con un
+transcript fijo, sin abrir UART ni simular la CPU. Los nueve tests del host
+comprueban selección, framing, comparación de snapshots y recuperación.
+Las proyecciones sobre \code{processor_top} se ejecutan por separado:
+
+\begin{codebox}[language=bash]
+python3 -m tools.board_acceptance.check_cpu \
+  --output build/board-acceptance/rtl
+\end{codebox}
+
+Ese comando requiere Icarus y las herramientas del entorno RTL. Para ensayar
+con la placa se necesita, además, pySerial 3.5, el bitstream \code{REFERENCE}
+ya programado y el puerto libre. En la misma terminal Bash, desde \code{tp3},
+asignar las rutas reales del puerto y del archivo descargado:
+
+\begin{codebox}[language=bash]
+TP3_UART="/dev/ttyUSB1"
+TP3_BITSTREAM="/ruta/a/evidencia/vivado/tp3-reference.bit"
+TP3_RTL_SHA="d2ef373194b396f5a4367af22fe7e243ada5d49e"
+python3 -m tools.board_acceptance --case smoke \
+  --port "$TP3_UART" --bitstream "$TP3_BITSTREAM" \
+  --rtl-commit "$TP3_RTL_SHA" --operators Franco Federico \
+  --notes "Basys 3; identificar placa y turno de operadores" \
+  --output build/board-acceptance/plate-smoke
+\end{codebox}
+
+El ejecutor registra el bitstream, pero no programa la FPGA. La programación
+previa se realiza con \tech{viewrv}; cerrar su conexión UART antes del ensayo
+directo. Para el lote automático, omitir \code{--case smoke} y utilizar otro
+directorio de salida. Los casos de botón requieren \code{--manual} y el ID
+exacto con \code{--case}; C009 conserva el procedimiento de instrumentación
+específico.
+
+El ejecutor abre el puerto con exclusión en Linux y usa \num{19200} baud, 8N1 y
+sin control de flujo. Cada ejecución exige un directorio nuevo y conserva
+\code{session.json}, \code{status.json} y los archivos \code{plan.json},
+\code{uart.jsonl} y \code{result.json} por caso. La
+\acceptancedoc{guía de aceptación de la PR N.º~37} documenta los turnos, los
+estímulos de BTNC y el recorrido CLI de \tech{viewrv}. Guardar el bitstream y
+los reportes de Vivado junto con el ensayo.

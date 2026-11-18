@@ -1,0 +1,58 @@
+\documentclass[12pt,a4paper,openany]{book}
+
+\input{librerias.tex}
+
+\begin{document}
+
+\input{introduccion/portada.tex}
+\begingroup
+\pagestyle{plain}
+\tableofcontents
+\thispagestyle{plain}
+\endgroup
+\newpage
+
+\chapter{Introducción}\label{chap:introduccion}
+\input{capitulos/introduccion.tex}
+
+\chapter{Objetivos y alcance}\label{chap:objetivos}
+\input{capitulos/objetivos.tex}
+
+\chapter{Arquitectura del sistema}\label{chap:arquitectura}
+\input{capitulos/arquitectura.tex}
+
+\chapter{Procesador RISC-V de cinco etapas}\label{chap:procesador}
+\input{capitulos/procesador.tex}
+
+\chapter{Memorias, carga y preparación}\label{chap:memorias}
+\input{capitulos/memorias.tex}
+
+\chapter{Control de ejecución y sesión}\label{chap:control-ejecucion}
+\input{capitulos/control_ejecucion.tex}
+
+\chapter{Hazards, forwarding y cambios de flujo}\label{chap:hazards}
+\input{capitulos/hazards.tex}
+
+\chapter{Flujo de programación y observación}\label{chap:flujo-software}
+\input{capitulos/flujo_software.tex}
+
+\chapter{Verificación funcional}\label{chap:verificacion}
+\input{capitulos/verificacion.tex}
+
+\chapter{Integración de UART, Debug y CPU}\label{chap:integracion-sistema}
+\input{capitulos/integracion_sistema.tex}
+
+\chapter{Plataforma Basys 3 y análisis temporal}\label{chap:plataforma-timing}
+\input{capitulos/plataforma_timing.tex}
+
+\chapter{Validación en placa}\label{chap:aceptacion-fisica}
+\input{capitulos/aceptacion_fisica.tex}
+
+\chapter{Conclusiones}\label{chap:conclusiones}
+\input{capitulos/conclusiones.tex}
+
+\chapter*{Referencias}
+\addcontentsline{toc}{chapter}{Referencias}
+\input{capitulos/referencias.tex}
+
+\end{document}

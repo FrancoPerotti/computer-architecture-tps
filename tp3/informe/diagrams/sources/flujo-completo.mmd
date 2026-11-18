@@ -1,0 +1,11 @@
+flowchart LR
+  subgraph PC["PC"]
+    E["Editor / CLI<br/>programa .s"] --> A["Assembler<br/>imagen + mapa"]
+    A --> V["viewrv<br/>core de sesión"]
+  end
+  subgraph FPGA["FPGA"]
+    S["system_top"] --> P["processor_top<br/>5 etapas"]
+    P --> M["IMEM / Debug<br/>snapshot"]
+  end
+  V <-->|"8N1"| S
+  M -.->|"observación"| V

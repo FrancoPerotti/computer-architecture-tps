@@ -1,0 +1,163 @@
+La verificación busca comprobar que el procesador y los componentes que lo
+rodean se comporten como se especificó. Para ello se prepararon casos con
+entradas y resultados esperados, que se aplicaron tanto a bloques aislados como
+a conjuntos cada vez más completos. Este capítulo presenta cómo se organizaron
+esas pruebas, qué se comprobó y cuáles fueron los resultados registrados.
+
+\section{Niveles de verificación}
+
+Una prueba puede concentrarse en un bloque particular o examinar la interacción
+entre varios componentes. Los niveles permiten distinguir qué parte del
+sistema se observó en cada caso:
+
+\begin{itemize}
+  \item \textbf{Modelo abstracto:} comprueba reglas de control, recuperación y
+    límites mediante un modelo de su comportamiento.
+  \item \textbf{Unidad:} ejercita un bloque o una lógica local de manera
+    aislada, como el detector de una dependencia.
+  \item \textbf{Integración local:} comprueba una etapa o la conexión entre
+    varios bloques, como el decoder junto con el detector.
+  \item \textbf{CPU:} ejecuta programas sobre \code{processor_top} para
+    observar el funcionamiento conjunto del procesador.
+  \item \textbf{Sistema:} conecta la CPU con UART, el controlador de protocolo
+    y el serializador para comprobar los intercambios y sus efectos.
+  \item \textbf{Cliente PC:} comprueba la aplicación y su transporte, incluidos
+    el tratamiento de respuestas y los tiempos de espera.
+  \item \textbf{Elaboración y revisión:} examina tipos, parámetros, interfaces
+    y dependencias de la implementación.
+  \item \textbf{Implementación:} utiliza Vivado y los reportes del diseño
+    físico para el perfil \code{REFERENCE}.
+  \item \textbf{Placa:} ejecuta pruebas en la Basys 3 y compara las respuestas
+    recibidas por UART.
+\end{itemize}
+
+Estos niveles se complementan. Por ejemplo, una prueba unitaria del detector
+puede comprobar que reconozca una dependencia, pero hace falta observar la CPU
+para verificar cómo se retiene y avanza el pipeline. Del mismo modo, una
+simulación de CPU no comprueba por sí sola la comunicación física con la placa.
+
+Para interpretar cada resultado se registra el caso y el nivel utilizado, junto
+con el estímulo, la expectativa, lo observado y las herramientas
+pertinentes. Si un banco agota su tiempo de espera, se informa como problema o
+limitación de esa prueba, no como una terminación \code{FINISHED} de la CPU.
+
+\section{Manifiesto y cobertura}
+
+Las pruebas se organizan en un manifiesto: un catálogo que identifica qué se
+comprueba, con qué entradas y cuál es el resultado esperado. Una especificación
+puede tener varias variantes, por ejemplo distintos operandos o direcciones
+límite. Cada grupo y cada variante tienen un identificador que permite localizar
+su definición y sus resultados.
+
+El manifiesto contiene 66 grupos y 1484 casos. La
+tabla~\ref{tab:manifiesto} muestra cuántos corresponden a cada área y cuántos
+figuran como implementados en el ejecutor de pruebas.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    \textbf{Área} & \textbf{Grupos} & \textbf{Casos} & \textbf{Implementados} &
+    \textbf{No implementados} \\
+    \midrule
+    ISA & 8 & 537 & 537 & 0 \\
+    Pipeline & 17 & 249 & 249 & 0 \\
+    Memoria & 10 & 200 & 199 & 1 \\
+    Ejecución & 11 & 222 & 222 & 0 \\
+    UART y Debug & 14 & 248 & 248 & 0 \\
+    Plataforma & 6 & 28 & 25 & 3 \\
+    \midrule
+    Total & 66 & 1484 & 1480 & 4 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Estado de los casos del manifiesto por área.}
+  \label{tab:manifiesto}
+\end{table}
+
+Un caso definido describe una situación que se quiere comprobar; una ejecución
+es un intento concreto de comprobarla con un banco y un nivel determinados. El
+manifiesto registra 208 configuraciones de ejecución y un mismo caso puede
+utilizarse en varias de ellas, por lo que la cantidad de ejecuciones de una
+campaña puede superar la cantidad de casos. Además, que un caso esté
+implementado indica que existe una prueba disponible, no que haya aprobado una
+corrida.
+
+La matriz de cobertura relaciona cada requisito con su contrato y sus pruebas:
+\doc{verification/coverage.md}{la matriz de cobertura}.
+
+Los cuatro casos que el ejecutor de simulación enumera como no implementados son
+\code{TEST-MEM-008/C007}, \code{TEST-PLAT-003/C001},
+\code{TEST-PLAT-004/C001} y \code{TEST-PLAT-006/C001}. Sus comprobaciones se
+realizan mediante otras evidencias: revisión del formato de \code{LOAD},
+elaboración y revisión estructural, implementación física y revisión documental,
+respectivamente. Por eso se presentan por separado de las simulaciones.
+
+\section{Verificación funcional}
+
+La verificación funcional comprueba tanto los resultados de las instrucciones
+como el comportamiento del pipeline, las memorias y el control de sesión. Por
+ejemplo, se prueban operaciones aritméticas, codificaciones del decoder,
+dependencias entre instrucciones y accesos a los límites de DMEM.
+
+Las pruebas se agrupan según el aspecto del procesador que se quiere comprobar:
+
+\begin{itemize}
+  \item \textbf{Instrucciones:} se comprueban las operaciones aritméticas y
+    lógicas, la formación de inmediatos y la identificación de instrucciones
+    válidas e inválidas.
+  \item \textbf{Pipeline:} se observan el avance de las instrucciones, el
+    forwarding, las esperas por dependencias y el descarte ante cambios de flujo.
+  \item \textbf{Memorias:} se verifican los tamaños de load y store, el orden
+    de los bytes, la alineación y los límites de las direcciones.
+  \item \textbf{Control de ejecución:} se comprueban la preparación, los
+    modos RUN y STEP, el drenado y la respuesta ante \code{halt} o faults.
+\end{itemize}
+
+Por ejemplo, el caso de \emph{load-use} presentado en el capítulo 7 comprueba
+una dependencia entre un load y la instrucción siguiente. El resultado esperado
+incluye tanto el valor calculado como la espera necesaria para obtenerlo. El
+detalle de este y de los demás casos se encuentra en el
+\doc{verification/cases.json}{manifiesto de pruebas}.
+
+\section{Resultados de la campaña}
+
+Una vez preparadas las pruebas, se ejecutaron simulaciones de los bloques y del
+sistema completo. También se probaron programas en la placa para comprobar el
+recorrido real entre la PC y la FPGA. Los resultados de la simulación y de la
+placa se presentan por separado porque cada uno observa condiciones distintas.
+
+\subsection{Regresión de simulación RTL}
+
+La \emph{regresión} consiste en volver a ejecutar un conjunto de pruebas para
+comprobar que el diseño siga cumpliendo los resultados esperados. En la corrida
+general se simularon las descripciones del hardware con Icarus Verilog y
+Verilator. Se realizaron 2695 ejecuciones de simulación RTL: en la primera
+corrida aprobaron 2692 y las tres restantes aprobaron al repetirse.
+
+Además de las simulaciones, se comprobaron aspectos del código y de la
+infraestructura de pruebas, y se ejecutaron las 114 pruebas del assembler.
+Estas comprobaciones resultaron conformes.
+
+\subsection{Pruebas de UART y Debug}
+
+Las pruebas de integración comprueban el intercambio entre la CPU, el
+controlador de protocolo, UART y Debug. Entre los escenarios ejercitados se
+encuentran la carga de programas, la transmisión de memoria utilizada y el
+comportamiento del reset.
+
+Se realizaron pruebas dirigidas de estos intercambios con la CPU y los bloques
+de comunicación conectados. También se simuló la integración con los componentes
+de la plataforma para observar la comunicación y el reset. El procedimiento y
+los resultados se desarrollan en el capítulo~\ref{chap:integracion-sistema}.
+
+\subsection{Validación en placa}
+
+La validación en placa permite comprobar el recorrido completo con la FPGA y la
+comunicación UART reales. Para ello se cargaron programas, se controló su
+ejecución desde la PC y se compararon las respuestas con los resultados
+esperados. El procedimiento, los resultados y las pruebas que quedaron fuera de
+su alcance se describen en el capítulo~\ref{chap:aceptacion-fisica}.
+
+Las instrucciones para ejecutar las pruebas se encuentran en la
+\doc{verification/test_selection.md}{guía de ejecución y selección de pruebas}.

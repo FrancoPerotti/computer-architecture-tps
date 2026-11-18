@@ -1,0 +1,9 @@
+*.aux
+*.log
+*.out
+*.toc
+*.listing
+missfont.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz

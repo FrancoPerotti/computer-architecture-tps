@@ -1,0 +1,31 @@
+\section{Entorno y pruebas de viewrv}
+
+El entorno de la aplicación es independiente del contenedor RTL. La versión
+0.7.0 fija CPython 3.14.9 y Node.js 24.22.1, con dependencias en
+\code{requirements-linux.lock} y \code{package-lock.json}. En Linux, desde
+\code{tp3}, con esas versiones disponibles:
+
+\begin{codebox}[language=bash]
+python3.14 -m venv software/.venv
+software/.venv/bin/python -m pip install --require-hashes \
+  -r software/requirements-linux.lock
+cd software/gui
+npm ci --no-audit --no-fund
+node node_modules/electron/install.js
+npm run check
+npm run test:core
+npm run test:gui
+\end{codebox}
+
+La instalación descarga dependencias. Una vez preparadas, las pruebas utilizan
+recursos locales. \code{check} comprueba formato, compila TypeScript y ejecuta
+las pruebas unitarias de GUI; \code{test:core} ejecuta la suite Python de core,
+CLI y protocolo; \code{test:gui} recorre las ventanas sobre la construcción
+generada. Este último requiere una sesión gráfica X11 en Linux y conserva
+resultados bajo \code{software/build/gui-check/}. \code{npm run check:all}
+reúne los tres niveles.
+
+Los adaptadores controlados y pseudo-terminales permiten comprobar el cliente
+sin FPGA. Esas pruebas no acreditan por sí solas la GUI sobre Basys 3 ni la
+distribución Windows. Los procedimientos de aplicación se detallan en el
+\href{\projecturl/blob/\baserevision/tp3/software/README.md}{README de viewrv}.

@@ -1,0 +1,191 @@
+La integración conecta el procesador con los bloques que permiten cargar
+programas, controlar su ejecución y consultar su estado desde una PC. Este
+capítulo describe cómo colaboran esos bloques y qué pruebas comprueban su
+funcionamiento en conjunto.
+
+\section{Composición del sistema}
+
+El sistema funcional está formado por cuatro bloques principales: la UART, el
+controlador de protocolo, el serializador de respuestas y el procesador. La
+tabla~\ref{tab:bloques-sistema} presenta la función de cada uno dentro del
+recorrido de una solicitud.
+
+El módulo \code{system_top} conecta estos bloques entre sí. A su vez,
+\code{basys3_top} adapta el sistema a la placa: conecta sus pines, genera el
+reloj de funcionamiento y acondiciona la señal de reset.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{L{4.4cm}Y}
+    \toprule
+    \textbf{Bloque} & \textbf{Función en la integración} \\
+    \midrule
+    \code{uart_core} & Sincroniza RX, genera el tick de baudios, recibe y
+    transmite bytes y conserva las FIFO de recepción y transmisión. \\
+    \addlinespace
+    \code{protocol_controller} & Interpreta \code{LOAD}, \code{RUN},
+    \code{STEP}, \code{RESET} y \code{CHECK_READY}; coordina las solicitudes,
+    los tiempos de espera y la observación. \\
+    \addlinespace
+    \code{response_serializer} & Captura el descriptor de respuesta y produce
+    la cabecera, el contexto, el banco de registros, los latches y la lista de
+    DMEM en el orden aprobado. \\
+    \addlinespace
+    \code{processor_top} & Ejecuta la imagen y entrega el estado observable:
+    PC, contador, RF, latches y metadatos de fault. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Bloques de la integración de sistema.}
+  \label{tab:bloques-sistema}
+\end{table}
+
+En un intercambio, la UART recibe los bytes de la PC y los entrega al
+controlador. Este interpreta la solicitud y la coordina con el procesador;
+después, el serializador forma la respuesta y la UART la transmite de vuelta.
+El controlador atiende una operación normal por vez y, durante Debug, mantiene
+estable el estado que se está enviando hasta que termina la respuesta.
+
+\section{Coordinación de comandos y observación}
+
+\subsection{LOAD y preparación}
+
+La PC inicia \code{LOAD} enviando una cabecera de seis bytes que incluye el
+tamaño del programa. El controlador valida ese tamaño y solicita al control
+de ejecución que acepte la carga. Una vez recibida la respuesta
+\code{ACCEPTED}, la PC transmite el contenido y el cargador del procesador
+reconstruye las palabras para escribirlas en IMEM.
+
+Cuando se recibe la última palabra, comienza la preparación del estado
+inicial: se inicializan el PC, el banco de registros, los registros interetapa
+y el contador, y se limpian las marcas de validez de DMEM. Al terminar la
+preparación se publica la imagen y el sistema responde \code{DONE}, indicando
+que el programa está disponible para ejecutar.
+
+\subsection{RUN, STEP y Debug}
+
+Una solicitud \code{RUN} aceptada inicia la ejecución continua y recibe una
+respuesta \code{ACCEPTED}. Cuando el programa termina por \code{halt} o por un
+fault y finaliza el drenado, la FPGA envía \code{FINISHED} o \code{FAULT} junto
+con el snapshot del estado final. En cambio, \code{STEP} ejecuta un ciclo
+efectivo y responde \code{DONE} con el estado posterior a ese ciclo.
+
+Para construir el snapshot, el serializador consulta el estado que el
+procesador expone para Debug y recorre el banco de registros y DMEM mediante
+sus caminos de lectura compartidos. Mientras se transmite la respuesta, el
+controlador mantiene retenida la CPU y excluye nuevas operaciones que podrían
+modificar ese estado. Así, todos los campos enviados corresponden a la misma
+observación, hasta que se transmite el bit de parada del último byte.
+
+\section{Comprobaciones de integración}
+
+Las pruebas de integración comprueban que los bloques conectados respeten el
+protocolo y que las respuestas coincidan con el estado del procesador. Para
+ello se simulan solicitudes y respuestas como tramas UART de formato 8N1 y se
+comparan los bytes transmitidos con los efectos observados en el sistema.
+
+La tabla~\ref{tab:casos-integracion} enumera los grupos del catálogo y el
+tema principal de cada uno. Los dos primeros comprueban la UART que sirve de
+base a los intercambios; los restantes abarcan el protocolo, la ejecución,
+Debug y las condiciones de recuperación.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{Grupo} & \textbf{Tema} & \textbf{Casos} \\
+    \midrule
+    \code{TEST-UART-001} & Temporización UART, sincronización y tramas & 31 \\
+    \code{TEST-UART-002} & FIFO de recepción y sus indicadores & 21 \\
+    \code{TEST-UART-003} & Comandos, disponibilidad y rechazos & 44 \\
+    \code{TEST-UART-004} & Carga de programas & 18 \\
+    \code{TEST-UART-005} & Tiempo de espera y errores de carga & 24 \\
+    \code{TEST-UART-006} & Recuperación por silencio y error de comando & 8 \\
+    \code{TEST-UART-007} & Snapshot fijo, registros y pipeline & 7 \\
+    \code{TEST-UART-008} & Lista de DMEM & 10 \\
+    \code{TEST-UART-009} & TX llena y finalización de transmisión & 9 \\
+    \code{TEST-UART-010} & Comandos RUN y STEP & 5 \\
+    \code{TEST-UART-011} & Exclusión durante Debug & 31 \\
+    \code{TEST-UART-012} & Orden de respuestas y reset & 14 \\
+    \code{TEST-UART-013} & Secuencia de reset & 16 \\
+    \code{TEST-UART-014} & Tiempos del enlace integrado & 10 \\
+    \midrule
+    \multicolumn{2}{r}{Total UART/Debug} & 248 \\
+    \midrule
+    \code{TEST-PLAT-001} & Perfiles y capacidades & 15 \\
+    \code{TEST-PLAT-003} & Composición RTL y dependencias & 1 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Grupos de la integración de sistema.}
+  \label{tab:casos-integracion}
+\end{table}
+
+Los 248 casos de UART y Debug figuran como implementados en el ejecutor. Además
+de las pruebas de simulación, \code{TEST-PLAT-001} comprueba configuraciones de
+las memorias y \code{TEST-PLAT-003} examina la composición del sistema y sus
+dependencias. Los niveles de prueba y el significado de estos estados se
+presentaron en el capítulo~\ref{chap:verificacion}.
+
+En la regresión general se realizaron 2695 ejecuciones RTL: 2692 aprobaron en
+la primera corrida y las tres restantes aprobaron al repetirse. Estas últimas
+correspondieron a las variantes \code{TEST-UART-006/C001}, \code{C013} y
+\code{C014}, que comprueban la recuperación de la comunicación.
+
+\subsection{Carga, observación y reset}
+
+Para comprobar la integración se realizaron 44 ejecuciones dirigidas de los
+grupos \code{TEST-UART-004}, \code{TEST-UART-008} y \code{TEST-UART-013}, que
+abarcan la carga de programas, la lista de memoria utilizada y la secuencia de
+reset. Las 44 aprobaron con Icarus Verilog 13.0.
+
+Además, \code{TEST-UART-013/C001} aprobó en XSim con \code{basys3_top}, el
+generador de reloj, la CPU y la UART configurada a \num{19200} baud. Esa prueba
+comprueba la respuesta al reset y el estado posterior del sistema utilizando
+los componentes integrados de la plataforma.
+
+\subsection{Revisión de la composición}
+
+La revisión \code{TEST-PLAT-003} examinó la composición del procesador y del
+sistema, incluidas sus conexiones y dependencias combinacionales. En la
+implementación se comprobó que \code{system_top} conservara las instancias de
+CPU, UART, controlador y serializador, junto con los componentes de reloj y
+reset de la plataforma.
+
+Los informes de Vivado no registraron puntos internos sin restricción temporal,
+registros sin reloj ni lazos combinacionales o latches. El análisis de recursos
+y temporización se desarrolla en el capítulo~\ref{chap:plataforma-timing}.
+
+\section{Registro de evidencia}
+
+Para poder revisar un resultado, cada ejecución identifica el caso, el nivel de
+verificación y la configuración utilizada. Según lo que compruebe la prueba,
+la evidencia puede incluir:
+
+\begin{itemize}
+  \item las solicitudes y respuestas intercambiadas por UART;
+  \item el snapshot con los registros, el PC, el contador, el estado del
+    pipeline, los datos de fault y la memoria utilizada;
+  \item los efectos observados ante una carga parcial, un error de recepción o
+    un tiempo de espera agotado;
+  \item la secuencia de señales y respuestas asociada a un reset.
+\end{itemize}
+
+Estos datos permiten comparar la respuesta esperada con la observada y, en las
+pruebas que incluyen Debug, comprobar que el snapshot corresponda al estado
+posterior al último ciclo autorizado. Los resultados se conservan en el
+\evidencefile{tp3-issue-17-evidencia.zip}{paquete de evidencia}.
+
+\section{Resultado de la integración}
+
+Las pruebas comprueban el recorrido de las solicitudes y respuestas entre la PC
+y el procesador, así como la coordinación necesaria para que Debug observe un
+estado coherente. También se ejercitan la recuperación ante errores, el reset
+y la carga de nuevos programas.
+
+La comprobación en la Basys 3 complementa las simulaciones: 150 de las 151
+variantes seleccionadas aprobaron en placa. La variante
+\code{TEST-UART-013/C009}, correspondiente a reset durante la preparación, quedó
+pendiente de ejecución física y cuenta con un resultado aprobado en simulación
+de sistema. El alcance de esa validación se presenta en el
+capítulo~\ref{chap:aceptacion-fisica}.
