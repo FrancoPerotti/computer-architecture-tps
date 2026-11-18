@@ -7,7 +7,8 @@ COPY ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources
 
 # La base mínima no trae certificados. Docker descarga este paquete por HTTPS;
 # su contenido verificado permite arrancar APT contra el snapshot por HTTPS.
-ADD https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/c/ca-certificates/ca-certificates_20240203_all.deb /tmp/ca-certificates.deb
+# Se usa el archivo oficial para este paquete, conservando la versión y el checksum fijados.
+ADD https://archive.ubuntu.com/ubuntu/pool/main/c/ca-certificates/ca-certificates_20240203_all.deb /tmp/ca-certificates.deb
 RUN set -eu; \
     echo "641de77d8f142cfd62a1a6f964ba67b20754d3337c480efb529d086075a06c9a  /tmp/ca-certificates.deb" | sha256sum --check -; \
     dpkg-deb --extract /tmp/ca-certificates.deb /tmp/bootstrap-ca; \
