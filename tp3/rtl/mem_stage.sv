@@ -27,7 +27,10 @@ module mem_stage #(
   word_t              load_value;
 
   mem_decode mem_decode (
-      .mem_op       (exmem.mem_op),
+      // Entradas
+      .mem_op(exmem.mem_op),
+
+      // Salidas
       .is_store     (is_store),
       .access_size  (access_size),
       .load_unsigned(load_unsigned),
@@ -35,10 +38,13 @@ module mem_stage #(
   );
 
   dmem_write_control dmem_write_control (
-      .cpu_cycle_fire (cpu_cycle_fire),
-      .exmem_valid    (exmem.valid),
-      .is_store       (is_store),
-      .mem_op         (exmem.mem_op),
+      // Entradas
+      .cpu_cycle_fire(cpu_cycle_fire),
+      .exmem_valid   (exmem.valid),
+      .is_store      (is_store),
+      .mem_op        (exmem.mem_op),
+
+      // Salidas
       .dmem_store_fire(dmem_store_fire),
       .byte_enable    (byte_enable)
   );
@@ -46,6 +52,7 @@ module mem_stage #(
   data_memory #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) data_memory (
+      // Entradas
       .clk               (clk),
       .reset             (reset),
       .address           (exmem.ex_result),
@@ -56,17 +63,22 @@ module mem_stage #(
       .prepare_dmem_addr (prepare_dmem_addr),
       .debug_read_select (debug_read_select),
       .debug_dmem_addr   (debug_dmem_addr),
-      .mem_read_data     (mem_read_data),
-      .debug_dmem_data   (debug_dmem_data),
-      .debug_dmem_used   (debug_dmem_used)
+
+      // Salidas
+      .mem_read_data  (mem_read_data),
+      .debug_dmem_data(debug_dmem_data),
+      .debug_dmem_used(debug_dmem_used)
   );
 
   load_select_extend load_select_extend (
+      // Entradas
       .mem_read_data   (mem_read_data),
       .address_low_bits(exmem.ex_result[1:0]),
       .access_size     (access_size),
       .load_unsigned   (load_unsigned),
-      .load_value      (load_value)
+
+      // Salidas
+      .load_value(load_value)
   );
 
   assign memwb_input.valid       = exmem.valid;

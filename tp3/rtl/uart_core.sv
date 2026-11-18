@@ -33,10 +33,13 @@ module uart_core #(
   logic                                  tx_start;
 
   serial_input_sync rx_synchronizer (
+      // Entradas
       .clk,
       .reset,
       .serial_async(serial_rx),
-      .serial_sync (synchronized_rx)
+
+      // Salidas
+      .serial_sync(synchronized_rx)
   );
 
   baud_tick_gen #(
@@ -44,16 +47,22 @@ module uart_core #(
       .BAUD_RATE  (BAUD_RATE),
       .OVERSAMPLE (OVERSAMPLE)
   ) baud_generator (
+      // Entradas
       .clk,
       .reset,
+
+      // Salidas
       .s_tick
   );
 
   uart_rx receiver (
+      // Entradas
       .clk,
       .reset,
-      .rx      (synchronized_rx),
+      .rx(synchronized_rx),
       .s_tick,
+
+      // Salidas
       .data_out(received_data),
       .rx_done_tick,
       .frame_error_tick,
@@ -65,39 +74,48 @@ module uart_core #(
       .DATA_WIDTH(system_pkg::UART_DATA_BITS),
       .ADDR_WIDTH(FIFO_ADDR_WIDTH)
   ) rx_fifo (
+      // Entradas
       .clk,
       .reset,
       .rd        (rd_uart),
       .wr        (rx_done_tick),
       .write_data(received_data),
-      .read_data (r_data),
-      .empty     (rx_empty),
-      .full      (rx_full)
+
+      // Salidas
+      .read_data(r_data),
+      .empty    (rx_empty),
+      .full     (rx_full)
   );
 
   fifo #(
       .DATA_WIDTH(system_pkg::UART_DATA_BITS),
       .ADDR_WIDTH(FIFO_ADDR_WIDTH)
   ) tx_fifo (
+      // Entradas
       .clk,
       .reset,
       .rd        (tx_done_tick),
       .wr        (wr_uart),
       .write_data(w_data),
-      .read_data (transmit_data),
-      .empty     (tx_empty),
-      .full      (tx_full)
+
+      // Salidas
+      .read_data(transmit_data),
+      .empty    (tx_empty),
+      .full     (tx_full)
   );
 
   assign tx_start = !reset && !tx_empty && !tx_busy;
 
   uart_tx transmitter (
+      // Entradas
       .clk,
       .reset,
       .tx_start,
       .s_tick,
       .data_in(transmit_data),
-      .tx     (serial_tx),
+
+      // Salidas
+      .tx(serial_tx),
       .tx_busy,
       .tx_done_tick
   );

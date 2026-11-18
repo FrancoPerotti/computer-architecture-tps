@@ -65,6 +65,7 @@ module execution_control #(
     assign image_valid = (loaded_image_size_bytes != '0);
 
     global_fsm global_fsm_inst (
+        // Entradas
         .clk                (clk),
         .reset              (reset),
         .load_request       (load_request),
@@ -76,17 +77,19 @@ module execution_control #(
         .halt_confirm       (halt_confirm),
         .fault_confirm      (fault_confirm),
         .pipeline_empty_next(pipeline_empty_next),
-        .command_accepted   (command_accepted),
-        .load_start         (load_start),
-        .cpu_cycle_fire     (cpu_cycle_fire),
-        .image_publish      (image_publish),
-        .loader_active      (loader_active),
-        .prepare_active     (prepare_active),
-        .drain_mode         (drain_mode),
-        .load_available     (load_available),
-        .program_finished   (program_finished),
-        .fault_terminal     (fault_terminal),
-        .global_state_code  (global_state_code)
+
+        // Salidas
+        .command_accepted (command_accepted),
+        .load_start       (load_start),
+        .cpu_cycle_fire   (cpu_cycle_fire),
+        .image_publish    (image_publish),
+        .loader_active    (loader_active),
+        .prepare_active   (prepare_active),
+        .drain_mode       (drain_mode),
+        .load_available   (load_available),
+        .program_finished (program_finished),
+        .fault_terminal   (fault_terminal),
+        .global_state_code(global_state_code)
     );
 
     always_ff @(posedge clk) begin

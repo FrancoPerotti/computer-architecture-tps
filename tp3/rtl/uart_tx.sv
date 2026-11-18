@@ -22,12 +22,15 @@ module uart_tx (
   logic [1:0] tx_output_select;
 
   tx_fsm transmitter_control (
+      // Entradas
       .clk,
       .reset,
       .tx_start,
       .s_tick,
       .sample_done,
       .last_bit,
+
+      // Salidas
       .sample_count_clear,
       .sample_count_inc,
       .bit_count_clear,
@@ -41,6 +44,7 @@ module uart_tx (
   );
 
   tx_datapath transmitter_datapath (
+      // Entradas
       .clk,
       .reset,
       .data_in,
@@ -52,6 +56,8 @@ module uart_tx (
       .data_shift_enable,
       .tx_write_enable,
       .tx_output_select,
+
+      // Salidas
       .sample_done,
       .last_bit,
       .tx

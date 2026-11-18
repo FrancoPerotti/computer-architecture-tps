@@ -69,15 +69,18 @@ module system_top #(
   uart_core #(
       .BAUD_RATE(BAUD_RATE)
   ) uart_inst (
+      // Entradas
       .clk,
       .reset,
       .serial_rx,
-      .serial_tx,
-      .r_data,
       .rd_uart,
-      .rx_empty,
       .w_data,
       .wr_uart,
+
+      // Salidas
+      .serial_tx,
+      .r_data,
+      .rx_empty,
       .tx_full,
       .rx_error_tick,
       .rx_activity,
@@ -87,6 +90,7 @@ module system_top #(
   protocol_controller #(
       .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
   ) controller_inst (
+      // Entradas
       .clk,
       .reset,
       .rx_empty,
@@ -102,6 +106,8 @@ module system_top #(
       .image_valid,
       .command_accepted,
       .cpu_cycle_fire,
+
+      // Salidas
       .rd_uart,
       .response_start,
       .response_opcode,
@@ -123,6 +129,7 @@ module system_top #(
       .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES),
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) processor_inst (
+      // Entradas
       .clk,
       .reset,
       .load_request,
@@ -137,6 +144,8 @@ module system_top #(
       .load_byte_offset,
       .debug_rf_addr,
       .debug_dmem_addr,
+
+      // Salidas
       .command_accepted,
       .load_available,
       .prepare_active,
@@ -190,25 +199,21 @@ module system_top #(
   response_serializer #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) serializer_inst (
+      // Entradas
       .clk,
       .reset,
       .tx_full,
       .tx_done_tick,
-      .w_data,
-      .wr_uart,
       .response_start,
       .response_opcode,
       .response_result,
       .response_with_debug,
-      .response_busy,
-      .response_done_tick,
       .debug_state_code (global_state_code),
       .debug_image_valid(image_valid),
       .debug_pc,
       .debug_cycle_count,
       .debug_fault_cause,
       .debug_fault_pc,
-      .debug_rf_addr,
       .debug_rf_data,
       .debug_ifid_valid,
       .debug_ifid_pc,
@@ -244,8 +249,15 @@ module system_top #(
       .debug_memwb_rd,
       .debug_memwb_reg_write,
       .debug_memwb_wb_value,
-      .debug_dmem_addr,
       .debug_dmem_data,
-      .debug_dmem_used
+      .debug_dmem_used,
+
+      // Salidas
+      .w_data,
+      .wr_uart,
+      .response_busy,
+      .response_done_tick,
+      .debug_rf_addr,
+      .debug_dmem_addr
   );
 endmodule
