@@ -137,8 +137,11 @@ A partir del margen de setup puede calcularse una frecuencia estimada:
   \approx \SI{52.8}{\mega\hertz}.
 \]
 Esta estimación supone que se mantienen el ruteo, el skew y la incertidumbre
-del reloj. Sirve como referencia para setup; los análisis de la implementación
-se realizaron a \SI{50}{\mega\hertz}.
+del reloj. Sirve como referencia para setup, pero no constituye un límite
+absoluto: una reimplementación a otra frecuencia vuelve a colocar y rutear el
+diseño. La sección~\ref{sec:frecuencia-operacion} analiza esa diferencia. Los
+análisis de la implementación de referencia se realizaron a
+\SI{50}{\mega\hertz}.
 
 El camino con menor margen de hold va de \code{ID/EX} a \code{EX/MEM}, para el
 bit 29 de la instrucción. En ese camino, la demora de datos es de
@@ -196,6 +199,224 @@ validez de DMEM implementadas en LUTRAM.
 La implementación generó el archivo \code{tp3-reference.bit}, utilizado para
 programar la FPGA. El bitstream y los reportes se encuentran en el
 \evidencefile{tp3-issue-17-evidencia.zip}{paquete de evidencia}.
+
+\section{Exploración de la frecuencia de operación}\label{sec:frecuencia-operacion}
+
+La implementación de referencia se cerró a \SI{50}{\mega\hertz}. Para estudiar
+cuánto margen existe por encima de esa frecuencia, se realizó una campaña
+separada con una versión parametrizada del reloj funcional. La frecuencia no se
+cambió en el bitstream de referencia: el flujo de construcción configura el
+MMCM para una frecuencia solicitada, calcula la frecuencia efectiva a partir de
+los divisores y la propaga al RTL como \code{CLK_FREQ_HZ}. La UART y el
+controlador de protocolo usan ese valor para recalcular el divisor de baudios y
+los timeouts, respectivamente. El valor por defecto continúa siendo
+\SI{50}{\mega\hertz}.
+
+\subsection{Parametrización del reloj}
+
+La figura~\ref{fig:frecuencia-flujo} resume el recorrido de la frecuencia. El
+oscilador de la placa entrega \SI{100}{\mega\hertz}; el Clocking Wizard genera
+la salida funcional y el flujo de construcción obtiene los divisores del MMCM.
+A partir de ellos calcula la frecuencia efectiva, la registra en el manifiesto
+y la pasa al RTL. El mismo valor se utiliza para el procesador, el divisor de
+la UART y los temporizadores del protocolo, de modo que un cambio de frecuencia
+no altere la velocidad de los 19200 baudios ni la duración de los timeouts.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=7mm and 9mm,
+    block/.style={draw=codeviolet, fill=codeback, rounded corners=2pt,
+      align=center, font=\small, minimum height=10mm, text width=2.7cm},
+    arrow/.style={-{Latex[length=2mm]}, draw=codeviolet, thick}
+  ]
+    \node[block] (osc) {Oscilador\\Basys 3\\100 MHz};
+    \node[block, right=of osc] (mmcm) {Clocking Wizard\\MMCM + BUFG};
+    \node[block, right=of mmcm] (clk) {Reloj funcional\\$f_{\mathrm{eff}}$};
+    \node[block, below=14mm of clk] (cpu) {CPU y FSM\\pipeline};
+    \node[block, left=9mm of cpu] (uart) {UART\\divisor de baudios};
+    \node[block, right=9mm of cpu] (ctrl) {Protocolo\\timeouts};
+    \node[block, below=14mm of osc] (build) {Flujo de build\\divisores MMCM};
+    \node[block, below=10mm of build] (manifest) {Manifiesto\\$f_{\mathrm{req}}$, $f_{\mathrm{eff}}$, período};
+
+    \draw[arrow] (osc) -- (mmcm);
+    \draw[arrow] (mmcm) -- (clk);
+    \path (clk.south) ++(0,-0.6) coordinate (bus);
+    \draw[arrow] (clk.south) -- (bus);
+    \draw[arrow] (bus) -| (cpu.north);
+    \draw[arrow] (bus) -| (uart.north);
+    \draw[arrow] (bus) -| (ctrl.north);
+    \draw[arrow, dashed] (build.north) -- (mmcm.south);
+    \draw[arrow, dashed] (build.south) -- (manifest.north);
+  \end{tikzpicture}
+  \caption{Flujo de parametrización de la frecuencia funcional. El valor
+  efectivo del MMCM se propaga al procesador, a la UART y a los temporizadores
+  del protocolo.}
+  \label{fig:frecuencia-flujo}
+\end{figure}
+
+\subsection{Márgenes y frecuencia}
+
+La tabla~\ref{tab:frecuencia-resultados} reúne las implementaciones completas
+ensayadas entre \SI{50}{\mega\hertz} y \SI{65}{\mega\hertz}. Todas usaron el
+perfil \code{REFERENCE}, el mismo dispositivo y Vivado 2026.1. La frecuencia
+efectiva se obtuvo de los divisores del MMCM y el período corresponde al reloj
+ruteado que analizó la herramienta. La fila de \SI{50}{\mega\hertz} es una
+reimplementación de esta campaña y no reemplaza al bitstream de referencia
+descrito en la sección anterior.
+
+\begin{table}[H]
+  \centering
+  \small
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{rrrrrrr}
+    \toprule
+    \textbf{Solicitada} & \textbf{Efectiva} & \textbf{Período} &
+    \textbf{WNS} & \textbf{WHS} & \textbf{TNS} & \textbf{Resultado} \\
+    \textbf{(MHz)} & \textbf{(MHz)} & \textbf{(ns)} & \textbf{(ns)} &
+    \textbf{(ns)} & \textbf{(ns)} & \\
+    \midrule
+    50 & 50 & \num{20.000} & \num[explicit-sign=+]{1.065} &
+    \num[explicit-sign=+]{0.037} & 0 & Cumple \\
+    51 & 51 & \num{19.608} & \num[explicit-sign=+]{1.100} &
+    \num[explicit-sign=+]{0.051} & 0 & Cumple \\
+    52 & 52 & \num{19.231} & \num[explicit-sign=+]{1.536} &
+    \num[explicit-sign=+]{0.037} & 0 & Cumple \\
+    53 & 53 & \num{18.868} & \num[explicit-sign=+]{0.584} &
+    \num[explicit-sign=+]{0.073} & 0 & Cumple \\
+    55 & 55 & \num{18.182} & \num[explicit-sign=+]{0.549} &
+    \num[explicit-sign=+]{0.061} & 0 & Cumple \\
+    60 & 60 & \num{16.667} & \num[explicit-sign=+]{0.367} &
+    \num[explicit-sign=+]{0.024} & 0 & Cumple \\
+    62 & 62 & \num{16.129} & \num[explicit-sign=+]{0.035} &
+    \num[explicit-sign=+]{0.027} & 0 & Cumple \\
+    63 & 63 & \num{15.873} & \num[explicit-sign=+]{0.002} &
+    \num[explicit-sign=+]{0.061} & 0 & Cumple \\
+    64 & 64 & \num{15.625} & \num{-0.721} &
+    \num[explicit-sign=+]{0.061} & \num{-21.901} & Falla \\
+    65 & 65 & \num{15.385} & \num{-0.346} &
+    \num[explicit-sign=+]{0.054} & \num{-8.024} & Falla \\
+    \bottomrule
+  \end{tabular}
+  \caption{Resultados post-ruteo de la campaña de frecuencia. La frecuencia
+  efectiva surge de los divisores del MMCM; el período es el valor analizado
+  por STA.}
+  \label{tab:frecuencia-resultados}
+\end{table}
+
+La figura~\ref{fig:frecuencia-margenes} representa los mismos resultados. A la
+izquierda se muestra el WNS y a la derecha el TNS. La línea horizontal marca el
+límite entre margen positivo y negativo.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        width=\linewidth,
+        height=5.8cm,
+        xlabel={Frecuencia solicitada (MHz)},
+        ylabel={WNS (ns)},
+        xmin=49, xmax=66,
+        ymin=-1.0, ymax=1.8,
+        xtick={50,51,52,53,55,60,62,63,64,65},
+        xticklabel style={font=\scriptsize, rotate=45, anchor=east},
+        yticklabel style={font=\scriptsize},
+        tick label style={font=\scriptsize},
+        label style={font=\small},
+        grid=major,
+        grid style={draw=black!10},
+        axis lines=left,
+      ]
+        \addplot[codeviolet, thick, mark=*, mark size=2.2pt] coordinates {
+          (50,1.065) (51,1.100) (52,1.536) (53,0.584) (55,0.549)
+          (60,0.367) (62,0.035) (63,0.002) (64,-0.721) (65,-0.346)
+        };
+        \addplot[only marks, mark=*, mark size=2.8pt,
+          mark options={fill=red!70!black, draw=red!70!black}]
+          coordinates {(64,-0.721) (65,-0.346)};
+        \draw[dashed, black!45] (axis cs:49,0) -- (axis cs:66,0);
+      \end{axis}
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        width=\linewidth,
+        height=5.8cm,
+        xlabel={Frecuencia solicitada (MHz)},
+        ylabel={TNS (ns)},
+        xmin=49, xmax=66,
+        ymin=-25, ymax=2,
+        xtick={50,51,52,53,55,60,62,63,64,65},
+        xticklabel style={font=\scriptsize, rotate=45, anchor=east},
+        yticklabel style={font=\scriptsize},
+        tick label style={font=\scriptsize},
+        label style={font=\small},
+        grid=major,
+        grid style={draw=black!10},
+        axis lines=left,
+        ybar,
+        bar width=4pt,
+        enlarge x limits=0.08,
+      ]
+        \addplot[fill=codeblue!50, draw=codeblue] coordinates {
+          (50,0) (51,0) (52,0) (53,0) (55,0) (60,0) (62,0) (63,0)
+          (64,-21.901) (65,-8.024)
+        };
+        \draw[dashed, black!45] (axis cs:49,0) -- (axis cs:66,0);
+        \node[font=\scriptsize, anchor=north, text=codeblue!70!black]
+          at (axis cs:64,-22.2) {\num{-21.901}};
+        \node[font=\scriptsize, anchor=south, text=codeblue!70!black]
+          at (axis cs:65,-7.8) {\num{-8.024}};
+      \end{axis}
+    \end{tikzpicture}
+  \end{minipage}
+  \caption{Márgenes de setup y TNS para las frecuencias ensayadas. Cada punto
+  corresponde a una implementación completa distinta; los puntos rojos marcan
+  los casos con WNS negativo.}
+  \label{fig:frecuencia-margenes}
+\end{figure}
+
+Los resultados muestran que el WNS se mantiene positivo hasta
+\SI{63}{\mega\hertz}, con un margen de solo \SI{0.002}{\nano\second}. A
+\SI{64}{\mega\hertz} aparecen 171 endpoints con slack negativo y el TNS cae a
+\SI{-21.901}{\nano\second}; a \SI{65}{\mega\hertz} fallan 96 endpoints y el TNS
+es \SI{-8.024}{\nano\second}. La comparación no es monótona: \SI{52}{\mega\hertz}
+tiene más margen que \SI{51}{\mega\hertz}, y \SI{65}{\mega\hertz} falla menos que
+\SI{64}{\mega\hertz}. Cada frecuencia es una implementación nueva, con su propio
+placement y ruteo, y por eso el camino crítico y el margen cambian.
+
+El hold no fue la restricción dominante: WHS se mantuvo positivo en todos los
+puntos, con un mínimo de \SI{0.024}{\nano\second} a \SI{60}{\mega\hertz}. WPWS
+permaneció en \SI{3.000}{\nano\second}, las cotas UART conservaron márgenes
+positivos y no se reportaron hallazgos DRC ni errores de ruteo.
+
+\subsection{Interpretación y alcance}
+
+La estimación de \SI{52.8}{\mega\hertz} de la sección anterior supone que el
+ruteo, el skew y la incertidumbre del reloj no cambian. La campaña confirma que
+esa suposición es conservadora: al reimplementar el diseño para otra frecuencia,
+Vivado vuelve a colocar y rutear, y el punto de cierre puede ser más alto. El
+resultado de \SI{63}{\mega\hertz} no debe interpretarse como una frecuencia
+máxima garantizada ni como una frecuencia recomendada: su margen de
+\SI{0.002}{\nano\second} es demasiado pequeño para absorber variaciones de
+tensión, temperatura o jitter.
+
+La frecuencia de operación validada físicamente sigue siendo
+\SI{50}{\mega\hertz}. Para la comparación en placa se seleccionaron
+\SI{50}{\mega\hertz}, \SI{55}{\mega\hertz} y \SI{60}{\mega\hertz}. Los
+bitstreams de las tres configuraciones se generaron en la campaña, pero
+corresponden a una revisión previa del RTL y deben regenerarse antes de
+programar la placa. El bitstream de referencia de \SI{50}{\mega\hertz} usado en
+la aceptación física es el de la implementación anterior, no el de esta
+campaña. La campaña no incluye pruebas físicas de arranque, reset, UART, carga,
+\code{STEP} o \code{RUN} a \SI{55}{\mega\hertz} ni a \SI{60}{\mega\hertz}. Por
+lo tanto, la única frecuencia con aceptación en placa es la de
+\SI{50}{\mega\hertz}, documentada en el capítulo~\ref{chap:aceptacion-fisica}.
 
 \section{Verificación de plataforma}
 

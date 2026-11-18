@@ -63,10 +63,10 @@ imagen. El tamaño confirmado se conserva en \code{loaded_image_size_bytes}; de
 ese valor se derivan \code{image_valid} y la cantidad de instrucciones
 disponibles.
 
-La región ejecutable comprende exactamente los bytes desde
-\code{0x00000000} hasta \code{loaded_image_size_bytes - 1}. Solo los fetches
-completamente contenidos en ese intervalo pueden ingresar al pipeline. El
-contenido físico que quede fuera del límite no pertenece a la imagen vigente.
+La región ejecutable comienza en la dirección cero y termina en el último byte
+del tamaño confirmado. Solo los fetches completamente contenidos en ese
+intervalo pueden ingresar al pipeline. El contenido físico que quede fuera del
+límite no pertenece a la imagen vigente.
 
 \subsection{Validación de fetch}
 
