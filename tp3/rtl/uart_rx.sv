@@ -22,6 +22,7 @@ module uart_rx (
   logic rx_previous = 1'b1;
 
   rx_fsm receiver_control (
+      // Entradas
       .clk,
       .reset,
       .rx,
@@ -29,6 +30,8 @@ module uart_rx (
       .sample_half,
       .sample_done,
       .last_bit,
+
+      // Salidas
       .sample_count_clear,
       .sample_count_inc,
       .bit_count_clear,
@@ -40,6 +43,7 @@ module uart_rx (
   );
 
   rx_datapath receiver_datapath (
+      // Entradas
       .clk,
       .reset,
       .rx,
@@ -48,6 +52,8 @@ module uart_rx (
       .bit_count_clear,
       .bit_count_inc,
       .data_shift_enable,
+
+      // Salidas
       .sample_half,
       .sample_done,
       .last_bit,

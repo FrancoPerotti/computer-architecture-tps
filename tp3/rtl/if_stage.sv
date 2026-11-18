@@ -57,13 +57,16 @@ module if_stage #(
       instruction_memory #(
           .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
       ) instruction_memory (
+          // Entradas
           .clk              (clk),
           .reset            (reset),
           .read_address     (pc),
           .imem_write_index (imem_write_index),
           .imem_write_data  (imem_write_data),
           .imem_write_enable(imem_write_enable),
-          .instruction      (instruction)
+
+          // Salidas
+          .instruction(instruction)
       );
 
       // El tamaño confirmado es la única fuente de validez de la imagen.
@@ -71,9 +74,12 @@ module if_stage #(
       fetch_fault_check #(
           .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
       ) fetch_fault_check (
-          .pc                      (pc),
-          .image_valid             (image_valid),
-          .loaded_image_size_bytes (loaded_image_size_bytes),
+          // Entradas
+          .pc                     (pc),
+          .image_valid            (image_valid),
+          .loaded_image_size_bytes(loaded_image_size_bytes),
+
+          // Salidas
           .if_fetch_fault_candidate(if_fetch_fault_candidate),
           .if_fetch_fault_cause    (if_fetch_fault_cause)
       );

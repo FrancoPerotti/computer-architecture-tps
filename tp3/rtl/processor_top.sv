@@ -196,6 +196,7 @@ module processor_top #(
     execution_control #(
         .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
     ) execution_control_inst (
+        // Entradas
         .clk                     (clk),
         .reset                   (reset),
         .load_request            (load_request),
@@ -215,39 +216,44 @@ module processor_top #(
         .exmem_next_valid        (exmem_next_valid),
         .memwb_next_valid        (memwb_next_valid),
         .pending_image_size_bytes(pending_image_size_bytes),
-        .command_accepted        (command_accepted),
-        .load_start              (load_start),
-        .cpu_cycle_fire          (cpu_cycle_fire),
-        .loader_active           (loader_active),
-        .prepare_active          (prepare_active),
-        .drain_mode              (drain_mode),
-        .load_available          (load_available),
-        .program_finished        (program_finished),
-        .fault_terminal          (fault_terminal),
-        .global_state_code       (global_state_code),
-        .loaded_image_size_bytes (loaded_image_size_bytes),
-        .image_valid             (image_valid),
         .halt_confirm            (act_halt),
         .idex_pc                 (idex.pc),
-        .fault_cause             (debug_fault_cause),
-        .fault_pc                (debug_fault_pc),
-        .cycle_count             (debug_cycle_count)
+
+        // Salidas
+        .command_accepted       (command_accepted),
+        .load_start             (load_start),
+        .cpu_cycle_fire         (cpu_cycle_fire),
+        .loader_active          (loader_active),
+        .prepare_active         (prepare_active),
+        .drain_mode             (drain_mode),
+        .load_available         (load_available),
+        .program_finished       (program_finished),
+        .fault_terminal         (fault_terminal),
+        .global_state_code      (global_state_code),
+        .loaded_image_size_bytes(loaded_image_size_bytes),
+        .image_valid            (image_valid),
+        .fault_cause            (debug_fault_cause),
+        .fault_pc               (debug_fault_pc),
+        .cycle_count            (debug_cycle_count)
     );
 
     // Loader: recibe los bytes del programa y arma las palabras que se escriben en IMEM.
     loader #(
         .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
     ) loader_inst (
-        .clk                     (clk),
-        .reset                   (reset),
-        .loader_active           (loader_active),
-        .load_start              (load_start),
-        .load_size_bytes         (load_size_bytes),
-        .load_byte_valid         (load_byte_valid),
-        .load_byte_data          (load_byte_data),
-        .load_byte_offset        (load_byte_offset),
-        .load_last_byte          (load_last_byte),
-        .load_abort              (load_abort),
+        // Entradas
+        .clk             (clk),
+        .reset           (reset),
+        .loader_active   (loader_active),
+        .load_start      (load_start),
+        .load_size_bytes (load_size_bytes),
+        .load_byte_valid (load_byte_valid),
+        .load_byte_data  (load_byte_data),
+        .load_byte_offset(load_byte_offset),
+        .load_last_byte  (load_last_byte),
+        .load_abort      (load_abort),
+
+        // Salidas
         .imem_write_index        (imem_write_index),
         .imem_write_data         (imem_write_data),
         .imem_write_enable       (imem_write_enable),
@@ -260,9 +266,12 @@ module processor_top #(
     session_preparation #(
         .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
     ) session_preparation_inst (
-        .clk               (clk),
-        .reset             (reset),
-        .prepare_active    (prepare_active),
+        // Entradas
+        .clk           (clk),
+        .reset         (reset),
+        .prepare_active(prepare_active),
+
+        // Salidas
         .prepare_init      (prepare_init),
         .prepare_dmem_clear(prepare_dmem_clear),
         .prepare_dmem_addr (prepare_dmem_addr),
@@ -272,6 +281,7 @@ module processor_top #(
     // Control de hazards: prioriza fallas, HALT, saltos y load-use para elegir la acción del ciclo.
     // Durante el drenaje decide si retener por load-use o avanzar las instrucciones pendientes.
     pipeline_hazard_control pipeline_hazard_control_inst (
+        // Entradas
         .cpu_cycle_fire    (cpu_cycle_fire),
         .drain_mode        (drain_mode),
         .ex_fault_candidate(ex_fault_candidate),
@@ -279,6 +289,8 @@ module processor_top #(
         .redirect_requested(redirect_requested),
         .id_fault_candidate(id_fault_candidate),
         .load_use_stall    (load_use_stall),
+
+        // Salidas
         .act_ex_fault      (act_ex_fault),
         .act_halt          (act_halt),
         .act_redirect      (act_redirect),
@@ -293,6 +305,7 @@ module processor_top #(
     if_stage #(
         .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
     ) if_stage_inst (
+        // Entradas
         .clk                    (clk),
         .reset                  (reset),
         .prepare_init           (prepare_init),
@@ -301,35 +314,40 @@ module processor_top #(
         .imem_write_index       (imem_write_index),
         .imem_write_data        (imem_write_data),
         .imem_write_enable      (imem_write_enable),
-        .debug_pc               (debug_pc),
         .act_normal             (act_normal),
         .act_redirect           (act_redirect),
-        .ifid_input             (ifid_input)
+
+        // Salidas
+        .debug_pc  (debug_pc),
+        .ifid_input(ifid_input)
     );
 
     // Etapa ID: decodifica, lee el banco de registros y detecta instrucciones ilegales y load-use.
     // Recibe de WB la escritura y el bypass para obtener los operandos actualizados.
     id_stage id_stage_inst (
-        .clk               (clk),
-        .reset             (reset),
-        .prepare_init      (prepare_init),
-        .ifid              (ifid),
-        .rf_write_addr     (rf_write_addr),
-        .rf_write_data     (rf_write_data),
-        .rf_write_fire     (rf_write_fire),
-        .bypass_rs1        (bypass_rs1),
-        .bypass_rs2        (bypass_rs2),
-        .debug_read_select (debug_read_select),
-        .debug_rf_addr     (debug_rf_addr),
+        // Entradas
+        .clk              (clk),
+        .reset            (reset),
+        .prepare_init     (prepare_init),
+        .ifid             (ifid),
+        .rf_write_addr    (rf_write_addr),
+        .rf_write_data    (rf_write_data),
+        .rf_write_fire    (rf_write_fire),
+        .bypass_rs1       (bypass_rs1),
+        .bypass_rs2       (bypass_rs2),
+        .debug_read_select(debug_read_select),
+        .debug_rf_addr    (debug_rf_addr),
+        .idex_valid       (idex.valid),
+        .idex_rd          (idex.rd),
+        .idex_mem_op      (idex.mem_op),
+
+        // Salidas
         .idex_input        (idex_input),
         .id_fault_candidate(id_fault_candidate),
         .id_fault_cause    (id_fault_cause),
         .id_fault_pc       (id_fault_pc),
         .load_use_stall    (load_use_stall),
-        .debug_rf_data     (debug_rf_data),
-        .idex_valid        (idex.valid),
-        .idex_rd           (idex.rd),
-        .idex_mem_op       (idex.mem_op)
+        .debug_rf_data     (debug_rf_data)
     );
 
     // Etapa EX: calcula resultados y direcciones, y produce candidatos de salto, HALT o falla.
@@ -337,9 +355,12 @@ module processor_top #(
     ex_stage #(
         .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
     ) ex_stage_inst (
-        .idex              (idex),
-        .exmem_producer    (exmem),
-        .memwb_producer    (memwb),
+        // Entradas
+        .idex          (idex),
+        .exmem_producer(exmem),
+        .memwb_producer(memwb),
+
+        // Salidas
         .exmem_input       (exmem_input),
         .ex_fault_candidate(ex_fault_candidate),
         .ex_fault_cause    (ex_fault_cause),
@@ -353,6 +374,7 @@ module processor_top #(
     mem_stage #(
         .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
     ) mem_stage_inst (
+        // Entradas
         .clk               (clk),
         .reset             (reset),
         .exmem             (exmem),
@@ -361,71 +383,88 @@ module processor_top #(
         .prepare_dmem_addr (prepare_dmem_addr),
         .debug_read_select (debug_read_select),
         .debug_dmem_addr   (debug_dmem_addr),
-        .debug_dmem_data   (debug_dmem_data),
-        .debug_dmem_used   (debug_dmem_used),
-        .memwb_input       (memwb_input)
+
+        // Salidas
+        .debug_dmem_data(debug_dmem_data),
+        .debug_dmem_used(debug_dmem_used),
+        .memwb_input    (memwb_input)
     );
 
     // Etapa WB: entrega el valor y la habilitación de escritura al banco de registros en ID.
     // Genera además las selecciones de bypass para las dos fuentes de la instrucción en ID.
     wb_stage wb_stage_inst (
-        .memwb            (memwb),
-        .cpu_cycle_fire   (cpu_cycle_fire),
+        // Entradas
+        .memwb         (memwb),
+        .cpu_cycle_fire(cpu_cycle_fire),
+        .ifid_rs1      (ifid.instruction[19:15]),
+        .ifid_rs2      (ifid.instruction[24:20]),
+
+        // Salidas
         .rf_write_register(rf_write_addr),
         .rf_write_data    (rf_write_data),
         .rf_write_fire    (rf_write_fire),
         .bypass_rs1       (bypass_rs1),
-        .bypass_rs2       (bypass_rs2),
-        .ifid_rs1         (ifid.instruction[19:15]),
-        .ifid_rs2         (ifid.instruction[24:20])
+        .bypass_rs2       (bypass_rs2)
     );
 
     // Registro IF/ID: conserva PC, instrucción y falla de fetch entre la búsqueda y la decodificación.
     if_id_register ifid_register (
+        // Entradas
         .clk         (clk),
         .reset       (reset),
         .prepare_init(prepare_init),
         .capture     (ifid_capture),
         .data_in     (ifid_input),
-        .data_out    (ifid),
-        .valid_next  (ifid_next_valid),
         .hold        (ifid_hold),
-        .invalidate  (ifid_invalidate)
+        .invalidate  (ifid_invalidate),
+
+        // Salidas
+        .data_out  (ifid),
+        .valid_next(ifid_next_valid)
     );
 
     // Registro ID/EX: conserva operandos, inmediato y controles de la instrucción que ejecutará EX.
     id_ex_register idex_register (
+        // Entradas
         .clk         (clk),
         .reset       (reset),
         .prepare_init(prepare_init),
         .capture     (idex_capture),
         .data_in     (idex_input),
-        .data_out    (idex),
-        .valid_next  (idex_next_valid),
-        .bubble      (idex_bubble)
+        .bubble      (idex_bubble),
+
+        // Salidas
+        .data_out  (idex),
+        .valid_next(idex_next_valid)
     );
 
     // Registro EX/MEM: conserva el resultado de EX y el dato de store para el acceso a memoria.
     ex_mem_register exmem_register (
+        // Entradas
         .clk         (clk),
         .reset       (reset),
         .prepare_init(prepare_init),
         .capture     (exmem_capture),
         .data_in     (exmem_input),
-        .data_out    (exmem),
-        .valid_next  (exmem_next_valid),
-        .invalidate  (exmem_invalidate)
+        .invalidate  (exmem_invalidate),
+
+        // Salidas
+        .data_out  (exmem),
+        .valid_next(exmem_next_valid)
     );
 
     // Registro MEM/WB: conserva el destino y el valor final que WB devolverá al banco de registros.
     mem_wb_register memwb_register (
+        // Entradas
         .clk         (clk),
         .reset       (reset),
         .prepare_init(prepare_init),
         .capture     (memwb_capture),
         .data_in     (memwb_input),
-        .data_out    (memwb),
-        .valid_next  (memwb_next_valid)
+
+        // Salidas
+        .data_out  (memwb),
+        .valid_next(memwb_next_valid)
     );
 
     // Debug expone los latches actuales directamente, sin copias ni registros de snapshot.

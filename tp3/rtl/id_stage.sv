@@ -38,7 +38,10 @@ module id_stage (
   assign idex_input.rd          = ifid.instruction[11:7];
 
   decoder decoder (
-      .instruction (ifid.instruction),
+      // Entradas
+      .instruction(ifid.instruction),
+
+      // Salidas
       .decode_legal(decode_legal),
       .alu_op      (idex_input.alu_op),
       .alu_src     (idex_input.alu_src),
@@ -51,12 +54,16 @@ module id_stage (
   );
 
   immediate_generator immediate_generator (
+      // Entradas
       .instruction(ifid.instruction),
-      .immediate  (idex_input.immediate)
+
+      // Salidas
+      .immediate(idex_input.immediate)
   );
 
   // RF recibe el writeback ya habilitado por WB y conserva su prioridad local de inicio.
   register_file register_file (
+      // Entradas
       .clk              (clk),
       .reset            (reset),
       .prepare_init     (prepare_init),
@@ -67,9 +74,11 @@ module id_stage (
       .write_register   (rf_write_addr),
       .write_data       (rf_write_data),
       .write_enable     (rf_write_fire),
-      .rf_rs1_value     (rf_rs1_value),
-      .rf_rs2_value     (rf_rs2_value),
-      .debug_rf_data    (debug_rf_data)
+
+      // Salidas
+      .rf_rs1_value (rf_rs1_value),
+      .rf_rs2_value (rf_rs2_value),
+      .debug_rf_data(debug_rf_data)
   );
 
   // Cada mux aplica el selector de WB; Debug conserva la lectura base anterior al bypass.
@@ -77,26 +86,32 @@ module id_stage (
   assign idex_input.rs2_value = bypass_rs2 ? rf_write_data : rf_rs2_value;
 
   id_fault_check id_fault_check (
+      // Entradas
       .ifid_valid            (ifid.valid),
       .ifid_pc               (ifid.pc),
       .ifid_fetch_fault_valid(ifid.fetch_fault_valid),
       .ifid_fetch_fault_cause(ifid.fetch_fault_cause),
       .decode_legal          (decode_legal),
-      .id_fault_candidate    (id_fault_candidate),
-      .id_fault_cause        (id_fault_cause),
-      .id_fault_pc           (id_fault_pc)
+
+      // Salidas
+      .id_fault_candidate(id_fault_candidate),
+      .id_fault_cause    (id_fault_cause),
+      .id_fault_pc       (id_fault_pc)
   );
 
   // Los usos son combinacionales: no se agregan campos al payload de ID/EX.
   load_use_detector load_use_detector (
-      .ifid_valid    (ifid.valid),
-      .rs1           (idex_input.rs1),
-      .rs2           (idex_input.rs2),
-      .uses_rs1      (uses_rs1),
-      .uses_rs2      (uses_rs2),
-      .idex_valid    (idex_valid),
-      .idex_rd       (idex_rd),
-      .idex_mem_op   (idex_mem_op),
+      // Entradas
+      .ifid_valid (ifid.valid),
+      .rs1        (idex_input.rs1),
+      .rs2        (idex_input.rs2),
+      .uses_rs1   (uses_rs1),
+      .uses_rs2   (uses_rs2),
+      .idex_valid (idex_valid),
+      .idex_rd    (idex_rd),
+      .idex_mem_op(idex_mem_op),
+
+      // Salidas
       .load_use_stall(load_use_stall)
   );
 endmodule

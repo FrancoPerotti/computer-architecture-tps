@@ -7,18 +7,25 @@ COPY ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources
 
 # La base mínima no trae certificados. Docker descarga este paquete por HTTPS;
 # su contenido verificado permite arrancar APT contra el snapshot por HTTPS.
-ADD https://snapshot.ubuntu.com/ubuntu/20261018T000000Z/pool/main/c/ca-certificates/ca-certificates_20240203_all.deb /tmp/ca-certificates.deb
+# Se usa el archivo oficial para este paquete, conservando la versión y el checksum fijados.
+ADD https://archive.ubuntu.com/ubuntu/pool/main/c/ca-certificates/ca-certificates_20240203_all.deb /tmp/ca-certificates.deb
+# El endpoint del snapshot falla también para la actualización de certificados.
+# APT usa esta copia de Launchpad con la misma versión y hash de sus índices firmados.
+# Se conserva en /tmp hasta terminar apt-get update, que vacía la caché de paquetes.
+ADD https://launchpad.net/ubuntu/+archive/primary/+files/ca-certificates_20260601~24.04.1_all.deb /tmp/ca-certificates-snapshot.deb
 RUN set -eu; \
     echo "641de77d8f142cfd62a1a6f964ba67b20754d3337c480efb529d086075a06c9a  /tmp/ca-certificates.deb" | sha256sum --check -; \
+    echo "6bac2a01979e210d9eac1d4d56747ec709ea60654744d66705dc3c36e7629e50  /tmp/ca-certificates-snapshot.deb" | sha256sum --check -; \
     dpkg-deb --extract /tmp/ca-certificates.deb /tmp/bootstrap-ca; \
     mkdir -p /etc/ssl/certs; \
     cat /tmp/bootstrap-ca/usr/share/ca-certificates/mozilla/*.crt > /etc/ssl/certs/ca-certificates.crt; \
     test "$(dpkg --print-architecture)" = amd64; \
     apt-get update; \
+    cp /tmp/ca-certificates-snapshot.deb /var/cache/apt/archives/ca-certificates_20260601~24.04.1_all.deb; \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
       autoconf bison build-essential ca-certificates flex gperf \
       libbz2-dev libreadline-dev zlib1g-dev; \
-    rm -rf /var/lib/apt/lists/* /tmp/bootstrap-ca /tmp/ca-certificates.deb
+    rm -rf /var/lib/apt/lists/* /tmp/bootstrap-ca /tmp/ca-certificates.deb /tmp/ca-certificates-snapshot.deb
 
 # Commit al que apunta el tag v13_0; no se sigue una rama mutable.
 ADD https://codeload.github.com/steveicarus/iverilog/tar.gz/dfeee909ed9f20b4870dd93423156c0170c0e1ff /tmp/iverilog-source.tar.gz
@@ -40,11 +47,15 @@ FROM ubuntu:24.04@sha256:a2d43bffc46670d7108bb3c0468c67c5557c4c92e83e1e34cbff132
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+# python3-pip requiere el mismo paquete de certificados que la etapa build.
+ADD https://launchpad.net/ubuntu/+archive/primary/+files/ca-certificates_20260601~24.04.1_all.deb /tmp/ca-certificates-snapshot.deb
 RUN set -eu; \
+    echo "6bac2a01979e210d9eac1d4d56747ec709ea60654744d66705dc3c36e7629e50  /tmp/ca-certificates-snapshot.deb" | sha256sum --check -; \
     apt-get update; \
+    cp /tmp/ca-certificates-snapshot.deb /var/cache/apt/archives/ca-certificates_20260601~24.04.1_all.deb; \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
       python3-pip python3-venv; \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/ca-certificates-snapshot.deb
 
 COPY check-jsonschema.requirements.txt /tmp/check-jsonschema.requirements.txt
 RUN set -eu; \

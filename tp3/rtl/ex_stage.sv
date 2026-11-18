@@ -29,6 +29,7 @@ module ex_stage #(
   logic         target_sel;
 
   forwarding_unit forwarding_unit (
+      // Entradas
       .idex_valid      (idex.valid),
       .idex_instruction(idex.instruction),
       .idex_rs1        (idex.rs1),
@@ -40,8 +41,10 @@ module ex_stage #(
       .memwb_valid     (memwb_producer.valid),
       .memwb_rd        (memwb_producer.rd),
       .memwb_reg_write (memwb_producer.reg_write),
-      .forward_a_sel   (forward_a_sel),
-      .forward_b_sel   (forward_b_sel)
+
+      // Salidas
+      .forward_a_sel(forward_a_sel),
+      .forward_b_sel(forward_b_sel)
   );
 
   assign rs1_effective = forward_a_sel == FORWARD_SEL_EX_MEM ? exmem_producer.ex_result :
@@ -52,9 +55,12 @@ module ex_stage #(
   assign alu_operand_b = idex.alu_src == ALU_SRC_IMMEDIATE ? idex.immediate : rs2_effective;
 
   alu alu (
-      .a         (rs1_effective),
-      .b         (alu_operand_b),
-      .alu_op    (idex.alu_op),
+      // Entradas
+      .a     (rs1_effective),
+      .b     (alu_operand_b),
+      .alu_op(idex.alu_op),
+
+      // Salidas
       .alu_result(alu_result),
       .zero      (alu_zero)
   );
@@ -69,9 +75,12 @@ module ex_stage #(
       idex.result_sel == RESULT_SEL_LINK ? link_value : word_t'(32'b0);
 
   flow_control flow_control (
-      .valid             (idex.valid),
-      .flow_op           (idex.flow_op),
-      .zero              (alu_zero),
+      // Entradas
+      .valid  (idex.valid),
+      .flow_op(idex.flow_op),
+      .zero   (alu_zero),
+
+      // Salidas
       .target_sel        (target_sel),
       .redirect_requested(redirect_requested),
       .ex_halt_candidate (ex_halt_candidate)
@@ -82,12 +91,15 @@ module ex_stage #(
   ex_fault_check #(
       .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
   ) ex_fault_check (
+      // Entradas
       .valid             (idex.valid),
       .mem_op            (idex.mem_op),
       .rs1_effective     (rs1_effective),
       .immediate         (idex.immediate),
       .redirect_requested(redirect_requested),
       .redirect_target   (redirect_target),
+
+      // Salidas
       .ex_fault_candidate(ex_fault_candidate),
       .ex_fault_cause    (ex_fault_cause)
   );

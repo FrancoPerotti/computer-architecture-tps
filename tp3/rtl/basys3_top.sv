@@ -19,15 +19,21 @@ module basys3_top #(
     logic uart_reset_request;
 
     clock_generator clock_wizard (
-        .clk_in1 (clk_100mhz_i),
-        .reset   (reset_btn_i),
+        // Entradas
+        .clk_in1(clk_100mhz_i),
+        .reset  (reset_btn_i),
+
+        // Salidas
         .clk_out1(clk),
         .locked
     );
 
     reset_sync reset_conditioner (
+        // Entradas
         .clk,
         .async_reset_request(reset_btn_i | uart_reset_request | !locked),
+
+        // Salidas
         .reset
     );
 
@@ -35,9 +41,12 @@ module basys3_top #(
         .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES),
         .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
     ) system (
+        // Entradas
         .clk,
         .reset,
         .serial_rx(uart_rx_i),
+
+        // Salidas
         .serial_tx(uart_tx_o),
         .uart_reset_request
     );
