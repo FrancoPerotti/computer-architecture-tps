@@ -3,7 +3,8 @@
 // Consumidor síncrono del reset y modelo de la frontera de la #15.
 module system_top #(
     parameter system_pkg::memory_capacity_t IMEM_CAPACITY_BYTES = 0,
-    parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 0
+    parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 0,
+    parameter longint unsigned              CLK_FREQ_HZ         = system_pkg::FUNCTIONAL_CLOCK_HZ
 ) (
     input  logic clk,
     input  logic reset,

@@ -42,10 +42,15 @@ set board_clock [get_clocks -quiet -of_objects [get_ports clk_100mhz_i]]
 set uart_clock_pin [get_pins -quiet -hierarchical -filter {NAME =~ */rx_synchronizer/serial_meta_reg/C}]
 set functional_clock [get_clocks -quiet -of_objects $uart_clock_pin]
 if {$board_clock ne "clk_board_100" || [get_property PERIOD $board_clock] != 10.0 ||
-        [llength $functional_clock] != 1 || [get_property PERIOD $functional_clock] != 20.0 ||
+        [llength $functional_clock] != 1 || abs([get_property PERIOD $functional_clock] - 1.0e9 / $effective_hz) > 0.001 ||
         [get_property MASTER_CLOCK $functional_clock] ne $board_clock} {
-    error "Se requieren clk_board_100 y su derivado de 50 MHz. Revisar clocks.rpt"
+    error "Se requieren clk_board_100 y su derivado MMCM consistente con el RTL. Revisar clocks.rpt"
 }
+
+set manifest [open [file join $output_dir build-info.txt] a]
+puts $manifest "Routed functional period ns: [get_property PERIOD $functional_clock]"
+puts $manifest "Routed functional MHz: [expr {1000.0 / [get_property PERIOD $functional_clock]}]"
+close $manifest
 
 # Verificar las dos cotas UART por separado, también si el peor camino es interno.
 set rx_d [get_pins -hierarchical -filter {NAME =~ */rx_synchronizer/serial_meta_reg/D}]
@@ -88,12 +93,13 @@ foreach delay {max min} {
     }
 }
 
-if {$build_mode eq "reference"} {
+if {$build_mode eq "reference" &&
+        !([info exists ::env(TP3_ROUTE_ONLY)] && $::env(TP3_ROUTE_ONLY) eq "1")} {
     set bitstream [file join $output_dir tp3-reference.bit]
     write_bitstream $bitstream
     set manifest [open [file join $output_dir build-info.txt] a]
     puts $manifest "SHA-256 del bitstream:"
-    puts $manifest [exec sha256sum -- $bitstream]
+    puts $manifest [file_sha256 $bitstream]
     close $manifest
     puts "Bitstream REFERENCE: $bitstream"
 }

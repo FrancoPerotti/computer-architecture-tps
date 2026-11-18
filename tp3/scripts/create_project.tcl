@@ -1,9 +1,13 @@
 source [file join [file dirname [info script]] vivado_common.tcl]
 
-if {$argc != 2 || [lindex $argv 1] ni {reference uart-fixture}} {
-    error "Uso: -tclargs <directorio-nuevo> <reference|uart-fixture>"
+if {$argc < 2 || $argc > 3 || [lindex $argv 1] ni {reference uart-fixture}} {
+    error "Uso: -tclargs <directorio-nuevo> <reference|uart-fixture> ?50..65?"
 }
-lassign $argv output_path build_mode
+lassign $argv output_path build_mode requested_mhz
+if {$requested_mhz eq ""} { set requested_mhz 50 }
+if {![string is integer -strict $requested_mhz] || $requested_mhz < 50 || $requested_mhz > 65} {
+    error "Frecuencia no soportada (MHz enteros entre 50 y 65): $requested_mhz"
+}
 
 set sources [rtl_files]
 set system_top [file join $tp3_dir rtl system_top.sv]
@@ -38,7 +42,7 @@ set_property -dict [list \
     CONFIG.PRIM_IN_FREQ 100.000 \
     CONFIG.PRIM_SOURCE {Single ended clock capable pin} \
     CONFIG.NUM_OUT_CLKS 1 \
-    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ 50.000 \
+    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ $requested_mhz \
     CONFIG.CLKOUT1_REQUESTED_PHASE 0.000 \
     CONFIG.CLKOUT1_REQUESTED_DUTY_CYCLE 50.000 \
     CONFIG.CLKOUT1_DRIVES BUFG \
@@ -50,6 +54,16 @@ set_property -dict [list \
     CONFIG.USE_SPREAD_SPECTRUM false] $wizard
 
 # La síntesis global deriva el clock del MMCM a partir del único clock de placa.
+set mult [get_property CONFIG.MMCM_CLKFBOUT_MULT_F $wizard]
+set divclk [get_property CONFIG.MMCM_DIVCLK_DIVIDE $wizard]
+set divout [get_property CONFIG.MMCM_CLKOUT0_DIVIDE_F $wizard]
+foreach value [list $mult $divclk $divout] {
+    if {![string is double -strict $value] || $value <= 0} {
+        error "Divisores MMCM inv?lidos: $mult $divclk $divout"
+    }
+}
+set effective_hz [expr {round(100000000.0 * $mult / $divclk / $divout)}]
+set_property generic "CLK_FREQ_HZ=$effective_hz" [get_filesets sources_1]
 set wizard_xci [get_files clock_generator.xci]
 set_property GENERATE_SYNTH_CHECKPOINT false $wizard_xci
 generate_target all $wizard
@@ -65,6 +79,11 @@ foreach script {create_project.tcl build_bitstream.tcl vivado_common.tcl} {
     lappend flow_inputs [file join $tp3_dir scripts $script]
 }
 write_build_info $output_dir $build_mode [concat $sources $flow_inputs]
+set manifest [open [file join $output_dir build-info.txt] a]
+puts $manifest "Requested MHz: $requested_mhz"
+puts $manifest "Effective Hz (rounded): $effective_hz"
+puts $manifest "MMCM multiplier/dividers: $mult / $divclk / $divout"
+close $manifest
 report_compile_order -constraints -file [file join $output_dir constraints-order.rpt]
 report_property -file [file join $output_dir clock-generator.rpt] $wizard
 puts "Proyecto generado en $output_dir/project/tp3_basys3.xpr"

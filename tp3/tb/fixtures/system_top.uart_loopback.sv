@@ -1,7 +1,8 @@
 // Fixture físico que retransmite un byte y pide reset cuando termina el envío.
 module system_top #(
     parameter system_pkg::memory_capacity_t IMEM_CAPACITY_BYTES = 0,
-    parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 0
+    parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES = 0,
+    parameter longint unsigned              CLK_FREQ_HZ         = system_pkg::FUNCTIONAL_CLOCK_HZ
 ) (
     input  logic clk,
     input  logic reset,
@@ -21,7 +22,9 @@ module system_top #(
     uart_reset_request <= !reset && tx_done_tick;
   end
 
-  uart_core transport (
+  uart_core #(
+      .CLK_FREQ_HZ(CLK_FREQ_HZ)
+  ) transport (
       .clk,
       .reset,
       .serial_rx,

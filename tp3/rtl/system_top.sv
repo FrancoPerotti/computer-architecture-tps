@@ -4,7 +4,8 @@ module system_top #(
         system_pkg::REFERENCE_IMEM_CAPACITY_BYTES,
     parameter system_pkg::memory_capacity_t DMEM_CAPACITY_BYTES =
         system_pkg::REFERENCE_DMEM_CAPACITY_BYTES,
-    parameter longint unsigned BAUD_RATE = system_pkg::UART_BAUD_RATE
+    parameter longint unsigned BAUD_RATE = system_pkg::UART_BAUD_RATE,
+    parameter longint unsigned CLK_FREQ_HZ = system_pkg::FUNCTIONAL_CLOCK_HZ
 ) (
     input  logic clk,
     input  logic reset,
@@ -67,7 +68,8 @@ module system_top #(
   logic [3:0] debug_idex_mem_op, debug_exmem_mem_op;
 
   uart_core #(
-      .BAUD_RATE(BAUD_RATE)
+      .BAUD_RATE  (BAUD_RATE),
+      .CLK_FREQ_HZ(CLK_FREQ_HZ)
   ) uart_inst (
       // Entradas
       .clk,
@@ -88,7 +90,8 @@ module system_top #(
       .tx_done_tick
   );
   protocol_controller #(
-      .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES)
+      .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES),
+      .CLK_FREQ_HZ        (CLK_FREQ_HZ)
   ) controller_inst (
       // Entradas
       .clk,
