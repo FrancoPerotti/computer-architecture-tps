@@ -54,6 +54,7 @@ de lint y formato de Verible. El runtime incluye `g++` del snapshot para los ban
 | Icarus 13.0, tag de origen `v13_0`                                                 | Commit `dfeee909ed9f20b4870dd93423156c0170c0e1ff`                          |
 | Archivo de fuentes de ese commit                                                   | SHA-256 `c3a18398dd25073845550af2f35926193f4d3aa7cd7080122bdc501f59717c00` |
 | Certificados iniciales: paquete Ubuntu `ca-certificates_20240203_all.deb`          | SHA-256 `641de77d8f142cfd62a1a6f964ba67b20754d3337c480efb529d086075a06c9a` |
+| Certificados del snapshot: paquete Ubuntu `ca-certificates_20260601~24.04.1_all.deb` | SHA-256 `6bac2a01979e210d9eac1d4d56747ec709ea60654744d66705dc3c36e7629e50` |
 | check-jsonschema 0.38.2 y sus dependencias Python                                  | [Versiones y hashes fijados](../docker/check-jsonschema.requirements.txt)  |
 
 Make `4.3-4.1build2`, Verilator `5.020-1`, ShellCheck `0.9.0-1` y shfmt
@@ -79,6 +80,13 @@ paquete de certificados iniciales; después de verificarlo, se extrae su
 contenido para que APT pueda acceder al snapshot por HTTPS. La primera etapa
 instala el paquete normal de certificados desde el mismo snapshot y pasa
 su bundle a las otras etapas.
+
+El paquete inicial se descarga de `archive.ubuntu.com`. La versión de certificados
+que selecciona el snapshot se obtiene de Launchpad y se coloca en la caché de APT
+en las etapas `build` y `validator`. Ambas copias se verifican por SHA-256; APT
+también contrasta la segunda con sus índices firmados. Esto evita los errores
+HTTP 500/503/504 del servicio de snapshots para esos archivos sin cambiar las
+versiones de los paquetes ni desactivar sus verificaciones.
 
 Las versiones instaladas se guardan en:
 
