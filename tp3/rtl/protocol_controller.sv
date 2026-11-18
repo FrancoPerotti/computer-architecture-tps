@@ -2,6 +2,7 @@
 module protocol_controller #(
     parameter system_pkg::memory_capacity_t IMEM_CAPACITY_BYTES =
         system_pkg::REFERENCE_IMEM_CAPACITY_BYTES,
+    parameter longint unsigned CLK_FREQ_HZ = system_pkg::FUNCTIONAL_CLOCK_HZ,
     localparam integer IMAGE_SIZE_WIDTH = system_pkg::capacity_inclusive_width(IMEM_CAPACITY_BYTES),
     localparam integer BYTE_ADDRESS_WIDTH = system_pkg::byte_address_width(IMEM_CAPACITY_BYTES)
 ) (
@@ -39,10 +40,17 @@ module protocol_controller #(
 );
   import system_pkg::*;
 
-  (* fsm_encoding = "one_hot" *)logic [                10:0] protocol_state;
-  logic [                10:0] next_state;
-  logic                        rx_byte_valid;
-  logic [                22:0] inactivity_count;
+  (* fsm_encoding = "one_hot" *)logic [10:0] protocol_state;
+  logic [10:0] next_state;
+  logic        rx_byte_valid;
+  localparam
+      longint unsigned LOAD_TIMEOUT_CYCLES = CLK_FREQ_HZ * PROTOCOL_LOAD_INACTIVITY_MS / 64'd1000;
+  localparam longint unsigned RECOVERY_TIMEOUT_CYCLES = CLK_FREQ_HZ * PROTOCOL_RECOVERY_SILENCE_MS /
+      64'd1000;
+  localparam longint unsigned MAX_TIMEOUT_CYCLES = (LOAD_TIMEOUT_CYCLES > RECOVERY_TIMEOUT_CYCLES) ?
+      LOAD_TIMEOUT_CYCLES : RECOVERY_TIMEOUT_CYCLES;
+  localparam integer TIMER_WIDTH = (MAX_TIMEOUT_CYCLES > 1) ? $clog2(MAX_TIMEOUT_CYCLES) : 1;
+  logic [     TIMER_WIDTH-1:0] inactivity_count;
   logic                        timer_clear;
   logic                        timer_inc;
   logic                        timer_limit_reached;
@@ -122,7 +130,9 @@ module protocol_controller #(
 
   assign rd_uart = !reset && !rx_empty;
   assign rx_byte_valid = !rx_empty && !rx_error_tick;
-  assign timer_limit_reached = (inactivity_count == 23'd4_999_999);
+  assign timer_limit_reached = (
+      inactivity_count == TIMER_WIDTH'((protocol_state == RECOVER_RX) ?
+                                       RECOVERY_TIMEOUT_CYCLES - 1 : LOAD_TIMEOUT_CYCLES - 1));
   assign load_size_candidate = {r_data, load_size_received[31:0]};
   assign last_size_byte = (size_byte_index == 3'd4);
   assign load_size_valid = (load_size_candidate != 40'd0) &&

@@ -1,6 +1,7 @@
 // Conecta los pines de Basys 3 con el sistema funcional del TP3.
 module basys3_top #(
-    parameter system_pkg::memory_profile_t MEMORY_PROFILE = system_pkg::REFERENCE
+    parameter system_pkg::memory_profile_t MEMORY_PROFILE = system_pkg::REFERENCE,
+    parameter longint unsigned             CLK_FREQ_HZ    = system_pkg::FUNCTIONAL_CLOCK_HZ
 ) (
     input  logic clk_100mhz_i,
     input  logic reset_btn_i,
@@ -33,7 +34,8 @@ module basys3_top #(
 
     system_top #(
         .IMEM_CAPACITY_BYTES(IMEM_CAPACITY_BYTES),
-        .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES)
+        .DMEM_CAPACITY_BYTES(DMEM_CAPACITY_BYTES),
+        .CLK_FREQ_HZ        (CLK_FREQ_HZ)
     ) system (
         .clk,
         .reset,
