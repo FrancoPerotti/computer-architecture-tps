@@ -99,6 +99,9 @@ def main():
                         assert "mantenimiento" in blocked.stderr
             if args.gui:
                 software = Path(__file__).resolve().parents[1]
+                node_runtime = os.environ.get(
+                    "VIEWRV_TEST_NODE", str(software / "build/toolchain/node_modules/node/bin/node")
+                )
                 gui_environment = {
                     **environment,
                     "VIEWRV_PRODUCT": str(root),
@@ -112,7 +115,7 @@ def main():
                             "-a",
                             "-s",
                             "-screen 0 1366x768x24",
-                            str(software / "build/toolchain/node_modules/node/bin/node"),
+                            node_runtime,
                             str(software / "gui/tests" / scenario),
                         ],
                         cwd=software / "gui",

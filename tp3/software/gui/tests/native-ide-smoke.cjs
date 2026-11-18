@@ -16,8 +16,12 @@ const { menuCommand } = require('./ui-commands.cjs')
 const assert = require('node:assert/strict')
 const gui = resolve(__dirname, '..'),
   product = process.env.VIEWRV_PRODUCT
-if (!product || !existsSync(resolve(product, 'VERIFICATION-ONLY.txt')))
-  throw Error('Indicá la disposición nativa de comprobación, no una distribución anterior.')
+if (
+  !product ||
+  (!existsSync(resolve(product, 'VERIFICATION-ONLY.txt')) &&
+    !existsSync(resolve(product, 'release.json')))
+)
+  throw Error('Indicá un paquete nativo de verificación o distribución mediante VIEWRV_PRODUCT.')
 const root = mkdtempSync(resolve(tmpdir(), 'viewrv-pc06-native-ide-'))
 const environment = {
   ...process.env,
@@ -146,8 +150,12 @@ function cli(...args) {
     return panel
   }
   try {
-    assert.equal(existsSync(resolve(product, 'release.json')), false)
-    assert.equal(existsSync(resolve(product, 'resources/hardware/processor.bit')), false)
+    const verificationOnly = existsSync(resolve(product, 'VERIFICATION-ONLY.txt'))
+    assert.equal(existsSync(resolve(product, 'release.json')), !verificationOnly)
+    assert.equal(
+      existsSync(resolve(product, 'resources/hardware/processor.bit')),
+      !verificationOnly,
+    )
     page = await openGui()
     assert.ok(corePid, 'Packaged host did not start its native core')
     const info = await instance.evaluate(({ app }) => ({
@@ -350,7 +358,7 @@ function cli(...args) {
     await until(() => !existsSync(resolve(root, 'viewrv/core.json')))
     assert.deepEqual(external, [])
     assert.deepEqual(errors, [])
-    return 'Native verification: 33 instructions / 165 stages, 59 examples and original guide; native core/CLI and real assembler; split/save and associated-file autosave, unassociated draft recovered after fresh core/GUI restart and saved to a chosen destination, external HTTP(S) blocked during the flows, independent GUI/CLI close and native final shutdown passed. No FPGA execution or final hardware distribution claimed.\n'
+    return 'Native package verification: 33 instructions / 165 stages, 59 examples and original guide; native core/CLI and real assembler; split/save and associated-file autosave, unassociated draft recovered after fresh core/GUI restart and saved to a chosen destination, external HTTP(S) blocked during the flows, independent GUI/CLI close and native final shutdown passed.\n'
   } catch (error) {
     if (page && !page.isClosed()) {
       console.error('Native renderer errors:', errors)

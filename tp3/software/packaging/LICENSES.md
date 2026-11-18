@@ -8,7 +8,7 @@ Desde `tp3`, preparar una vez la caché de fuentes con sus huellas fijadas:
 software/.venv/bin/python software/packaging/licenses.py --fetch
 ```
 
-La descarga es explícita y usa HTTPS. Solo se conservan como válidos archivos de tamaño y SHA-256 coincidentes; un fallo no reemplaza un archivo válido. La construcción normal no descarga nada. Si falta una fuente, un texto o cambió una entrada revisada, termina con error.
+La descarga es explícita y usa HTTPS. Las fuentes pueden prepararse antes de compilar CLI y core. Solo se conservan como válidos archivos de tamaño y SHA-256 coincidentes; un fallo no reemplaza un archivo válido. La construcción valida también los insumos de los binarios y los textos revisados. Si falta una fuente, un texto o cambió una entrada revisada, termina con error.
 
 Después de construir GUI y CLI/core, el constructor de verificación y el hook de electron-builder agregan automáticamente el material antes de generar el inventario completo Linux. El hook de Windows lo rechaza hasta disponer de una revisión nativa de esa plataforma. La falta de bitstream sigue bloqueando la distribución de hardware.
 
@@ -23,6 +23,8 @@ El destino `software/build/licenses` debe ser nuevo. El menú de la GUI de desar
 ## Actualizar componentes
 
 El lock conserva entradas revisadas (locks Python/npm, recursos aprobados y fuentes de atribución), hashes de los textos, archivos fuente, archivos nativos y procedencia. Una actualización exige revisar su composición, licencias y avisos; regenerar hashes por sí solo no acredita esa revisión. Para la GUI se utiliza `audit_gui_modules.cjs` contra el ASAR construido; un paquete final con dependencias adicionales requiere ampliar el inventario. El guard de composición rechaza módulos externos inesperados y archivos npm fuera del bundle revisado.
+
+Las entradas `Analysis-00.toc` de PyInstaller usan `format: pyinstaller-analysis`. Su huella conserva las opciones del análisis y ordena los inventarios de módulos, datos y biblioteca base antes de compararlos. La revisión de la candidata Linux verificó que estos inventarios contienen las mismas entradas que la construcción Ubuntu anterior. Un cambio de módulos, rutas, tipos u opciones sigue produciendo una huella diferente.
 
 Las fuentes Ubuntu corresponden al snapshot firmado `20261018T000000Z`; se conservaron hashes de sus índices Sources y las revisiones exactas con parches de distribución. FFmpeg corresponde a la revisión Chromium fijada por Electron 45.0.0, con el parche de Electron y su configuración Linux. `REBUILDING.md` explica el uso de esas fuentes y el reemplazo local. certifi conserva MPL y sus archivos fuente exactos.
 

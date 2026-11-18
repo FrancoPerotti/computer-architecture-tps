@@ -78,8 +78,16 @@ def main():
                 assert core.poll() is None, "El core empaquetado terminó durante el arranque"
                 time.sleep(0.05)
             discovery = json.loads(discovery_file.read_text())
+            # The Linux launcher supervises the native core in a child process.
+            process_ids = [core.pid]
+            process_ids.extend(
+                int(pid)
+                for pid in Path(f"/proc/{core.pid}/task/{core.pid}/children").read_text().split()
+            )
             thread_names = [
-                entry.read_text().strip() for entry in Path(f"/proc/{core.pid}/task").glob("*/comm")
+                entry.read_text().strip()
+                for pid in process_ids
+                for entry in Path(f"/proc/{pid}/task").glob("*/comm")
             ]
             assert thread_names.count("viewrv-serial") == 1, thread_names
         except BaseException:
@@ -125,13 +133,14 @@ def main():
             )
             assert snapshot["text"] == capture["source_text"] and snapshot["is_open"]
             action("preferences/update", {"default_author": "PC-I02", "ui_zoom": 1.25}, gui_id)
-            # This partial product deliberately has no real assembler yet (#13/#17).
-            failure = json.loads(
-                cli("--output", "json", "program", "assemble", str(source), expected=1)
-            )
-            assert failure["result"] is None
-            assert failure["error"]["code"] == "ASSEMBLY_INTERNAL_ERROR", failure
-            assert failure["error"]["details"]["source_version"] == capture["source_version"]
+            translated = json.loads(cli("--output", "json", "program", "assemble", str(source)))
+            assert translated["error"] is None, translated
+            assert translated["result"]["image"] == [147, 0, 80, 0, 11, 0, 0, 0]
+            assert translated["result"]["pc_to_line"] == [
+                {"pc": 0, "line": 1},
+                {"pc": 4, "line": 2},
+            ]
+            assert translated["result"]["source_version"] == capture["source_version"]
             closed = action("program/close", capture, gui_id)
             assert not closed["is_open"]
             reopened = action("program/recover", {"program_id": program["program_id"]}, gui_id)
@@ -162,7 +171,7 @@ def main():
                 core.terminate()
                 core.wait(timeout=5)
     print(
-        "PC-I03 paquete: inventario, CLI/core nativos, único hilo serial, programas, conservación, assembler ausente explícito, continuidad y cierre correctos."
+        "PC-I03 paquete: inventario, CLI/core nativos, único hilo serial, programas, conservación, ensamblado real, continuidad y cierre correctos."
     )
 
 

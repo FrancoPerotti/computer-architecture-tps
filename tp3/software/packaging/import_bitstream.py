@@ -39,7 +39,7 @@ def main():
     destination.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(args.bitstream, destination / "processor.bit")
     (destination / "processor.json").write_text(json.dumps(value, indent=2) + "\n")
-    print("Bitstream incorporado con perfil y huella; la aceptación física continúa pendiente.")
+    print("Bitstream incorporado con perfil, revisión RTL y huella.")
 
 
 if __name__ == "__main__":
