@@ -1,0 +1,8 @@
+flowchart LR
+  HA[HALT_DRAIN_AUTO] -->|un ciclo| F[FINISHED]
+  HS[HALT_DRAIN_STEP] -->|STEP o RUN: un ciclo| F
+  FA[FAULT_DRAIN_AUTO] -->|pipeline vacío tras el ciclo| X[FAULT]
+  FA -->|queda trabajo| FA
+  FS[FAULT_DRAIN_STEP] -->|STEP: queda trabajo| FS
+  FS -->|STEP o RUN: pipeline vacío| X
+  FS -->|RUN: queda trabajo| FA

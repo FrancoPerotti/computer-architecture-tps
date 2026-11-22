@@ -1,0 +1,174 @@
+La validación en placa comprueba el funcionamiento del sistema en las
+condiciones reales de uso: la PC envía programas y órdenes por UART, y la FPGA
+ejecuta las instrucciones y devuelve su estado. Esto complementa las pruebas de
+simulación presentadas anteriormente y permite observar el recorrido completo,
+desde el código assembler hasta las respuestas recibidas desde la placa.
+
+\section{Configuración de la validación}
+
+Para la validación se conectó una PC a la Basys 3 y se utilizó el assembler
+junto con la aplicación \tech{viewrv}. La FPGA se configuró con el bitstream
+del perfil \code{REFERENCE}; sobre esa misma configuración se cargaron y
+ejecutaron diferentes programas, sin volver a sintetizar el diseño.
+
+Se seleccionaron 151 variantes de pruebas ya definidas en el catálogo. La
+tabla~\ref{tab:replay} indica a qué grupo pertenece cada conjunto y cuántas
+variantes se seleccionaron. Se conservan los identificadores originales para
+poder comparar lo observado en placa con las expectativas de cada prueba.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{Grupo} & \textbf{Tema} & \textbf{Variantes} \\
+    \midrule
+    \code{TEST-ISA-001} & Aritmética y lógica & 20 \\
+    \code{TEST-ISA-002} & Shifts y comparaciones & 37 \\
+    \code{TEST-ISA-003} & \code{LUI} y límites & 4 \\
+    \code{TEST-ISA-005} & Branches condicionales & 4 \\
+    \code{TEST-ISA-006} & Saltos y valor de enlace & 8 \\
+    \code{TEST-ISA-007} & Loads y stores & 22 \\
+    \code{TEST-ISA-008} & Destinos de flujo inválidos & 6 \\
+    \code{TEST-PIPE-003} & Forwarding y prioridad por fuente & 5 \\
+    \code{TEST-PIPE-005} & Consumidores load-use & 9 \\
+    \code{TEST-EXEC-004} & Faults precisos & 7 \\
+    \code{TEST-EXEC-008} & Ausencia de halt & 4 \\
+    \code{TEST-MEM-008} & Reemplazo y publicación de imagen & 6 \\
+    \code{TEST-UART-004} & Carga de programas & 9 \\
+    \code{TEST-UART-008} & Lista de DMEM & 4 \\
+    \code{TEST-UART-013} & Secuencia de reset & 6 \\
+    \midrule
+    Total & & 151 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Variantes seleccionadas para la validación en placa.}
+  \label{tab:replay}
+\end{table}
+
+Para preparar los datos de cada prueba se ejecutaron instrucciones reales en la
+CPU. Por ejemplo, los casos de \code{TEST-UART-008} utilizan stores para
+escribir DMEM y generar la lista de memoria utilizada. Las instrucciones de
+preparación forman parte de la ejecución, por lo que sus efectos y sus ciclos se
+tienen en cuenta al comparar los resultados.
+
+La selección conserva el alcance previsto para la placa: en
+\code{TEST-UART-013}, por ejemplo, los cuatro casos de drenado se verifican
+localmente y no forman parte de las variantes físicas seleccionadas.
+
+La tabla~\ref{tab:sesion-fisica} resume la configuración utilizada para la
+comunicación y la ejecución en placa.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{L{3.8cm}Y}
+    \toprule
+    \textbf{Elemento} & \textbf{Configuración} \\
+    \midrule
+    Placa & Basys 3. \\
+    Enlace serie & \num{19200} baud, 8N1, sin control de flujo. \\
+    Bitstream & \code{tp3-reference.bit}, perfil \code{REFERENCE}. \\
+    Aplicación & \tech{viewrv} 0.7.0. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Configuración utilizada para la validación en placa.}
+  \label{tab:sesion-fisica}
+\end{table}
+
+\section{Resultados de la validación en placa}
+
+De las 151 variantes seleccionadas, 150 aprobaron en placa: 146 se ejecutaron
+automáticamente y cuatro requirieron accionar el botón BTNC durante RUN, LOAD
+o Debug. Estas pruebas permitieron comparar las respuestas y el estado observado
+con los resultados esperados para cada caso.
+
+La variante \code{TEST-UART-013/C009} quedó pendiente en placa. Esta prueba
+requiere presionar el botón de reset durante la preparación posterior a una
+carga, que dura aproximadamente \SI{41}{\micro\second}. Para asegurar que el
+pulso ocurra en esa ventana es necesario sincronizarlo con el final de la carga
+y registrar su posición temporal. Como no se contó con esa instrumentación, la
+variante no se contabiliza entre las aprobaciones físicas.
+
+La misma variante sí aprobó en simulación de sistema con el banco
+\code{system_top_session_tb}, que comprobó que la preparación estuviera activa
+al llegar el reset, que la transmisión volviera a reposo y que el sistema
+quedara en un estado limpio. El resultado corresponde a simulación y no
+sustituye la prueba pendiente en placa.
+
+\section{Recorrido funcional comprobado}
+
+Además de las variantes de la tabla, se comprobó un recorrido de uso mediante
+la interfaz de línea de comandos de \tech{viewrv}. Este recorrido utilizó el
+assembler, la aplicación y la FPGA para cargar programas, ejecutarlos y
+consultar su estado.
+
+Para describirlo se identifican como A y B dos programas de prueba. El programa
+A escribe valores en registros y memoria, mientras que B termina sin dejar
+datos escritos. La secuencia permitió observar el avance de A y después
+comprobar que B comenzara con un estado inicial limpio:
+
+\begin{enumerate}
+  \item \textbf{Preparación y carga:} se configuró la FPGA, se comprobó el
+    enlace y se ensambló y cargó el programa A.
+  \item \textbf{Paso a paso:} el primer \code{STEP} produjo ciclo 1, PC 4,
+    \code{IF/ID} válido en PC 0, RF en cero y DMEM sin bytes utilizados.
+  \item \textbf{Ejecución continua:} tras recargar A, \code{RUN} terminó en
+    \code{FINISHED}, ciclo 7, PC 20, \code{x1=7} y \code{x2=9}; los cuatro
+    bytes utilizados de DMEM fueron \code{07 00 00 00} en las direcciones 0--3.
+  \item \textbf{Reprogramación:} se cargó B sin cambiar el bitstream. Terminó en
+    \code{FINISHED}, ciclo 3, PC 8, RF en cero y DMEM sin bytes utilizados.
+  \item \textbf{Fault:} un tercer programa terminó en \code{FAULT}, ciclo 5,
+    PC 8, causa 1, \code{fault_pc=4} y \code{x1=1}.
+  \item \textbf{Interrupción y recuperación:} se inició un bucle sin
+    \code{halt}, se solicitó su detención desde otra terminal y se confirmó
+    la interrupción por petición del usuario. La carga y ejecución posterior
+    de B comprobó la recuperación.
+\end{enumerate}
+
+Además, las variantes seleccionadas incluyeron programas con dependencias,
+comparaciones de snapshots y pruebas del botón de reset. En particular, los
+casos de \code{load-use} permitieron comprobar los ciclos y campos activos
+esperados para esa dependencia.
+
+\section{Alcance de la verificación de \texorpdfstring{\tech{viewrv}}{viewrv}}
+
+La aplicación \tech{viewrv} tiene sus propios requisitos y pruebas. Mientras
+que las variantes de \code{TEST-PLAT-005} se concentran en el comportamiento de
+la FPGA observado por UART, los escenarios de la aplicación comprueban cómo se
+preparan las operaciones, se interpretan las respuestas y se presentan los
+resultados. El \doc{software/viewrv/verificacion.md}{catálogo de la aplicación}
+define 30 escenarios y 74 requisitos.
+
+Se realizaron 47 pruebas de protocolo y de la CLI con el core, mediante
+adaptadores controlados y pseudo-terminales de Linux. Estas pruebas permiten
+comprobar, sin una placa conectada, la formación de mensajes, las respuestas
+parciales, los tiempos de espera y la recuperación de la comunicación. El
+recorrido físico descrito anteriormente agrega la observación del flujo con una
+Basys 3 real.
+
+La interfaz gráfica comparte el core y presenta el código, los registros, el
+pipeline y la memoria. Sus pruebas unitarias y recorridos de ventana se
+describen en la \doc{software/viewrv/verificacion.md}{verificación de viewrv}.
+La ejecución física mediante
+CLI no acredita por sí sola todos los escenarios de la interfaz gráfica ni la
+distribución para Windows.
+
+\section{Registro de evidencia}
+
+Para cada variante se conserva el plan de prueba y se registra el resultado
+esperado y el observado. Según el caso, la evidencia incluye los bytes
+intercambiados por UART y el snapshot recibido, lo que permite revisar los
+registros, el pipeline, la memoria utilizada y la información de fault.
+
+El \evidencefile{resultados-por-id.csv}{resumen por ID} reúne los resultados
+de las variantes y el \evidencefile{tp3-issue-17-evidencia.zip}{paquete de
+evidencia} conserva las capturas, el bitstream y los reportes utilizados.
+
+\section{Resultado de aceptación}
+
+La validación comprobó en placa la carga y el reemplazo de programas, la
+ejecución continua y paso a paso, la observación del procesador y la
+recuperación mediante reset. Los resultados permiten contrastar la ejecución
+física con las expectativas de las pruebas, teniendo en cuenta la variante de
+reset que permanece pendiente en placa.

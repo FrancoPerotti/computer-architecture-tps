@@ -1,0 +1,6 @@
+flowchart LR
+  N[NO_IMAGE] -->|LOAD aceptada| L[LOADING]
+  E[Otros estados<br/>elegibles para LOAD] -->|LOAD aceptada| L
+  L -->|load_fail| N
+  L -->|load_ok| P[PREPARING_READY]
+  P -->|prepare_done<br/>publicar imagen| R[READY]

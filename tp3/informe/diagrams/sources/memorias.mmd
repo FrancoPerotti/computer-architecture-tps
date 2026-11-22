@@ -1,0 +1,3 @@
+flowchart LR
+  IMEM["IMEM<br/>imagen confirmada"] -->|"fetch 32 bits"| CPU["CPU<br/>IF - ID - EX<br/>MEM - WB"]
+  CPU <-->|"load / store"| DMEM["DMEM<br/>datos de la sesión"]

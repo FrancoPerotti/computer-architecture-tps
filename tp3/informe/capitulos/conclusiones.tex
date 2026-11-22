@@ -1,0 +1,48 @@
+Este trabajo práctico nos permitió retomar lo aprendido en los trabajos
+anteriores y aplicarlo a un sistema más completo. La ALU que construimos en el
+TP1 volvió a formar parte del camino de datos, mientras que la comunicación
+UART del TP2 nos permitió intercambiar programas y resultados con la PC. Esta
+vez, el desafío no consistió en realizar una operación aislada, sino en integrar
+esos bloques en un procesador capaz de ejecutar programas y permitirnos observar
+su funcionamiento.
+
+Al organizar el procesador en cinco etapas comprendimos que superponer
+instrucciones mejora el aprovechamiento del circuito, pero también introduce
+situaciones que tuvimos que resolver cuidadosamente. Una instrucción puede
+necesitar un resultado que todavía no llegó al banco de registros y, al mismo
+tiempo, un salto puede cambiar el camino cuando ya se buscaron instrucciones
+posteriores. Trabajar con forwarding, bypass y esperas por \code{load-use} nos
+ayudó a entender cuándo un dato está disponible y cómo hacer que cada
+instrucción utilice la versión correcta.
+
+También aprendimos a prestar atención a qué significa avanzar un ciclo del
+procesador. Para poder ejecutar de manera continua o paso a paso y, a la vez,
+observar el estado por UART, tuvimos que distinguir el reloj físico de los
+ciclos efectivos de la CPU. El tratamiento de \code{halt} y los faults agregó
+otra decisión importante: dejar terminar las instrucciones anteriores y
+descartar las posteriores, de manera que el estado final conserve los efectos
+que corresponden.
+
+La carga y la preparación de programas nos mostraron la importancia de definir
+claramente las responsabilidades de cada parte del sistema. El assembler
+traduce el código, la UART transporta la imagen y el procesador la recibe y
+prepara el estado inicial. Esto nos permitió ejecutar distintos programas sobre
+una misma configuración de FPGA y volver a empezar una ejecución sin depender
+de los datos que hubiera dejado la anterior. A su vez, Debug nos dio una forma
+de relacionar lo que escribimos en el programa con lo que ocurre dentro del
+pipeline.
+
+Durante la verificación volvimos a apoyarnos en la metodología de los trabajos
+anteriores: comprobar primero los bloques por separado y después observar cómo
+funcionan al conectarlos. Las simulaciones nos ayudaron a seguir las
+instrucciones ciclo a ciclo y a comprobar condiciones de borde; luego, la
+implementación y las pruebas en la Basys 3 nos permitieron recorrer el sistema
+con la placa y la comunicación reales.
+
+En conjunto, el trabajo nos ayudó a comprender que diseñar un procesador
+implica mucho más que implementar un conjunto de instrucciones. Tuvimos que
+coordinar el tiempo y el estado de sus componentes, conectarlos con el exterior
+y encontrar formas de verificar lo que ocurría en cada etapa. El resultado no
+fue solamente un circuito capaz de ejecutar programas, sino también una
+oportunidad para integrar los conceptos de la materia y llevarlos desde el
+diseño hasta su observación en la FPGA.

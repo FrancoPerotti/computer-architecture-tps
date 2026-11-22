@@ -1,0 +1,60 @@
+\section{Contexto}
+
+El Trabajo Práctico N.º~3 de la materia Arquitectura de Computadoras
+propone crear un procesador \tech{RISC-V} de 32 bits con un pipeline
+de cinco etapas, una unidad de debug y un enlace \tech{UART} que
+permita operarlo desde una computadora. El resultado debe ser un
+sistema que sea capaz de recibir un programa escrito en
+\tech{assembler}, lo traduzca a código máquina, lo cargue en la
+memoria de instrucciones, lo pueda ejecutar en modo continuo o paso a
+paso y, finalmente, devuelva una observación coherente del estado interno.
+
+\section{Alcance del trabajo}
+
+El sistema comprende tres partes principales:
+
+\begin{enumerate}
+  \item un procesador \tech{RISC-V} de 32 bits con pipeline de cinco etapas;
+  \item una unidad de carga, control de ejecución y debug conectada
+    con una PC por \tech{UART};
+  \item una aplicación de PC para editar, traducir, cargar, ejecutar y observar
+    programas.
+\end{enumerate}
+
+El procesador implementa un subconjunto de \tech{RV32I} de 32
+instrucciones y la instrucción \code{halt}. La versión del ISA
+adoptada es User-Level ISA V2.2. La FPGA de referencia es una
+\tech{Basys 3} (\tech{XC7A35T-1CPG236C}) con un dominio funcional de
+\SI{50}{\mega\hertz}. El perfil de memoria de referencia utiliza
+\SI{1024}{\byte} de IMEM y \SI{2048}{\byte} de DMEM.
+
+\section{Metodología de desarrollo}
+
+El desarrollo siguió una secuencia de especificación, implementación
+y verificación. En la primera etapa se identificaron los requisitos,
+se registraron las decisiones de arquitectura y se definieron las
+interfaces entre bloques. Esa documentación permitió implementar cada
+módulo contra un contrato explícito y construir bancos de prueba
+antes de conectar los bloques entre sí.
+
+La implementación se organizó por entregas funcionales. Cada entrega
+reunió un conjunto coherente de módulos, sus pruebas y la evidencia
+de ejecución correspondiente. Las etapas del procesador se
+verificaron primero de forma aislada y después en los niveles de
+integración local y CPU. La comunicación, el control de sesión y la
+plataforma se incorporaron sobre esa base, conservando las interfaces
+y los identificadores de las pruebas.
+
+La verificación combina simulaciones, revisiones estructurales y
+análisis de síntesis e implementación. Las pruebas funcionales se
+ejecutan con Icarus Verilog; el análisis del RTL se realiza con
+Verilator y Verible; la implementación física se evaluó con Vivado.
+Los resultados se registran por caso, nivel y configuración de memoria.
+
+La especificación completa de la arquitectura se encuentra en
+\doc{architecture/system_overview.md}{el diseño FPGA consolidado}.
+Los requisitos y sus criterios de aceptación se detallan en
+\doc{requirements.md}{la especificación de requisitos}. La
+organización de los bloques y sus interfaces se documenta en
+\doc{architecture/module_inventory.md}{el inventario de módulos} y en
+\doc{interfaces.md}{el contrato de interfaces}.
