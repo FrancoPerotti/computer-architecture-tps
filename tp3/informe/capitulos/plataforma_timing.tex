@@ -392,6 +392,36 @@ puntos, con un mínimo de \SI{0.024}{\nano\second} a \SI{60}{\mega\hertz}. WPWS
 permaneció en \SI{3.000}{\nano\second}, las cotas UART conservaron márgenes
 positivos y no se reportaron hallazgos DRC ni errores de ruteo.
 
+\subsection{Límite observado y ruta crítica}
+
+En las implementaciones evaluadas, \SI{63}{\mega\hertz} fue la mayor frecuencia
+ensayada que cumplió setup, con WNS de \SI{0.002}{\nano\second}. A
+\SI{64}{\mega\hertz}, el WNS fue de \SI{-0.721}{\nano\second}. Por lo tanto,
+la transición observada entre cumplimiento e incumplimiento se sitúa entre
+\SI{63}{\mega\hertz} y \SI{64}{\mega\hertz}, con un margen prácticamente nulo
+en el último punto que cumple. Esta conclusión caracteriza la campaña
+realizada; cada punto corresponde a una implementación física distinta.
+
+El análisis detallado de setup a \SI{64}{\mega\hertz} identifica una ruta que
+comienza en un registro \code{ID/EX}, atraviesa \code{forwarding_unit}, la ALU
+y su condición \code{zero}, continúa por \code{flow_control},
+\code{fault_check} y el control de hazards y del pipeline, y termina en el
+registro de estado de \code{global_fsm}. A \SI{63}{\mega\hertz} aparece una
+ruta similar. Esto sitúa la posible limitación en la etapa EX y su camino
+combinacional hacia el control global, sin atribuirla exclusivamente a la ALU
+ni a otro módulo aislado.
+
+Como hipótesis, el límite se explica por la acumulación de retardos en ese
+recorrido. A \SI{64}{\mega\hertz}, la ruta presenta 21 niveles de LUT
+(\emph{Look-Up Tables}, bloques que implementan lógica combinacional en la
+FPGA) y un retardo de datos de \SI{16.259}{\nano\second}. De ese total,
+\SI{13.199}{\nano\second}, equivalentes al \num{81.2}\,\%, corresponden al
+ruteo. La profundidad lógica y, principalmente en esta implementación, el
+retardo de las interconexiones sugieren que el resultado de EX no alcanza el
+registro de la FSM global con la anticipación exigida por setup. Ambos diseños
+completaron el ruteo sin nets con errores; el incumplimiento a
+\SI{64}{\mega\hertz} corresponde al análisis temporal post-ruteo.
+
 \subsection{Interpretación y alcance}
 
 La estimación de \SI{52.8}{\mega\hertz} de la sección anterior supone que el
